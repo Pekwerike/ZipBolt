@@ -5,10 +5,11 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import com.salesground.speedforce.model.ImageModel
 
 class ImageRepository(private val applicationContext: Context) {
 
-    fun fetchAllImagesOnDevice() {
+    fun fetchAllImagesOnDevice() : MutableList<ImageModel>{
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -34,8 +35,20 @@ class ImageRepository(private val applicationContext: Context) {
             selection,
             selectionArgs,
             sortOrder
-        )?.apply {cursor : Cursor ->
-            val imageIdIndex =
+        )?.apply {
+            val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val imageDateAddedColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val imageDisplayNameColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+
+            while(moveToNext()){
+                val imageId = getLong(imageIdColumnIndex)
+                val imageDateAdded = getLong(imageDateAddedColumnIndex)
+                val imageDisplayName = getString(imageDisplayNameColumnIndex)
+                val imageSize = getLong(imageSizeColumnIndex)
+
+                ImageModel()
+            }
         }
 
     }
