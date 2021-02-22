@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(p0: Int) {
-               // connection request failed,
+               // connection initiation failed,
                 // TODO Alert user of failed connection attempt
             }
 
