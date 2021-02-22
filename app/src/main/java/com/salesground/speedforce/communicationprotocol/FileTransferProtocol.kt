@@ -54,13 +54,18 @@ class FileTransferProtocol(private val socket: Socket) {
         filesReceived.forEach {
             val receivedFile = File(parentFolder, it.key)
             val receivedFileOuputStream = FileOutputStream(receivedFile)
-            val bytesToReadOut = it.value
+            var  bytesToReadOut = it.value
             val buffer = ByteArray(1_000_000)
 
             while(bytesToReadOut > 0){
-                val bytesRead = socketDIS.readBytes()
-
+                val bytesRead = socketDIS.read(buffer, 0, Math.min(bytesToReadOut.toInt(), buffer.size))
+                if(bytesRead == -1){
+                    break; // end of stream
+                }
+                receivedFileOuputStream.write(buffer, 0, bytesRead)
+                bytesToReadOut -= bytesRead
             }
+            receivedFileOuputStream.close()
         }
     }
 }
