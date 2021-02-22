@@ -30,10 +30,11 @@ class FileTransferProtocol(private val socket: Socket) {
                 } != -1) {
                 socketDOS.write(buffer, 0,length)
             }
+            fileInputStream.close()
         }
     }
 
-    fun receiveFile() {
+    fun receiveFile(parentFolder : File) {
         val socketInputStream = socket.getInputStream()
         val socketBIS = BufferedInputStream(socketInputStream)
         val socketDIS = DataInputStream(socketBIS)
@@ -49,5 +50,17 @@ class FileTransferProtocol(private val socket: Socket) {
             filesReceived.put(fileName, fileLength)
         }
 
+        // read the byte of each file out from the socketDIS
+        filesReceived.forEach {
+            val receivedFile = File(parentFolder, it.key)
+            val receivedFileOuputStream = FileOutputStream(receivedFile)
+            val bytesToReadOut = it.value
+            val buffer = ByteArray(1_000_000)
+
+            while(bytesToReadOut > 0){
+                val bytesRead = socketDIS.readBytes()
+
+            }
+        }
     }
 }
