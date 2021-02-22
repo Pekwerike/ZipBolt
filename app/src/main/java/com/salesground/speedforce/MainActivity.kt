@@ -23,8 +23,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.salesground.speedforce.broadcast.WifiDirectBroadcastReceiver
+import com.salesground.speedforce.localnetwork.Client
+import com.salesground.speedforce.localnetwork.Server
 import com.salesground.speedforce.ui.theme.SpeedForceTheme
 import com.salesground.speedforce.viewmodel.MainActivityViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
 
@@ -143,11 +149,15 @@ class MainActivity : AppCompatActivity() {
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
         mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
             it?.let {
-                val ipAddressForServerSocket : String = it.groupOwnerAddress.hostAddress
-                if(it.groupFormed && it.isGroupOwner){
-                    // kick of the server
-                }else if(it.groupFormed){
-                    // kick of the client, client will connect to the server,
+                val ipAddressForServerSocket: String = it.groupOwnerAddress.hostAddress
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (it.groupFormed && it.isGroupOwner) {
+                        // kick of the server
+                        Server().listenIncomingConnection()
+                    } else if (it.groupFormed) {
+                        // kick of the client, client will connect to the server,
+                        Client(serverIpAddress = ipAddressForServerSocket).connectToServer()
+                    }
                 }
             }
         })
