@@ -2,6 +2,7 @@ package com.salesground.speedforce
 
 import android.Manifest.*
 import android.content.Context
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
+    private lateinit var intentFilter: IntentFilter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,16 @@ class MainActivity : AppCompatActivity() {
         }
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
+        intentFilter = registerIntentFilter()
+    }
+
+    private fun registerIntentFilter(): IntentFilter {
+        return IntentFilter().apply {
+            addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
+            addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
+            addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+            addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
+        }
     }
 
     private fun initializeChannelAndBroadcastReceiver() {
@@ -97,6 +109,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        //register the broadcast receiver
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
