@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.salesground.speedforce.ui.theme.SpeedForceTheme
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -29,14 +30,14 @@ class MainActivity : AppCompatActivity() {
 
     // check if SpeedForce has access to device fine location
     private fun checkFineLocationPermission(){
-        val isFineLocationPermissionGranted = ActivityCompat.checkSelfPermission(
+        val isFineLocationPermissionGranted = ContextCompat.checkSelfPermission(
             this,
             permission.ACCESS_FINE_LOCATION
         ) ==
                 PackageManager.PERMISSION_GRANTED
 
         if(isFineLocationPermissionGranted){
-
+            // TODO check if the device location is on
         }else {
             ActivityCompat.requestPermissions(
                 this,
@@ -44,6 +45,22 @@ class MainActivity : AppCompatActivity() {
                 FINE_LOCATION_REQUEST_CODE
             )
         }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if(requestCode== FINE_LOCATION_REQUEST_CODE && permissions.contains(permission.ACCESS_FINE_LOCATION)){
+            if(grantResults.isNotEmpty()){
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    // access to device fine location has been granted to SpeedForce
+                    // TODO check if the device location is on
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
 
