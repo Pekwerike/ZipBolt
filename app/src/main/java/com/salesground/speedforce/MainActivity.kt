@@ -1,5 +1,6 @@
 package com.salesground.speedforce
 
+import android.Manifest
 import android.Manifest.*
 import android.annotation.SuppressLint
 import android.content.Context
@@ -33,6 +34,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
+private const val READ_WRITE_STORAGE_REQUEST_CODE = 101
 
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
@@ -183,6 +185,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // check if SpeedForce has access to read and write to the device external storage
+    private fun checkReadAndWriteExternalStoragePermission(){
+        if(ActivityCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this, permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+
+            // Permission granted to SpeedForce to read and write to the device external storage
+            // TODO Go ahead an inform the viewModel to fetch, media items from the repositoris
+        }else {
+            ActivityCompat.requestPermissions(this, arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE), READ_WRITE_STORAGE_REQUEST_CODE)
+        }
+    }
+
     private fun isLocationPermissionGranted() = ActivityCompat.checkSelfPermission(
         this,
         permission.ACCESS_FINE_LOCATION
@@ -211,6 +225,14 @@ class MainActivity : AppCompatActivity() {
                     // access to device fine location has been granted to SpeedForce
                     // TODO check if the device location is on, using location manager
                     //TODO more resource @ https://developer.android.com/training/location
+                }
+            }
+        }else if(requestCode == READ_WRITE_STORAGE_REQUEST_CODE && permissions.contains(permission.READ_EXTERNAL_STORAGE) &&
+            permissions.contains(permission.WRITE_EXTERNAL_STORAGE)){
+            if(grantResults.isNotEmpty()){
+                if(grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                    // SpeedForce has permission to read and write ot the device external storage
+                    // TODO Alert the viewModel to go ahead and fetch media and files from the repositories
                 }
             }
         }
