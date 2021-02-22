@@ -24,6 +24,6 @@ class ImageRepositoryTest {
     fun fetchAllImagesOnDevice() {
         val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
 
-        assertTrue(deviceImages.isNotEmpty())
+        assertTrue(deviceImages.size != 0)
     }
 }
