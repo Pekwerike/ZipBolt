@@ -9,12 +9,22 @@ import java.net.Socket
 
 class Server {
 
-    suspend fun listenIncomingConnection(filesToTransfer: MutableList<File>) {
+    suspend fun listenIncomingConnection(
+        filesToTransfer: MutableList<File>? = null,
+        parentFolder: File? = null
+    ) {
         withContext(Dispatchers.IO) {
             val serverSocket: ServerSocket = ServerSocket(8090)
             // blocking call
             val client: Socket = serverSocket.accept()
-            FileTransferProtocol(client).transferFile(filesToTransfer = filesToTransfer)
+            val fileTransferProtocol = FileTransferProtocol(client)
+
+            filesToTransfer?.let {
+                fileTransferProtocol.transferFile(it)
+            }
+            parentFolder?.let {
+                fileTransferProtocol.receiveFile(it)
+            }
         }
     }
 }
