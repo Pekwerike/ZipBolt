@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity() {
                 PackageManager.PERMISSION_GRANTED
 
         if(isFineLocationPermissionGranted){
-            // TODO check if the device location is on
+            // TODO check if the device location is on, using location manager
+            //TODO more resource @ https://developer.android.com/training/location
         }else {
             ActivityCompat.requestPermissions(
                 this,
@@ -56,7 +57,8 @@ class MainActivity : AppCompatActivity() {
             if(grantResults.isNotEmpty()){
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     // access to device fine location has been granted to SpeedForce
-                    // TODO check if the device location is on
+                    // TODO check if the device location is on, using location manager
+                    //TODO more resource @ https://developer.android.com/training/location
                 }
             }
         }
