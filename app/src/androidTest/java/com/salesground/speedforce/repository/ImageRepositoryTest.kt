@@ -9,6 +9,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.runner.RunWith
+import java.text.SimpleDateFormat
 
 @RunWith(AndroidJUnit4::class)
 class ImageRepositoryTest {
@@ -21,9 +22,31 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun fetchAllImagesOnDevice() {
+    fun fetchAllImage_TestCollectionIsNotEmpty() {
         val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
 
         assertTrue(deviceImages.size != 0)
     }
+
+    @Test
+    fun testthat_FetchedImagesIs_SortedByDateIn_AscendingOrder(){
+        val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+        val simpleDateFormat = SimpleDateFormat("yyyy-MMM-dd-kk-mm-sss-S")
+        val dateCreatedFirstImage = simpleDateFormat.parse(simpleDateFormat.format(deviceImages.get(0).imageDateAdded))
+        val dateCreatedSecondImage =simpleDateFormat.parse(simpleDateFormat.format(deviceImages.get(1).imageDateAdded))
+        val dateCreatedThirdImage = simpleDateFormat.parse(simpleDateFormat.format(deviceImages.get(2).imageDateAdded))
+        when(deviceImages.size){
+             in 1..3000 -> {
+                 assertTrue(dateCreatedFirstImage.compareTo(dateCreatedSecondImage) < 0)
+             }
+            2 -> {
+                assertTrue(deviceImages.get(0).imageDateAdded < deviceImages.get(1).imageDateAdded)
+            }else -> {
+            // device doesn't have any image
+                assertTrue(true)
+            }
+        }
+
+    }
+
 }
