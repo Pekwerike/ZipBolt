@@ -1,4 +1,15 @@
 package com.salesground.speedforce.communicationprotocol
 
-class FileTransferProtocol {
+import java.io.File
+import java.net.Socket
+
+class FileTransferProtocol(private val socket: Socket) {
+
+    fun transferFiles(filesToTransfer : MutableList<File>){
+
+    }
+
+    fun receiveFiles(){
+
+    }
 }
