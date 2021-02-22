@@ -19,6 +19,14 @@ class WifiDirectBroadcastReceiver(
                 when (it) {
                     // Broadcast when Wi-Fi P2P is enabled or disabled on the device.
                     WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
+                        val isWifiOn = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
+                        if(isWifiOn == WifiP2pManager.WIFI_P2P_STATE_ENABLED){
+                            // wifiP2p ie enabled
+                            mainActivity.wifiP2pState(isEnabled = true)
+                        }else {
+                            // wifiP2p is not enabled
+                            mainActivity.wifiP2pState(isEnabled = false)
+                        }
 
                     }
 

@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+    }
+
+    fun wifiP2pState(isEnabled : Boolean){
+
     }
 
     // check if SpeedForce has access to device fine location
