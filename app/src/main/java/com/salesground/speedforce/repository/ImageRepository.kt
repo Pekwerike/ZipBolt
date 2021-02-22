@@ -29,7 +29,7 @@ class ImageRepository(private val applicationContext: Context) {
 
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} ASC"
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
 
         applicationContext.contentResolver.query(
             collection,
