@@ -1,6 +1,7 @@
 package com.salesground.speedforce
 
 import android.Manifest.*
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -47,6 +48,22 @@ class MainActivity : AppCompatActivity() {
         intentFilter = registerIntentFilter()
     }
 
+    @SuppressLint("MissingPermission")
+    private fun beginPeerDiscovery(){
+        if (isLocationPermissionGranted()) {
+            wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    // TODO Peer discovery started alert the user
+                }
+
+                override fun onFailure(p0: Int) {
+                    // TODO Peer discovery initiation failed, alert the user
+                }
+
+            })
+        }
+    }
+
     private fun registerIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
@@ -74,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun observeViewModelLiveData() {
+    private fun observeViewModelLiveData() {
         // wifiP2p state changed, either enabled or disabled
         mainActivityViewModel.isWifiP2pEnabled.observe(this, Observer {
             it?.let {
@@ -91,11 +108,7 @@ class MainActivity : AppCompatActivity() {
 
     // check if SpeedForce has access to device fine location
     private fun checkFineLocationPermission() {
-        val isFineLocationPermissionGranted = ContextCompat.checkSelfPermission(
-            this,
-            permission.ACCESS_FINE_LOCATION
-        ) ==
-                PackageManager.PERMISSION_GRANTED
+        val isFineLocationPermissionGranted = isLocationPermissionGranted()
 
         if (isFineLocationPermissionGranted) {
             // TODO check if the device location is on, using location manager
@@ -109,9 +122,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isLocationPermissionGranted() = ActivityCompat.checkSelfPermission(
+        this,
+        permission.ACCESS_FINE_LOCATION
+    ) ==
+            PackageManager.PERMISSION_GRANTED
+
     override fun onResume() {
         super.onResume()
-        //register the broadcast receiver
+        // register the broadcast receiver
+        registerReceiver(wifiDirectBroadcastReceiver, intentFilter)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // unregister the broadcast receiver
+        unregisterReceiver(wifiDirectBroadcastReceiver)
     }
     override fun onRequestPermissionsResult(
         requestCode: Int,
