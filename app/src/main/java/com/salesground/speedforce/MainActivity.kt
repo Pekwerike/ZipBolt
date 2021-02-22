@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun peersListAvailable(peersList : MutableList<WifiP2pDevice>){
-
+      mainActivityViewModel.discoveredPeersListChanged(peersList)
     }
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery(){
@@ -104,6 +104,13 @@ class MainActivity : AppCompatActivity() {
                 if (it) {
                     // begin peer discovery
                 }
+            }
+        })
+
+        // discoveredPeersList to be displayed on the UI for the user to select a potential connection
+        mainActivityViewModel.discoveredPeersList.observe(this, Observer {
+            it?.let {
+
             }
         })
     }
