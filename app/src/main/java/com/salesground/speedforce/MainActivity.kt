@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.wifi.WpsInfo
+import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
@@ -49,6 +51,26 @@ class MainActivity : AppCompatActivity() {
         intentFilter = registerIntentFilter()
     }
 
+    @SuppressLint("MissingPermission")
+    private fun connectToADevice(device: WifiP2pDevice){
+        val wifiP2pConfiguration = WifiP2pConfig().apply {
+            deviceAddress = device.deviceAddress
+            wps.setup = WpsInfo.PBC
+        }
+
+        wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfiguration,
+        object: WifiP2pManager.ActionListener{
+            override fun onSuccess() {
+                // Broadcast receiveer notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
+            }
+
+            override fun onFailure(p0: Int) {
+               // connection request failed,
+                // TODO Alert user of failed connection attempt
+            }
+
+        })
+    }
     fun peersListAvailable(peersList : MutableList<WifiP2pDevice>){
       mainActivityViewModel.discoveredPeersListChanged(peersList)
     }
