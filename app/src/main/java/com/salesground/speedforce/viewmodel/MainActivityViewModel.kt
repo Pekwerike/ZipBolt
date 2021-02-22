@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class MainActivityViewModel : ViewModel() {
-    private var _isWifiP2pEnabled = MutableLiveData<Boolean>(false)
+    private var _isWifiP2pEnabled = MutableLiveData(false)
     val isWifiP2pEnabled : LiveData<Boolean> = _isWifiP2pEnabled
 
     fun wifiP2pStateChange(newState : Boolean){

@@ -1,8 +1,10 @@
 package com.salesground.speedforce.broadcast
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.wifi.p2p.WifiP2pDeviceList
 import android.net.wifi.p2p.WifiP2pManager
 import com.salesground.speedforce.MainActivity
 
@@ -12,6 +14,7 @@ class WifiDirectBroadcastReceiver(
     private val wifiP2pChannel: WifiP2pManager.Channel
 ) : BroadcastReceiver() {
 
+    @SuppressLint("MissingPermission")
     override fun onReceive(p0: Context?, p1: Intent?) {
         p1?.let { intent: Intent ->
             val action: String? = intent.action
@@ -34,6 +37,13 @@ class WifiDirectBroadcastReceiver(
                         You will usually call requestPeers() to get an updated list of peers if you handle this intent in your application.
                         */
                     WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
+                        wifiP2pManager.requestPeers(wifiP2pChannel) { p0 ->
+                            // potential peers are available
+                            // Store this list in a viewModel to display it on the UI
+                            p0?.deviceList?.let {
+                                mainActivity.peersListAvailable(it.toMutableList())
+                            }
+                        }
                     }
 
                     //Broadcast when the state of the device's Wi-Fi connection changes.

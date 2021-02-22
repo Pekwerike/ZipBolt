@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -48,6 +49,9 @@ class MainActivity : AppCompatActivity() {
         intentFilter = registerIntentFilter()
     }
 
+    fun peersListAvailable(peersList : MutableList<WifiP2pDevice>){
+
+    }
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery(){
         if (isLocationPermissionGranted()) {
@@ -61,6 +65,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
             })
+        }else {
+            checkFineLocationPermission()
         }
     }
 
