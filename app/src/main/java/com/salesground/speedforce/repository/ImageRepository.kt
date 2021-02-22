@@ -1,5 +1,6 @@
 package com.salesground.speedforce.repository
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -9,7 +10,8 @@ import com.salesground.speedforce.model.ImageModel
 
 class ImageRepository(private val applicationContext: Context) {
 
-    fun fetchAllImagesOnDevice() : MutableList<ImageModel>{
+    fun fetchAllImagesOnDevice(): MutableList<ImageModel> {
+        val allImagesOnDevice : MutableList<ImageModel> = mutableListOf()
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -37,19 +39,32 @@ class ImageRepository(private val applicationContext: Context) {
             sortOrder
         )?.apply {
             val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val imageDateAddedColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
-            val imageDisplayNameColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val imageDateAddedColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val imageDisplayNameColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
 
-            while(moveToNext()){
+            while (moveToNext()) {
                 val imageId = getLong(imageIdColumnIndex)
                 val imageDateAdded = getLong(imageDateAddedColumnIndex)
                 val imageDisplayName = getString(imageDisplayNameColumnIndex)
                 val imageSize = getLong(imageSizeColumnIndex)
 
-                ImageModel()
+                val imageUri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    imageId
+                )
+
+               allImagesOnDevice.add(ImageModel(
+                    imageUri = imageUri,
+                    imageDateAdded = imageDateAdded,
+                    imageDisplayName = imageDisplayName,
+                    imageSize = imageSize
+                )
+               )
             }
         }
-
+        return allImagesOnDevice
     }
 }
