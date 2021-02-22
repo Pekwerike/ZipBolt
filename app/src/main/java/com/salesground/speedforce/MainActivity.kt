@@ -3,6 +3,7 @@ package com.salesground.speedforce
 import android.Manifest.*
 import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,10 +13,13 @@ import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.salesground.speedforce.ui.theme.SpeedForceTheme
+import com.salesground.speedforce.viewmodel.MainActivityViewModel
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
 class MainActivity : AppCompatActivity() {
+    val mainActivityViewModel by viewModels<MainActivityViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -26,12 +30,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        observeViewModelLiveData()
 
 
     }
 
-    fun wifiP2pState(isEnabled : Boolean){
+    fun observeViewModelLiveData(){
+        // wifiP2p state changed, either enabled or disabled
+        mainActivityViewModel.isWifiP2pEnabled.observe(this, Observer {
+            it?.let {
 
+            }
+        })
+    }
+
+    fun wifiP2pState(isEnabled : Boolean){
+        mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
     }
 
     // check if SpeedForce has access to device fine location
