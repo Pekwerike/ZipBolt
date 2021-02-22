@@ -60,6 +60,7 @@ class WifiDirectBroadcastReceiver(
                                     p0?.let {
                                         // send connected device the connection info to the mainActivityViewModel
                                         // so we can create a socket connection and begin data transfer
+                                        mainActivity.peeredDeviceConnectionInfoReady(deviceConnectionInfo = it)
                                     }
                                 }
 

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -51,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         intentFilter = registerIntentFilter()
     }
 
+    fun peeredDeviceConnectionInfoReady(deviceConnectionInfo : WifiP2pInfo){
+        mainActivityViewModel.peeredDeviceConnectionInfoUpdated(connectionInfo = deviceConnectionInfo)
+    }
     @SuppressLint("MissingPermission")
     private fun connectToADevice(device: WifiP2pDevice){
         val wifiP2pConfiguration = WifiP2pConfig().apply {
@@ -121,7 +125,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun observeViewModelLiveData() {
         // wifiP2p state changed, either enabled or disabled
-        mainActivityViewModel.isWifiP2pEnabled.observe(this, Observer {
+        mainActivityViewModel.isWifiP2pEnabled.observe(this, {
             it?.let {
                 if (it) {
                     // begin peer discovery
@@ -130,9 +134,21 @@ class MainActivity : AppCompatActivity() {
         })
 
         // discoveredPeersList to be displayed on the UI for the user to select a potential connection
-        mainActivityViewModel.discoveredPeersList.observe(this, Observer {
+        mainActivityViewModel.discoveredPeersList.observe(this, {
             it?.let {
 
+            }
+        })
+
+        // peeredDevice connection info ready, use this details to create a socket connection btw both device
+        mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
+            it?.let {
+                val ipAddressForServerSocket : String = it.groupOwnerAddress.hostAddress
+                if(it.groupFormed && it.isGroupOwner){
+                    // kick of the server
+                }else if(it.groupFormed){
+                    // kick of the client, client will connect to the server,
+                }
             }
         })
     }
