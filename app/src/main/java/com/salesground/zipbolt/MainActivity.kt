@@ -11,6 +11,7 @@ import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
@@ -47,11 +48,12 @@ class MainActivity : AppCompatActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
-                        sendAction = { /*TODO*/ },
-                        receiveAction = { /*TODO*/ })
+                        sendAction = { beginPeerDiscovery() },
+                        receiveAction = { beginPeerDiscovery() })
                 }
             }
         }
+        checkReadAndWriteExternalStoragePermission()
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
@@ -92,16 +94,22 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // TODO Peer discovery started alert the user
+                    displayToast("Peer discovery successfully initiated")
                 }
 
                 override fun onFailure(p0: Int) {
                     // TODO Peer discovery initiation failed, alert the user
+                    displayToast("Peer discovery initiation failed")
                 }
 
             })
         } else {
             checkFineLocationPermission()
         }
+    }
+
+    private fun displayToast(message : String){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun registerIntentFilter(): IntentFilter {
