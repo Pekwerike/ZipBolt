@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
+import com.salesground.zipbolt.ui.screen.HomeScreen
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +45,10 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-
+                    HomeScreen(
+                        mainActivityViewModel = mainActivityViewModel,
+                        sendAction = { /*TODO*/ },
+                        receiveAction = { /*TODO*/ })
                 }
             }
         }
@@ -53,34 +57,37 @@ class MainActivity : AppCompatActivity() {
         intentFilter = registerIntentFilter()
     }
 
-    fun peeredDeviceConnectionInfoReady(deviceConnectionInfo : WifiP2pInfo){
+    fun peeredDeviceConnectionInfoReady(deviceConnectionInfo: WifiP2pInfo) {
         mainActivityViewModel.peeredDeviceConnectionInfoUpdated(connectionInfo = deviceConnectionInfo)
     }
+
     @SuppressLint("MissingPermission")
-    private fun connectToADevice(device: WifiP2pDevice){
+    private fun connectToADevice(device: WifiP2pDevice) {
         val wifiP2pConfiguration = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
             wps.setup = WpsInfo.PBC
         }
 
         wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfiguration,
-        object: WifiP2pManager.ActionListener{
-            override fun onSuccess() {
-                // Broadcast receiveer notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-            }
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    // Broadcast receiveer notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
+                }
 
-            override fun onFailure(p0: Int) {
-               // connection initiation failed,
-                // TODO Alert user of failed connection attempt
-            }
+                override fun onFailure(p0: Int) {
+                    // connection initiation failed,
+                    // TODO Alert user of failed connection attempt
+                }
 
-        })
+            })
     }
-    fun peersListAvailable(peersList : MutableList<WifiP2pDevice>){
-      mainActivityViewModel.discoveredPeersListChanged(peersList)
+
+    fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
+        mainActivityViewModel.discoveredPeersListChanged(peersList)
     }
+
     @SuppressLint("MissingPermission")
-    private fun beginPeerDiscovery(){
+    private fun beginPeerDiscovery() {
         if (isLocationPermissionGranted()) {
             wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
@@ -92,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
             })
-        }else {
+        } else {
             checkFineLocationPermission()
         }
     }
@@ -179,14 +186,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     // check if SpeedForce has access to read and write to the device external storage
-    private fun checkReadAndWriteExternalStoragePermission(){
-        if(ActivityCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-            || ActivityCompat.checkSelfPermission(this, permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+    private fun checkReadAndWriteExternalStoragePermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
+                this,
+                permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
 
             // Permission granted to SpeedForce to read and write to the device external storage
             // TODO Go ahead an inform the viewModel to fetch, media items from the repositoris
-        }else {
-            ActivityCompat.requestPermissions(this, arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE), READ_WRITE_STORAGE_REQUEST_CODE)
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE),
+                READ_WRITE_STORAGE_REQUEST_CODE
+            )
         }
     }
 
@@ -207,6 +225,7 @@ class MainActivity : AppCompatActivity() {
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -220,10 +239,11 @@ class MainActivity : AppCompatActivity() {
                     //TODO more resource @ https://developer.android.com/training/location
                 }
             }
-        }else if(requestCode == READ_WRITE_STORAGE_REQUEST_CODE && permissions.contains(permission.READ_EXTERNAL_STORAGE) &&
-            permissions.contains(permission.WRITE_EXTERNAL_STORAGE)){
-            if(grantResults.isNotEmpty()){
-                if(grantResults[1] == PackageManager.PERMISSION_GRANTED){
+        } else if (requestCode == READ_WRITE_STORAGE_REQUEST_CODE && permissions.contains(permission.READ_EXTERNAL_STORAGE) &&
+            permissions.contains(permission.WRITE_EXTERNAL_STORAGE)
+        ) {
+            if (grantResults.isNotEmpty()) {
+                if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // SpeedForce has permission to read and write ot the device external storage
                     // TODO Alert the viewModel to go ahead and fetch media and files from the repositories
                 }
