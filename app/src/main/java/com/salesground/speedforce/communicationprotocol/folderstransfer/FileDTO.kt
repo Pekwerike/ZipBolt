@@ -1,4 +1,4 @@
-package com.salesground.speedforce.communicationprotocol
+package com.salesground.speedforce.communicationprotocol.folderstransfer
 
 import java.io.File
 
