@@ -18,6 +18,17 @@ class FoldersFTP(private val socket: Socket) {
 
         socketDOS.write(filesCount) // number of files to send
 
+        filesDTO.forEach { fileDTO ->
+            socketDOS.writeUTF(fileDTO.name)
+            if(fileDTO.name.endsWith("Folder")){
+                socketDOS.writeLong(fileDTO.childCount)
+            }else {
+                socketDOS.writeLong(fileDTO.length)
+
+                val fileInputStream
+            }
+        }
+
 
     }
 
@@ -28,13 +39,13 @@ class FoldersFTP(private val socket: Socket) {
         if(file.isDirectory){
             val filesInDirectory = file.listFiles()!!
             // add directory to the list of filesDTO
-            filesDTO.add(FileDTO(name = file.name, childCount = filesInDirectory.size.toLong(), length = 0, file = null ))
+            filesDTO.add(FileDTO(name = file.name + "Folder", childCount = filesInDirectory.size.toLong(), length = 0, file = null ))
             // for every file in the directory, count them, and add them to the list of filesDTO
             filesInDirectory.forEach{
                 folderCount(it)
             }
         }else {
-            // add file directory to the list of DTO
+            // add file directory to the list of filesDTO
             filesDTO.add(FileDTO(name = file.name, childCount =  0, length = file.length(), file = file))
         }
     }
