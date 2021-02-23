@@ -74,23 +74,28 @@ class ImageRepository(private val applicationContext: Context) {
     }
 
     fun convertImageModelToFile(imagesToConvert: MutableList<ImageModel>): MutableList<File> {
+        val imageFiles : MutableList<File> = mutableListOf()
         val imageFolder = File(applicationContext.getExternalFilesDir(null), "SpeedForce")
         if(!imageFolder.exists()) imageFolder.mkdirs()
 
-        imagesToConvert.map { it.imageUri.toFile() }.toMutableList()
         imagesToConvert.forEach {
 
             val imageFile = File(imageFolder, it.imageDisplayName)
             val imageFileOutputStream = FileOutputStream(imageFile)
-            applicationContext.contentResolver.openFileDescriptor(it.imageUri, "rw")?.apply {
+
+            applicationContext.contentResolver.openFileDescriptor(it.imageUri, "r")?.apply {
                 val fileInputStream = FileInputStream(this.fileDescriptor)
                 val buffer = ByteArray(1_000_000)
                 var length: Int
                 while (fileInputStream.read(buffer).also { length = it } != -1) {
-                    imageFileOutputStream
-
+                    imageFileOutputStream.write(buffer, 0, length)
                 }
+                fileInputStream.close()
             }
+            imageFileOutputStream.flush()
+            imageFileOutputStream.close()
+            imageFiles.add(imageFile)
         }
+        return imageFiles
     }
 }
