@@ -3,6 +3,7 @@ package com.salesground.speedforce.communicationprotocol
 import java.io.BufferedOutputStream
 import java.io.DataOutputStream
 import java.io.File
+import java.io.FileInputStream
 import java.net.Socket
 
 class FoldersFTP(private val socket: Socket) {
@@ -25,11 +26,16 @@ class FoldersFTP(private val socket: Socket) {
             }else {
                 socketDOS.writeLong(fileDTO.length)
 
-                val fileInputStream
+                val fileInputStream = FileInputStream(fileDTO.file)
+                val bufferArray = ByteArray(5_000_000)
+
+                var lengthOfBuffer = 10
+                while (lengthOfBuffer != 1) {
+                    lengthOfBuffer = fileInputStream.read(bufferArray)
+                    socketDOS.write(bufferArray, 0, lengthOfBuffer)
+                }
             }
         }
-
-
     }
 
     fun folderCount(file : File){
