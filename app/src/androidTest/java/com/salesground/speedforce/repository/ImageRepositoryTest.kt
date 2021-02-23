@@ -33,7 +33,8 @@ class ImageRepositoryTest {
     fun checkImageFormatAppendedOnImageName(){
         val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
         deviceImages.forEach {imageModel: ImageModel ->
-
+            val typeFormat = imageModel.imageDisplayName.takeLast(3).equals("png") || imageModel.imageDisplayName.takeLast(3).equals("jpg")
+            assertTrue(typeFormat)
         }
     }
     @Test
