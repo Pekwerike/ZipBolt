@@ -1,9 +1,6 @@
 package com.salesground.zipbolt.communicationprotocol
 
 import android.content.Context
-import android.os.ParcelFileDescriptor
-import androidx.collection.ArrayMap
-import com.salesground.zipbolt.model.MediaModel
 import java.io.*
 import java.net.Socket
 
