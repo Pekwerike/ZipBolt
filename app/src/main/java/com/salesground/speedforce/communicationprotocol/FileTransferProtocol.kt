@@ -32,6 +32,9 @@ class FileTransferProtocol(private val socket: Socket) {
             }
             fileInputStream.close()
         }
+
+        // delete all the files
+        filesToTransfer.forEach { it.delete() }
     }
 
     fun receiveFile(parentFolder : File) {
