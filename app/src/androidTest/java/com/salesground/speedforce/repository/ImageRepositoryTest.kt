@@ -30,6 +30,13 @@ class ImageRepositoryTest {
     }
 
     @Test
+    fun checkImageFormatAppendedOnImageName(){
+        val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+        deviceImages.forEach {imageModel: ImageModel ->
+
+        }
+    }
+    @Test
     fun convertImageModelToFile_Test() {
         val deviceImages: MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
 
@@ -39,6 +46,7 @@ class ImageRepositoryTest {
         assertEquals(imageFiles.get(0).name, deviceImages.get(0).imageDisplayName)
     }
 
+    @Test
     fun convertImageModelToFile_TestForFileSize(){
         val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
         val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceImages.get(0)))

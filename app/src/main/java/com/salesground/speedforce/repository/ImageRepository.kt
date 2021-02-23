@@ -60,6 +60,7 @@ class ImageRepository(private val applicationContext: Context) {
                     imageId
                 )
 
+
                 allImagesOnDevice.add(
                     ImageModel(
                         imageUri = imageUri,
