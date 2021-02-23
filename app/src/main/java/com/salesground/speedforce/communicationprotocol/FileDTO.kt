@@ -1,3 +1,10 @@
 package com.salesground.speedforce.communicationprotocol
 
-data class FileDTO()
+import java.io.File
+
+data class FileDTO(
+    val name: String,
+    val childCount: Long,
+    val length: Long,
+    val file: File
+)
