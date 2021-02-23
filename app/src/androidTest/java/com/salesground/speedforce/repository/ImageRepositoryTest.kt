@@ -15,7 +15,8 @@ import java.text.SimpleDateFormat
 class ImageRepositoryTest {
 
     val applicationContext = ApplicationProvider.getApplicationContext<Context>()
-    lateinit var imageRepository : ImageRepository
+    lateinit var imageRepository: ImageRepository
+
     @Before
     fun setUp() {
         imageRepository = ImageRepository(applicationContext = applicationContext)
@@ -23,14 +24,25 @@ class ImageRepositoryTest {
 
     @Test
     fun fetchAllImage_TestCollectionIsNotEmpty() {
-        val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+        val deviceImages: MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
 
         assertTrue(deviceImages.size != 0)
     }
 
     @Test
-    fun convertImageModelToFile_Test(){
+    fun convertImageModelToFile_Test() {
+        val deviceImages: MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+
+        val imageFiles =
+            imageRepository.convertImageModelToFile(mutableListOf(deviceImages.get(0)))
+
+        assertEquals(imageFiles.get(0).name, deviceImages.get(0).imageDisplayName)
+    }
+
+    fun convertImageModelToFile_TestForFileSize(){
         val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+        val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceImages.get(0)))
+        assertEquals(imageFiles.get(0).length(), deviceImages.get(0).imageSize)
     }
 
 }

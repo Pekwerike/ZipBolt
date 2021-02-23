@@ -6,13 +6,15 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import androidx.core.net.toFile
 import com.salesground.speedforce.model.ImageModel
 import java.io.File
+import java.io.FileInputStream
 
 class ImageRepository(private val applicationContext: Context) {
 
     fun fetchAllImagesOnDevice(): MutableList<ImageModel> {
-        val allImagesOnDevice : MutableList<ImageModel> = mutableListOf()
+        val allImagesOnDevice: MutableList<ImageModel> = mutableListOf()
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -57,19 +59,30 @@ class ImageRepository(private val applicationContext: Context) {
                     imageId
                 )
 
-               allImagesOnDevice.add(ImageModel(
-                    imageUri = imageUri,
-                    imageDateAdded = imageDateAdded,
-                    imageDisplayName = imageDisplayName,
-                    imageSize = imageSize
+                allImagesOnDevice.add(
+                    ImageModel(
+                        imageUri = imageUri,
+                        imageDateAdded = imageDateAdded,
+                        imageDisplayName = imageDisplayName,
+                        imageSize = imageSize
+                    )
                 )
-               )
             }
         }
         return allImagesOnDevice
     }
 
-    fun convertImageModelToFile(imagesToConvert : MutableList<ImageModel>) : MutableList<File> =
-        imagesToConvert.map { File(it.imageUri.path!!) }.toMutableList()
+    fun convertImageModelToFile(imagesToConvert: MutableList<ImageModel>): MutableList<File> {
+        imagesToConvert.map { it.imageUri.toFile() }.toMutableList()
+        imagesToConvert.forEach {
+            applicationContext.contentResolver.openFileDescriptor(it.imageUri, "rw")?.apply {
+                val fileInputStream = FileInputStream(this.fileDescriptor)
+                val buffer = ByteArray(1_000_000)
+                var length: Int
+                while (fileInputStream.read(buffer).also { length = it } != -1) {
 
+                }
+            }
+        }
+    }
 }
