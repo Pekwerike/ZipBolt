@@ -3,7 +3,9 @@ package com.salesground.speedforce.viewmodel
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,13 +31,16 @@ class MainActivityViewModel : ViewModel() {
 
     fun wifiP2pStateChange(newState: Boolean) {
         _isWifiP2pEnabled.value = newState
+        isWifiP2pEnabledState.value = newState
     }
 
     fun discoveredPeersListChanged(newDiscoveredPeersList: MutableList<WifiP2pDevice>) {
         _discoveredPeersList.value = newDiscoveredPeersList
+        discoveredPeersListState.value = newDiscoveredPeersList
     }
 
     fun peeredDeviceConnectionInfoUpdated(connectionInfo: WifiP2pInfo) {
         _peeredDeviceConnectionInfo.value = connectionInfo
+        peeredDeviceConnectionInfoState.value = connectionInfo
     }
 }
