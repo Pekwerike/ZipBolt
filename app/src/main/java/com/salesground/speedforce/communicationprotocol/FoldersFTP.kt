@@ -16,7 +16,6 @@ class FoldersFTP(private val socket: Socket) {
         val socketDOS = DataOutputStream(socketBOS)
 
         folderCount(folder) // get the total number of files to send and group both folders and files into a filesDTO
-
         socketDOS.write(filesCount) // number of files to send
 
         filesDTO.forEach { fileDTO ->
@@ -38,7 +37,11 @@ class FoldersFTP(private val socket: Socket) {
         }
     }
 
-    fun folderCount(file : File){
+    fun receiveFolder(){
+        val socketIS = socket.getInputStream()
+    }
+
+    private fun folderCount(file : File){
         // increment the files count by one, for a new file
         filesCount += 1
 
