@@ -28,6 +28,9 @@ class ImageRepositoryTest {
         assertTrue(deviceImages.size != 0)
     }
 
-
+    @Test
+    fun convertImageModelToFile_Test(){
+        val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+    }
 
 }

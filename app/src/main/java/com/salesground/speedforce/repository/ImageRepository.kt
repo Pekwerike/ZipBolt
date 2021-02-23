@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.salesground.speedforce.model.ImageModel
+import java.io.File
 
 class ImageRepository(private val applicationContext: Context) {
 
@@ -67,4 +68,8 @@ class ImageRepository(private val applicationContext: Context) {
         }
         return allImagesOnDevice
     }
+
+    fun convertImageModelToFile(imagesToConvert : MutableList<ImageModel>) : MutableList<File> =
+        imagesToConvert.map { File(it.imageUri.path!!) }.toMutableList()
+
 }
