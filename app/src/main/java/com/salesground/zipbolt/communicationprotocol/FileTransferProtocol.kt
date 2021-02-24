@@ -1,12 +1,13 @@
 package com.salesground.zipbolt.communicationprotocol
 
 import android.content.Context
+import com.salesground.zipbolt.model.ImageModel
 import java.io.*
 import java.net.Socket
 
 class FileTransferProtocol(private val socket: Socket) {
 
-    fun transferFile(filesToTransfer: MutableList<MediaModel>, context : Context) {
+    fun transferFile(filesToTransfer: MutableList<ImageModel>, context : Context) {
         val socketOutputStream = socket.getOutputStream()
         val socketBOS = BufferedOutputStream(socketOutputStream)
         val socketDOS = DataOutputStream(socketBOS)
@@ -16,10 +17,10 @@ class FileTransferProtocol(private val socket: Socket) {
 
         // write the name, length and byte of each file to transfer
         filesToTransfer.forEach { mediaModel ->
-            socketDOS.writeUTF(mediaModel.name)
-            socketDOS.writeLong(mediaModel.size)
+            socketDOS.writeUTF(mediaModel.imageDisplayName)
+            socketDOS.writeLong(mediaModel.imageSize)
 
-            context.contentResolver.openFileDescriptor(mediaModel.uri, "r")?.let { pdf ->
+            context.contentResolver.openFileDescriptor(mediaModel.imageUri, "r")?.let { pdf ->
                 val fileInputStream = FileInputStream(pdf.fileDescriptor)
                 val bufferArray = ByteArray(5_000_000)
                 var length : Int
