@@ -1,9 +1,7 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.net.wifi.p2p.WifiP2pDevice
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
@@ -24,7 +22,13 @@ fun HomeScreen(
 ) {
 
     val listOfDiscoveredDevices = mainActivityViewModel.discoveredPeersListState
-    Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
 
         LazyColumn(content = {
             items(listOfDiscoveredDevices.value) { device ->
@@ -34,8 +38,10 @@ fun HomeScreen(
 
         Row() {
             Button(onClick = sendAction) {
+
                 Text(text = "Send")
             }
+            Spacer(modifier = Modifier.padding(10.dp))
             Button(onClick = receiveAction) {
                 Text(text = "Receive")
             }
