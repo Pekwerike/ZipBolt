@@ -163,10 +163,10 @@ class MainActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.Main).launch {
                     if (it.groupFormed && it.isGroupOwner) {
                         // kick of the server
-                        Server().listenIncomingConnection()
+                        Server().listenIncomingConnection(this@MainActivity)
                     } else if (it.groupFormed) {
                         // kick of the client, client will connect to the server,
-                        Client(serverIpAddress = ipAddressForServerSocket).connectToServer()
+                        Client(serverIpAddress = ipAddressForServerSocket).connectToServer(this@MainActivity)
                     }
                 }
             }
