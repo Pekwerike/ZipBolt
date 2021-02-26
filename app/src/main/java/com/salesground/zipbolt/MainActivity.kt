@@ -149,12 +149,6 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 if (it) {
                     // begin peer discovery
-                    displayToast("Wifi is on")
-                    mainActivityViewModel.wifiP2pStateChange(null)
-                    //mainActivityViewModel.wifiP2pStateChange(false)
-                }else {
-                    displayToast("Wifi is off")
-                    mainActivityViewModel.wifiP2pStateChange(null)
                 }
             }
         })
@@ -177,11 +171,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
-        if (mainActivityViewModel.isWifiP2pEnabled.value == false && isEnabled) {
-            mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
-        }else if(mainActivityViewModel.isWifiP2pEnabled.value == true && !isEnabled){
-            mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
-        }
+        mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
     }
 
     // check if SpeedForce has access to device fine location
