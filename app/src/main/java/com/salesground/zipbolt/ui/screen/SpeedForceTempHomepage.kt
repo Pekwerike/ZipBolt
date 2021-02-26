@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.net.wifi.p2p.WifiP2pDevice
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -52,7 +53,9 @@ fun HomeScreen(
 
 @Composable
 fun DiscoveredPeerUI(device: WifiP2pDevice) {
-    Row() {
+    Row(modifier = Modifier.padding(4.dp).clickable {
+        // TODO Send update to the viewModel about the device clicked
+    }.padding(4.dp)) {
         val deviceDetails = buildAnnotatedString {
             append(device.deviceName)
             withStyle(style = ParagraphStyle()) {
