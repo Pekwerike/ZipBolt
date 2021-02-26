@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import java.io.File
 import java.io.FileInputStream
@@ -26,7 +27,8 @@ class ImageRepository(private val applicationContext: Context) : IImageRepositor
             MediaStore.Images.Media._ID,
             MediaStore.Images.Media.DATE_ADDED,
             MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.SIZE
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.MIME_TYPE
         )
 
         val selection = null
@@ -46,12 +48,14 @@ class ImageRepository(private val applicationContext: Context) : IImageRepositor
             val imageDisplayNameColumnIndex =
                 getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val imageMimeTypeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
 
             while (moveToNext()) {
                 val imageId = getLong(imageIdColumnIndex)
                 val imageDateAdded = getLong(imageDateAddedColumnIndex)
                 val imageDisplayName = getString(imageDisplayNameColumnIndex)
                 val imageSize = getLong(imageSizeColumnIndex)
+                val imageMimeType = getString(imageMimeTypeColumnIndex)
 
                 val imageUri = ContentUris.withAppendedId(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -64,7 +68,9 @@ class ImageRepository(private val applicationContext: Context) : IImageRepositor
                         mediaUri = imageUri,
                         mediaDateAdded = imageDateAdded,
                         mediaDisplayName = imageDisplayName,
-                        mediaSize = imageSize
+                        mediaSize = imageSize,
+                        mediaCategory = MediaCategory.IMAGE,
+                        mimeType = imageMimeType
                     )
                 )
             }
