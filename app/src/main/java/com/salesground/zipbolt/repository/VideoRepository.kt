@@ -41,6 +41,12 @@ class VideoRepository(private val context: Context) {
             val videoMimeTypeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
 
             while(cursor.moveToNext()){
+                val videoId = cursor.getLong(videoIdColumnIndex)
+                val videoDisplayName = cursor.getString(videoDisplayNameColumnIndex)
+                val videoSize = cursor.getLong(videoSizeColumnIndex)
+                val videoDateAdded = cursor.getLong(videoDateAddedColumnIndex)
+                val videoMimeType = cursor.getString(videoMimeTypeColumnIndex)
+
 
             }
         }

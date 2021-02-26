@@ -32,7 +32,7 @@ class ImageRepositoryTest {
     fun checkThatImageFormatIsAppendedOnImageName(){
         val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
         deviceMedia.forEach { mediaModel: MediaModel ->
-            val typeFormat = mediaModel.imageDisplayName.takeLast(3).equals("png") || mediaModel.imageDisplayName.takeLast(3).equals("jpg")
+            val typeFormat = mediaModel.mediaDisplayName.takeLast(3).equals("png") || mediaModel.mediaDisplayName.takeLast(3).equals("jpg")
             assertTrue(typeFormat)
         }
     }
@@ -43,14 +43,14 @@ class ImageRepositoryTest {
         val imageFiles =
             imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
 
-        assertEquals(imageFiles.get(0).name, deviceMedia.get(0).imageDisplayName)
+        assertEquals(imageFiles.get(0).name, deviceMedia.get(0).mediaDisplayName)
     }
 
     @Test
     fun convertImageModelToFile_TestForFileSize(){
         val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
         val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
-        assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).imageSize)
+        assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).mediaSize)
     }
 
 }

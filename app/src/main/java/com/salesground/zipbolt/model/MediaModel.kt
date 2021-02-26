@@ -2,8 +2,17 @@ package com.salesground.zipbolt.model
 
 import android.net.Uri
 
-data class MediaModel (val imageUri : Uri,
-                       val imageDisplayName : String,
-                       val imageDateAdded : Long,
-                       val imageSize : Long
+enum class MediaCategory {
+    IMAGE,
+    VIDEO
+}
+
+data class MediaModel(
+    val mediaUri: Uri,
+    val mediaDisplayName: String,
+    val mediaDateAdded: Long,
+    val mediaSize: Long,
+    val mediaCategory: MediaCategory,
+    val mimeType: String
+
 )

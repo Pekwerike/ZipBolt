@@ -17,10 +17,10 @@ class FileTransferProtocol(private val socket: Socket) {
 
         // write the name, length and byte of each file to transfer
         filesToTransfer.forEach { mediaModel ->
-            socketDOS.writeUTF(mediaModel.imageDisplayName)
-            socketDOS.writeLong(mediaModel.imageSize)
+            socketDOS.writeUTF(mediaModel.mediaDisplayName)
+            socketDOS.writeLong(mediaModel.mediaSize)
 
-            context.contentResolver.openFileDescriptor(mediaModel.imageUri, "r")?.let { pdf ->
+            context.contentResolver.openFileDescriptor(mediaModel.mediaUri, "r")?.let { pdf ->
                 val fileInputStream = FileInputStream(pdf.fileDescriptor)
                 val bufferArray = ByteArray(5_000_000)
                 var length : Int

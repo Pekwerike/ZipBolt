@@ -61,10 +61,10 @@ class ImageRepository(private val applicationContext: Context) : IImageRepositor
 
                 allImagesOnDevice.add(
                     MediaModel(
-                        imageUri = imageUri,
-                        imageDateAdded = imageDateAdded,
-                        imageDisplayName = imageDisplayName,
-                        imageSize = imageSize
+                        mediaUri = imageUri,
+                        mediaDateAdded = imageDateAdded,
+                        mediaDisplayName = imageDisplayName,
+                        mediaSize = imageSize
                     )
                 )
             }
@@ -79,10 +79,10 @@ class ImageRepository(private val applicationContext: Context) : IImageRepositor
 
         imagesToConvert.forEach {
 
-            val imageFile = File(imageFolder, it.imageDisplayName)
+            val imageFile = File(imageFolder, it.mediaDisplayName)
             val imageFileOutputStream = FileOutputStream(imageFile)
 
-            applicationContext.contentResolver.openFileDescriptor(it.imageUri, "r")?.apply {
+            applicationContext.contentResolver.openFileDescriptor(it.mediaUri, "r")?.apply {
                 val fileInputStream = FileInputStream(this.fileDescriptor)
                 val buffer = ByteArray(1_000_000)
                 var length: Int
