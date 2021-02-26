@@ -7,6 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
+import com.salesground.zipbolt.repository.repositoryinterface.IImageRepositoryInterface
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
