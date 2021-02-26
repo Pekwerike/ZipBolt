@@ -28,9 +28,9 @@ class VideoRepositoryTest {
     fun test_getAllVideosFromDeviceAsFlow_emitsValue() = runBlocking {
         val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDeviceAsFlow().first()
 
-        assertTrue(firstVideoOnDevice.mediaDisplayName.isNullOrEmpty())
+        assertTrue(firstVideoOnDevice.mediaDisplayName.isNotEmpty())
         assertEquals(firstVideoOnDevice.mediaCategory, MediaCategory.VIDEO)
-        assertEquals(firstVideoOnDevice.mimeType, "mp4")
+        assertTrue(firstVideoOnDevice.mimeType.contains("mp4") )
 
     }
 
