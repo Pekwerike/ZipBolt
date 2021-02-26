@@ -55,6 +55,7 @@ fun HomeScreen(
 fun DiscoveredPeerUI(device: WifiP2pDevice) {
     Row(modifier = Modifier.padding(4.dp).clickable {
         // TODO Send update to the viewModel about the device clicked
+
     }.padding(4.dp)) {
         val deviceDetails = buildAnnotatedString {
             append(device.deviceName)

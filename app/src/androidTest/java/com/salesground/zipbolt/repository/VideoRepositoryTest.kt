@@ -40,7 +40,10 @@ class VideoRepositoryTest {
 
     @Test
     fun test_getAllVideosFromDeviceAsFlow_collectAllValues() = runBlocking{
+        val allVideosOnDevice
+        videoRepository.getAllVideoFromDeviceAsFlow().collect { video : MediaModel ->
 
+        }
     }
 
     @After
