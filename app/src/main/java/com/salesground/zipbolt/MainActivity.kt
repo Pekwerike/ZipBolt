@@ -1,5 +1,6 @@
 package com.salesground.zipbolt
 
+
 import android.Manifest.*
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,11 +13,11 @@ import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.ui.platform.setContent
 import androidx.core.app.ActivityCompat
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.localnetwork.Client
