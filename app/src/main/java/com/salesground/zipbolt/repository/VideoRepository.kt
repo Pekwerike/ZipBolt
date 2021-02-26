@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.flow
 
 class VideoRepository(private val context: Context) {
 
-    fun getAllVideoFromDeviceAsFlow: Flow<MediaModel> = flow {
+    fun getAllVideoFromDeviceAsFlow(): Flow<MediaModel> = flow {
         val collection: Uri = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -34,7 +34,7 @@ class VideoRepository(private val context: Context) {
             selection,
             selectionArguments,
             sortOrder
-        )?.let {cursor: Cursor ->
+        )?.let { cursor: Cursor ->
             val videoIdColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val videoDisplayNameColumnIndex =
                 cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
@@ -43,6 +43,28 @@ class VideoRepository(private val context: Context) {
                 cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED)
             val videoMimeTypeColumnIndex =
                 cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
+
+            while (cursor.moveToNext()) {
+                val videoId = cursor.getLong(videoIdColumnIndex)
+                val videoDisplayName = cursor.getString(videoDisplayNameColumnIndex)
+                val videoSize = cursor.getLong(videoSizeColumnIndex)
+                val videoDateAdded = cursor.getLong(videoDateAddedColumnIndex)
+                val videoMimeType = cursor.getString(videoMimeTypeColumnIndex)
+
+                val videoUri =
+                    ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, videoId)
+
+                emit(
+                    MediaModel(
+                        mediaUri = videoUri,
+                        mediaDisplayName = videoDisplayName,
+                        mediaDateAdded = videoDateAdded,
+                        mediaSize = videoSize,
+                        mediaCategory = MediaCategory.VIDEO,
+                        mimeType = videoMimeType
+                    )
+                )
+            }
         }
 
     }
