@@ -154,8 +154,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
-        /*   mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
+           mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
                it?.let {
+                   displayToast("Peered device connection info is ready")
                    val ipAddressForServerSocket: String = it.groupOwnerAddress.hostAddress
                    CoroutineScope(Dispatchers.Main).launch {
                        if (it.groupFormed && it.isGroupOwner) {
@@ -167,7 +168,7 @@ class MainActivity : AppCompatActivity() {
                        }
                    }
                }
-           })*/
+           })
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
