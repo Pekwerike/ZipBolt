@@ -1,6 +1,8 @@
 package com.salesground.zipbolt.repository
 
 import android.content.Context
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
@@ -40,10 +42,14 @@ class VideoRepositoryTest {
 
     @Test
     fun test_getAllVideosFromDeviceAsFlow_collectAllValues() = runBlocking{
-        val allVideosOnDevice
-        videoRepository.getAllVideoFromDeviceAsFlow().collect { video : MediaModel ->
+        val allVideosOnDeviceState : MutableState<MutableList<MediaModel>> = mutableStateOf(mutableListOf())
+        val allVideosOnDevice : MutableList<MediaModel> = mutableListOf()
 
+        videoRepository.getAllVideoFromDeviceAsFlow().collect { video : MediaModel ->
+            allVideosOnDevice.add(video)
+            allVideosOnDeviceState.value = allVideosOnDevice
         }
+        assertTrue(allVideosOnDeviceState.value.size > 1)
     }
 
     @After
