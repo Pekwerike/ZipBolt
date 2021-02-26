@@ -4,5 +4,7 @@ import android.content.Context
 
 class VideoRepository (private val context : Context) {
 
-    suspend fun getAllVideoFromDevice()
+    suspend fun getAllVideoFromDevice() : Flow{
+
+    }
 }

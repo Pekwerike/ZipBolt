@@ -10,9 +10,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class ImageRepository(private val applicationContext: Context) {
+class ImageRepository(private val applicationContext: Context) : IImageRepositoryInterface {
 
-    fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
+    override fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
         val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
@@ -72,7 +72,7 @@ class ImageRepository(private val applicationContext: Context) {
         return allImagesOnDevice
     }
 
-    fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File> {
+    override fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File> {
         val imageFiles : MutableList<File> = mutableListOf()
         val imageFolder = File(applicationContext.getExternalFilesDir(null), "SpeedForce")
         if(!imageFolder.exists()) imageFolder.mkdirs()
