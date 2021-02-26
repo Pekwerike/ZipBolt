@@ -24,7 +24,7 @@ class MainActivityViewModel : ViewModel() {
         private set
 
     fun wifiP2pStateChange(newState: Boolean) {
-        _isWifiP2pEnabled.value = _isWifiP2pEnabled.value == newState
+        _isWifiP2pEnabled.value = newState
         isWifiP2pEnabledState.value = newState
     }
 
