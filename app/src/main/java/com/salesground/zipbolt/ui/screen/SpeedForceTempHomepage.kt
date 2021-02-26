@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.net.wifi.p2p.WifiP2pDevice
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,8 +20,9 @@ import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 @Composable
 fun HomeScreen(
     mainActivityViewModel: MainActivityViewModel,
-    sendAction: () -> Unit, receiveAction: () -> Unit
+    sendAction: () -> Unit, receiveAction: () -> Unit, selectedDevice : (WifiP2pDevice) -> Unit
 ) {
+
 
     val listOfDiscoveredDevices = mainActivityViewModel.discoveredPeersListState
     Column(
@@ -33,7 +35,7 @@ fun HomeScreen(
 
         LazyColumn(modifier = Modifier.fillMaxHeight(0.9f), content = {
             items(listOfDiscoveredDevices.value) { device ->
-                DiscoveredPeerUI(device = device)
+                DiscoveredPeerUI(device = device, selectedDevice = selectedDevice)
             }
         })
 
@@ -52,9 +54,10 @@ fun HomeScreen(
 }
 
 @Composable
-fun DiscoveredPeerUI(device: WifiP2pDevice) {
+fun DiscoveredPeerUI(device: WifiP2pDevice, selectedDevice : (WifiP2pDevice) -> Unit) {
     Row(modifier = Modifier.padding(4.dp).clickable {
         // TODO Send update to the viewModel about the device clicked
+        selectedDevice(device)
 
     }.padding(4.dp)) {
         val deviceDetails = buildAnnotatedString {

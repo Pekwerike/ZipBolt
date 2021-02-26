@@ -52,7 +52,8 @@ class MainActivity : AppCompatActivity() {
                     HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { beginPeerDiscovery() },
-                        receiveAction = { beginPeerDiscovery() })
+                        receiveAction = { beginPeerDiscovery() },
+                        selectedDevice = { connectToADevice(it) })
                 }
             }
         }
@@ -111,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayToast(message : String){
+    private fun displayToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -148,25 +149,26 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 if (it) {
                     // begin peer discovery
+                    displayToast("Wifi is on")
                 }
             }
         })
 
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
-     /*   mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
-            it?.let {
-                val ipAddressForServerSocket: String = it.groupOwnerAddress.hostAddress
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (it.groupFormed && it.isGroupOwner) {
-                        // kick of the server
-                        Server().listenIncomingConnection(this@MainActivity)
-                    } else if (it.groupFormed) {
-                        // kick of the client, client will connect to the server,
-                        Client(serverIpAddress = ipAddressForServerSocket).connectToServer(this@MainActivity)
-                    }
-                }
-            }
-        })*/
+        /*   mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
+               it?.let {
+                   val ipAddressForServerSocket: String = it.groupOwnerAddress.hostAddress
+                   CoroutineScope(Dispatchers.Main).launch {
+                       if (it.groupFormed && it.isGroupOwner) {
+                           // kick of the server
+                           Server().listenIncomingConnection(this@MainActivity)
+                       } else if (it.groupFormed) {
+                           // kick of the client, client will connect to the server,
+                           Client(serverIpAddress = ipAddressForServerSocket).connectToServer(this@MainActivity)
+                       }
+                   }
+               }
+           })*/
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
