@@ -7,12 +7,12 @@ import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
-import com.salesground.zipbolt.repository.repositoryinterface.IImageRepositoryInterface
+import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class ImageRepository(private val applicationContext: Context) : IImageRepositoryInterface {
+class ImageRepository(private val applicationContext: Context) : ImageRepositoryInterface {
 
     override fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
         val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
