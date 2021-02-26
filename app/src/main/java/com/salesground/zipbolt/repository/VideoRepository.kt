@@ -1,4 +1,8 @@
 package com.salesground.zipbolt.repository
 
-class VideoRepository {
+import android.content.Context
+
+class VideoRepository (private val context : Context) {
+
+    suspend fun getAllVideoFromDevice()
 }
