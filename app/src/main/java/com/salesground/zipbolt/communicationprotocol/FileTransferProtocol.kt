@@ -1,13 +1,13 @@
 package com.salesground.zipbolt.communicationprotocol
 
 import android.content.Context
-import com.salesground.zipbolt.model.ImageModel
+import com.salesground.zipbolt.model.MediaModel
 import java.io.*
 import java.net.Socket
 
 class FileTransferProtocol(private val socket: Socket) {
 
-    fun transferFile(filesToTransfer: MutableList<ImageModel>, context : Context) {
+    fun transferFile(filesToTransfer: MutableList<MediaModel>, context : Context) {
         val socketOutputStream = socket.getOutputStream()
         val socketBOS = BufferedOutputStream(socketOutputStream)
         val socketDOS = DataOutputStream(socketBOS)

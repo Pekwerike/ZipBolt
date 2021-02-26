@@ -2,7 +2,7 @@ package com.salesground.zipbolt.localnetwork
 
 import android.content.Context
 import com.salesground.zipbolt.communicationprotocol.FileTransferProtocol
-import com.salesground.zipbolt.model.ImageModel
+import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -14,7 +14,7 @@ class Client(private val serverIpAddress: String) {
 
     suspend fun connectToServer(
         context: Context,
-        filesToTransfer: MutableList<ImageModel>? = null,
+        filesToTransfer: MutableList<MediaModel>? = null,
         parentFolder: File? = null
     ) {
         withContext(Dispatchers.IO) {

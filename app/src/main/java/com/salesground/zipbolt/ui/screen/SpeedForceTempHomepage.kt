@@ -36,7 +36,7 @@ fun HomeScreen(
             }
         })
 
-        Row() {
+        Row(verticalAlignment = Alignment.Bottom) {
             Button(onClick = sendAction) {
 
                 Text(text = "Send")

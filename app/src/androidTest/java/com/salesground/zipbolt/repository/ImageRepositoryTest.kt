@@ -3,7 +3,7 @@ package com.salesground.zipbolt.repository
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.salesground.zipbolt.model.ImageModel
+import com.salesground.zipbolt.model.MediaModel
 import org.junit.Before
 import org.junit.Test
 
@@ -23,34 +23,34 @@ class ImageRepositoryTest {
 
     @Test
     fun fetchAllImage_TestCollectionIsNotEmpty() {
-        val deviceImages: MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
 
-        assertTrue(deviceImages.size != 0)
+        assertTrue(deviceMedia.size != 0)
     }
 
     @Test
     fun checkThatImageFormatIsAppendedOnImageName(){
-        val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
-        deviceImages.forEach {imageModel: ImageModel ->
-            val typeFormat = imageModel.imageDisplayName.takeLast(3).equals("png") || imageModel.imageDisplayName.takeLast(3).equals("jpg")
+        val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+        deviceMedia.forEach { mediaModel: MediaModel ->
+            val typeFormat = mediaModel.imageDisplayName.takeLast(3).equals("png") || mediaModel.imageDisplayName.takeLast(3).equals("jpg")
             assertTrue(typeFormat)
         }
     }
     @Test
     fun convertImageModelToFile_Test() {
-        val deviceImages: MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
+        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
 
         val imageFiles =
-            imageRepository.convertImageModelToFile(mutableListOf(deviceImages.get(0)))
+            imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
 
-        assertEquals(imageFiles.get(0).name, deviceImages.get(0).imageDisplayName)
+        assertEquals(imageFiles.get(0).name, deviceMedia.get(0).imageDisplayName)
     }
 
     @Test
     fun convertImageModelToFile_TestForFileSize(){
-        val deviceImages : MutableList<ImageModel> = imageRepository.fetchAllImagesOnDevice()
-        val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceImages.get(0)))
-        assertEquals(imageFiles.get(0).length(), deviceImages.get(0).imageSize)
+        val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+        val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
+        assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).imageSize)
     }
 
 }

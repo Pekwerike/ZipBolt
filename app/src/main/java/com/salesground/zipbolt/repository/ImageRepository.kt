@@ -5,15 +5,15 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import com.salesground.zipbolt.model.ImageModel
+import com.salesground.zipbolt.model.MediaModel
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
 class ImageRepository(private val applicationContext: Context) {
 
-    fun fetchAllImagesOnDevice(): MutableList<ImageModel> {
-        val allImagesOnDevice: MutableList<ImageModel> = mutableListOf()
+    fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
+        val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -60,7 +60,7 @@ class ImageRepository(private val applicationContext: Context) {
 
 
                 allImagesOnDevice.add(
-                    ImageModel(
+                    MediaModel(
                         imageUri = imageUri,
                         imageDateAdded = imageDateAdded,
                         imageDisplayName = imageDisplayName,
@@ -72,7 +72,7 @@ class ImageRepository(private val applicationContext: Context) {
         return allImagesOnDevice
     }
 
-    fun convertImageModelToFile(imagesToConvert: MutableList<ImageModel>): MutableList<File> {
+    fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File> {
         val imageFiles : MutableList<File> = mutableListOf()
         val imageFolder = File(applicationContext.getExternalFilesDir(null), "SpeedForce")
         if(!imageFolder.exists()) imageFolder.mkdirs()
