@@ -30,7 +30,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        LazyColumn(content = {
+        LazyColumn(modifier = Modifier.fillMaxHeight(0.9f), content = {
             items(listOfDiscoveredDevices.value) { device ->
                 DiscoveredPeerUI(device = device)
             }
