@@ -150,13 +150,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // discoveredPeersList to be displayed on the UI for the user to select a potential connection
-        mainActivityViewModel.discoveredPeersList.observe(this, {
-            it?.let {
-
-            }
-        })
-
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
      /*   mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
             it?.let {

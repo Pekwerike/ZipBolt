@@ -11,9 +11,6 @@ class MainActivityViewModel : ViewModel() {
     private var _isWifiP2pEnabled = MutableLiveData(false)
     val isWifiP2pEnabled: LiveData<Boolean> = _isWifiP2pEnabled
 
-    private var _discoveredPeersList = MutableLiveData(mutableListOf<WifiP2pDevice>())
-    val discoveredPeersList: LiveData<MutableList<WifiP2pDevice>> = _discoveredPeersList
-
 
     private var _peeredDeviceConnectionInfo = MutableLiveData<WifiP2pInfo>()
     val peeredDeviceConnectionInfo: LiveData<WifiP2pInfo> = _peeredDeviceConnectionInfo
@@ -32,7 +29,6 @@ class MainActivityViewModel : ViewModel() {
     }
 
     fun discoveredPeersListChanged(newDiscoveredPeersList: MutableList<WifiP2pDevice>) {
-        _discoveredPeersList.value = newDiscoveredPeersList
         discoveredPeersListState.value = newDiscoveredPeersList
     }
 
