@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -44,12 +45,24 @@ class VideoRepositoryTest {
     fun test_getAllVideosFromDeviceAsFlow_collectAllValues() = runBlocking{
         val allVideosOnDeviceState : MutableState<MutableList<MediaModel>> = mutableStateOf(mutableListOf())
         val allVideosOnDevice : MutableList<MediaModel> = mutableListOf()
+        val allFilteredVideosOnDevice : MutableList<MediaModel> = mutableListOf()
 
+        // check that multiple videos are collected
         videoRepository.getAllVideoFromDeviceAsFlow().collect { video : MediaModel ->
             allVideosOnDevice.add(video)
             allVideosOnDeviceState.value = allVideosOnDevice
         }
         assertTrue(allVideosOnDeviceState.value.size > 1)
+
+        // test that the filter lambda functions as expected
+        videoRepository.getAllVideoFromDeviceAsFlow().filter {
+            it.mediaCategory == MediaCategory.IMAGE
+        }.collect{
+            allFilteredVideosOnDevice.add(it)
+        }
+
+        assertEquals(allFilteredVideosOnDevice.size, 0)
+
     }
 
     @After
