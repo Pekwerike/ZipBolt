@@ -17,13 +17,13 @@ class MainActivityViewModel : ViewModel() {
 
     var discoveredPeersListState = mutableStateOf(mutableListOf<WifiP2pDevice>())
         private set
-    var isWifiP2pEnabledState = mutableStateOf(false)
+    var isWifiP2pEnabledState = mutableStateOf<Boolean?>(false)
         private set
 
     var peeredDeviceConnectionInfoState = mutableStateOf<WifiP2pInfo>(WifiP2pInfo())
         private set
 
-    fun wifiP2pStateChange(newState: Boolean) {
+    fun wifiP2pStateChange(newState: Boolean?) {
         _isWifiP2pEnabled.value = newState
         isWifiP2pEnabledState.value = newState
     }

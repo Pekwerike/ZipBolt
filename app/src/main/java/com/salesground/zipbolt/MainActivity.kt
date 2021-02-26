@@ -150,7 +150,11 @@ class MainActivity : AppCompatActivity() {
                 if (it) {
                     // begin peer discovery
                     displayToast("Wifi is on")
+                    mainActivityViewModel.wifiP2pStateChange(null)
                     //mainActivityViewModel.wifiP2pStateChange(false)
+                }else {
+                    displayToast("Wifi is off")
+                    mainActivityViewModel.wifiP2pStateChange(null)
                 }
             }
         })
