@@ -34,7 +34,15 @@ class VideoRepository(private val context: Context) {
             selectionArgs,
             sortOrder
         )?.let { cursor: Cursor ->
-            val
+            val videoIdColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
+            val videoDisplayNameColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
+            val videoSizeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
+            val videoDateAddedColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_ADDED)
+            val videoMimeTypeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
+
+            while(cursor.moveToNext()){
+
+            }
         }
     }
 }
