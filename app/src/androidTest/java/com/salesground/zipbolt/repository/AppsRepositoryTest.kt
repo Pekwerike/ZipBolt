@@ -20,10 +20,10 @@ class AppsRepositoryTest {
         appsRepository = AppsRepository(applicationContext)
     }
 
+    // confirm that the mutable list allAppsOnDevice holds items
     @Test
     fun test_getAllAppsOnDevice_returnsAListOfApps() {
         val allAppsOnDevice = appsRepository.getAllAppsOnDevice()
-        // confirm that the mutable list allAppsOnDevice holds items
         assertTrue(allAppsOnDevice.isNotEmpty())
     }
 
@@ -38,13 +38,22 @@ class AppsRepositoryTest {
         }
     }
 
+    // confirm that all apps on device has an icon
     @Test
     fun test_thatAllAppsOnDeviceHasAnIcon(){
         val allAppsOnDevice = appsRepository.getAllAppsOnDevice()
 
-        // confirm that all apps on device has an icon
         allAppsOnDevice.forEach {
             assertNotNull(it.loadIcon(applicationContext.packageManager))
+        }
+    }
+
+    // confirm that the getAllApplicationAsCustomModel returns the size of the application
+    @Test
+    fun testThat_getAllApplicationAsCustomModelReturnsTheSizeOfAnApplication(){
+        val allApplicationAsCustomModel = appsRepository.getAllApplicationAsCustomModel()
+        allApplicationAsCustomModel.forEach {
+            assertTrue(it.appSize > 100)
         }
     }
 
