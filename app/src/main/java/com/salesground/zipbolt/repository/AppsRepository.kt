@@ -11,7 +11,11 @@ class AppsRepository(private val context: Context) {
 
 
     fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
-        return context.packageManager.getInstalledApplications(0)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.packageManager.getInstalledApplications(PackageManager.INSTALL_REASON_USER)
+        }else {
+            context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        }
     }
 
 }
