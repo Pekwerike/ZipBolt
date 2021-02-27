@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
@@ -31,6 +32,7 @@ import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
 private const val READ_WRITE_STORAGE_REQUEST_CODE = 101
@@ -156,21 +158,35 @@ class MainActivity : AppCompatActivity() {
         })
 
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
-           mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
-               it?.let {
-                   displayToast("Peered device connection info is ready")
-                   val ipAddressForServerSocket: String = it.groupOwnerAddress.hostAddress
-                   CoroutineScope(Dispatchers.Main).launch {
-                       if (it.groupFormed && it.isGroupOwner) {
-                           // kick of the server
-                           Server().listenIncomingConnection(this@MainActivity)
-                       } else if (it.groupFormed) {
-                           // kick of the client, client will connect to the server,
-                           Client(serverIpAddress = ipAddressForServerSocket).connectToServer(this@MainActivity)
-                       }
-                   }
-               }
-           })
+        mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
+            it?.let { wifiP2pInfo ->
+                it.groupOwnerAddress?.let {
+                    val ipAddressForServerSocket: String = it.hostAddress
+                    lifecycleScope.launch {
+                        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
+
+                            withContext(Dispatchers.IO) {
+                                val hostName = wifiP2pInfo.groupOwnerAddress.hostName
+                                withContext(Dispatchers.Main) {
+                                    displayToast("$hostName is the host")
+                                }
+                                Server().listenIncomingConnection(this@MainActivity)
+                            }
+
+
+                            // kick of the server
+                            //  Server().listenIncomingConnection(this@MainActivity)
+                        } else if (wifiP2pInfo.groupFormed) {
+                            // kick of the client, client will connect to the server,
+
+                            Client(serverIpAddress = ipAddressForServerSocket).connectToServer(
+                                this@MainActivity
+                            )
+                        }
+                    }
+                }
+            }
+        })
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
