@@ -7,7 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 
 
-public class AppsRepository(private val context: Context) {
+class AppsRepository(private val context: Context) {
 
 
     fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
