@@ -37,4 +37,12 @@ class AppsRepositoryTest {
             }
         }
     }
+
+    @Test
+    fun test_getAllAppsOnDevice_AllAppHasLogo(){
+        val allAppsOnDevice = appsRepository.getAllAppsOnDevice()
+        allAppsOnDevice.forEach {
+            assertNotNull(it.loadLogo(applicationContext.packageManager))
+        }
+    }
 }
