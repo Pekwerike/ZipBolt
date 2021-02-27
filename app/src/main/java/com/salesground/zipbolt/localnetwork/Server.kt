@@ -18,7 +18,7 @@ class Server {
     ) {
         withContext(Dispatchers.IO) {
             val serverSocket: ServerSocket = ServerSocket(8090)
-            serverSocket.bind(null)
+
             // blocking call
             val client: Socket = serverSocket.accept()
             val fileTransferProtocol = FileTransferProtocol(client)

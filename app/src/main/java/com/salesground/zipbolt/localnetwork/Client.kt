@@ -6,6 +6,7 @@ import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.InetSocketAddress
 import java.net.Socket
 
 class Client(private val serverIpAddress: String) {
@@ -18,7 +19,9 @@ class Client(private val serverIpAddress: String) {
         parentFolder: File? = null
     ) {
         withContext(Dispatchers.IO) {
-            val server: Socket = Socket(serverIpAddress, 8090)
+            val server = Socket()
+            server.bind(null)
+            server.connect(InetSocketAddress(serverIpAddress, 8090), 100000)
             fileTransferProtocol = FileTransferProtocol(server)
 
             filesToTransfer?.let {
