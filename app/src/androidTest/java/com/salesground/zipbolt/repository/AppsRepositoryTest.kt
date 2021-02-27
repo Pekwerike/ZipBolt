@@ -39,10 +39,14 @@ class AppsRepositoryTest {
     }
 
     @Test
-    fun test_getAllAppsOnDevice_AllAppHasLogo(){
+    fun test_thatAllAppsOnDeviceHasAnIcon(){
         val allAppsOnDevice = appsRepository.getAllAppsOnDevice()
+
+        // confirm that all apps on device has an icon
         allAppsOnDevice.forEach {
-            assertNotNull(it.loadLogo(applicationContext.packageManager))
+            assertNotNull(it.loadIcon(applicationContext.packageManager))
         }
     }
+
+
 }

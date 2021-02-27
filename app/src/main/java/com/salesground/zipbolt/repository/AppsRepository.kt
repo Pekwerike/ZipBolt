@@ -18,4 +18,11 @@ class AppsRepository(private val context: Context) {
         }
     }
 
+    fun getTheRealFileOfAppsOnDevice(){
+        val allAppsOnDevice = getAllAppsOnDevice()
+        allAppsOnDevice.forEach {
+
+        }
+    }
+
 }
