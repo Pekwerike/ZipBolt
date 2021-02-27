@@ -5,6 +5,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 
 import org.junit.Assert.*
@@ -28,7 +30,7 @@ class AppsRepositoryTest {
     }
 
     @Test
-    fun test_getAllAppsOnDevice_returnsOnlyAppsInstalledByTheUserInAndroidVersionGreaterThan8(){
+    fun test_getAllAppsOnDevice_returnsOnlyAppsInstalledByTheUserInAndroidVersionGreaterThan8() {
         val allAppsOnDevice = appsRepository.getAllAppsOnDevice()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -40,7 +42,7 @@ class AppsRepositoryTest {
 
     // confirm that all apps on device has an icon
     @Test
-    fun test_thatAllAppsOnDeviceHasAnIcon(){
+    fun test_thatAllAppsOnDeviceHasAnIcon() {
         val allAppsOnDevice = appsRepository.getAllAppsOnDevice()
 
         allAppsOnDevice.forEach {
@@ -50,11 +52,11 @@ class AppsRepositoryTest {
 
     // confirm that the getAllApplicationAsCustomModel returns the size of the application
     @Test
-    fun testThat_getAllApplicationAsCustomModelReturnsTheSizeOfAnApplication(){
-        val allApplicationAsCustomModel = appsRepository.getAllApplicationAsCustomModel()
-        allApplicationAsCustomModel.forEach {
-            assertTrue(it.appSize > 100)
-        }
+    fun testThat_getAllApplicationAsCustomModelReturnsTheSizeOfAnApplication() = runBlocking {
+        appsRepository.getAllApplicationAsCustomModel()
+            .collect {
+                assertTrue(it.appSize > 100)
+            }
     }
 
 
