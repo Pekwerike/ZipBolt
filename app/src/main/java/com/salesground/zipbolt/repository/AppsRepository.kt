@@ -6,6 +6,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import com.salesground.zipbolt.model.ApplicationModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.File
 
 
@@ -20,14 +22,16 @@ class AppsRepository(private val context: Context) {
         }
     }
 
-    fun getAllApplicationAsCustomModel(): List<ApplicationModel> {
+    fun getAllApplicationAsCustomModel(): Flow<ApplicationModel> = flow {
         val allAppsOnDevice = getAllAppsOnDevice()
-        return allAppsOnDevice.map {
-            ApplicationModel(
-                applicationName = it.name,
-                apkPath = it.sourceDir,
-                appIcon = it.loadIcon(context.packageManager),
-                appSize = File(it.sourceDir).length()
+        allAppsOnDevice.map {
+            emit(
+                ApplicationModel(
+                    applicationName = it.name,
+                    apkPath = it.sourceDir,
+                    appIcon = it.loadIcon(context.packageManager),
+                    appSize = File(it.sourceDir).length()
+                )
             )
         }
     }
