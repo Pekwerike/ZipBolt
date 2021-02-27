@@ -26,7 +26,7 @@ class VideoRepository(private val context: Context) {
         )
         val selection = null
         val selectionArguments = null
-        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} ASC"
+        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
 
         context.contentResolver.query(
             collection,
@@ -52,7 +52,7 @@ class VideoRepository(private val context: Context) {
                 val videoMimeType = cursor.getString(videoMimeTypeColumnIndex)
 
                 val videoUri =
-                    ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, videoId)
+                    ContentUris.withAppendedId(collection, videoId)
 
                 emit(
                     MediaModel(
