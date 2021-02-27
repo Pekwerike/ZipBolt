@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.repository
+Ipackage com.salesground.zipbolt.repository
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
@@ -50,7 +50,7 @@ class AppsRepositoryTest {
         }
     }
 
-    // confirm that the getAllApplicationAsCustomModel returns the size of the application
+    // confirm that the getAllApplicationAsCustomModel returns the size of all applications
     @Test
     fun testThat_getAllApplicationAsCustomModelReturnsTheSizeOfAnApplication() = runBlocking {
         appsRepository.getAllApplicationAsCustomModel()
