@@ -11,5 +11,5 @@ fun Uri.getMediaDuration(context: Context): String {
         mediaDuration = mediaMetaDataRetriver.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
         mediaMetaDataRetriver.release()
     }
-    return mediaDuration ?: ""
+    return mediaDuration ?: "1"
 }
