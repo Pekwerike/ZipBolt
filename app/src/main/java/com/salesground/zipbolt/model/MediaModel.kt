@@ -4,7 +4,8 @@ import android.net.Uri
 
 enum class MediaCategory {
     IMAGE,
-    VIDEO
+    VIDEO,
+    AUDIO
 }
 
 data class MediaModel(

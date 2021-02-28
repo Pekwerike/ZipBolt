@@ -5,12 +5,15 @@ import android.content.Context
 import android.database.Cursor
 import android.os.Build
 import android.provider.MediaStore
+import com.salesground.zipbolt.extensions.getMediaDuration
+import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class AudioRepository(private val context: Context) {
 
-    fun getAllAudioFilesOnDevice() : Flow<MediaModel> {
+    fun getAllAudioFilesOnDevice() : Flow<MediaModel> = flow {
         val collection = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
@@ -60,7 +63,19 @@ class AudioRepository(private val context: Context) {
                 val audioDateAdded = cursor.getLong(audioDateAddedColumnIndex)
                 val audioSize = cursor.getLong(audioSizeColumnIndex)
                 val audioUri = ContentUris.withAppendedId(collection, audioId)
-                val audioDuration = audioU
+                val audioDuration = audioUri.getMediaDuration(context)
+
+                emit(
+                    MediaModel(
+                        mediaUri = audioUri,
+                        mediaDisplayName = audioDisplayName,
+                        mediaDateAdded = audioDateAdded,
+                        mediaSize = audioSize,
+                        mediaCategory = MediaCategory.AUDIO,
+                        mediaBucketName = "",
+                        mediaDuration = audioDuration.toLong()
+                    )
+                )
             }
         }
 
