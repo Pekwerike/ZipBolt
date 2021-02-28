@@ -69,7 +69,7 @@ class VideoRepositoryTest {
     /*
     This test should only pass on 2 conditions
     1. Devices that have at least on video in the shared storage
-    2. All videos in the device must be caputered through the camera
+    2. All videos in the device must be captured through the camera
     */
     @Test
     fun confirm_thatVideoRepositoryFetchsTheParentFolderOfEachVideo() = runBlocking {
