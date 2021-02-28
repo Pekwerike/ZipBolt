@@ -2,9 +2,11 @@ package com.salesground.zipbolt.repository
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.flow.collect
 import org.junit.Before
 
 import org.junit.Assert.*
+import org.junit.Test
 
 class AudioRepositoryTest {
 
@@ -16,5 +18,10 @@ class AudioRepositoryTest {
         audioRepository = AudioRepository(applicationContext)
     }
 
+    @Test
+    fun testThat_theDurationOfEachVideoIsReturned(){
+        audioRepository.getAllAudioFilesOnDevice().collect {
 
+        }
+    }
 }

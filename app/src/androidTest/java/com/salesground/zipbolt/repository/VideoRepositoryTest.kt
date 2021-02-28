@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -27,9 +28,10 @@ class VideoRepositoryTest {
     }
 
 
+    /*Test will fail if there are no videos on device*/
     @Test
     fun test_getAllVideosFromDeviceAsFlow_emitsValue() = runBlocking {
-        val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDeviceAsFlow().first()
+        val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDeviceAsFlow() first ()
 
         // check that the video name is not empty
         assertTrue(firstVideoOnDevice.mediaDisplayName.isNotEmpty())
@@ -41,6 +43,7 @@ class VideoRepositoryTest {
         assertTrue(firstVideoOnDevice.mimeType.contains("video/"))
     }
 
+    /*Test will fail if there are no videos on device*/
     @Test
     fun test_getAllVideosFromDeviceAsFlow_collectAllValues() = runBlocking {
         val allVideosOnDeviceState: MutableState<MutableList<MediaModel>> =
@@ -74,7 +77,7 @@ class VideoRepositoryTest {
     @Test
     fun confirm_thatVideoRepositoryFetchsTheParentFolderOfEachVideo() = runBlocking {
         videoRepository.getAllVideoFromDeviceAsFlow().collect { mediaModel ->
-            assertEquals( "Camera", mediaModel.mediaBucketName)
+            assertEquals("Camera", mediaModel.mediaBucketName)
         }
     }
 
