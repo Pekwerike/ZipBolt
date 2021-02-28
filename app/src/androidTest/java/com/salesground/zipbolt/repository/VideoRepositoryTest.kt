@@ -38,17 +38,18 @@ class VideoRepositoryTest {
         // check that the media type is of the category video
         assertEquals(firstVideoOnDevice.mediaCategory, MediaCategory.VIDEO)
         // check that the mime type returned by the media store contains mp4
-        assertTrue(firstVideoOnDevice.mimeType.contains("video/") )
+        assertTrue(firstVideoOnDevice.mimeType.contains("video/"))
     }
 
     @Test
-    fun test_getAllVideosFromDeviceAsFlow_collectAllValues() = runBlocking{
-        val allVideosOnDeviceState : MutableState<MutableList<MediaModel>> = mutableStateOf(mutableListOf())
-        val allVideosOnDevice : MutableList<MediaModel> = mutableListOf()
-        val allFilteredVideosOnDevice : MutableList<MediaModel> = mutableListOf()
+    fun test_getAllVideosFromDeviceAsFlow_collectAllValues() = runBlocking {
+        val allVideosOnDeviceState: MutableState<MutableList<MediaModel>> =
+            mutableStateOf(mutableListOf())
+        val allVideosOnDevice: MutableList<MediaModel> = mutableListOf()
+        val allFilteredVideosOnDevice: MutableList<MediaModel> = mutableListOf()
 
         // check that multiple videos are collected
-        videoRepository.getAllVideoFromDeviceAsFlow().collect { video : MediaModel ->
+        videoRepository.getAllVideoFromDeviceAsFlow().collect { video: MediaModel ->
             allVideosOnDevice.add(video)
             allVideosOnDeviceState.value = allVideosOnDevice
         }
@@ -57,12 +58,24 @@ class VideoRepositoryTest {
         // test that the filter lambda functions as expected
         videoRepository.getAllVideoFromDeviceAsFlow().filter {
             it.mediaCategory == MediaCategory.IMAGE
-        }.collect{
+        }.collect {
             allFilteredVideosOnDevice.add(it)
         }
 
         assertEquals(allFilteredVideosOnDevice.size, 0)
 
+    }
+
+    /*
+    This test should only pass on 2 conditions
+    1. Devices that have at least on video in the shared storage
+    2. All videos in the device must be caputered through the camera
+    */
+    @Test
+    fun confirm_thatVideoRepositoryFetchsTheParentFolderOfEachVideo() = runBlocking {
+        videoRepository.getAllVideoFromDeviceAsFlow().collect { mediaModel ->
+            assertEquals( "Camera", mediaModel.mediaBucketName)
+        }
     }
 
     @After
