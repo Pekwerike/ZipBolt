@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
         mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
             it?.let { wifiP2pInfo ->
-                it.groupOwnerAddress?.let {
+                wifiP2pInfo.groupOwnerAddress?.let {
                     val ipAddressForServerSocket: String = it.hostAddress
                     lifecycleScope.launch(Dispatchers.IO) {
                         if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {

@@ -24,13 +24,24 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         }
 
-        val projection: Array<String> = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.MIME_TYPE
-        )
+        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
+        } else {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE
+            )
+        }
 
         val selection = null
         val selectionArgs = null
@@ -50,6 +61,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                 getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
             val imageMimeTypeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+            val imageBucketNameColumnIndex = getColumnIndex(MediaStore.)
 
             while (moveToNext()) {
                 val imageId = getLong(imageIdColumnIndex)
@@ -62,6 +74,10 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     imageId
                 )
+
+                applicationContext.contentResolver.openFileDescriptor(imageUri, "r")?.apply {
+
+                }
 
 
                 allImagesOnDevice.add(
@@ -80,9 +96,9 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
     }
 
     override fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File> {
-        val imageFiles : MutableList<File> = mutableListOf()
+        val imageFiles: MutableList<File> = mutableListOf()
         val imageFolder = File(applicationContext.getExternalFilesDir(null), "SpeedForce")
-        if(!imageFolder.exists()) imageFolder.mkdirs()
+        if (!imageFolder.exists()) imageFolder.mkdirs()
 
         imagesToConvert.forEach {
 
