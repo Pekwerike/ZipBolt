@@ -62,8 +62,8 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                 getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
             val imageMimeTypeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-            val imageBucketNameColumnIndex = getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-            val imageData = getColumnIndex(MediaStore.Images.Media.DATA)
+
+
 
             while (moveToNext()) {
                 val imageId = getLong(imageIdColumnIndex)
@@ -76,9 +76,13 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     imageId
                 )
-
-                val imageParentFolderName = if(imageBucketNameColumnIndex != -1){
-                    getString(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                val imageParentFolderName = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                    val imageBucketNameColumnIndex =
+                        getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                    getString(imageBucketNameColumnIndex)
+                } else {
+                    val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
+                    File(getString(imageDataColumnIndex)).parent
                 }
 
 
@@ -89,7 +93,8 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                         mediaDisplayName = imageDisplayName,
                         mediaSize = imageSize,
                         mediaCategory = MediaCategory.IMAGE,
-                        mimeType = imageMimeType
+                        mimeType = imageMimeType,
+                        mediaBucketName = imageParentFolderName
                     )
                 )
             }
