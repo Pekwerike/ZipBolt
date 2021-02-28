@@ -54,6 +54,11 @@ class ImageRepositoryTest {
         assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).mediaSize)
     }
 
+    /*
+    This test should only pass on 2 conditions
+    1. Devices that have at least on photo in the shared storage
+    2. All photos in the device must be caputered through the camera
+    */
     @Test
     fun fetchAllImagesOnDevice_returnsTheBucketNameOfAllImages() = runBlocking {
         val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice()
