@@ -10,6 +10,7 @@ import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.File
 
 class VideoRepository(private val context: Context) {
 
@@ -17,13 +18,25 @@ class VideoRepository(private val context: Context) {
         val collection: Uri = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        val projection: Array<String> = arrayOf(
-            MediaStore.Video.Media._ID,
-            MediaStore.Video.Media.DISPLAY_NAME,
-            MediaStore.Video.Media.SIZE,
-            MediaStore.Video.Media.DATE_ADDED,
-            MediaStore.Video.Media.MIME_TYPE
-        )
+        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Video.Media._ID,
+                MediaStore.Video.Media.DISPLAY_NAME,
+                MediaStore.Video.Media.SIZE,
+                MediaStore.Video.Media.DATE_ADDED,
+                MediaStore.Video.Media.MIME_TYPE,
+                MediaStore.Video.Media.BUCKET_DISPLAY_NAME
+            )
+        } else {
+            arrayOf(
+                MediaStore.Video.Media._ID,
+                MediaStore.Video.Media.DISPLAY_NAME,
+                MediaStore.Video.Media.SIZE,
+                MediaStore.Video.Media.DATE_ADDED,
+                MediaStore.Video.Media.MIME_TYPE,
+                MediaStore.Video.Media.DATA
+            )
+        }
         val selection = null
         val selectionArguments = null
         val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
@@ -51,8 +64,18 @@ class VideoRepository(private val context: Context) {
                 val videoDateAdded = cursor.getLong(videoDateAddedColumnIndex)
                 val videoMimeType = cursor.getString(videoMimeTypeColumnIndex)
 
+                val videoParentFolderName : String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val videoBucketDisplayNameColumnIndex =
+                        cursor.getColumnIndexOrThrow(MediaStore.Video.Media.BUCKET_DISPLAY_NAME)
+                    cursor.getString(videoBucketDisplayNameColumnIndex)
+                } else {
+                    val videoFilePath = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA)
+                    File(cursor.getString(videoFilePath)).parentFile!!.name
+                }
+
                 val videoUri =
                     ContentUris.withAppendedId(collection, videoId)
+
 
                 emit(
                     MediaModel(
@@ -61,7 +84,8 @@ class VideoRepository(private val context: Context) {
                         mediaDateAdded = videoDateAdded,
                         mediaSize = videoSize,
                         mediaCategory = MediaCategory.VIDEO,
-                        mimeType = videoMimeType
+                        mimeType = videoMimeType,
+                        mediaBucketName = videoParentFolderName
                     )
                 )
             }

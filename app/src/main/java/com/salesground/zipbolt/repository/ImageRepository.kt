@@ -76,7 +76,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                     imageId
                 )
-                val imageParentFolderName = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                val imageParentFolderName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     val imageBucketNameColumnIndex =
                         getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
                     getString(imageBucketNameColumnIndex)
