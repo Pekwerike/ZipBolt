@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import com.salesground.zipbolt.extensions.getMediaDuration
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.flow.Flow
@@ -77,6 +78,7 @@ class VideoRepository(private val context: Context) {
 
                 val videoUri =
                     ContentUris.withAppendedId(collection, videoId)
+                val videoDuration = videoUri.getMediaDuration(context)
 
 
                 emit(
@@ -87,7 +89,8 @@ class VideoRepository(private val context: Context) {
                         mediaSize = videoSize,
                         mediaCategory = MediaCategory.VIDEO,
                         mimeType = videoMimeType,
-                        mediaBucketName = videoParentFolderName
+                        mediaBucketName = videoParentFolderName,
+                        mediaDuration = videoDuration.toLong()
                     )
                 )
             }
