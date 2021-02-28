@@ -59,8 +59,8 @@ class AudioRepository(private val context: Context) {
                 val audioMimeType = cursor.getString(audioMimeTypeColumnIndex)
                 val audioDateAdded = cursor.getLong(audioDateAddedColumnIndex)
                 val audioSize = cursor.getLong(audioSizeColumnIndex)
-
                 val audioUri = ContentUris.withAppendedId(collection, audioId)
+                val audioDuration = audioU
             }
         }
 
