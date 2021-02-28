@@ -23,7 +23,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SpeedForce">
+        android:theme="@style/Theme.SpeedForce"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name="com.salesground.zipbolt.MainActivity"
             android:exported="true"
