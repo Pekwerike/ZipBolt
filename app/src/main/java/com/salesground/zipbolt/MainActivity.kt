@@ -162,17 +162,13 @@ class MainActivity : AppCompatActivity() {
             it?.let { wifiP2pInfo ->
                 it.groupOwnerAddress?.let {
                     val ipAddressForServerSocket: String = it.hostAddress
-                    lifecycleScope.launch {
+                    lifecycleScope.launch(Dispatchers.IO) {
                         if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
-
-                            withContext(Dispatchers.IO) {
-                                val hostName = wifiP2pInfo.groupOwnerAddress.hostName
-                                withContext(Dispatchers.Main) {
-                                    displayToast("$hostName is the host")
-                                }
-                                Server().listenIncomingConnection(this@MainActivity)
+                            val hostName = wifiP2pInfo.groupOwnerAddress.hostName
+                            withContext(Dispatchers.Main) {
+                                displayToast("$hostName is the host")
                             }
-
+                            Server().listenIncomingConnection(this@MainActivity)
 
                             // kick of the server
                             //  Server().listenIncomingConnection(this@MainActivity)
