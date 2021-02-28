@@ -39,7 +39,8 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                 MediaStore.Images.Media.DATE_ADDED,
                 MediaStore.Images.Media.DISPLAY_NAME,
                 MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.MIME_TYPE
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.DATA
             )
         }
 
@@ -61,7 +62,8 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                 getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
             val imageMimeTypeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-            val imageBucketNameColumnIndex = getColumnIndex(MediaStore.)
+            val imageBucketNameColumnIndex = getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+            val imageData = getColumnIndex(MediaStore.Images.Media.DATA)
 
             while (moveToNext()) {
                 val imageId = getLong(imageIdColumnIndex)
@@ -75,8 +77,8 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                     imageId
                 )
 
-                applicationContext.contentResolver.openFileDescriptor(imageUri, "r")?.apply {
-
+                val imageParentFolderName = if(imageBucketNameColumnIndex != -1){
+                    getString(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
                 }
 
 
