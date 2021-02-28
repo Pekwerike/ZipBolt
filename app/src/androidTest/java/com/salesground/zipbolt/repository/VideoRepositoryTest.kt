@@ -31,7 +31,7 @@ class VideoRepositoryTest {
     /*Test will fail if there are no videos on device*/
     @Test
     fun test_getAllVideosFromDeviceAsFlow_emitsValue() = runBlocking {
-        val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDeviceAsFlow() first ()
+        val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDeviceAsFlow().first()
 
         // check that the video name is not empty
         assertTrue(firstVideoOnDevice.mediaDisplayName.isNotEmpty())
