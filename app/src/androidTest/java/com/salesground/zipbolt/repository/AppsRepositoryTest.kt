@@ -1,4 +1,5 @@
-Ipackage com.salesground.zipbolt.repository
+import com.salesground.zipbolt.repository.AppsRepository
+
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
