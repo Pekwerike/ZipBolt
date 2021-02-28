@@ -16,7 +16,6 @@ class Server {
         filesToTransfer: MutableList<MediaModel>? = null,
         parentFolder: File? = null
     ) {
-        withContext(Dispatchers.IO) {
             val serverSocket: ServerSocket = ServerSocket(8090)
 
             // blocking call
@@ -30,5 +29,4 @@ class Server {
                 fileTransferProtocol.receiveFile(it)
             }
         }
-    }
 }

@@ -18,7 +18,6 @@ class Client(private val serverIpAddress: String) {
         filesToTransfer: MutableList<MediaModel>? = null,
         parentFolder: File? = null
     ) {
-        withContext(Dispatchers.IO) {
             val server = Socket()
             server.bind(null)
             server.connect(InetSocketAddress(serverIpAddress, 8090), 100000)
@@ -31,7 +30,5 @@ class Client(private val serverIpAddress: String) {
                 fileTransferProtocol.receiveFile(it)
             }
         }
-    }
-
 
 }
