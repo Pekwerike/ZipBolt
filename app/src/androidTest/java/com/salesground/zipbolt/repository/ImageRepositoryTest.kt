@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.salesground.zipbolt.model.MediaModel
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
@@ -51,6 +52,14 @@ class ImageRepositoryTest {
         val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
         val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
         assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).mediaSize)
+    }
+
+    @Test
+    fun fetchAllImagesOnDevice_returnsTheBucketNameOfAllImages() = runBlocking {
+        val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice()
+        allImagesOnDevice.forEach {
+            assertEquals(it.mediaBucketName, "Camera")
+        }
     }
 
 }
