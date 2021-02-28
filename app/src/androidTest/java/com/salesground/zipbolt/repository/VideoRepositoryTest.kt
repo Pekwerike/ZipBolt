@@ -38,7 +38,7 @@ class VideoRepositoryTest {
         // check that the media type is of the category video
         assertEquals(firstVideoOnDevice.mediaCategory, MediaCategory.VIDEO)
         // check that the mime type returned by the media store contains mp4
-        assertTrue(firstVideoOnDevice.mimeType.contains("mp4") )
+        assertTrue(firstVideoOnDevice.mimeType.contains("video/") )
     }
 
     @Test
