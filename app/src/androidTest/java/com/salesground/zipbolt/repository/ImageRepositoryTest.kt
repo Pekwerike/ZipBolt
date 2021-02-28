@@ -64,6 +64,7 @@ class ImageRepositoryTest {
         val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice()
         allImagesOnDevice.forEach {
             assertEquals(it.mediaBucketName, "Camera")
+            assertTrue(it.mediaBucketName.startsWith("Camera"))
         }
     }
 

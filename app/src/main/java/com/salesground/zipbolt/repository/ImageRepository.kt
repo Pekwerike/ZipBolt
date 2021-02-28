@@ -12,6 +12,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
+
 class ImageRepository(private val applicationContext: Context) : ImageRepositoryInterface {
 
     override fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
@@ -82,7 +83,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                     getString(imageBucketNameColumnIndex)
                 } else {
                     val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
-                    File(getString(imageDataColumnIndex)).parent
+                    File(getString(imageDataColumnIndex)).parentFile!!.name
                 }
 
 
