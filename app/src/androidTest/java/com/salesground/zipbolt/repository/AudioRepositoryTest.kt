@@ -3,6 +3,7 @@ package com.salesground.zipbolt.repository
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 
 import org.junit.Assert.*
@@ -19,9 +20,9 @@ class AudioRepositoryTest {
     }
 
     @Test
-    fun testThat_theDurationOfEachVideoIsReturned(){
+    fun testThat_theDurationOfEachVideoIsReturned() = runBlocking{
         audioRepository.getAllAudioFilesOnDevice().collect {
-
+            assertTrue(it.mediaDuration > 10)
         }
     }
 }
