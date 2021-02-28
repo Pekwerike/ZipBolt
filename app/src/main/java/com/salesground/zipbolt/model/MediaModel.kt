@@ -13,5 +13,6 @@ data class MediaModel(
     val mediaDateAdded: Long,
     val mediaSize: Long,
     val mediaCategory: MediaCategory,
-    val mimeType: String
+    val mimeType: String,
+    val bucketName: String
 )
