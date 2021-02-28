@@ -73,7 +73,8 @@ class AudioRepository(private val context: Context) {
                         mediaSize = audioSize,
                         mediaCategory = MediaCategory.AUDIO,
                         mediaBucketName = "",
-                        mediaDuration = audioDuration.toLong()
+                        mediaDuration = audioDuration.toLong(),
+                        mimeType = audioMimeType
                     )
                 )
             }
