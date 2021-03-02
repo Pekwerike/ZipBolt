@@ -37,6 +37,7 @@ class ZipBoltMTP(private val context: Context) {
                     mediaModelFileInputStream.close()
                 }
             }
+
         }
     }
 
@@ -45,8 +46,15 @@ class ZipBoltMTP(private val context: Context) {
         for (i in 0 until numberOfItemsSent) {
             val mediaName = DIS.readUTF()
             val mediaSize = DIS.readLong()
+            val mediaType = DIS.readUTF()
 
             // read media bytes and save it into the media store based on the mime type
+            when(mediaType) {
+                MediaCategory.VIDEO.name -> TODO()
+                MediaCategory.IMAGE.name -> TODO()
+                MediaCategory.AUDIO.name -> TODO()
+            }
+
         }
     }
 }
