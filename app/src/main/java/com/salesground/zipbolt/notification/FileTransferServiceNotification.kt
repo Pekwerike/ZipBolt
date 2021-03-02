@@ -14,18 +14,14 @@ class FileTransferServiceNotification(private val notificationManager: Notificat
 
 
     fun createFTSNotificationChannel() {
-        val ftsChannel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel(FILE_TRANSFER_SERVICE_NOTIFICATION_ID, )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val ftsChannel = NotificationChannel(FILE_TRANSFER_SERVICE_NOTIFICATION_ID, FILE_TRANSFER_SERVICE_CHANNEL_NAME,
+            NotificationCompat.PRIORITY_DEFAULT)
                 .apply {
-                    this.setName("ZipBolt File Transfer Service Notification")
                     setDescription("This notification channel is responsible for alerting you that ZipBolt is sharing files on the background")
                     setShowBadge(false)
-                }.build()
-        } else {
-            TODO("VERSION.SDK_INT < O")
+                }
+            notificationManager.createNotificationChannel(ftsChannel)
         }
-
-        notificationManager.createNotificationChannel(ftsChannel)
-
     }
 }
