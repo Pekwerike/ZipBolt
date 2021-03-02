@@ -161,10 +161,14 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
             put(MediaStore.Images.Media.IS_PENDING, 1)
         }
 
-        val imageUri = applicationContext.contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            contentValues
-        )
+        val imageUri =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) MediaStore.Images.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL_PRIMARY
+            )
+            else applicationContext.contentResolver.insert(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+            )
 
         imageUri?.let {
             applicationContext.contentResolver.openFileDescriptor(imageUri, "w").apply {
