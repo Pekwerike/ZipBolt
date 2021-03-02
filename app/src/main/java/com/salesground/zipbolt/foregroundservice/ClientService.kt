@@ -22,7 +22,8 @@ class ClientService : Service() {
         val serviceNotification = NotificationCompat.Builder(this, FILE_TRANSFER_SERVICE_NOTIFICATION_ID)
             .apply {
                 setContentTitle(getString(R.string.fileTransferServiceNotificationTitle))
-                setContentText(getString(R.string.))
+                setContentText(getString(R.string.fileTransferServiceNotificationContentText))
+                setSmallIcon(R.drawable.zipbolt_service_notification_icon)
             }
 
         return START_NOT_STICKY
