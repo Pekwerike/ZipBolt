@@ -2,6 +2,7 @@ package com.salesground.zipbolt.communicationprotocol
 
 import android.content.ContentValues
 import android.content.Context
+import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
@@ -55,57 +56,73 @@ class ZipBoltMTP(private val context: Context) {
             when (mediaType) {
                 MediaCategory.VIDEO.name -> TODO()
                 MediaCategory.IMAGE.name -> {
-                    val parentRelativePath =
-                        File(Environment.getExternalStorageDirectory(), "ZipBolt")
-                    if (!parentRelativePath.exists()) parentRelativePath.mkdirs()
-                    val imagesRelativePath = File(parentRelativePath, "images")
-                    if (!imagesRelativePath.exists()) imagesRelativePath.mkdirs()
-                    val imageFile = File(imagesRelativePath, mediaName)
-
-                    val contentValues = ContentValues().apply {
-                        put(MediaStore.Images.Media.DISPLAY_NAME, mediaName)
-                        put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, context.packageName)
-                        put(MediaStore.Images.Media.RELATIVE_PATH, imagesRelativePath.absolutePath)
-                        put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
-                        put(MediaStore.Images.Media.SIZE, mediaSize)
-                        put(MediaStore.Images.Media.MIME_TYPE, "image/*")
-                        put(
-                            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                            imagesRelativePath.absolutePath
-                        )
-                        put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
-                        put(MediaStore.Images.Media.IS_PENDING, 1)
-                    }
-
-                    val imageUri = context.contentResolver.insert(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        contentValues
-                    )
-
-                    imageUri?.let {
-                        context.contentResolver.openFileDescriptor(imageUri, "w").apply {
-                            this?.let {
-                                val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
-                                val bufferArray = ByteArray(10_000_000)
-
-                                while (mediaSize > 0) {
-                                    val bytesRead = DIS.read(
-                                        bufferArray,
-                                        0,
-                                        min(mediaSize.toInt(), bufferArray.size)
-                                    )
-                                    if (bytesRead == -1) break
-                                    imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
-                                    mediaSize -= bytesRead
-                                }
-                            }
-                        }
-                    }
+                    mediaSize = insertImageIntoMediaStore(mediaName, mediaSize, DIS)
 
                 }
                 MediaCategory.AUDIO.name -> TODO()
             }
 
         }
+    }
+
+    private fun insertImageIntoMediaStore(
+        mediaName: String?,
+        mediaSize: Long,
+        DIS: DataInputStream
+    ): Long {
+        var mediaSize1 = mediaSize
+        val parentRelativePath =
+            File(Environment.getExternalStorageDirectory(), "ZipBolt")
+        if (!parentRelativePath.exists()) parentRelativePath.mkdirs()
+        val imagesRelativePath = File(parentRelativePath, "images")
+        if (!imagesRelativePath.exists()) imagesRelativePath.mkdirs()
+        val imageFile = File(imagesRelativePath, mediaName)
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, mediaName)
+            put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, context.packageName)
+            put(MediaStore.Images.Media.RELATIVE_PATH, imagesRelativePath.absolutePath)
+            put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+            put(MediaStore.Images.Media.SIZE, mediaSize1)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/*")
+            put(
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                imagesRelativePath.absolutePath
+            )
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val imageUri = context.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+
+        imageUri?.let {
+            context.contentResolver.openFileDescriptor(imageUri, "w").apply {
+                this?.let {
+                    val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
+                    val bufferArray = ByteArray(10_000_000)
+
+                    while (mediaSize1 > 0) {
+                        val bytesRead = DIS.read(
+                            bufferArray,
+                            0,
+                            min(mediaSize1.toInt(), bufferArray.size)
+                        )
+                        if (bytesRead == -1) break
+                        imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
+                        mediaSize1 -= bytesRead
+                    }
+                    imageFileDataOutputStream.flush()
+                    imageFileDataOutputStream.close()
+                    it.close()
+                }
+            }
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            context.contentResolver.update(imageUri, contentValues, null, null)
+        }
+        return mediaSize1
     }
 }

@@ -10,6 +10,8 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.runner.RunWith
+import java.io.DataInputStream
+import java.io.FileInputStream
 
 @RunWith(AndroidJUnit4::class)
 class ImageRepositoryTest {
@@ -30,13 +32,15 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun checkThatImageFormatIsAppendedOnImageName(){
-        val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+    fun checkThatImageFormatIsAppendedOnImageName() {
+        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
         deviceMedia.forEach { mediaModel: MediaModel ->
-            val typeFormat = mediaModel.mediaDisplayName.takeLast(3).equals("png") || mediaModel.mediaDisplayName.takeLast(3).equals("jpg")
+            val typeFormat = mediaModel.mediaDisplayName.takeLast(3)
+                .equals("png") || mediaModel.mediaDisplayName.takeLast(3).equals("jpg")
             assertTrue(typeFormat)
         }
     }
+
     @Test
     fun convertImageModelToFile_Test() {
         val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
@@ -48,8 +52,8 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun convertImageModelToFile_TestForFileSize(){
-        val deviceMedia : MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+    fun convertImageModelToFile_TestForFileSize() {
+        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
         val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
         assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).mediaSize)
     }
@@ -68,4 +72,16 @@ class ImageRepositoryTest {
         }
     }
 
+    @Test
+    fun insertImageIntoMediaStoreTest() = runBlocking {
+        val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice()
+        val firstImage = allImagesOnDevice.get(0)
+        applicationContext.contentResolver.openFileDescriptor(firstImage.mediaUri, "r")?.also {
+            val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
+            imageRepository.insertImageIntoMediaStore(
+                firstImage.mediaDisplayName, firstImage.mediaSize,
+                DIS
+            )
+        }
+    }
 }

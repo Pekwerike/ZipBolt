@@ -5,13 +5,16 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
+import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import kotlin.math.min
 
 
 class ImageRepository(private val applicationContext: Context) : ImageRepositoryInterface {
@@ -130,20 +133,63 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
         return imageFiles
     }
 
-    suspend fun insertImageIntoMediaStore(imageFile: File) {
-        val contentValues = ContentValues(7).apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/*")
-            put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, imageFile.parent)
-            put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
-            put(MediaStore.Images.Media.SIZE, imageFile.length())
-            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+    suspend fun insertImageIntoMediaStore(
+        mediaName: String?,
+        mediaSize: Long,
+        DIS: DataInputStream
+    ) {
+        var mediaSize1 = mediaSize
+        val parentRelativePath =
+            File(Environment.getExternalStorageDirectory(), "ZipBolt")
+        if (!parentRelativePath.exists()) parentRelativePath.mkdirs()
+        val imagesRelativePath = File(parentRelativePath, "images")
+        if (!imagesRelativePath.exists()) imagesRelativePath.mkdirs()
+        val imageFile = File(imagesRelativePath, mediaName)
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, mediaName)
             put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
+            put(MediaStore.Images.Media.RELATIVE_PATH, imagesRelativePath.absolutePath)
+            put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+            put(MediaStore.Images.Media.SIZE, mediaSize1)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/*")
+            put(
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                imagesRelativePath.absolutePath
+            )
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.IS_PENDING, 1)
         }
 
-        applicationContext.contentResolver.insert(
+        val imageUri = applicationContext.contentResolver.insert(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             contentValues
         )
+
+        imageUri?.let {
+            applicationContext.contentResolver.openFileDescriptor(imageUri, "w").apply {
+                this?.let {
+                    val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
+                    val bufferArray = ByteArray(10_000_000)
+
+                    while (mediaSize1 > 0) {
+                        val bytesRead = DIS.read(
+                            bufferArray,
+                            0,
+                            min(mediaSize1.toInt(), bufferArray.size)
+                        )
+                        if (bytesRead == -1) break
+                        imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
+                        mediaSize1 -= bytesRead
+                    }
+                    imageFileDataOutputStream.flush()
+                    imageFileDataOutputStream.close()
+                    it.close()
+                }
+            }
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            applicationContext.contentResolver.update(imageUri, contentValues, null, null)
+        }
     }
 }
