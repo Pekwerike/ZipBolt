@@ -9,7 +9,7 @@ import java.io.FileInputStream
 
 class ZipBoltMTP(private val context: Context) {
 
-    fun transferMedia(mediaItems: MutableList<MediaModel>, DOS: DataOutputStream) {
+    suspend fun transferMedia(mediaItems: MutableList<MediaModel>, DOS: DataOutputStream) {
         DOS.writeInt(mediaItems.size)
         mediaItems.forEach { mediaModel: MediaModel ->
             DOS.writeUTF(mediaModel.mediaDisplayName)
@@ -32,7 +32,7 @@ class ZipBoltMTP(private val context: Context) {
         }
     }
 
-    fun receiveMedia(DIS: DataInputStream){
+    suspend fun receiveMedia(DIS: DataInputStream){
 
     }
 }
