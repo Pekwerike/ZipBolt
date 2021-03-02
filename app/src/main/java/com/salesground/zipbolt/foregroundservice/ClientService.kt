@@ -23,7 +23,7 @@ const val CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID = 2
 class ClientService : Service() {
     private val clientServiceBinder = ClientServiceBinder()
     private var serverIpAddress : String = ""
-    private val fileTransferProtocol : StableFileTransferProtocol = StableFileTransferProtocol()
+
 
     inner class ClientServiceBinder : Binder() {
         fun getClientServiceBinder() = this@ClientService
