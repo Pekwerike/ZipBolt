@@ -3,6 +3,7 @@ package com.salesground.zipbolt.communicationprotocol
 import android.content.Context
 import android.os.ParcelFileDescriptor
 import com.salesground.zipbolt.model.MediaModel
+import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.FileInputStream
 
@@ -29,5 +30,9 @@ class ZipBoltMTP(private val context: Context) {
                 }
             }
         }
+    }
+
+    fun receiveMedia(DIS: DataInputStream){
+
     }
 }
