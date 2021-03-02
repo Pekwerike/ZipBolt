@@ -142,7 +142,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
         val parentRelativePath =
             File(Environment.getExternalStorageDirectory(), "ZipBolt")
         if (!parentRelativePath.exists()) parentRelativePath.mkdirs()
-        val imagesRelativePath = File(parentRelativePath, "images")
+        val imagesRelativePath = File(parentRelativePath, "ZipBoltImages")
         if (!imagesRelativePath.exists()) imagesRelativePath.mkdirs()
         val imageFile = File(imagesRelativePath, mediaName)
 

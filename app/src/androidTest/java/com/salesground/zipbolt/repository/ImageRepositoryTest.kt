@@ -79,9 +79,11 @@ class ImageRepositoryTest {
         applicationContext.contentResolver.openFileDescriptor(firstImage.mediaUri, "r")?.also {
             val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
             imageRepository.insertImageIntoMediaStore(
-                firstImage.mediaDisplayName, firstImage.mediaSize,
+                firstImage.mediaDisplayName + "new", firstImage.mediaSize,
                 DIS
             )
         }
+        val newCollectionOfImages = imageRepository.fetchAllImagesOnDevice()
+        assertEquals(newCollectionOfImages.last().mediaBucketName, "ZipBoltImages")
     }
 }

@@ -48,7 +48,6 @@ class ClientService : Service() {
                     continue
                 }
             }
-            fileTransferProtocol = FileTransferProtocol(server)
         }
 
         return START_NOT_STICKY
