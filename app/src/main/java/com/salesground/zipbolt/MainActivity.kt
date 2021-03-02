@@ -40,6 +40,7 @@ import kotlinx.coroutines.withContext
 private const val FINE_LOCATION_REQUEST_CODE = 100
 private const val READ_WRITE_STORAGE_REQUEST_CODE = 101
 
+const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
