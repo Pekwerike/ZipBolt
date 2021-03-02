@@ -84,6 +84,6 @@ class ImageRepositoryTest {
             )
         }
         val newCollectionOfImages = imageRepository.fetchAllImagesOnDevice()
-        assertEquals(newCollectionOfImages.last().mediaBucketName, "ZipBoltImages")
+        assertEquals(newCollectionOfImages.first().mediaBucketName, "ZipBoltImages")
     }
 }
