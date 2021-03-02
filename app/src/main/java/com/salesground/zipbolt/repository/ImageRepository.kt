@@ -150,7 +150,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
             put(MediaStore.Images.Media.DISPLAY_NAME, mediaName)
             put(MediaStore.Images.Media.TITLE, mediaName)
             put(MediaStore.Images.Media.SIZE, mediaSize1)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/${mediaName!!.take(4)}")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/${mediaName!!.take(3)}")
             put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
