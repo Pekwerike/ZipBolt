@@ -10,13 +10,20 @@ import androidx.core.app.NotificationCompat
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
+import com.salesground.zipbolt.communicationprotocol.FileTransferProtocol
+import com.salesground.zipbolt.communicationprotocol.StableFileTransferProtocol
 import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
+import java.net.InetSocketAddress
+import java.net.Socket
 
 
 const val CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID = 2
 
 class ClientService : Service() {
     private val clientServiceBinder = ClientServiceBinder()
+    private var serverIpAddress : String = ""
+    private val fileTransferProtocol : StableFileTransferProtocol = StableFileTransferProtocol()
 
     inner class ClientServiceBinder : Binder() {
         fun getClientServiceBinder() = this@ClientService
@@ -29,7 +36,20 @@ class ClientService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID, configureNotification())
 
-
+        intent?.let { mainIntent: Intent ->
+            serverIpAddress = mainIntent.getStringExtra(SERVER_IP_ADDRESS_KEY)!!
+            val server = Socket()
+            server.bind(null)
+            while(true) {
+                try {
+                    server.connect(InetSocketAddress(serverIpAddress, 8090), 100000)
+                    break
+                }catch (connectionException : Exception){
+                    continue
+                }
+            }
+            fileTransferProtocol = FileTransferProtocol(server)
+        }
 
         return START_NOT_STICKY
     }
