@@ -79,7 +79,7 @@ class ImageRepositoryTest {
         applicationContext.contentResolver.openFileDescriptor(firstImage.mediaUri, "r")?.also {
             val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
             imageRepository.insertImageIntoMediaStore(
-                firstImage.mediaDisplayName + "new", firstImage.mediaSize,
+                firstImage.mediaDisplayName + System.currentTimeMillis(), firstImage.mediaSize,
                 DIS
             )
         }

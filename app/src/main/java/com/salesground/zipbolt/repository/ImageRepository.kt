@@ -51,7 +51,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
 
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
 
         applicationContext.contentResolver.query(
             collection,
@@ -139,36 +139,46 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
         DIS: DataInputStream
     ) {
         var mediaSize1 = mediaSize
-        val parentRelativePath =
-            File(Environment.getExternalStorageDirectory(), "ZipBolt")
-        if (!parentRelativePath.exists()) parentRelativePath.mkdirs()
-        val imagesRelativePath = File(parentRelativePath, "ZipBoltImages")
-        if (!imagesRelativePath.exists()) imagesRelativePath.mkdirs()
-        val imageFile = File(imagesRelativePath, mediaName)
+
+        val mainDirectory = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+            File(Environment.DIRECTORY_PICTURES, "ZipBoltImages")
+        else File(Environment.getExternalStorageDirectory(), "ZipBoltImages")
+        if (!mainDirectory.exists()) mainDirectory.mkdirs()
+        val imageFile = File(mainDirectory, mediaName)
 
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, mediaName)
-            put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
-            put(MediaStore.Images.Media.RELATIVE_PATH, imagesRelativePath.absolutePath)
-            put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
             put(MediaStore.Images.Media.SIZE, mediaSize1)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/*")
-            put(
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                imagesRelativePath.absolutePath
-            )
+            put(MediaStore.Images.Media.MIME_TYPE, "image/${mediaName!!.take(4)}")
             put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
-            put(MediaStore.Images.Media.IS_PENDING, 1)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
+                put(
+                    MediaStore.Images.Media.RELATIVE_PATH,
+                    Environment.DIRECTORY_PICTURES + "/ZipBoltImages"
+                )
+                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+                put(
+                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                    mainDirectory.absolutePath
+                )
+            } else {
+                put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+            }
+
         }
 
-        val imageUri =
+        val collection =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY
             )
-            else applicationContext.contentResolver.insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
+            else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+
+        val imageUri = applicationContext.contentResolver.insert(
+            collection,
+            contentValues
+        )
 
         imageUri?.let {
             applicationContext.contentResolver.openFileDescriptor(imageUri, "w").apply {
@@ -192,8 +202,10 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                 }
             }
             contentValues.clear()
-            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-            applicationContext.contentResolver.update(imageUri, contentValues, null, null)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                applicationContext.contentResolver.update(imageUri, contentValues, null, null)
+            }
         }
     }
 }
