@@ -6,11 +6,11 @@ import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 
-class FileTransferService : Service() {
+class ClientService : Service() {
     private val fileTransferServiceBinder = FileTransferServiceBinder()
 
     inner class FileTransferServiceBinder : Binder() {
-        fun getFileTransferService() = this@FileTransferService
+        fun getFileTransferService() = this@ClientService
     }
     override fun onBind(intent: Intent): IBinder {
         return fileTransferServiceBinder
