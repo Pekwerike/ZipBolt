@@ -95,7 +95,7 @@ class StableFileTransferProtocol(socket: Socket) {
                 while (fileLength > 0) {
                     val bytesRead = socketDIS.read(bufferArray, 0, min(fileLength.toInt(), bufferArray.size))
                     if (bytesRead == -1) break
-                    fileOutputStream.write(bufferArray)
+                    fileOutputStream.write(bufferArray, 0, bytesRead)
                     fileLength -= bytesRead
                 }
                 fileOutputStream.flush()
