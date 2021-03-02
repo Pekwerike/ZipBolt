@@ -35,7 +35,10 @@ class ImageRepositoryTest {
     fun checkThatImageFormatIsAppendedOnImageName() {
         val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
         deviceMedia.forEach { mediaModel: MediaModel ->
-            val typeFormat = mediaModel.mediaDisplayName.takeLast(3) == "png" || mediaModel.mediaDisplayName.takeLast(3) == "jpg" || mediaModel.mediaDisplayName.takeLast(3) == "jpeg"
+            val typeFormat =
+                mediaModel.mediaDisplayName.takeLast(3) == "png" || mediaModel.mediaDisplayName.takeLast(
+                    3
+                ) == "jpg" || mediaModel.mediaDisplayName.takeLast(3) == "jpeg"
             assertTrue(typeFormat)
         }
     }
@@ -66,10 +69,13 @@ class ImageRepositoryTest {
             val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
             imageRepository.insertImageIntoMediaStore(
                 firstImage.mediaDisplayName, firstImage.mediaSize,
+                firstImage.mimeType,
                 DIS
             )
         }
-        val newCollectionOfImages = imageRepository.fetchAllImagesOnDevice()
-        assertEquals(newCollectionOfImages.first().mediaBucketName, "ZipBoltImages")
+        val zipBoltImages = imageRepository.fetchAllImagesOnDevice().filter {
+            it.mediaBucketName == "ZipBoltImages"
+        }
+        assertTrue(zipBoltImages.isNotEmpty())
     }
 }
