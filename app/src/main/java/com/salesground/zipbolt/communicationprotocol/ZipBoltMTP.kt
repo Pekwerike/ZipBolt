@@ -7,10 +7,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.File
-import java.io.FileInputStream
+import java.io.*
 
 class ZipBoltMTP(private val context: Context) {
 
@@ -49,7 +46,7 @@ class ZipBoltMTP(private val context: Context) {
         val numberOfItemsSent = DIS.readInt()
         for (i in 0 until numberOfItemsSent) {
             val mediaName = DIS.readUTF()
-            val mediaSize = DIS.readLong()
+            var mediaSize = DIS.readLong()
             val mediaType = DIS.readUTF()
 
             // read media bytes and save it into the media store based on the mime type
@@ -82,6 +79,19 @@ class ZipBoltMTP(private val context: Context) {
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         contentValues
                     )
+
+                    imageUri?.let {
+                        context.contentResolver.openFileDescriptor(imageUri, "w").apply {
+                            this?.let {
+                                val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
+                                val bufferArray = ByteArray(10_000_000)
+
+                                while(mediaSize > 0){
+
+                                }
+                            }
+                        }
+                    }
 
                 }
                 MediaCategory.AUDIO.name -> TODO()
