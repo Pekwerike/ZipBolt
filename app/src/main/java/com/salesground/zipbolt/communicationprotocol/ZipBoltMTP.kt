@@ -8,6 +8,8 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import java.io.*
+import java.util.Collections.min
+import kotlin.math.min
 
 class ZipBoltMTP(private val context: Context) {
 
@@ -86,8 +88,15 @@ class ZipBoltMTP(private val context: Context) {
                                 val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
                                 val bufferArray = ByteArray(10_000_000)
 
-                                while(mediaSize > 0){
-
+                                while (mediaSize > 0) {
+                                    val bytesRead = DIS.read(
+                                        bufferArray,
+                                        0,
+                                        min(mediaSize.toInt(), bufferArray.size)
+                                    )
+                                    if (bytesRead == -1) break
+                                    imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
+                                    mediaSize -= bytesRead
                                 }
                             }
                         }
