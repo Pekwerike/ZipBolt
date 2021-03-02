@@ -6,7 +6,7 @@ import com.salesground.zipbolt.model.MediaModel
 import java.io.DataOutputStream
 import java.io.FileInputStream
 
-class ZipBoltMediaTransferProtocol(private val context: Context) {
+class ZipBoltMTP(private val context: Context) {
 
     fun transferMedia(mediaItems: MutableList<MediaModel>, DOS: DataOutputStream) {
         DOS.writeInt(mediaItems.size)
