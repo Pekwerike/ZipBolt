@@ -2,10 +2,10 @@ package com.salesground.zipbolt.model
 
 import android.net.Uri
 
-enum class MediaCategory {
-    IMAGE,
-    VIDEO,
-    AUDIO
+enum class MediaCategory(private val mediaType : String) {
+    IMAGE("image"),
+    VIDEO("video"),
+    AUDIO("audio")
 }
 
 data class MediaModel(

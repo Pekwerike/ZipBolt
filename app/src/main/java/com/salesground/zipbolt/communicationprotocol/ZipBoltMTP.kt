@@ -2,6 +2,7 @@ package com.salesground.zipbolt.communicationprotocol
 
 import android.content.Context
 import android.os.ParcelFileDescriptor
+import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -14,6 +15,13 @@ class ZipBoltMTP(private val context: Context) {
         mediaItems.forEach { mediaModel: MediaModel ->
             DOS.writeUTF(mediaModel.mediaDisplayName)
             DOS.writeLong(mediaModel.mediaSize)
+            DOS.writeUTF(
+                when (mediaModel.mediaCategory) {
+                    MediaCategory.AUDIO -> MediaCategory.AUDIO.name
+                    MediaCategory.VIDEO -> MediaCategory.VIDEO.name
+                    else -> MediaCategory.IMAGE.name
+                }
+            )
             context.contentResolver.openFileDescriptor(mediaModel.mediaUri, "r").apply {
                 this?.let { parcelFileDescriptor: ParcelFileDescriptor ->
                     val mediaModelFileInputStream =
@@ -32,9 +40,9 @@ class ZipBoltMTP(private val context: Context) {
         }
     }
 
-    suspend fun receiveMedia(DIS: DataInputStream){
+    suspend fun receiveMedia(DIS: DataInputStream) {
         val numberOfItemsSent = DIS.readInt()
-        for(i in 0 until numberOfItemsSent){
+        for (i in 0 until numberOfItemsSent) {
             val mediaName = DIS.readUTF()
             val mediaSize = DIS.readLong()
 
