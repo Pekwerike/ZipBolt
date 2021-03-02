@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ZipBolt</string>
+    <string name="fileTransferServiceNotificationChannelID">FileTransferServiceNotificationID</string>
+    <string name="fileTransferServiceChannelName">ZipBolt File Transfer Service Notification</string>
+    <string name="fileTransferServiceNotificationTitle">ZipBolt</string>
+    <string name="fileTransferServiceNotificationContentText">
+        ZipBolt is processing files
+    </string>
 </resources>
