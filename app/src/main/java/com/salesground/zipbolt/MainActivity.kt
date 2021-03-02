@@ -3,6 +3,7 @@ package com.salesground.zipbolt
 
 import android.Manifest.*
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Context
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -22,10 +23,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
+import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.HomeScreen
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
@@ -45,6 +48,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var intentFilter: IntentFilter
+    private lateinit var ftsNotification: FileTransferServiceNotification
+
+    private val notifcationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,10 +69,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        createNotificationChannel()
         checkReadAndWriteExternalStoragePermission()
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
+    }
+
+    private fun createNotificationChannel() {
+        ftsNotification = FileTransferServiceNotification(notifcationManager)
+        ftsNotification.createFTSNotificationChannel()
     }
 
     fun peeredDeviceConnectionInfoReady(deviceConnectionInfo: WifiP2pInfo) {
