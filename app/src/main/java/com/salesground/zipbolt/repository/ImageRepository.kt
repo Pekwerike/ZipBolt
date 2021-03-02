@@ -160,7 +160,7 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
                     MediaStore.Images.Media.RELATIVE_PATH,
                     Environment.DIRECTORY_PICTURES + "/ZipBoltImages"
                 )
-                    put(MediaStore.Images.Media.DATE_TAKEN, Calendar.getInstance().timeInMillis)
+                put(MediaStore.Images.Media.DATE_TAKEN, Calendar.getInstance().timeInMillis)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
@@ -184,25 +184,23 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
         )
 
         imageUri?.let {
-            applicationContext.contentResolver.openFileDescriptor(imageUri, "w").apply {
-                this?.let {
-                    val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
-                    val bufferArray = ByteArray(10_000_000)
+            applicationContext.contentResolver.openFileDescriptor(imageUri, "w")?.let {
+                val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
+                val bufferArray = ByteArray(10_000_000)
 
-                    while (mediaSize1 > 0) {
-                        val bytesRead = DIS.read(
-                            bufferArray,
-                            0,
-                            min(mediaSize1.toInt(), bufferArray.size)
-                        )
-                        if (bytesRead == -1) break
-                        imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
-                        mediaSize1 -= bytesRead
-                    }
-                    imageFileDataOutputStream.flush()
-                    imageFileDataOutputStream.close()
-                    it.close()
+                while (mediaSize1 > 0) {
+                    val bytesRead = DIS.read(
+                        bufferArray,
+                        0,
+                        min(mediaSize1.toInt(), bufferArray.size)
+                    )
+                    if (bytesRead == -1) break
+                    imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
+                    mediaSize1 -= bytesRead
                 }
+                imageFileDataOutputStream.flush()
+                imageFileDataOutputStream.close()
+                it.close()
             }
             contentValues.clear()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
