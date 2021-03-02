@@ -33,6 +33,12 @@ class ZipBoltMTP(private val context: Context) {
     }
 
     suspend fun receiveMedia(DIS: DataInputStream){
+        val numberOfItemsSent = DIS.readInt()
+        for(i in 0 until numberOfItemsSent){
+            val mediaName = DIS.readUTF()
+            val mediaSize = DIS.readLong()
 
+            // read media bytes and save it into the media store based on the mime type
+        }
     }
 }
