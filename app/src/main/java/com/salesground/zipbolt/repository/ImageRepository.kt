@@ -14,6 +14,7 @@ import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.util.*
 import kotlin.math.min
 
 
@@ -151,14 +152,14 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
             put(MediaStore.Images.Media.TITLE, mediaName)
             put(MediaStore.Images.Media.SIZE, mediaSize1)
             put(MediaStore.Images.Media.MIME_TYPE, "image/${mediaName!!.take(3)}")
-            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.DATE_ADDED, Calendar.getInstance().timeInMillis)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
                 put(
                     MediaStore.Images.Media.RELATIVE_PATH,
                     Environment.DIRECTORY_PICTURES + "/ZipBoltImages"
                 )
-                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+                    put(MediaStore.Images.Media.DATE_TAKEN, Calendar.getInstance().timeInMillis)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,

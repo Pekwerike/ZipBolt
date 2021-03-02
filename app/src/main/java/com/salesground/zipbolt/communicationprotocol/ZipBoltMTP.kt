@@ -19,13 +19,7 @@ class ZipBoltMTP(private val context: Context) {
         mediaItems.forEach { mediaModel: MediaModel ->
             DOS.writeUTF(mediaModel.mediaDisplayName)
             DOS.writeLong(mediaModel.mediaSize)
-            DOS.writeUTF(
-                when (mediaModel.mediaCategory) {
-                    MediaCategory.AUDIO -> MediaCategory.AUDIO.name
-                    MediaCategory.VIDEO -> MediaCategory.VIDEO.name
-                    else -> MediaCategory.IMAGE.name
-                }
-            )
+            DOS.writeUTF(mediaModel.mimeType)
             context.contentResolver.openFileDescriptor(mediaModel.mediaUri, "r").apply {
                 this?.let { parcelFileDescriptor: ParcelFileDescriptor ->
                     val mediaModelFileInputStream =
@@ -53,13 +47,17 @@ class ZipBoltMTP(private val context: Context) {
             val mediaType = DIS.readUTF()
 
             // read media bytes and save it into the media store based on the mime type
-            /*when (mediaType) {
-                MediaCategory.VIDEO.name -> TODO()
-                MediaCategory.IMAGE.name -> {
+            when {
+                mediaType.contains("image", true) -> {
 
                 }
-                MediaCategory.AUDIO.name -> TODO()
-            }*/
+                mediaType.contains("video", true) -> {
+
+                }
+                mediaType.contains("audio", true) -> {
+
+                }
+            }
 
         }
     }
