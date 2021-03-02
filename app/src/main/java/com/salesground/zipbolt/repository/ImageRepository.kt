@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.repository
 
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -127,5 +128,22 @@ class ImageRepository(private val applicationContext: Context) : ImageRepository
             imageFiles.add(imageFile)
         }
         return imageFiles
+    }
+
+    suspend fun insertImageIntoMediaStore(imageFile: File) {
+        val contentValues = ContentValues(7).apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/*")
+            put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, imageFile.parent)
+            put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+            put(MediaStore.Images.Media.SIZE, imageFile.length())
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
+        }
+
+        applicationContext.contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
     }
 }
