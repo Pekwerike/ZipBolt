@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -18,7 +19,7 @@ import java.util.*
 import kotlin.math.min
 
 
-class ImageRepository(private val applicationContext: Context) : ImageRepositoryInterface {
+class ImageRepository(@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
 
     override fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
         val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
