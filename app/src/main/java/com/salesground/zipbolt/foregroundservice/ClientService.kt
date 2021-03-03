@@ -49,7 +49,6 @@ class ClientService : Service() {
                 }
             }
         }
-
         return START_NOT_STICKY
     }
 
