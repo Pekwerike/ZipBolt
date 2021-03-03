@@ -16,10 +16,12 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
+import javax.inject.Inject
 import kotlin.math.min
 
 
-class ImageRepository(@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
+class ImageRepository @Inject constructor
+    (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
 
     override fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
         val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
