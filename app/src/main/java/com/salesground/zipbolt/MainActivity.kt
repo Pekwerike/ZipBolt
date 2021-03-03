@@ -32,6 +32,7 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.HomeScreen
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,6 +43,8 @@ private const val READ_WRITE_STORAGE_REQUEST_CODE = 101
 
 const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
