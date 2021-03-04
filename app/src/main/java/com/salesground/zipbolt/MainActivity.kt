@@ -5,6 +5,7 @@ import android.Manifest.*
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
+import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
@@ -181,27 +183,38 @@ class MainActivity : AppCompatActivity() {
             it?.let { wifiP2pInfo ->
                 wifiP2pInfo.groupOwnerAddress?.let {
                     val ipAddressForServerSocket: String = it.hostAddress
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
-                            val hostName = wifiP2pInfo.groupOwnerAddress.hostName
-                            withContext(Dispatchers.Main) {
-                                displayToast("$hostName is the host")
-                            }
-                            Server().listenIncomingConnection(this@MainActivity)
+                    if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner){
+                        // server
 
-                            // kick of the server
-                            //  Server().listenIncomingConnection(this@MainActivity)
-                        } else if (wifiP2pInfo.groupFormed) {
-                            // kick of the client, client will connect to the server,
+                    }else if(wifiP2pInfo.groupFormed){
+                        // client
+                        Intent(this@MainActivity, ClientService::class.java).apply {
 
-                            Client(serverIpAddress = ipAddressForServerSocket).connectToServer(
-                                this@MainActivity
-                            )
                         }
                     }
+
                 }
             }
         })
+    }
+
+    lifecycleScope.launch(Dispatchers.IO) {
+        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
+            val hostName = wifiP2pInfo.groupOwnerAddress.hostName
+            withContext(Dispatchers.Main) {
+                displayToast("$hostName is the host")
+            }
+            Server().listenIncomingConnection(this@MainActivity)
+
+            // kick of the server
+            //  Server().listenIncomingConnection(this@MainActivity)
+        } else if (wifiP2pInfo.groupFormed) {
+            // kick of the client, client will connect to the server,
+
+            Client(serverIpAddress = ipAddressForServerSocket).connectToServer(
+                this@MainActivity
+            )
+        }
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
