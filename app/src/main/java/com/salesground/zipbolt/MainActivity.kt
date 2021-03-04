@@ -4,9 +4,7 @@ package com.salesground.zipbolt
 import android.Manifest.*
 import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.wifi.WifiManager
@@ -17,6 +15,7 @@ import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -168,6 +167,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private val clientServiceConnection = object : ServiceConnection{
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            val clientServiceBinder = p1 as ClientService.ClientServiceBinder
+            clientServiceBinder.getClientServiceBinder()
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            TODO("Not yet implemented")
+        }
+
+    }
     private fun observeViewModelLiveData() {
         // wifiP2p state changed, either enabled or disabled
         mainActivityViewModel.isWifiP2pEnabled.observe(this, {
@@ -189,7 +200,10 @@ class MainActivity : AppCompatActivity() {
                     }else if(wifiP2pInfo.groupFormed){
                         // client
                         Intent(this@MainActivity, ClientService::class.java).apply {
+                            putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
+                            bindService(this, object: ServiceConnection{
 
+                            })
                         }
                     }
 
