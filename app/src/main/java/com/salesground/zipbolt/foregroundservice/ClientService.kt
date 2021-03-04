@@ -32,7 +32,6 @@ class ClientService : Service() {
     private val clientServiceBinder = ClientServiceBinder()
     private var serverIpAddress: String = ""
     private var isDataToTransferAvailable: Boolean = false
-    private var isDataToReceiveAvailable: Boolean = false
     private lateinit var zipBoltMTP: ZipBoltMTP
     private var mediaItemsToTransfer: MutableList<MediaModel> = mutableListOf()
 
@@ -69,26 +68,37 @@ class ClientService : Service() {
                 val socketDIS = DataInputStream(BufferedInputStream(server.getInputStream()))
                 val socketDOS = DataOutputStream(BufferedOutputStream(server.getOutputStream()))
 
-                withContext(Dispatchers.IO) {
-                    while (true) {
-                        if (!isDataToTransferAvailable) {
-                            socketDOS.writeUTF(NO_DATA_AVAILABLE)
-                        } else {
-                            zipBoltMTP.transferMedia(mediaItemsToTransfer, socketDOS)
-                            isDataToTransferAvailable = false
-                        }
-                    }
+                CoroutineScope(Dispatchers.IO).launch {
+                    listenForAvailableFilesToTransfer(socketDOS)
                 }
 
-                withContext(Dispatchers.IO){
-                    while(true){
-                        sock
-                    }
+                CoroutineScope(Dispatchers.IO).launch {
+                    listenForIncomingFiles(socketDIS)
                 }
-
             }
         }
         return START_NOT_STICKY
+    }
+
+    private suspend fun listenForAvailableFilesToTransfer(socketDOS: DataOutputStream) {
+        while (true) {
+            if (!isDataToTransferAvailable) {
+                socketDOS.writeUTF(NO_DATA_AVAILABLE)
+            } else {
+                socketDOS.writeUTF(DATA_AVAILABLE)
+                zipBoltMTP.transferMedia(mediaItemsToTransfer, socketDOS)
+                isDataToTransferAvailable = false
+            }
+        }
+    }
+
+    private suspend fun listenForIncomingFiles(socketDIS: DataInputStream) {
+        while (true) {
+            val isDataToReceiveAvailable = socketDIS.readUTF()
+            if (isDataToReceiveAvailable == DATA_AVAILABLE) {
+                zipBoltMTP.receiveMedia(socketDIS)
+            }
+        }
     }
 
     fun transferMediaItems(mediaCollection: MutableList<MediaModel>) {
@@ -106,6 +116,7 @@ class ClientService : Service() {
                     0
                 )
             }
+
         return NotificationCompat.Builder(this, FILE_TRANSFER_SERVICE_NOTIFICATION_ID)
             .apply {
                 setContentIntent(openMainActivityPendingIntent)
