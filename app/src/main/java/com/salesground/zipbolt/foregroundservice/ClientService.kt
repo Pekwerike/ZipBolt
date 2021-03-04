@@ -107,24 +107,4 @@ class ClientService : Service() {
         isDataToTransferAvailable = true
     }
 
-    private fun configureNotification(context : Context): Notification {
-        val openMainActivityPendingIntent: PendingIntent =
-            Intent(context, MainActivity::class.java).let {
-                PendingIntent.getActivity(
-                    context,
-                    OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE,
-                    it,
-                    0
-                )
-            }
-
-        return NotificationCompat.Builder(this, FILE_TRANSFER_SERVICE_NOTIFICATION_ID)
-            .apply {
-                setContentIntent(openMainActivityPendingIntent)
-                setContentTitle(getString(R.string.fileTransferServiceNotificationTitle))
-                setContentText(getString(R.string.fileTransferServiceNotificationContentText))
-                setSmallIcon(R.drawable.zipbolt_service_notification_icon)
-                setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            }.build()
-    }
 }
