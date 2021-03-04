@@ -27,6 +27,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
+import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
@@ -56,7 +57,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var intentFilter: IntentFilter
     private lateinit var ftsNotification: FileTransferServiceNotification
     private lateinit var clientService: ClientService
+    private lateinit var serverService: ServerService
+    private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
+
 
     private val notificationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -181,7 +185,18 @@ class MainActivity : AppCompatActivity() {
         override fun onServiceDisconnected(p0: ComponentName?) {
             isClientServiceBound = false
         }
+    }
 
+    private val serverServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            val serverServiceBinder = p1 as ServerService.ServerServiceBinder
+            serverService = serverServiceBinder.getServerServiceInstance()
+            isServerServiceBound = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isServerServiceBound = false
+        }
     }
 
     private fun observeViewModelLiveData() {
@@ -201,40 +216,31 @@ class MainActivity : AppCompatActivity() {
                     val ipAddressForServerSocket: String = it.hostAddress
                     if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
                         // server
+                        Intent(this@MainActivity, ServerService::class.java).apply {
+                            bindService(this, serverServiceConnection, 0)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(this)
+                            } else {
+                                startService(this)
+                            }
+                        }
 
                     } else if (wifiP2pInfo.groupFormed) {
                         // client
                         Intent(this@MainActivity, ClientService::class.java).apply {
                             putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
-                            bindService(this, object : ServiceConnection {
-
-                            })
+                            bindService(this, clientServiceConnection, 0)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(this)
+                            } else {
+                                startService(this)
+                            }
                         }
                     }
 
                 }
             }
         })
-    }
-
-    lifecycleScope.launch(Dispatchers.IO)
-    {
-        if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
-            val hostName = wifiP2pInfo.groupOwnerAddress.hostName
-            withContext(Dispatchers.Main) {
-                displayToast("$hostName is the host")
-            }
-            Server().listenIncomingConnection(this@MainActivity)
-
-            // kick of the server
-            //  Server().listenIncomingConnection(this@MainActivity)
-        } else if (wifiP2pInfo.groupFormed) {
-            // kick of the client, client will connect to the server,
-
-            Client(serverIpAddress = ipAddressForServerSocket).connectToServer(
-                this@MainActivity
-            )
-        }
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
@@ -294,7 +300,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        if(isClientServiceBound) unbindService(clientServiceConnection)
+        if (isClientServiceBound) unbindService(clientServiceConnection)
+        if(isServerServiceBound) unbindService(serverServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
     }
