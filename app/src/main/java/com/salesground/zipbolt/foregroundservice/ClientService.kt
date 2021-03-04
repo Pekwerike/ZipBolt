@@ -11,8 +11,8 @@ import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
-import com.salesground.zipbolt.communicationprotocol.FileTransferProtocol
-import com.salesground.zipbolt.communicationprotocol.StableFileTransferProtocol
+import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
+import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,8 +30,11 @@ const val CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID = 2
 
 class ClientService : Service() {
     private val clientServiceBinder = ClientServiceBinder()
-    private var serverIpAddress : String = ""
-    private var isDataAvailable : Boolean = false
+    private var serverIpAddress: String = ""
+    private var isDataToTransferAvailable: Boolean = false
+    private var isDataToReceiveAvailable: Boolean = false
+    private lateinit var zipBoltMTP: ZipBoltMTP
+    private var mediaItemsToTransfer: MutableList<MediaModel> = mutableListOf()
 
 
     inner class ClientServiceBinder : Binder() {
@@ -40,6 +43,11 @@ class ClientService : Service() {
 
     override fun onBind(intent: Intent): IBinder {
         return clientServiceBinder
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        zipBoltMTP = ZipBoltMTP(this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -61,17 +69,31 @@ class ClientService : Service() {
                 val socketDIS = DataInputStream(BufferedInputStream(server.getInputStream()))
                 val socketDOS = DataOutputStream(BufferedOutputStream(server.getOutputStream()))
 
+                withContext(Dispatchers.IO) {
+                    while (true) {
+                        if (!isDataToTransferAvailable) {
+                            socketDOS.writeUTF(NO_DATA_AVAILABLE)
+                        } else {
+                            zipBoltMTP.transferMedia(mediaItemsToTransfer, socketDOS)
+                            isDataToTransferAvailable = false
+                        }
+                    }
+                }
+
                 withContext(Dispatchers.IO){
                     while(true){
-                        if(!isDataAvailable){
-                           socketDOS.writeUTF(NO_DATA_AVAILABLE)
-                        }
+                        sock
                     }
                 }
 
             }
         }
         return START_NOT_STICKY
+    }
+
+    fun transferMediaItems(mediaCollection: MutableList<MediaModel>) {
+        mediaItemsToTransfer = mediaCollection
+        isDataToTransferAvailable = true
     }
 
     private fun configureNotification(): Notification {
