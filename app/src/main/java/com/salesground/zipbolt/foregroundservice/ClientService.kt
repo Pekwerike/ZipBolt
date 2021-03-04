@@ -17,6 +17,7 @@ import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_I
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -30,6 +31,7 @@ const val CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID = 2
 class ClientService : Service() {
     private val clientServiceBinder = ClientServiceBinder()
     private var serverIpAddress : String = ""
+    private var isDataAvailable : Boolean = false
 
 
     inner class ClientServiceBinder : Binder() {
@@ -58,6 +60,15 @@ class ClientService : Service() {
                 }
                 val socketDIS = DataInputStream(BufferedInputStream(server.getInputStream()))
                 val socketDOS = DataOutputStream(BufferedOutputStream(server.getOutputStream()))
+
+                withContext(Dispatchers.IO){
+                    while(true){
+                        if(!isDataAvailable){
+                           socketDOS.writeUTF(NO_DATA_AVAILABLE)
+                        }
+                    }
+                }
+
             }
         }
         return START_NOT_STICKY
