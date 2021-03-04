@@ -16,7 +16,7 @@ import java.io.FileInputStream
 @RunWith(AndroidJUnit4::class)
 class ImageRepositoryTest {
 
-    val applicationContext = ApplicationProvider.getApplicationContext<Context>()
+    private val applicationContext = ApplicationProvider.getApplicationContext<Context>()
     lateinit var imageRepository: ImageRepository
 
     @Before

@@ -15,6 +15,6 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
             private set
 
     fun addImages(){
-
+        imageRepository.fetchAllImagesOnDevice()
     }
 }

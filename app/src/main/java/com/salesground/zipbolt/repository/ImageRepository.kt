@@ -11,6 +11,8 @@ import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -23,8 +25,7 @@ import kotlin.math.min
 class ImageRepository @Inject constructor
     (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
 
-    override fun fetchAllImagesOnDevice(): MutableList<MediaModel> {
-        val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
+    override fun fetchAllImagesOnDevice() = flow<MediaModel>{
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY
@@ -95,7 +96,7 @@ class ImageRepository @Inject constructor
                 }
 
 
-                allImagesOnDevice.add(
+                emit(
                     MediaModel(
                         mediaUri = imageUri,
                         mediaDateAdded = imageDateAdded,
@@ -108,7 +109,6 @@ class ImageRepository @Inject constructor
                 )
             }
         }
-        return allImagesOnDevice
     }
 
     override fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File> {
