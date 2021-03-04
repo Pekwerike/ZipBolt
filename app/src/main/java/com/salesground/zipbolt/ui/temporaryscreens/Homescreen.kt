@@ -5,5 +5,5 @@ import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 
 @Composable
 fun HomeScreen(mainActivityViewModel: MainActivityViewModel){
-    mainActivityViewModel.
+
 }
