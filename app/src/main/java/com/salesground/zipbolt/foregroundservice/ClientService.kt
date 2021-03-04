@@ -27,7 +27,6 @@ import java.net.InetSocketAddress
 import java.net.Socket
 
 
-const val CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID = 2
 
 class ClientService : Service() {
     private val clientServiceBinder = ClientServiceBinder()
@@ -51,7 +50,7 @@ class ClientService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
+        startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
 
         intent?.let { mainIntent: Intent ->
             CoroutineScope(Dispatchers.IO).launch {
