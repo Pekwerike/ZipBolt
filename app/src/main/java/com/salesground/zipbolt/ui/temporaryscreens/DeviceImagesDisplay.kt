@@ -10,5 +10,7 @@ fun ImagesOnDeviceList(){
 
 @Composable
 fun SingleImageOnDevice(image : MediaModel){
+    CoilImage(
 
+    )
 }
