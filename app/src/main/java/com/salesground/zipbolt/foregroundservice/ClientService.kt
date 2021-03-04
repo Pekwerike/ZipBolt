@@ -14,6 +14,13 @@ import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
 import com.salesground.zipbolt.communicationprotocol.FileTransferProtocol
 import com.salesground.zipbolt.communicationprotocol.StableFileTransferProtocol
 import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 
@@ -37,16 +44,20 @@ class ClientService : Service() {
         startForeground(CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID, configureNotification())
 
         intent?.let { mainIntent: Intent ->
-            serverIpAddress = mainIntent.getStringExtra(SERVER_IP_ADDRESS_KEY)!!
-            val server = Socket()
-            server.bind(null)
-            while(true) {
-                try {
-                    server.connect(InetSocketAddress(serverIpAddress, 8090), 100000)
-                    break
-                }catch (connectionException : Exception){
-                    continue
+            CoroutineScope(Dispatchers.IO).launch {
+                serverIpAddress = mainIntent.getStringExtra(SERVER_IP_ADDRESS_KEY)!!
+                val server = Socket()
+                server.bind(null)
+                while (true) {
+                    try {
+                        server.connect(InetSocketAddress(serverIpAddress, 8090), 100000)
+                        break
+                    } catch (connectionException: Exception) {
+                        continue
+                    }
                 }
+                val socketDIS = DataInputStream(BufferedInputStream(server.getInputStream()))
+                val socketDOS = DataOutputStream(BufferedOutputStream(server.getOutputStream()))
             }
         }
         return START_NOT_STICKY
