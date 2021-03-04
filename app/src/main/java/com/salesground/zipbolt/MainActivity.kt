@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
@@ -32,8 +33,10 @@ import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.HomeScreen
+import com.salesground.zipbolt.ui.temporaryscreens.TempHomeScreen
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
+import com.salesground.zipbolt.viewmodel.MediaViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +52,8 @@ const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
+    private val mediaViewModel by viewModels<MediaViewModel>()
+
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
     }
@@ -66,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
+    @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -73,11 +79,12 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreen(
+                   /* HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })
+                        selectedDevice = { connectToADevice(it) })*/
+                    TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
         }
