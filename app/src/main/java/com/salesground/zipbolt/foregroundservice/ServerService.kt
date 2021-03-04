@@ -50,18 +50,20 @@ class ServerService : Service() {
                     listenForNewMediaCollectionToTransfer(socketDOS)
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-                    
+
                 }
             }
         }
 
         return START_NOT_STICKY
     }
-    
-    private suspend fun listenForIncomingMediaItemsToReceive(DIS: DataInputStream){
-        while(true){
+
+    private suspend fun listenForIncomingMediaItemsToReceive(DIS: DataInputStream) {
+        while (true) {
             val isMediaAvailable = DIS.readUTF()
-            if(isMediaAvailabl)
+            if (isMediaAvailable == DATA_AVAILABLE) {
+                zipBoltMTP.receiveMedia(DIS)
+            }
         }
     }
 
