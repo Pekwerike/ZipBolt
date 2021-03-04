@@ -1,10 +1,7 @@
 package com.salesground.zipbolt.localnetwork
 
 import android.content.Context
-import com.salesground.zipbolt.communicationprotocol.FileTransferProtocol
 import com.salesground.zipbolt.model.MediaModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.ServerSocket
 import java.net.Socket
@@ -20,13 +17,6 @@ class Server {
 
             // blocking call
             val client: Socket = serverSocket.accept()
-            val fileTransferProtocol = FileTransferProtocol(client)
 
-            filesToTransfer?.let {
-                fileTransferProtocol.transferFile(it, context)
-            }
-            parentFolder?.let {
-                fileTransferProtocol.receiveFile(it)
-            }
         }
 }
