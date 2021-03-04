@@ -55,8 +55,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var intentFilter: IntentFilter
     private lateinit var ftsNotification: FileTransferServiceNotification
+    private lateinit var clientService: ClientService
+    private var isClientServiceBound: Boolean = false
 
-    private val notifcationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
+    private val notificationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
@@ -83,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNotificationChannel() {
-        ftsNotification = FileTransferServiceNotification(notifcationManager)
+        ftsNotification = FileTransferServiceNotification(notificationManager)
         ftsNotification.createFTSNotificationChannel()
     }
 
@@ -168,17 +170,20 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val clientServiceConnection = object : ServiceConnection{
+    private val clientServiceConnection = object : ServiceConnection {
+
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             val clientServiceBinder = p1 as ClientService.ClientServiceBinder
-            clientServiceBinder.getClientServiceBinder()
+            clientService = clientServiceBinder.getClientServiceBinder()
+            isClientServiceBound = true
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
-            TODO("Not yet implemented")
+            isClientServiceBound = false
         }
 
     }
+
     private fun observeViewModelLiveData() {
         // wifiP2p state changed, either enabled or disabled
         mainActivityViewModel.isWifiP2pEnabled.observe(this, {
@@ -194,14 +199,14 @@ class MainActivity : AppCompatActivity() {
             it?.let { wifiP2pInfo ->
                 wifiP2pInfo.groupOwnerAddress?.let {
                     val ipAddressForServerSocket: String = it.hostAddress
-                    if(wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner){
+                    if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
                         // server
 
-                    }else if(wifiP2pInfo.groupFormed){
+                    } else if (wifiP2pInfo.groupFormed) {
                         // client
                         Intent(this@MainActivity, ClientService::class.java).apply {
                             putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
-                            bindService(this, object: ServiceConnection{
+                            bindService(this, object : ServiceConnection {
 
                             })
                         }
@@ -212,7 +217,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    lifecycleScope.launch(Dispatchers.IO) {
+    lifecycleScope.launch(Dispatchers.IO)
+    {
         if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
             val hostName = wifiP2pInfo.groupOwnerAddress.hostName
             withContext(Dispatchers.Main) {
@@ -288,6 +294,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        if(isClientServiceBound) unbindService(clientServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
     }
