@@ -300,6 +300,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        // unbind the bounded services
         if (isClientServiceBound) unbindService(clientServiceConnection)
         if(isServerServiceBound) unbindService(serverServiceConnection)
         // unregister the broadcast receiver
