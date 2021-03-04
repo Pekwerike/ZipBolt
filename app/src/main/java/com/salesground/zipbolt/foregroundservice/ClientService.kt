@@ -3,6 +3,7 @@ package com.salesground.zipbolt.foregroundservice
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
@@ -50,7 +51,7 @@ class ClientService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID, configureNotification())
+        startForeground(CLIENT_SERVICE_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
 
         intent?.let { mainIntent: Intent ->
             CoroutineScope(Dispatchers.IO).launch {
@@ -106,11 +107,11 @@ class ClientService : Service() {
         isDataToTransferAvailable = true
     }
 
-    private fun configureNotification(): Notification {
+    private fun configureNotification(context : Context): Notification {
         val openMainActivityPendingIntent: PendingIntent =
-            Intent(this, MainActivity::class.java).let {
+            Intent(context, MainActivity::class.java).let {
                 PendingIntent.getActivity(
-                    this,
+                    context,
                     OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE,
                     it,
                     0
