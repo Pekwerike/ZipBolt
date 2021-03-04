@@ -8,21 +8,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.ImageRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MediaViewModel(application: Application) : AndroidViewModel(application) {
-    private val imageRepository = ImageRepository(application)
-    var allImagesOnDevice
-    = mutableStateListOf<MediaModel>()
+@HiltViewModel
+class MediaViewModel @Inject constructor(
+    private val
+    imageRepository: ImageRepository
+) : ViewModel() {
+
+    var allImagesOnDevice = mutableStateOf<MutableList<MediaModel>>(mutableListOf())
         private set
 
-    fun addImages() {
-        viewModelScope.launch(Dispatchers.IO) {
+    private val imagesList: MutableList<MediaModel> = mutableListOf()
+
+    init {
+        addImages()
+    }
+
+    private fun addImages() {
+        viewModelScope.launch {
             imageRepository.fetchAllImagesOnDevice().collect {
-                allImagesOnDevice.add(it)
+                imagesList.add(it)
+                allImagesOnDevice.value = imagesList
             }
         }
     }

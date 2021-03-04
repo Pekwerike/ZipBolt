@@ -11,8 +11,10 @@ import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -26,90 +28,92 @@ class ImageRepository @Inject constructor
     (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
 
     override fun fetchAllImagesOnDevice() = flow {
-        val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(
-                MediaStore.VOLUME_EXTERNAL_PRIMARY
-            )
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-
-        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            arrayOf(
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATE_ADDED,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.MIME_TYPE,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-            )
-        } else {
-            arrayOf(
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DATE_ADDED,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.MIME_TYPE,
-                MediaStore.Images.Media.DATA
-            )
-        }
-
-        val selection = null
-        val selectionArgs = null
-        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
-
-        applicationContext.contentResolver.query(
-            collection,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
-        )?.apply {
-            val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val imageDateAddedColumnIndex =
-                getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
-            val imageDisplayNameColumnIndex =
-                getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-            val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-            val imageMimeTypeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
-
-
-
-            while (moveToNext()) {
-                val imageId = getLong(imageIdColumnIndex)
-                val imageDateAdded = getLong(imageDateAddedColumnIndex)
-                val imageDisplayName = getString(imageDisplayNameColumnIndex)
-                val imageSize = getLong(imageSizeColumnIndex)
-                val imageMimeType = getString(imageMimeTypeColumnIndex)
-
-                val imageUri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    imageId
+            val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                MediaStore.Images.Media.getContentUri(
+                    MediaStore.VOLUME_EXTERNAL_PRIMARY
                 )
-                val imageParentFolderName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    val imageBucketNameColumnIndex =
-                        getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-                    getString(imageBucketNameColumnIndex)
-                } else {
-                    val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
-                    File(getString(imageDataColumnIndex)).parentFile!!.name
-                }
+            } else {
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            }
 
-
-                emit(
-                    MediaModel(
-                        mediaUri = imageUri,
-                        mediaDateAdded = imageDateAdded,
-                        mediaDisplayName = imageDisplayName,
-                        mediaSize = imageSize,
-                        mediaCategory = MediaCategory.IMAGE,
-                        mimeType = imageMimeType,
-                        mediaBucketName = imageParentFolderName
-                    )
+            val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                arrayOf(
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.DATE_ADDED,
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.SIZE,
+                    MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+                )
+            } else {
+                arrayOf(
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.DATE_ADDED,
+                    MediaStore.Images.Media.DISPLAY_NAME,
+                    MediaStore.Images.Media.SIZE,
+                    MediaStore.Images.Media.MIME_TYPE,
+                    MediaStore.Images.Media.DATA
                 )
             }
+
+            val selection = null
+            val selectionArgs = null
+            val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
+
+            applicationContext.contentResolver.query(
+                collection,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
+            )?.apply {
+                val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val imageDateAddedColumnIndex =
+                    getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+                val imageDisplayNameColumnIndex =
+                    getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+                val imageMimeTypeColumnIndex =
+                    getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+
+
+                while (moveToNext()) {
+                    val imageId = getLong(imageIdColumnIndex)
+                    val imageDateAdded = getLong(imageDateAddedColumnIndex)
+                    val imageDisplayName = getString(imageDisplayNameColumnIndex)
+                    val imageSize = getLong(imageSizeColumnIndex)
+                    val imageMimeType = getString(imageMimeTypeColumnIndex)
+
+                    val imageUri = ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        imageId
+                    )
+                    val imageParentFolderName =
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            val imageBucketNameColumnIndex =
+                                getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                            getString(imageBucketNameColumnIndex)
+                        } else {
+                            val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
+                            File(getString(imageDataColumnIndex)).parentFile!!.name
+                        }
+
+
+                    emit(
+                        MediaModel(
+                            mediaUri = imageUri,
+                            mediaDateAdded = imageDateAdded,
+                            mediaDisplayName = imageDisplayName,
+                            mediaSize = imageSize,
+                            mediaCategory = MediaCategory.IMAGE,
+                            mimeType = imageMimeType,
+                            mediaBucketName = imageParentFolderName
+                        )
+                    )
+                }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File> {
         val imageFiles: MutableList<File> = mutableListOf()

@@ -12,5 +12,5 @@ import com.salesground.zipbolt.viewmodel.MediaViewModel
 @Composable
 fun TempHomeScreen(mediaViewModel: MediaViewModel) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
-    ImagesOnDeviceList(images = allImagesOnDevice.toMutableList())
+    ImagesOnDeviceList(images = allImagesOnDevice.value)
 }
