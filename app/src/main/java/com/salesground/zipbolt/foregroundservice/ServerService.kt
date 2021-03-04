@@ -4,9 +4,18 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
+import com.salesground.zipbolt.model.MediaModel
 
 class ServerService : Service() {
-    private val serverServiceBinder : ServerServiceBinder = ServerServiceBinder()
+    private val serverServiceBinder: ServerServiceBinder = ServerServiceBinder()
+    private lateinit var zipBoltMTP: ZipBoltMTP
+    private var mediaItemsToTransfer : MutableList<MediaModel> = mutableListOf()
+
+    override fun onCreate() {
+        super.onCreate()
+        zipBoltMTP = ZipBoltMTP(this)
+    }
 
     inner class ServerServiceBinder : Binder() {
         fun getServerServiceInstance(): ServerService {
@@ -20,6 +29,15 @@ class ServerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
+
+        intent?.let {
+
+        }
+
         return START_NOT_STICKY
+    }
+
+    fun transferMediaItems(mediaItems : MutableList<MediaModel>){
+        mediaItemsToTransfer = mediaItems
     }
 }
