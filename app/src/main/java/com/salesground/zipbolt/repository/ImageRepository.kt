@@ -25,7 +25,7 @@ import kotlin.math.min
 class ImageRepository @Inject constructor
     (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
 
-    override fun fetchAllImagesOnDevice() = flow<MediaModel>{
+    override fun fetchAllImagesOnDevice() = flow {
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(
                 MediaStore.VOLUME_EXTERNAL_PRIMARY

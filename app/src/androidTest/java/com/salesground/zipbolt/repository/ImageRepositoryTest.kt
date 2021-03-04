@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.salesground.zipbolt.model.MediaModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
@@ -25,15 +28,16 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun fetchAllImage_TestCollectionIsNotEmpty() {
-        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+    fun fetchAllImage_TestCollectionIsNotEmpty() = runBlocking {
+        val deviceMedia = imageRepository.fetchAllImagesOnDevice().toList()
 
         assertTrue(deviceMedia.size != 0)
     }
 
     @Test
-    fun checkThatImageFormatIsAppendedOnImageName() {
-        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+    fun checkThatImageFormatIsAppendedOnImageName() = runBlocking {
+        val deviceMedia: MutableList<MediaModel> =
+            imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
         deviceMedia.forEach { mediaModel: MediaModel ->
             val typeFormat =
                 mediaModel.mediaDisplayName.takeLast(3) == "png" || mediaModel.mediaDisplayName.takeLast(
@@ -44,8 +48,9 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun convertImageModelToFile_Test() {
-        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+    fun convertImageModelToFile_Test() = runBlocking {
+        val deviceMedia: MutableList<MediaModel> =
+            imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
 
         val imageFiles =
             imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
@@ -54,8 +59,9 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun convertImageModelToFile_TestForFileSize() {
-        val deviceMedia: MutableList<MediaModel> = imageRepository.fetchAllImagesOnDevice()
+    fun convertImageModelToFile_TestForFileSize() = runBlocking {
+        val deviceMedia: MutableList<MediaModel> =
+            imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
         val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
         assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).mediaSize)
     }
@@ -63,7 +69,7 @@ class ImageRepositoryTest {
 
     @Test
     fun insertImageIntoMediaStoreTest() = runBlocking {
-        val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice()
+        val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
         val firstImage = allImagesOnDevice[0]
         applicationContext.contentResolver.openFileDescriptor(firstImage.mediaUri, "r")?.also {
             val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
@@ -75,7 +81,7 @@ class ImageRepositoryTest {
         }
         val zipBoltImages = imageRepository.fetchAllImagesOnDevice().filter {
             it.mediaBucketName == "ZipBoltImages"
-        }
+        }.toList()
         assertTrue(zipBoltImages.isNotEmpty())
     }
 }
