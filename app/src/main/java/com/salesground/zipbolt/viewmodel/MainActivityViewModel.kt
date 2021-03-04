@@ -23,6 +23,7 @@ class MainActivityViewModel : ViewModel() {
     var peeredDeviceConnectionInfoState = mutableStateOf<WifiP2pInfo>(WifiP2pInfo())
         private set
 
+
     fun wifiP2pStateChange(newState: Boolean) {
         _isWifiP2pEnabled.value = newState
         isWifiP2pEnabledState.value = newState
