@@ -6,6 +6,11 @@ import android.os.Binder
 import android.os.IBinder
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.net.ServerSocket
+import java.net.Socket
 
 class ServerService : Service() {
     private val serverServiceBinder: ServerServiceBinder = ServerServiceBinder()
@@ -31,7 +36,10 @@ class ServerService : Service() {
         startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
 
         intent?.let {
-
+            CoroutineScope(Dispatchers.IO).launch {
+                val server = ServerSocket(SOCKET_PORT)
+                server.accept()
+            }
         }
 
         return START_NOT_STICKY

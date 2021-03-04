@@ -59,7 +59,7 @@ class ClientService : Service() {
                 server.bind(null)
                 while (true) {
                     try {
-                        server.connect(InetSocketAddress(serverIpAddress, 8090), 100000)
+                        server.connect(InetSocketAddress(serverIpAddress, SOCKET_PORT), 100000)
                         break
                     } catch (connectionException: Exception) {
                         continue
