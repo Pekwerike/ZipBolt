@@ -8,6 +8,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
+import com.salesground.zipbolt.repository.ImageRepository
 import java.io.*
 import java.util.Collections.min
 import kotlin.math.min
@@ -49,7 +50,8 @@ class ZipBoltMTP(private val context: Context) {
             // read media bytes and save it into the media store based on the mime type
             when {
                 mediaType.contains("image", true) -> {
-
+                    ImageRepository(context).insertImageIntoMediaStore(mediaName,
+                    mediaSize, mediaType, DIS)
                 }
                 mediaType.contains("video", true) -> {
 
