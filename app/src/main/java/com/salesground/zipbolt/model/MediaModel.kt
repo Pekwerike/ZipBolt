@@ -10,7 +10,7 @@ enum class MediaCategory(private val mediaType : String) {
 
 data class MediaModel(
     val mediaUri: Uri,
-    val mediaDisplayName: String,
+    val mediaDisplayName: String?,
     val mediaDateAdded: Long,
     val mediaSize: Long,
     val mediaCategory: MediaCategory,

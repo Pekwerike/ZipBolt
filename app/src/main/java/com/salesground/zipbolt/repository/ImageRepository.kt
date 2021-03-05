@@ -27,91 +27,182 @@ import kotlin.math.min
 class ImageRepository @Inject constructor
     (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
 
+    fun fetchAllImagesOnDeviceOnce(): MutableList<MediaModel> {
+        val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
+
+        val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL_PRIMARY
+            )
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
+        } else {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.DATA
+            )
+        }
+
+        val selection = null
+        val selectionArgs = null
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
+
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )?.apply {
+            val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val imageDateAddedColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val imageDisplayNameColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val imageMimeTypeColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+
+
+            while (moveToNext()) {
+                val imageId = getLong(imageIdColumnIndex)
+                val imageDateAdded = getLong(imageDateAddedColumnIndex)
+                val imageDisplayName = getString(imageDisplayNameColumnIndex)
+                val imageSize = getLong(imageSizeColumnIndex)
+                val imageMimeType = getString(imageMimeTypeColumnIndex)
+
+                val imageUri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    imageId
+                )
+                val imageParentFolderName =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val imageBucketNameColumnIndex =
+                            getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                        getString(imageBucketNameColumnIndex)
+                    } else {
+                        val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
+                        File(getString(imageDataColumnIndex)).parentFile!!.name
+                    }
+
+
+                allImagesOnDevice.add(
+                    MediaModel(
+                        mediaUri = imageUri,
+                        mediaDateAdded = imageDateAdded,
+                        mediaDisplayName = imageDisplayName,
+                        mediaSize = imageSize,
+                        mediaCategory = MediaCategory.IMAGE,
+                        mimeType = imageMimeType,
+                        mediaBucketName = imageParentFolderName
+                    )
+                )
+            }
+        }
+        return allImagesOnDevice
+    }
+
     override fun fetchAllImagesOnDevice() = flow {
-            val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Images.Media.getContentUri(
-                    MediaStore.VOLUME_EXTERNAL_PRIMARY
+        val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL_PRIMARY
+            )
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
+        } else {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.DATA
+            )
+        }
+
+        val selection = null
+        val selectionArgs = null
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
+
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )?.apply {
+            val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val imageDateAddedColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val imageDisplayNameColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val imageMimeTypeColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+
+
+            while (moveToNext()) {
+                val imageId = getLong(imageIdColumnIndex)
+                val imageDateAdded = getLong(imageDateAddedColumnIndex)
+                val imageDisplayName = getString(imageDisplayNameColumnIndex)
+                val imageSize = getLong(imageSizeColumnIndex)
+                val imageMimeType = getString(imageMimeTypeColumnIndex)
+
+                val imageUri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    imageId
                 )
-            } else {
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            }
-
-            val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                arrayOf(
-                    MediaStore.Images.Media._ID,
-                    MediaStore.Images.Media.DATE_ADDED,
-                    MediaStore.Images.Media.DISPLAY_NAME,
-                    MediaStore.Images.Media.SIZE,
-                    MediaStore.Images.Media.MIME_TYPE,
-                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME
-                )
-            } else {
-                arrayOf(
-                    MediaStore.Images.Media._ID,
-                    MediaStore.Images.Media.DATE_ADDED,
-                    MediaStore.Images.Media.DISPLAY_NAME,
-                    MediaStore.Images.Media.SIZE,
-                    MediaStore.Images.Media.MIME_TYPE,
-                    MediaStore.Images.Media.DATA
-                )
-            }
-
-            val selection = null
-            val selectionArgs = null
-            val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
-
-            applicationContext.contentResolver.query(
-                collection,
-                projection,
-                selection,
-                selectionArgs,
-                sortOrder
-            )?.apply {
-                val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val imageDateAddedColumnIndex =
-                    getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
-                val imageDisplayNameColumnIndex =
-                    getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-                val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-                val imageMimeTypeColumnIndex =
-                    getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+                val imageParentFolderName =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val imageBucketNameColumnIndex =
+                            getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                        getString(imageBucketNameColumnIndex)
+                    } else {
+                        val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
+                        File(getString(imageDataColumnIndex)).parentFile!!.name
+                    }
 
 
-
-                while (moveToNext()) {
-                    val imageId = getLong(imageIdColumnIndex)
-                    val imageDateAdded = getLong(imageDateAddedColumnIndex)
-                    val imageDisplayName = getString(imageDisplayNameColumnIndex)
-                    val imageSize = getLong(imageSizeColumnIndex)
-                    val imageMimeType = getString(imageMimeTypeColumnIndex)
-
-                    val imageUri = ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        imageId
+                emit(
+                    MediaModel(
+                        mediaUri = imageUri,
+                        mediaDateAdded = imageDateAdded,
+                        mediaDisplayName = imageDisplayName,
+                        mediaSize = imageSize,
+                        mediaCategory = MediaCategory.IMAGE,
+                        mimeType = imageMimeType,
+                        mediaBucketName = imageParentFolderName
                     )
-                    val imageParentFolderName =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            val imageBucketNameColumnIndex =
-                                getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-                            getString(imageBucketNameColumnIndex)
-                        } else {
-                            val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
-                            File(getString(imageDataColumnIndex)).parentFile!!.name
-                        }
-
-
-                    emit(
-                        MediaModel(
-                            mediaUri = imageUri,
-                            mediaDateAdded = imageDateAdded,
-                            mediaDisplayName = imageDisplayName,
-                            mediaSize = imageSize,
-                            mediaCategory = MediaCategory.IMAGE,
-                            mimeType = imageMimeType,
-                            mediaBucketName = imageParentFolderName
-                        )
-                    )
-                }
+                )
+            }
         }
     }.flowOn(Dispatchers.IO)
 

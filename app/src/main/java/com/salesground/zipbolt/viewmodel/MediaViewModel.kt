@@ -3,9 +3,7 @@ package com.salesground.zipbolt.viewmodel
 import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,10 +23,20 @@ class MediaViewModel @Inject constructor(
     var allImagesOnDevice = mutableStateOf<MutableList<MediaModel>>(mutableListOf())
         private set
 
+    private var _allImagesFetchedOnce = MutableLiveData<MutableList<MediaModel>>()
+    val allImagesFetchedOnce : LiveData<MutableList<MediaModel>> = _allImagesFetchedOnce
+
     private val imagesList: MutableList<MediaModel> = mutableListOf()
 
     init {
         addImages()
+    }
+
+    private fun fetchAllImagesOnDeviceOnce(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val imagesOnDevice = imageRepository.fetchAllImagesOnDeviceOnce()
+            _allImagesFetchedOnce.value = imagesOnDevice
+        }
     }
 
     private fun addImages() {
