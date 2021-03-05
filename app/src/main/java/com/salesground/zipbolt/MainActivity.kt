@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -71,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
+    @ExperimentalAnimationApi
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +81,12 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreen(
+                   /* HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })
-                    // TempHomeScreen(mediaViewModel = mediaViewModel)
+                        selectedDevice = { connectToADevice(it) })*/
+                     TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
         }
