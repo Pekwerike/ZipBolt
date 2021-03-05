@@ -18,10 +18,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,13 +52,20 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
     }
     LazyColumn(content = {
         groupedBy.forEach { (s, list) ->
-            item {
-                Text(s)
+            stickyHeader {
+                Text(
+                    s,
+                    modifier = Modifier
+                        .background(MaterialTheme.colors.surface)
+                        .fillMaxWidth(1f)
+                )
             }
             val rowCount = list.size / 4 + if (list.size % 4 == 0) 0 else 1
             items(rowCount) { rowIndex ->
-                Row (modifier = Modifier.fillMaxWidth(1f),
-                horizontalArrangement = Arrangement.SpaceEvenly){
+                Row(
+                    modifier = Modifier.fillMaxWidth(1f),
+                    horizontalArrangement = Arrangement.spacedBy(1.dp)
+                ) {
                     for (i in 4 * rowIndex until 4 * (1 + rowIndex)) {
                         if (i < list.size) {
                             SingleImageOnDevice(list[i])
@@ -73,10 +82,10 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
 @Composable
 fun SingleImageOnDevice(image: MediaModel) {
     var imageClicked by remember { mutableStateOf<Boolean>(false) }
-    val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 100.dp)
+    val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 101.dp)
     Box(
         modifier = Modifier
-            .size(100.dp),
+            .size(101.dp),
         contentAlignment = Alignment.Center
     ) {
         CoilImage(
