@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
@@ -25,7 +26,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
-
+import java.net.SocketException
 
 
 class ClientService : Service() {
@@ -67,7 +68,10 @@ class ClientService : Service() {
                 }
                 val socketDIS = DataInputStream(BufferedInputStream(server.getInputStream()))
                 val socketDOS = DataOutputStream(BufferedOutputStream(server.getOutputStream()))
-
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@ClientService, "Connected to server", Toast.LENGTH_SHORT)
+                        .show()
+                }
                 CoroutineScope(Dispatchers.IO).launch {
                     listenForAvailableFilesToTransfer(socketDOS)
                 }
@@ -82,21 +86,31 @@ class ClientService : Service() {
 
     private suspend fun listenForAvailableFilesToTransfer(socketDOS: DataOutputStream) {
         while (true) {
-            if (!isDataToTransferAvailable) {
-                socketDOS.writeUTF(NO_DATA_AVAILABLE)
-            } else {
-                socketDOS.writeUTF(DATA_AVAILABLE)
-                zipBoltMTP.transferMedia(mediaItemsToTransfer, socketDOS)
-                isDataToTransferAvailable = false
+            try {
+                if (!isDataToTransferAvailable) {
+                    socketDOS.writeUTF(NO_DATA_AVAILABLE)
+                } else {
+                    socketDOS.writeUTF(DATA_AVAILABLE)
+                    zipBoltMTP.transferMedia(mediaItemsToTransfer, socketDOS)
+                    isDataToTransferAvailable = false
+                }
+            } catch (connectionReset: SocketException) {
+                stopSelf()
+                break
             }
         }
     }
 
     private suspend fun listenForIncomingFiles(socketDIS: DataInputStream) {
         while (true) {
-            val isDataToReceiveAvailable = socketDIS.readUTF()
-            if (isDataToReceiveAvailable == DATA_AVAILABLE) {
-                zipBoltMTP.receiveMedia(socketDIS)
+            try {
+                val isDataToReceiveAvailable = socketDIS.readUTF()
+                if (isDataToReceiveAvailable == DATA_AVAILABLE) {
+                    zipBoltMTP.receiveMedia(socketDIS)
+                }
+            } catch (exception: Exception) {
+                stopSelf()
+                break
             }
         }
     }

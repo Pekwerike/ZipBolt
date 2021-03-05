@@ -13,7 +13,7 @@ import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_I
 const val NO_DATA_AVAILABLE = "NoDataAvailable"
 const val DATA_AVAILABLE = "DataAvailable"
 const val FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID = 2
-const val SOCKET_PORT = 8090
+const val SOCKET_PORT = 8098
 
 fun configureNotification(context: Context): Notification {
     val openMainActivityPendingIntent: PendingIntent =
@@ -28,9 +28,9 @@ fun configureNotification(context: Context): Notification {
 
     return NotificationCompat.Builder(context, FILE_TRANSFER_SERVICE_NOTIFICATION_ID)
         .apply {
-            setContentIntent(openMainActivityPendingIntent)
             setContentTitle(context.getString(R.string.fileTransferServiceNotificationTitle))
             setContentText(context.getString(R.string.fileTransferServiceNotificationContentText))
+            setContentIntent(openMainActivityPendingIntent)
             setSmallIcon(R.drawable.zipbolt_service_notification_icon)
             setPriority(NotificationCompat.PRIORITY_DEFAULT)
         }.build()

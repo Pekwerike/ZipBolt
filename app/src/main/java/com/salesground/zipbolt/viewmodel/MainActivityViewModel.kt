@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.salesground.zipbolt.foregroundservice.ClientService
+import com.salesground.zipbolt.foregroundservice.ServerService
 
 class MainActivityViewModel : ViewModel() {
     private var _isWifiP2pEnabled = MutableLiveData(false)
@@ -23,6 +25,16 @@ class MainActivityViewModel : ViewModel() {
     var peeredDeviceConnectionInfoState = mutableStateOf<WifiP2pInfo>(WifiP2pInfo())
         private set
 
+    var clientService: ClientService? = null
+    var serverService: ServerService? = null
+
+    fun serverServiceReady(serverService: ServerService) {
+        this.serverService = serverService
+    }
+
+    fun clientServiceRead(clientService: ClientService) {
+        this.clientService = clientService
+    }
 
     fun wifiP2pStateChange(newState: Boolean) {
         _isWifiP2pEnabled.value = newState

@@ -4,22 +4,36 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.widget.Toast
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.net.BindException
 import java.net.ServerSocket
+import java.net.SocketException
+import java.nio.channels.AlreadyBoundException
 
 class ServerService : Service() {
     private val serverServiceBinder: ServerServiceBinder = ServerServiceBinder()
     private lateinit var zipBoltMTP: ZipBoltMTP
     private var mediaItemsToTransfer: MutableList<MediaModel> = mutableListOf()
     private var isDataAvailableToTransfer: Boolean = false
+    private lateinit var serverSocket: ServerSocket
+
+    override fun onDestroy() {
+        serverSocket.let {
+            it.close()
+            Toast.makeText(this, "Server socket closed", Toast.LENGTH_SHORT).show()
+        }
+        super.onDestroy()
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -41,10 +55,27 @@ class ServerService : Service() {
 
         intent?.let {
             CoroutineScope(Dispatchers.IO).launch {
-                val server = ServerSocket(SOCKET_PORT)
-                val client = server.accept()
+                while(true) {
+                    try {
+                        serverSocket = ServerSocket(SOCKET_PORT)
+                        break
+                    } catch (addressAlreadyInUse: SocketException) {
+                        try {
+                            serverSocket.bind(null)
+                        }catch (alreadyBound: Exception){
+                            break
+                        }
+                        continue
+                    }
+                }
+                val client = serverSocket.accept()
                 val socketDOS = DataOutputStream(BufferedOutputStream(client.getOutputStream()))
                 val socketDIS = DataInputStream(BufferedInputStream(client.getInputStream()))
+
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@ServerService, "Connected to Client", Toast.LENGTH_SHORT)
+                        .show()
+                }
 
                 CoroutineScope(Dispatchers.IO).launch {
                     listenForNewMediaCollectionToTransfer(socketDOS)

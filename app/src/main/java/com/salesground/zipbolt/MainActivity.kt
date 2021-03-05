@@ -61,8 +61,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var intentFilter: IntentFilter
     private lateinit var ftsNotification: FileTransferServiceNotification
-    private lateinit var clientService: ClientService
-    private lateinit var serverService: ServerService
+    private var clientService: ClientService? = null
+    private var serverService: ServerService? = null
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
 
@@ -79,12 +79,12 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                   /* HomeScreen(
+                    HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })*/
-                    TempHomeScreen(mediaViewModel = mediaViewModel)
+                        selectedDevice = { connectToADevice(it) })
+                    // TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
         }
@@ -223,24 +223,29 @@ class MainActivity : AppCompatActivity() {
                     val ipAddressForServerSocket: String = it.hostAddress
                     if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
                         // server
-                        Intent(this@MainActivity, ServerService::class.java).apply {
-                            bindService(this, serverServiceConnection, 0)
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                startForegroundService(this)
-                            } else {
-                                startService(this)
+                        if (serverService == null) {
+                            Intent(this@MainActivity, ServerService::class.java).apply {
+                                bindService(this, serverServiceConnection, 0)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startService(this)
+                                    startForegroundService(this)
+                                } else {
+                                    startService(this)
+                                }
                             }
                         }
-
                     } else if (wifiP2pInfo.groupFormed) {
                         // client
-                        Intent(this@MainActivity, ClientService::class.java).apply {
-                            putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
-                            bindService(this, clientServiceConnection, 0)
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                startForegroundService(this)
-                            } else {
-                                startService(this)
+                        if (clientService == null) {
+                            Intent(this@MainActivity, ClientService::class.java).apply {
+                                putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
+                                bindService(this, clientServiceConnection, 0)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    startService(this)
+                                    startForegroundService(this)
+                                } else {
+                                    startService(this)
+                                }
                             }
                         }
                     }
@@ -309,7 +314,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         // unbind the bounded services
         if (isClientServiceBound) unbindService(clientServiceConnection)
-        if(isServerServiceBound) unbindService(serverServiceConnection)
+        if (isServerServiceBound) unbindService(serverServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
     }
