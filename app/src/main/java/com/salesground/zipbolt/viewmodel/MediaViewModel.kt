@@ -24,18 +24,21 @@ class MediaViewModel @Inject constructor(
         private set
 
     private var _allImagesFetchedOnce = MutableLiveData<MutableList<MediaModel>>()
-    val allImagesFetchedOnce : LiveData<MutableList<MediaModel>> = _allImagesFetchedOnce
+    val allImagesFetchedOnce: LiveData<MutableList<MediaModel>> = _allImagesFetchedOnce
 
     private val imagesList: MutableList<MediaModel> = mutableListOf()
 
     init {
+        fetchAllImagesOnDeviceOnce()
         addImages()
     }
 
-    private fun fetchAllImagesOnDeviceOnce(){
+    private fun fetchAllImagesOnDeviceOnce() {
         viewModelScope.launch(Dispatchers.IO) {
             val imagesOnDevice = imageRepository.fetchAllImagesOnDeviceOnce()
-            _allImagesFetchedOnce.value = imagesOnDevice
+            withContext(Dispatchers.Main) {
+                _allImagesFetchedOnce.value = imagesOnDevice
+            }
         }
     }
 

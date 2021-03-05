@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 import com.salesground.zipbolt.viewmodel.MediaViewModel
@@ -14,6 +15,6 @@ import com.salesground.zipbolt.viewmodel.MediaViewModel
 @Composable
 fun TempHomeScreen(mediaViewModel: MediaViewModel) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
-    val allImagesFetchedOnce = mediaViewModel.allImagesFetchedOnce.observeAsState()
-    ImagesOnDeviceList(images = allImagesOnDevice.value)
+    val allImagesFetchedOnce by mediaViewModel.allImagesFetchedOnce.observeAsState()
+    ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf())
 }
