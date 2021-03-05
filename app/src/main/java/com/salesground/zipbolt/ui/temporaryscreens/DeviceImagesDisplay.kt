@@ -55,7 +55,8 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
             }
             val rowCount = list.size / 4 + if (list.size % 4 == 0) 0 else 1
             items(rowCount) { rowIndex ->
-                Row {
+                Row (modifier = Modifier.fillMaxWidth(1f),
+                horizontalArrangement = Arrangement.SpaceEvenly){
                     for (i in 4 * rowIndex until 4 * (1 + rowIndex)) {
                         if (i < list.size) {
                             SingleImageOnDevice(list[i])
