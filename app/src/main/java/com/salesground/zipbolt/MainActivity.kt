@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
 
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             val clientServiceBinder = p1 as ClientService.ClientServiceBinder
-            clientService = clientServiceBinder.getClientServiceBinder()
+            mainActivityViewModel.clientServiceRead(clientServiceBinder.getClientServiceBinder())
             isClientServiceBound = true
         }
 
@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity() {
     private val serverServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             val serverServiceBinder = p1 as ServerService.ServerServiceBinder
-            serverService = serverServiceBinder.getServerServiceInstance()
+            mainActivityViewModel.serverServiceReady(serverServiceBinder.getServerServiceInstance())
             isServerServiceBound = true
         }
 
@@ -213,6 +213,18 @@ class MainActivity : AppCompatActivity() {
                 if (it) {
                     // begin peer discovery
                 }
+            }
+        })
+
+        mainActivityViewModel.serverService.observe(this, {
+            it?.let {
+                serverService = it
+            }
+        })
+
+        mainActivityViewModel.clientService.observe(this, {
+            it?.let {
+                clientService = it
             }
         })
 

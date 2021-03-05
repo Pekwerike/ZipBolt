@@ -38,6 +38,11 @@ class ServerService : Service() {
     override fun onCreate() {
         super.onCreate()
         zipBoltMTP = ZipBoltMTP(this)
+        try {
+            serverSocket = ServerSocket(SOCKET_PORT)
+        } catch (addressAlreadyInUse: Exception) {
+
+        }
     }
 
     inner class ServerServiceBinder : Binder() {
@@ -55,19 +60,6 @@ class ServerService : Service() {
 
         intent?.let {
             CoroutineScope(Dispatchers.IO).launch {
-                while(true) {
-                    try {
-                        serverSocket = ServerSocket(SOCKET_PORT)
-                        break
-                    } catch (addressAlreadyInUse: SocketException) {
-                        try {
-                            serverSocket.bind(null)
-                        }catch (alreadyBound: Exception){
-                            break
-                        }
-                        continue
-                    }
-                }
                 val client = serverSocket.accept()
                 val socketDOS = DataOutputStream(BufferedOutputStream(client.getOutputStream()))
                 val socketDIS = DataInputStream(BufferedInputStream(client.getInputStream()))

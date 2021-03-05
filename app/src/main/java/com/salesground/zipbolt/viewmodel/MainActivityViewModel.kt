@@ -25,15 +25,18 @@ class MainActivityViewModel : ViewModel() {
     var peeredDeviceConnectionInfoState = mutableStateOf<WifiP2pInfo>(WifiP2pInfo())
         private set
 
-    var clientService: ClientService? = null
-    var serverService: ServerService? = null
+    private var _clientService = MutableLiveData<ClientService>()
+    val clientService : LiveData<ClientService> = _clientService
+
+    private var _serverService = MutableLiveData<ServerService>()
+    val serverService : LiveData<ServerService> = _serverService
 
     fun serverServiceReady(serverService: ServerService) {
-        this.serverService = serverService
+        _serverService.value = serverService
     }
 
     fun clientServiceRead(clientService: ClientService) {
-        this.clientService = clientService
+        _clientService.value = clientService
     }
 
     fun wifiP2pStateChange(newState: Boolean) {
