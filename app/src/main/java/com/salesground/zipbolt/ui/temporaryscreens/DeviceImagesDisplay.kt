@@ -24,11 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.primarySurface
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +36,8 @@ import coil.request.ImageRequest
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.ui.theme.typography
 import dev.chrisbanes.accompanist.coil.CoilImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @ExperimentalAnimationApi
@@ -50,14 +48,18 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
     val groupedBy = images.groupBy {
         it.mediaBucketName
     }
-    LazyColumn(modifier = Modifier.fillMaxSize(1f), content = {
+    LazyColumn(modifier = Modifier.fillMaxSize(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center, content = {
         groupedBy.forEach { (s, list) ->
             stickyHeader {
                 Text(
                     s,
                     modifier = Modifier
                         .background(MaterialTheme.colors.surface)
-                        .fillMaxWidth(1f)
+                        .padding(5.dp)
+                        .fillMaxWidth(1f),
+                    style = MaterialTheme.typography.h6
                 )
             }
             val rowCount = list.size / 4 + if (list.size % 4 == 0) 0 else 1
@@ -81,6 +83,7 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
 @ExperimentalAnimationApi
 @Composable
 fun SingleImageOnDevice(image: MediaModel) {
+    val scope = rememberCoroutineScope()
     var imageClicked by remember { mutableStateOf<Boolean>(false) }
     val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 100.dp)
     Box(
@@ -88,23 +91,35 @@ fun SingleImageOnDevice(image: MediaModel) {
             .size(100.dp),
         contentAlignment = Alignment.Center
     ) {
-        CoilImage(
-            modifier = Modifier
-                .padding(1.dp)
-                .size(animatedImageSize)
-                .clickable {
-                    imageClicked = !imageClicked
-                },
-            data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
-            contentDescription = ""
-        )
-        AnimatedVisibility(visible = imageClicked) {
-            Box(
+            CoilImage(
                 modifier = Modifier
-                    .fillMaxSize(1f)
-                    .background(Color.Green.copy(alpha = 0.2f))
+                    .padding(1.dp)
+                    .size(animatedImageSize)
+                    .clickable {
+                        imageClicked = !imageClicked
+                    },
+                data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
+                contentDescription = "",
+                error = {
+                    CoilImage(
+                        modifier = Modifier
+                            .padding(1.dp)
+                            .size(animatedImageSize)
+                            .clickable {
+                                imageClicked = !imageClicked
+                            },
+                        data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
+                        contentDescription = ""
+                    )
+                }
             )
+            AnimatedVisibility(visible = imageClicked) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(1f)
+                        .background(Color.Green.copy(alpha = 0.2f))
+                )
+            }
         }
-    }
 }
 
