@@ -22,6 +22,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
@@ -34,6 +35,7 @@ import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.HomeScreen
+import com.salesground.zipbolt.ui.temporaryscreens.HomeScreenTwo
 import com.salesground.zipbolt.ui.temporaryscreens.TempHomeScreen
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
@@ -70,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
+    @ExperimentalMaterialApi
     @ExperimentalAnimationApi
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,11 +82,12 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreen(
+                    HomeScreenTwo(mediaViewModel)
+                   /* HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })
+                        selectedDevice = { connectToADevice(it) })*/
                   //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
