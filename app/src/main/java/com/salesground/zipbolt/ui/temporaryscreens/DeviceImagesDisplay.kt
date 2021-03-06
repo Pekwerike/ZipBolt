@@ -50,7 +50,7 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
     val groupedBy = images.groupBy {
         it.mediaBucketName
     }
-    LazyColumn(content = {
+    LazyColumn(modifier = Modifier.fillMaxSize(1f), content = {
         groupedBy.forEach { (s, list) ->
             stickyHeader {
                 Text(
