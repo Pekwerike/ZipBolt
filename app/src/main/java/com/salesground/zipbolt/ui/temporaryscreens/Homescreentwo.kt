@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.ui.temporaryscreens
 
+import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
-fun HomeScreenTwo(mediaViewModel: MediaViewModel) {
+fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
     val allImagesFetchedOnce by mediaViewModel.allImagesFetchedOnce.observeAsState()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
@@ -46,7 +47,7 @@ fun HomeScreenTwo(mediaViewModel: MediaViewModel) {
                         shape = RoundedCornerShape(corner = CornerSize(5.dp)))
                 )
             }
-            ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf())
+            ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf(), context)
         },
         sheetElevation =16.dp ,
       //  sheetShape = MaterialTheme.shapes.large.copy(topStart = CornerSize(16.dp), topEnd = CornerSize(16.dp)),

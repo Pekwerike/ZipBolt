@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                   HomeScreenTwo(mediaViewModel)
+                   HomeScreenTwo(mediaViewModel, this)
                  /*   HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { createWifiDirectGroup() },

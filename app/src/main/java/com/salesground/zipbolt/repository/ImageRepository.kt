@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Size
+import androidx.annotation.RequiresApi
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
@@ -26,6 +28,7 @@ import kotlin.math.min
 
 class ImageRepository @Inject constructor
     (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
+
 
     fun fetchAllImagesOnDeviceOnce(): MutableList<MediaModel> {
         val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
@@ -110,7 +113,8 @@ class ImageRepository @Inject constructor
                         mediaSize = imageSize,
                         mediaCategory = MediaCategory.IMAGE,
                         mimeType = imageMimeType,
-                        mediaBucketName = imageParentFolderName
+                        mediaBucketName = imageParentFolderName,
+
                     )
                 )
             }

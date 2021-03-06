@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.ui.temporaryscreens
 
+import android.content.Context
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
@@ -13,8 +14,8 @@ import com.salesground.zipbolt.viewmodel.MediaViewModel
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @Composable
-fun TempHomeScreen(mediaViewModel: MediaViewModel) {
+fun TempHomeScreen(mediaViewModel: MediaViewModel, context : Context) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
     val allImagesFetchedOnce by mediaViewModel.allImagesFetchedOnce.observeAsState()
-    ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf())
+    ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf(), context)
 }

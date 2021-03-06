@@ -26,11 +26,18 @@ class MediaViewModel @Inject constructor(
     private var _allImagesFetchedOnce = MutableLiveData<MutableList<MediaModel>>()
     val allImagesFetchedOnce: LiveData<MutableList<MediaModel>> = _allImagesFetchedOnce
 
+    private var _selectedImagesForTransfer = MutableLiveData<MutableList<MediaModel>>(mutableListOf())
+    val selectedImagesForTransfer : LiveData<MutableList<MediaModel>> = _selectedImagesForTransfer
+
     private val imagesList: MutableList<MediaModel> = mutableListOf()
 
     init {
         fetchAllImagesOnDeviceOnce()
         addImages()
+    }
+
+    fun imageSelected(imageSelected : MediaModel){
+        _selectedImagesForTransfer.value?.add(imageSelected)
     }
 
     private fun fetchAllImagesOnDeviceOnce() {

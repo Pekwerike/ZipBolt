@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.model
 
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 
 enum class MediaCategory(private val mediaType : String) {

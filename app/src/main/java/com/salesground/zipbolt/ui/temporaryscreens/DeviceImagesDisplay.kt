@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.temporaryscreens
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
@@ -33,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.request.ImageRequest
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.ui.theme.typography
 import dev.chrisbanes.accompanist.coil.CoilImage
@@ -43,7 +45,7 @@ import kotlinx.coroutines.launch
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @Composable
-fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
+fun ImagesOnDeviceList(images: MutableList<MediaModel>, context: Context) {
 
     val groupedBy = images.groupBy {
         it.mediaBucketName
@@ -51,65 +53,86 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
     LazyColumn(modifier = Modifier.fillMaxSize(1f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center, content = {
-        groupedBy.forEach { (s, list) ->
-            stickyHeader {
-                Text(
-                    s,
-                    modifier = Modifier
-                        .background(MaterialTheme.colors.surface)
-                        .padding(5.dp)
-                        .fillMaxWidth(1f),
-                    style = MaterialTheme.typography.h6
-                )
-            }
-            val rowCount = list.size / 4 + if (list.size % 4 == 0) 0 else 1
-            items(rowCount) { rowIndex ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(1f),
-                    horizontalArrangement = Arrangement.spacedBy(1.dp)
-                ) {
-                    for (i in 4 * rowIndex until 4 * (1 + rowIndex)) {
-                        if (i < list.size) {
-                            SingleImageOnDevice(list[i])
-                        } else break
+            groupedBy.forEach { (s, list) ->
+                stickyHeader {
+                    Text(
+                        s,
+                        modifier = Modifier
+                            .background(MaterialTheme.colors.surface)
+                            .padding(5.dp)
+                            .fillMaxWidth(1f),
+                        style = MaterialTheme.typography.h6
+                    )
+                }
+                val rowCount = list.size / 4 + if (list.size % 4 == 0) 0 else 1
+                items(rowCount) { rowIndex ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(1f),
+                        horizontalArrangement = Arrangement.spacedBy(1.dp)
+                    ) {
+                        for (i in 4 * rowIndex until 4 * (1 + rowIndex)) {
+                            if (i < list.size) {
+                                SingleImageOnDevice(list[i], context)
+                            } else break
+                        }
                     }
                 }
             }
-        }
-    })
+        })
 }
 
 
 @ExperimentalAnimationApi
 @Composable
-fun SingleImageOnDevice(image: MediaModel) {
+fun SingleImageOnDevice(image: MediaModel, context: Context) {
+
     var imageClicked by remember { mutableStateOf<Boolean>(false) }
     val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 100.dp)
     Box(
         modifier = Modifier
-            .size(100.dp),
-        contentAlignment = Alignment.Center
+            .size(100.dp)
+            .padding(5.dp)
     ) {
+
+        Box(
+            modifier = Modifier
+                .size(100.dp),
+            contentAlignment = Alignment.Center
+        ) {
             CoilImage(
+                request = ImageRequest.Builder(context)
+                    .apply {
+                        size(100, 100)
+                        data(image.mediaUri)
+                        dispatcher(Dispatchers.Default)
+                        allowHardware(true)
+                       // placeholder(R.drawable.zipbolt_service_notification_icon)
+
+                    }.build(),
                 modifier = Modifier
                     .padding(1.dp)
                     .size(animatedImageSize)
                     .clickable {
                         imageClicked = !imageClicked
                     },
-                data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
+                fadeIn = true,
+                contentScale = ContentScale.Crop,
                 contentDescription = ""
             )
-            Checkbox(checked = imageClicked, onCheckedChange = {
-
-            }, modifier = Modifier.clip(shape = MaterialTheme.shapes.small.copy(CornerSize(10.dp))))
             AnimatedVisibility(visible = imageClicked) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize(1f)
-                        .background(Color.Green.copy(alpha = 0.2f))
+                        .background(Color.Gray.copy(alpha = 0.2f))
                 )
             }
         }
+        Checkbox(
+            checked = imageClicked, onCheckedChange = {
+                imageClicked = !imageClicked
+            }, modifier = Modifier.clip(shape = MaterialTheme.shapes.small.copy(CornerSize(10.dp))),
+            colors = CheckboxDefaults.colors(checkedColor = Color.Green.copy(0.5f))
+        )
+    }
 }
 
