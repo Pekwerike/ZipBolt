@@ -160,8 +160,12 @@ class MainActivity : AppCompatActivity() {
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
                         displayToast("Group created successfully")
-                        wifiP2pManager.requestGroupInfo(wifiP2pChannel){
-                            Log.i("WifiP2pProsper", it.passphrase)
+                        wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
+                            it?.let {
+                                Log.i("WifiP2pProsper", it.passphrase)
+                                Toast.makeText(this@MainActivity,
+                                    it.passphrase, Toast.LENGTH_LONG).show()
+                            }
                         }
                     }
 
