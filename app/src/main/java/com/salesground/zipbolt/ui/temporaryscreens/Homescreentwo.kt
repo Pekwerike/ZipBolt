@@ -27,8 +27,11 @@ import kotlinx.coroutines.launch
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
-fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context,
-                  imageSelectedForTransfer: (MediaModel) -> Unit) {
+fun HomeScreenTwo(
+    mediaViewModel: MediaViewModel, context: Context,
+    imageSelectedForTransfer: (MediaModel) -> Unit,
+    transferImages: () -> Unit
+) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
     val allImagesFetchedOnce by mediaViewModel.allImagesFetchedOnce.observeAsState()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
@@ -44,15 +47,19 @@ fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context,
                     modifier = Modifier
                         .width(60.dp)
                         .height(10.dp)
-                        .background(color = Color.DarkGray.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(corner = CornerSize(5.dp)))
+                        .background(
+                            color = Color.DarkGray.copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(corner = CornerSize(5.dp))
+                        )
                 )
             }
-            ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf(), context,
-                imageSelectedForTransfer)
+            ImagesOnDeviceList(
+                images = allImagesFetchedOnce ?: mutableListOf(), context,
+                imageSelectedForTransfer
+            )
         },
-        sheetElevation =16.dp ,
-      //  sheetShape = MaterialTheme.shapes.large.copy(topStart = CornerSize(16.dp), topEnd = CornerSize(16.dp)),
+        sheetElevation = 16.dp,
+        //  sheetShape = MaterialTheme.shapes.large.copy(topStart = CornerSize(16.dp), topEnd = CornerSize(16.dp)),
         scaffoldState = bottomSheetScaffoldState
     ) {
         Column(
@@ -62,12 +69,8 @@ fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = {
-                homeScreenCoroutineScope.launch {
-                    bottomSheetScaffoldState.bottomSheetState.expand()
-                }
-            }) {
-                Text(text = "Open")
+            Button(onClick = transferImages) {
+                Text(text = "Transfer")
             }
         }
     }

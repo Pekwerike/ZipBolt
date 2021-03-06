@@ -112,13 +112,14 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreenTwo(mediaViewModel, this, this::imageSelected)
-                    /*   HomeScreen(
-                           mainActivityViewModel = mainActivityViewModel,
-                           sendAction = { createWifiDirectGroup() },
-                           // sendAction = { beginPeerDiscovery() },
-                           receiveAction = { beginPeerDiscovery() },
-                           selectedDevice = { connectToADevice(it) })*/
+                    HomeScreenTwo(mediaViewModel, this, this::imageSelected
+                    ) { transferImages() }
+                    HomeScreen(
+                        mainActivityViewModel = mainActivityViewModel,
+                        // sendAction = { createWifiDirectGroup() },
+                        sendAction = { beginPeerDiscovery() },
+                        receiveAction = { beginPeerDiscovery() },
+                        selectedDevice = { connectToADevice(it) })
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
@@ -132,15 +133,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun imageSelected(image: MediaModel) {
         mediaViewModel.imageSelected(image)
+        displayToast(image.mediaBucketName)
     }
 
     private fun transferImages() {
         val selectedImages = mediaViewModel.selectedImagesForTransfer.value
-        if(mainActivityViewModel.clientService.value != null){
+        if (mainActivityViewModel.clientService.value != null) {
             selectedImages?.let {
                 mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
             }
-        }else {
+        } else {
             selectedImages?.let {
                 mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
             }
