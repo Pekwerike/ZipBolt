@@ -110,13 +110,13 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    //  HomeScreenTwo(mediaViewModel)
-                    HomeScreen(
+                   HomeScreenTwo(mediaViewModel)
+                 /*   HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { createWifiDirectGroup() },
                         // sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })
+                        selectedDevice = { connectToADevice(it) })*/
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
@@ -163,8 +163,8 @@ class MainActivity : AppCompatActivity() {
                         wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
                             it?.let {
 
-                                Toast.makeText(this@MainActivity,
-                                    it.passphrase, Toast.LENGTH_LONG).show()
+                                Toast.makeText(this@MainActivity, "Password is " +
+                                        it.passphrase, Toast.LENGTH_LONG).show()
                             }
                         }
                     }

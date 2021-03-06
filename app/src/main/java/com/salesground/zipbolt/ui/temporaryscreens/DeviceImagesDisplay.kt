@@ -17,16 +17,15 @@ import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Done
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -101,6 +100,9 @@ fun SingleImageOnDevice(image: MediaModel) {
                 data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
                 contentDescription = ""
             )
+            Checkbox(checked = imageClicked, onCheckedChange = {
+
+            }, modifier = Modifier.clip(shape = MaterialTheme.shapes.small.copy(CornerSize(10.dp))))
             AnimatedVisibility(visible = imageClicked) {
                 Box(
                     modifier = Modifier
