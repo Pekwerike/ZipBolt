@@ -91,9 +91,7 @@ fun SingleImageOnDevice(image: MediaModel, context: Context) {
     Box(
         modifier = Modifier
             .size(100.dp)
-            .padding(5.dp)
     ) {
-
         Box(
             modifier = Modifier
                 .size(100.dp),
@@ -106,8 +104,6 @@ fun SingleImageOnDevice(image: MediaModel, context: Context) {
                         data(image.mediaUri)
                         dispatcher(Dispatchers.Default)
                         allowHardware(true)
-                       // placeholder(R.drawable.zipbolt_service_notification_icon)
-
                     }.build(),
                 modifier = Modifier
                     .padding(1.dp)

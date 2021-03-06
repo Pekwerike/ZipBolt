@@ -28,12 +28,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.localnetwork.Client
 import com.salesground.zipbolt.localnetwork.Server
+import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.HomeScreen
 import com.salesground.zipbolt.ui.temporaryscreens.HomeScreenTwo
@@ -110,13 +112,13 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                   HomeScreenTwo(mediaViewModel, this)
-                 /*   HomeScreen(
-                        mainActivityViewModel = mainActivityViewModel,
-                        sendAction = { createWifiDirectGroup() },
-                        // sendAction = { beginPeerDiscovery() },
-                        receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })*/
+                    HomeScreenTwo(mediaViewModel, this)
+                    /*   HomeScreen(
+                           mainActivityViewModel = mainActivityViewModel,
+                           sendAction = { createWifiDirectGroup() },
+                           // sendAction = { beginPeerDiscovery() },
+                           receiveAction = { beginPeerDiscovery() },
+                           selectedDevice = { connectToADevice(it) })*/
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
@@ -126,6 +128,21 @@ class MainActivity : AppCompatActivity() {
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
+    }
+
+    private fun imageSelected(image: MediaModel) {
+        mediaViewModel.imageSelected(image)
+    }
+
+    private fun transferImages() {
+        val selectedImages = mediaViewModel.selectedImagesForTransfer.value
+        mainActivityViewModel.clientService.observe(this, Observer {
+            it?.let { clientService: ClientService ->
+                selectedImages?.let {
+                   clientService.transferMediaItems(selectedImages)
+                }
+            }
+        })
     }
 
     private fun createNotificationChannel() {
@@ -163,8 +180,10 @@ class MainActivity : AppCompatActivity() {
                         wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
                             it?.let {
 
-                                Toast.makeText(this@MainActivity, "Password is " +
-                                        it.passphrase, Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this@MainActivity, "Password is " +
+                                            it.passphrase, Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     }

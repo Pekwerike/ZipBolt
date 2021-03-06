@@ -79,7 +79,7 @@ class ServerService : Service() {
                     listenForNewMediaCollectionToTransfer(socketDOS)
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-
+                    listenForIncomingMediaItemsToReceive(socketDIS)
                 }
             }
         }
