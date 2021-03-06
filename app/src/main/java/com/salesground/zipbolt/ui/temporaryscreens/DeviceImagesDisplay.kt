@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -83,7 +84,6 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
 @ExperimentalAnimationApi
 @Composable
 fun SingleImageOnDevice(image: MediaModel) {
-    val scope = rememberCoroutineScope()
     var imageClicked by remember { mutableStateOf<Boolean>(false) }
     val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 100.dp)
     Box(
@@ -99,19 +99,7 @@ fun SingleImageOnDevice(image: MediaModel) {
                         imageClicked = !imageClicked
                     },
                 data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
-                contentDescription = "",
-                error = {
-                    CoilImage(
-                        modifier = Modifier
-                            .padding(1.dp)
-                            .size(animatedImageSize)
-                            .clickable {
-                                imageClicked = !imageClicked
-                            },
-                        data = image.mediaUri, contentScale = ContentScale.Crop, fadeIn = true,
-                        contentDescription = ""
-                    )
-                }
+                contentDescription = ""
             )
             AnimatedVisibility(visible = imageClicked) {
                 Box(

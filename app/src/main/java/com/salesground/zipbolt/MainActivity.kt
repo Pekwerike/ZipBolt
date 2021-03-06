@@ -16,6 +16,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -60,6 +61,12 @@ class MainActivity : AppCompatActivity() {
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
     }
+    private val notificationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
+        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+    private val wifiManager: WifiManager by lazy(LazyThreadSafetyMode.NONE) {
+        applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    }
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var intentFilter: IntentFilter
@@ -68,8 +75,29 @@ class MainActivity : AppCompatActivity() {
     private var isClientServiceBound: Boolean = false
 
 
-    private val notificationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
-        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val clientServiceConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            val clientServiceBinder = p1 as ClientService.ClientServiceBinder
+            mainActivityViewModel.clientServiceRead(clientServiceBinder.getClientServiceBinder())
+            isClientServiceBound = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isClientServiceBound = false
+        }
+    }
+
+    private val serverServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            val serverServiceBinder = p1 as ServerService.ServerServiceBinder
+            mainActivityViewModel.serverServiceReady(serverServiceBinder.getServerServiceInstance())
+            isServerServiceBound = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isServerServiceBound = false
+        }
     }
 
     @ExperimentalMaterialApi
@@ -82,13 +110,14 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreenTwo(mediaViewModel)
-                   /* HomeScreen(
+                    //  HomeScreenTwo(mediaViewModel)
+                    HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
-                        sendAction = { beginPeerDiscovery() },
+                        sendAction = { createWifiDirectGroup() },
+                        // sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })*/
-                  //   TempHomeScreen(mediaViewModel = mediaViewModel)
+                        selectedDevice = { connectToADevice(it) })
+                    //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
         }
@@ -106,6 +135,41 @@ class MainActivity : AppCompatActivity() {
 
     fun peeredDeviceConnectionInfoReady(deviceConnectionInfo: WifiP2pInfo) {
         mainActivityViewModel.peeredDeviceConnectionInfoUpdated(connectionInfo = deviceConnectionInfo)
+    }
+
+
+    @SuppressLint("MissingPermission", "HardwareIds")
+    private fun createWifiDirectGroup() {
+        val wifiP2pConfig = WifiP2pConfig().apply {
+            deviceAddress = wifiManager.connectionInfo.macAddress
+            wps.setup = WpsInfo.PBC
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+                        displayToast("Group created successfully")
+                    }
+
+                    override fun onFailure(p0: Int) {
+                        displayToast("Group creation failed")
+                    }
+                })
+        } else {
+            wifiP2pManager.createGroup(wifiP2pChannel,
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+                        displayToast("Group created successfully")
+                        wifiP2pManager.requestGroupInfo(wifiP2pChannel){
+                            Log.i("WifiP2pProsper", it.passphrase)
+                        }
+                    }
+
+                    override fun onFailure(p0: Int) {
+                        displayToast("Group creation failed")
+                    }
+                })
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -185,31 +249,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val clientServiceConnection = object : ServiceConnection {
-
-        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            val clientServiceBinder = p1 as ClientService.ClientServiceBinder
-            mainActivityViewModel.clientServiceRead(clientServiceBinder.getClientServiceBinder())
-            isClientServiceBound = true
-        }
-
-        override fun onServiceDisconnected(p0: ComponentName?) {
-            isClientServiceBound = false
-        }
-    }
-
-    private val serverServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            val serverServiceBinder = p1 as ServerService.ServerServiceBinder
-            mainActivityViewModel.serverServiceReady(serverServiceBinder.getServerServiceInstance())
-            isServerServiceBound = true
-        }
-
-        override fun onServiceDisconnected(p0: ComponentName?) {
-            isServerServiceBound = false
-        }
-    }
-
     private fun observeViewModelLiveData() {
         // wifiP2p state changed, either enabled or disabled
         mainActivityViewModel.isWifiP2pEnabled.observe(this, {
@@ -237,8 +276,9 @@ class MainActivity : AppCompatActivity() {
                                     startService(this)
                                 }
                             }
-                        } else{
-                            Toast.makeText(this, "Connected to client already", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Connected to client already", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     } else if (wifiP2pInfo.groupFormed) {
                         // client
@@ -253,7 +293,11 @@ class MainActivity : AppCompatActivity() {
                                     startService(this)
                                 }
                             }
-                        }else Toast.makeText(this, "Connected to server already", Toast.LENGTH_SHORT).show()
+                        } else Toast.makeText(
+                            this,
+                            "Connected to server already",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                 }
