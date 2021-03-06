@@ -82,10 +82,10 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>) {
 @Composable
 fun SingleImageOnDevice(image: MediaModel) {
     var imageClicked by remember { mutableStateOf<Boolean>(false) }
-    val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 101.dp)
+    val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 100.dp)
     Box(
         modifier = Modifier
-            .size(101.dp),
+            .size(100.dp),
         contentAlignment = Alignment.Center
     ) {
         CoilImage(

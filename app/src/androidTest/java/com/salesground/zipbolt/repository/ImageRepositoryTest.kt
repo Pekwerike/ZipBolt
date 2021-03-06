@@ -57,7 +57,7 @@ class ImageRepositoryTest {
     @Test
     fun insertImageIntoMediaStoreTest() = runBlocking {
         val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
-        val firstImage = allImagesOnDevice[0]
+        val firstImage = allImagesOnDevice[3]
         applicationContext.contentResolver.openFileDescriptor(firstImage.mediaUri, "r")?.also {
             val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
             imageRepository.insertImageIntoMediaStore(

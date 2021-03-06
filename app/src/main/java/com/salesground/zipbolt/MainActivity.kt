@@ -62,8 +62,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var intentFilter: IntentFilter
     private lateinit var ftsNotification: FileTransferServiceNotification
-    private var clientService: ClientService? = null
-    private var serverService: ServerService? = null
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
 
@@ -81,12 +79,12 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                   /* HomeScreen(
+                    HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })*/
-                     TempHomeScreen(mediaViewModel = mediaViewModel)
+                        selectedDevice = { connectToADevice(it) })
+                  //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
         }
@@ -218,18 +216,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mainActivityViewModel.serverService.observe(this, {
-            it?.let {
-                serverService = it
-            }
-        })
-
-        mainActivityViewModel.clientService.observe(this, {
-            it?.let {
-                clientService = it
-            }
-        })
-
         // peeredDevice connection info ready, use this details to create a socket connection btw both device
         mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
             it?.let { wifiP2pInfo ->
@@ -237,9 +223,9 @@ class MainActivity : AppCompatActivity() {
                     val ipAddressForServerSocket: String = it.hostAddress
                     if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
                         // server
-                        if (serverService == null) {
+                        if (mainActivityViewModel.serverService.value == null) {
                             Intent(this@MainActivity, ServerService::class.java).apply {
-                                bindService(this, serverServiceConnection, 0)
+                                bindService(this, serverServiceConnection, Context.BIND_AUTO_CREATE)
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     startService(this)
                                     startForegroundService(this)
@@ -247,13 +233,15 @@ class MainActivity : AppCompatActivity() {
                                     startService(this)
                                 }
                             }
+                        } else{
+                            Toast.makeText(this, "Connected to client already", Toast.LENGTH_SHORT).show()
                         }
                     } else if (wifiP2pInfo.groupFormed) {
                         // client
-                        if (clientService == null) {
+                        if (mainActivityViewModel.clientService.value == null) {
                             Intent(this@MainActivity, ClientService::class.java).apply {
                                 putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
-                                bindService(this, clientServiceConnection, 0)
+                                bindService(this, clientServiceConnection, Context.BIND_AUTO_CREATE)
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     startService(this)
                                     startForegroundService(this)
@@ -261,7 +249,7 @@ class MainActivity : AppCompatActivity() {
                                     startService(this)
                                 }
                             }
-                        }
+                        }else Toast.makeText(this, "Connected to server already", Toast.LENGTH_SHORT).show()
                     }
 
                 }
@@ -329,6 +317,8 @@ class MainActivity : AppCompatActivity() {
         // unbind the bounded services
         if (isClientServiceBound) unbindService(clientServiceConnection)
         if (isServerServiceBound) unbindService(serverServiceConnection)
+        isServerServiceBound = false
+        isClientServiceBound = false
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
     }

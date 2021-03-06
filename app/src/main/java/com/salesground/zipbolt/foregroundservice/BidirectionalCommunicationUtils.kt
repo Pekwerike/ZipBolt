@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.foregroundservice
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
@@ -15,9 +16,11 @@ const val DATA_AVAILABLE = "DataAvailable"
 const val FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID = 2
 const val SOCKET_PORT = 8098
 
+
 fun configureNotification(context: Context): Notification {
     val openMainActivityPendingIntent: PendingIntent =
         Intent(context, MainActivity::class.java).let {
+            it.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             PendingIntent.getActivity(
                 context,
                 OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE,
