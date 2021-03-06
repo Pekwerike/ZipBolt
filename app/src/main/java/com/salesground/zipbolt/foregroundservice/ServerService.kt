@@ -15,9 +15,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.net.BindException
-import java.net.ServerSocket
-import java.net.SocketException
+import java.net.*
 import java.nio.channels.AlreadyBoundException
 
 class ServerService : Service() {
@@ -60,8 +58,16 @@ class ServerService : Service() {
                 } catch (addressAlreadyInUse: Exception) {
 
                 }
-                val client = serverSocket.accept()
-                val socketDOS = DataOutputStream(BufferedOutputStream(client.getOutputStream()))
+                var client: Socket? = null
+                while (true) {
+                    try {
+                        client = serverSocket.accept()
+                        break
+                    } catch (socketConnectionTimeOut: SocketTimeoutException) {
+                        continue
+                    }
+                }
+                val socketDOS = DataOutputStream(BufferedOutputStream(client!!.getOutputStream()))
                 val socketDIS = DataInputStream(BufferedInputStream(client.getInputStream()))
 
                 withContext(Dispatchers.Main) {
