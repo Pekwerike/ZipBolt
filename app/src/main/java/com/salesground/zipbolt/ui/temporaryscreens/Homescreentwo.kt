@@ -27,7 +27,8 @@ import kotlinx.coroutines.launch
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
-fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context) {
+fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context,
+                  imageSelectedForTransfer: (MediaModel) -> Unit) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
     val allImagesFetchedOnce by mediaViewModel.allImagesFetchedOnce.observeAsState()
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
@@ -47,7 +48,8 @@ fun HomeScreenTwo(mediaViewModel: MediaViewModel, context: Context) {
                         shape = RoundedCornerShape(corner = CornerSize(5.dp)))
                 )
             }
-            ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf(), context)
+            ImagesOnDeviceList(images = allImagesFetchedOnce?: mutableListOf(), context,
+                imageSelectedForTransfer)
         },
         sheetElevation =16.dp ,
       //  sheetShape = MaterialTheme.shapes.large.copy(topStart = CornerSize(16.dp), topEnd = CornerSize(16.dp)),

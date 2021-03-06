@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreenTwo(mediaViewModel, this)
+                    HomeScreenTwo(mediaViewModel, this, this::imageSelected)
                     /*   HomeScreen(
                            mainActivityViewModel = mainActivityViewModel,
                            sendAction = { createWifiDirectGroup() },
@@ -136,13 +136,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun transferImages() {
         val selectedImages = mediaViewModel.selectedImagesForTransfer.value
-        mainActivityViewModel.clientService.observe(this, Observer {
-            it?.let { clientService: ClientService ->
-                selectedImages?.let {
-                   clientService.transferMediaItems(selectedImages)
-                }
+        if(mainActivityViewModel.clientService.value != null){
+            selectedImages?.let {
+                mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
             }
-        })
+        }else {
+            selectedImages?.let {
+                mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
+            }
+        }
     }
 
     private fun createNotificationChannel() {

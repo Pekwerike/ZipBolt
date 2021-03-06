@@ -45,7 +45,8 @@ import kotlinx.coroutines.launch
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @Composable
-fun ImagesOnDeviceList(images: MutableList<MediaModel>, context: Context) {
+fun ImagesOnDeviceList(images: MutableList<MediaModel>, context: Context,
+                       imageSelectedForTransfer: (MediaModel) -> Unit) {
 
     val groupedBy = images.groupBy {
         it.mediaBucketName
@@ -72,7 +73,7 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>, context: Context) {
                     ) {
                         for (i in 4 * rowIndex until 4 * (1 + rowIndex)) {
                             if (i < list.size) {
-                                SingleImageOnDevice(list[i], context)
+                                SingleImageOnDevice(list[i], context, imageSelectedForTransfer)
                             } else break
                         }
                     }
@@ -84,7 +85,10 @@ fun ImagesOnDeviceList(images: MutableList<MediaModel>, context: Context) {
 
 @ExperimentalAnimationApi
 @Composable
-fun SingleImageOnDevice(image: MediaModel, context: Context) {
+fun SingleImageOnDevice(
+    image: MediaModel, context: Context,
+    imageSelectedForTransfer: (MediaModel) -> Unit
+) {
 
     var imageClicked by remember { mutableStateOf<Boolean>(false) }
     val animatedImageSize by animateDpAsState(targetValue = if (imageClicked) 70.dp else 100.dp)
@@ -110,6 +114,7 @@ fun SingleImageOnDevice(image: MediaModel, context: Context) {
                     .size(animatedImageSize)
                     .clickable {
                         imageClicked = !imageClicked
+                        imageSelectedForTransfer(image)
                     },
                 fadeIn = true,
                 contentScale = ContentScale.Crop,
