@@ -185,7 +185,6 @@ class MainActivity : AppCompatActivity() {
                         displayToast("Group created successfully")
                         wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
                             it?.let {
-
                                 Toast.makeText(
                                     this@MainActivity, "Password is " +
                                             it.passphrase, Toast.LENGTH_LONG
