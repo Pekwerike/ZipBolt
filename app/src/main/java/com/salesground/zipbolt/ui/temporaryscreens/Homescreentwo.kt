@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 fun HomeScreenTwo(
     mediaViewModel: MediaViewModel, context: Context,
     imageSelectedForTransfer: (MediaModel) -> Unit,
-    transferImages: () -> Unit
 ) {
     val allImagesOnDevice = mediaViewModel.allImagesOnDevice
     val allImagesFetchedOnce by mediaViewModel.allImagesFetchedOnce.observeAsState()
@@ -69,9 +68,6 @@ fun HomeScreenTwo(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = transferImages) {
-                Text(text = "Transfer")
-            }
         }
     }
 }

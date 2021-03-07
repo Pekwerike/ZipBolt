@@ -20,7 +20,8 @@ import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 @Composable
 fun HomeScreen(
     mainActivityViewModel: MainActivityViewModel,
-    sendAction: () -> Unit, receiveAction: () -> Unit, selectedDevice : (WifiP2pDevice) -> Unit
+    sendAction: () -> Unit, receiveAction: () -> Unit, selectedDevice : (WifiP2pDevice) -> Unit,
+    transferImages: () -> Unit
 ) {
 
 
@@ -33,7 +34,10 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        LazyColumn(modifier = Modifier.fillMaxHeight(0.9f), content = {
+        Button(onClick = transferImages) {
+            Text(text = "Transfer")
+        }
+        LazyColumn(modifier = Modifier.fillMaxHeight(0.8f), content = {
             items(listOfDiscoveredDevices.value) { device ->
                 DiscoveredPeerUI(device = device, selectedDevice = selectedDevice)
             }

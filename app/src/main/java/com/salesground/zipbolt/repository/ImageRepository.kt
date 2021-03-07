@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Size
 import androidx.annotation.RequiresApi
 import com.salesground.zipbolt.model.MediaCategory
@@ -105,6 +106,7 @@ class ImageRepository @Inject constructor
                     }
 
 
+
                 allImagesOnDevice.add(
                     MediaModel(
                         mediaUri = imageUri,
@@ -115,7 +117,7 @@ class ImageRepository @Inject constructor
                         mimeType = imageMimeType,
                         mediaBucketName = imageParentFolderName,
 
-                    )
+                        )
                 )
             }
         }
@@ -216,7 +218,6 @@ class ImageRepository @Inject constructor
         if (!imageFolder.exists()) imageFolder.mkdirs()
 
         imagesToConvert.forEach {
-
             val imageFile = File(imageFolder, it.mediaDisplayName)
             val imageFileOutputStream = FileOutputStream(imageFile)
 
@@ -236,7 +237,7 @@ class ImageRepository @Inject constructor
         return imageFiles
     }
 
-    suspend fun insertImageIntoMediaStore(
+    fun insertImageIntoMediaStore(
         mediaName: String?,
         mediaSize: Long,
         mediaMimeType: String,
@@ -247,22 +248,37 @@ class ImageRepository @Inject constructor
         val mainDirectory = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             File(Environment.DIRECTORY_PICTURES, "ZipBoltImages")
         else File(Environment.getExternalStorageDirectory(), "ZipBoltImages")
-        if (!mainDirectory.exists()) mainDirectory.mkdirs()
-        val imageFile = File(mainDirectory, mediaName)
+        if (!mainDirectory.exists()) {
+            mainDirectory.mkdirs()
+        }
+
+       /* TODO Create a function that searches the mediaStore for an image with the exact same name
+       as mediaName before trying to create a file for the image
+
+       applicationContext.contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            null,
+            "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
+            arrayOf(mediaName),
+            "${MediaStore.Images.Media.DISPLAY_NAME} LIMIT 1"
+        )*/
+
+        val imageFile = File(mainDirectory, "Image" + System.currentTimeMillis() + ".jpg")
+       // Log.i("NewTransfer", "right here in media store filename = ${imageFile.name}")
 
         val contentValues = ContentValues().apply {
-            put(MediaStore.Images.Media.DISPLAY_NAME, mediaName)
-            put(MediaStore.Images.Media.TITLE, mediaName)
+            put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
+            put(MediaStore.Images.Media.TITLE, imageFile.name)
             put(MediaStore.Images.Media.SIZE, mediaSize1)
             put(MediaStore.Images.Media.MIME_TYPE, mediaMimeType)
-            put(MediaStore.Images.Media.DATE_ADDED, Calendar.getInstance().timeInMillis)
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
                 put(
                     MediaStore.Images.Media.RELATIVE_PATH,
                     Environment.DIRECTORY_PICTURES + "/ZipBoltImages"
                 )
-                put(MediaStore.Images.Media.DATE_TAKEN, Calendar.getInstance().timeInMillis)
+                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
@@ -304,8 +320,9 @@ class ImageRepository @Inject constructor
                 imageFileDataOutputStream.close()
                 it.close()
             }
-            contentValues.clear()
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentValues.clear()
                 contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
                 applicationContext.contentResolver.update(imageUri, contentValues, null, null)
             }

@@ -35,6 +35,6 @@ fun configureNotification(context: Context): Notification {
             setContentText(context.getString(R.string.fileTransferServiceNotificationContentText))
             setContentIntent(openMainActivityPendingIntent)
             setSmallIcon(R.drawable.zipbolt_service_notification_icon)
-            setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            priority = NotificationCompat.PRIORITY_DEFAULT
         }.build()
 }

@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
@@ -87,22 +88,36 @@ class ServerService : Service() {
         return START_NOT_STICKY
     }
 
-    private suspend fun listenForIncomingMediaItemsToReceive(DIS: DataInputStream) {
+   /* private fun listenForIncomingMediaItemsToReceive(DIS: DataInputStream) {
         while (true) {
             val isMediaAvailable = DIS.readUTF()
             if (isMediaAvailable == DATA_AVAILABLE) {
                 zipBoltMTP.receiveMedia(DIS)
             }
         }
+    }*/
+    private fun listenForIncomingMediaItemsToReceive(socketDIS: DataInputStream){
+        while (true) {
+            try {
+                val isDataToReceiveAvailable = socketDIS.readUTF()
+                if (isDataToReceiveAvailable == DATA_AVAILABLE) {
+                   // Log.i("NewTransfer", "Data is now available")
+                    zipBoltMTP.receiveMedia(socketDIS)
+                }
+            } catch (exception: Exception) {
+                continue
+            }
+        }
     }
 
-    private suspend fun listenForNewMediaCollectionToTransfer(DOS: DataOutputStream) {
-
+    private fun listenForNewMediaCollectionToTransfer(DOS: DataOutputStream) {
         while (true) {
             if (isDataAvailableToTransfer) {
+                isDataAvailableToTransfer = false
                 DOS.writeUTF(DATA_AVAILABLE)
                 zipBoltMTP.transferMedia(mediaItemsToTransfer, DOS)
-                isDataAvailableToTransfer = false
+                //Log.i("NewTransfer", "Transfer completed " +
+                  //      "isDataAvailableToTransfer value is ${isDataAvailableToTransfer}")
             } else {
                 DOS.writeUTF(NO_DATA_AVAILABLE)
             }
@@ -112,5 +127,6 @@ class ServerService : Service() {
     fun transferMediaItems(mediaItems: MutableList<MediaModel>) {
         mediaItemsToTransfer = mediaItems
         isDataAvailableToTransfer = true
+        //Log.i("NewTransfer", "Items available, items count is ${mediaItemsToTransfer.size}")
     }
 }

@@ -112,14 +112,14 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreenTwo(mediaViewModel, this, this::imageSelected
-                    ) { transferImages() }
+                    HomeScreenTwo(mediaViewModel, this, this::imageSelected)
                     HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         // sendAction = { createWifiDirectGroup() },
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) })
+                        selectedDevice = { connectToADevice(it) },
+                        this::transferImages)
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun imageSelected(image: MediaModel) {
         mediaViewModel.imageSelected(image)
-        displayToast(image.mediaBucketName)
+        displayToast(image.mimeType)
     }
 
     private fun transferImages() {
@@ -141,10 +141,12 @@ class MainActivity : AppCompatActivity() {
         if (mainActivityViewModel.clientService.value != null) {
             selectedImages?.let {
                 mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
+                displayToast("transfering")
             }
-        } else {
+        } else if(mainActivityViewModel.serverService.value != null){
             selectedImages?.let {
                 mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
+                displayToast("transfering")
             }
         }
     }

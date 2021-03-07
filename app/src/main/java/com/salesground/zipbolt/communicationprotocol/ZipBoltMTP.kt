@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
+import android.util.Log
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.ImageRepository
@@ -15,7 +16,7 @@ import kotlin.math.min
 
 class ZipBoltMTP(private val context: Context) {
 
-    suspend fun transferMedia(mediaItems: MutableList<MediaModel>, DOS: DataOutputStream) {
+    fun transferMedia(mediaItems: MutableList<MediaModel>, DOS: DataOutputStream) {
         DOS.writeInt(mediaItems.size)
         mediaItems.forEach { mediaModel: MediaModel ->
             DOS.writeUTF(mediaModel.mediaDisplayName)
@@ -40,8 +41,9 @@ class ZipBoltMTP(private val context: Context) {
         }
     }
 
-    suspend fun receiveMedia(DIS: DataInputStream) {
+     fun receiveMedia(DIS: DataInputStream) {
         val numberOfItemsSent = DIS.readInt()
+        // Log.i("NewTransfer", "Received $numberOfItemsSent images")
         for (i in 0 until numberOfItemsSent) {
             val mediaName = DIS.readUTF()
             var mediaSize = DIS.readLong()
@@ -49,7 +51,7 @@ class ZipBoltMTP(private val context: Context) {
 
             // read media bytes and save it into the media store based on the mime type
             when {
-                mediaType.contains("image", true) -> {
+                mediaType.contains("image" , true) -> {
                     ImageRepository(context).insertImageIntoMediaStore(mediaName,
                     mediaSize, mediaType, DIS)
                 }
