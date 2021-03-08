@@ -71,4 +71,9 @@ class ImageRepositoryTest {
         }.toList()
         assertTrue(zipBoltImages.isNotEmpty())
     }
+
+    @Test
+    fun searchForImageByNameInMediaStoreTest(){
+
+    }
 }
