@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import org.intellij.lang.annotations.Language
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -237,8 +238,31 @@ class ImageRepository @Inject constructor
         return imageFiles
     }
 
-    fun searchForImageByNameInMediaStore(imageName : String){
-
+    fun searchForImageByNameInMediaStore(imageName: String) : Boolean {
+        val collection = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            }
+            else -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+        val projection = arrayOf(MediaStore.Images.Media.DISPLAY_NAME)
+        val selection = "${MediaStore.Images.Media.DISPLAY_NAME} == ?"
+        val selectionArgs = arrayOf(imageName)
+        val selectionOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC LIMIT 1"
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArgs,
+            selectionOrder
+        )?.let { cursor ->
+            val imageDisplayNameColumnIndex =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            if (cursor.moveToFirst()) {
+                return true
+            }
+        }
+        return false
     }
 
     fun insertImageIntoMediaStore(
@@ -256,19 +280,19 @@ class ImageRepository @Inject constructor
             mainDirectory.mkdirs()
         }
 
-       /* TODO Create a function that searches the mediaStore for an image with the exact same name
-       as mediaName before trying to create a file for the image
+        /* TODO Create a function that searches the mediaStore for an image with the exact same name
+        as mediaName before trying to create a file for the image
 
-       applicationContext.contentResolver.query(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            null,
-            "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
-            arrayOf(mediaName),
-            "${MediaStore.Images.Media.DISPLAY_NAME} LIMIT 1"
-        )*/
+        applicationContext.contentResolver.query(
+             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+             null,
+             "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
+             arrayOf(mediaName),
+             "${MediaStore.Images.Media.DISPLAY_NAME} LIMIT 1"
+         )*/
 
         val imageFile = File(mainDirectory, "Image" + System.currentTimeMillis() + ".jpg")
-       // Log.i("NewTransfer", "right here in media store filename = ${imageFile.name}")
+        // Log.i("NewTransfer", "right here in media store filename = ${imageFile.name}")
 
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
