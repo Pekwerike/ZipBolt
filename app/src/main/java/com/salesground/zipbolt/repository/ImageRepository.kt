@@ -29,7 +29,8 @@ import kotlin.math.min
 
 
 class ImageRepository @Inject constructor
-    (@ApplicationContext private val applicationContext: Context) : ImageRepositoryInterface {
+    (@ApplicationContext private val applicationContext: Context,
+private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRepositoryInterface {
 
 
     fun fetchAllImagesOnDeviceOnce(): MutableList<MediaModel> {
@@ -276,8 +277,8 @@ class ImageRepository @Inject constructor
     ) {
         var mediaSize1 = mediaSize
 
-        val mainDirectory = File(Environment.getExternalStorageDirectory(), "ZipBoltImages")
-            mainDirectory.mkdirs()
+        val imagesBaseDirectory = zipBoltSavedFilesRepository
+            .getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
 
 
         /* TODO Create a function that searches the mediaStore for an image with the exact same name
