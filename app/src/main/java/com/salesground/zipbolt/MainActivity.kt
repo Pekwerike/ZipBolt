@@ -3,6 +3,7 @@ package com.salesground.zipbolt
 
 import android.Manifest.*
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.*
 import android.content.pm.PackageManager
@@ -122,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         createNotificationChannel()
         checkReadAndWriteExternalStoragePermission()
         observeViewModelLiveData()

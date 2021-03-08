@@ -19,11 +19,11 @@ import javax.inject.Inject
 private const val ZIP_BOLT_MAIN_DIRECTORY = "ZipBolt"
 
 enum class ZipBoltMediaCategory(categoryName: String){
-    ZIP_BOLT_IMAGES_BASE_DIRECTORY("Images"),
-    ZIP_BOLT_VIDEOS_BASE_DIRECTORY("Videos"),
-    ZIP_BOLT_AUDIO_BASE_DIRECTORY("Audios"),
-    ZIP_BOLT_FILES_BASE_DIRECTORY("Files"),
-    ZIP_BOLT_APPS_BASE_DIRECTORY("Apps")
+    IMAGES_BASE_DIRECTORY("Images"),
+    VIDEOS_BASE_DIRECTORY("Videos"),
+    AUDIO_BASE_DIRECTORY("Audios"),
+    FILES_BASE_DIRECTORY("Files"),
+    APPS_BASE_DIRECTORY("Apps")
 }
 
 class ZipBoltSavedFilesRepository @Inject constructor() {
