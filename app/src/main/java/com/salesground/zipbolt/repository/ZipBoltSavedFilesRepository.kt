@@ -16,12 +16,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
 
-private const val ZIP_BOLT_MAIN_DIRECTORY = "ZipBolt"
-
+const val ZIP_BOLT_MAIN_DIRECTORY = "ZipBolt"
 enum class ZipBoltMediaCategory(val categoryName: String){
-    IMAGES_BASE_DIRECTORY("Images"),
-    VIDEOS_BASE_DIRECTORY("Videos"),
-    AUDIO_BASE_DIRECTORY("Audios"),
+    IMAGES_BASE_DIRECTORY("ZipBolt Images"),
+    VIDEOS_BASE_DIRECTORY("ZipBolt Videos"),
+    AUDIO_BASE_DIRECTORY("ZipBolt Audios"),
     FILES_BASE_DIRECTORY("Files"),
     APPS_BASE_DIRECTORY("Apps"),
     FOLDERS_BASE_DIRECTORY("Folders")

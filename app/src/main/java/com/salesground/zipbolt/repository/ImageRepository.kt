@@ -242,7 +242,7 @@ class ImageRepository @Inject constructor
     private fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {
             if (searchForImageByNameInMediaStore(mediaName)) {
-                "IMG" + Random().nextInt(30).toString() + mediaName
+                "IMG" + Random().nextInt(100000).toString() + mediaName
             } else {
                 mediaName
             }
@@ -297,8 +297,8 @@ class ImageRepository @Inject constructor
             put(MediaStore.Images.Media.TITLE, imageFile.name)
             put(MediaStore.Images.Media.SIZE, mediaSize1)
             put(MediaStore.Images.Media.MIME_TYPE, mediaMimeType)
-            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
             put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
             put(MediaStore.Images.Media.DATE_MODIFIED, System.currentTimeMillis())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
@@ -306,19 +306,13 @@ class ImageRepository @Inject constructor
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                    imagesBaseDirectory.name
+                    ZIP_BOLT_MAIN_DIRECTORY
                 )
             }
         }
 
-        val collection =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) MediaStore.Images.Media.getContentUri(
-                MediaStore.VOLUME_EXTERNAL_PRIMARY
-            )
-            else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
         val imageUri = applicationContext.contentResolver.insert(
-            collection,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             contentValues
         )
 
