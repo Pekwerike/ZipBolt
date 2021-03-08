@@ -8,16 +8,32 @@ import javax.inject.Inject
 
 const val ZIP_BOLT_MAIN_DIRECTORY = "ZipBolt"
 const val ZIP_BOLT_IMAGES_BASE_DIRECTORY = "Images"
-class ZipBoltSavedFilesRepository @Inject constructor(@ApplicationContext private val
-applicationContext: Context) {
+const val ZIP_BOLT_VIDEOS_BASE_DIRECTORY = "Videos"
+const val ZIP_BOLT_FILES_BASE_DIRECTORY = "Files"
+const val  ZIP_BOLT_APPS_BASE_DIRECTORY = "Apps"
 
-    fun getZipBoltBaseDirectory() : File{
+class ZipBoltSavedFilesRepository @Inject constructor(
+    @ApplicationContext private val
+    applicationContext: Context
+) {
+
+    private fun getZipBoltBaseDirectory(): File {
         val baseDirectory = File(Environment.getExternalStorageDirectory(), ZIP_BOLT_MAIN_DIRECTORY)
-        if(!baseDirectory.exists()) baseDirectory.mkdirs()
+        if (!baseDirectory.exists()) baseDirectory.mkdirs()
         return baseDirectory
     }
 
-    fun getZipBoltImagesBaseDirectory() : File {
-        return File(getZipBoltBaseDirectory(), ZIP_BOLT_IMAGES_BASE_DIRECTORY)
+    fun getZipBoltImagesBaseDirectory(): File {
+        val imageBaseDirectory = File(getZipBoltBaseDirectory(), ZIP_BOLT_IMAGES_BASE_DIRECTORY)
+        checkIfDirectoryExist(imageBaseDirectory)
+        return imageBaseDirectory
+    }
+
+    fun getZipBoltVideosBaseDirectory() : File{
+        val videoBaseDirectory = File(getZipBoltBaseDirectory(), )
+    }
+
+    private fun checkIfDirectoryExist(directory: File) {
+        if (!directory.exists()) directory.mkdirs()
     }
 }

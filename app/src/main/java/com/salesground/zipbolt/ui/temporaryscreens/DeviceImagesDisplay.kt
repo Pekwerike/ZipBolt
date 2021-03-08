@@ -106,8 +106,7 @@ fun SingleImageOnDevice(
                 request = ImageRequest.Builder(context)
                     .apply {
                         size(100, 100)
-                        data("https://egbemhenghe-abel.medium.com/how-to-stay-confident-when-job-hunting-in-nigeria-33394a5e184f"
-                            .toUri())
+                        data("https://egbemhenghe-abel.medium.com/how-to-stay-confident-when-job-hunting-in-nigeria-33394a5e184f")
                         dispatcher(Dispatchers.Default)
                         allowHardware(true)
                     }.build(),
