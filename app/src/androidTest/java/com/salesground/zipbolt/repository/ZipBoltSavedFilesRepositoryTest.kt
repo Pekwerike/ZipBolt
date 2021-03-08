@@ -4,6 +4,7 @@ import org.junit.Before
 
 import org.junit.Assert.*
 import org.junit.Test
+import java.util.zip.ZipInputStream
 
 class ZipBoltSavedFilesRepositoryTest {
     lateinit var zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository
@@ -28,6 +29,14 @@ class ZipBoltSavedFilesRepositoryTest {
                 zipBoltSavedFilesRepository.getZipBoltMediaCategoryBaseDirectory(it)
             assertTrue(mediaCategory.exists())
         }
+    }
+
+    @Test
+    fun confirmThatDirectoryForImagesHasTheNameImages(){
+        val imageCategory = ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY
+        val imageCategoryBaseDirectory =
+            zipBoltSavedFilesRepository.getZipBoltMediaCategoryBaseDirectory(imageCategory)
+        assertEquals(imageCategoryBaseDirectory.name, "Images")
     }
 
 }

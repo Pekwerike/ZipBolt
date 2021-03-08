@@ -49,10 +49,6 @@ class ClientService : Service() {
         return clientServiceBinder
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
 

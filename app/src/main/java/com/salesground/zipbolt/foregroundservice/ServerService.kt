@@ -33,14 +33,11 @@ class ServerService : Service() {
     override fun onDestroy() {
         serverSocket.let {
             it.close()
-            Toast.makeText(this, "Server socket closed", Toast.LENGTH_SHORT).show()
         }
         super.onDestroy()
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
+
 
     inner class ServerServiceBinder : Binder() {
         fun getServerServiceInstance(): ServerService {
