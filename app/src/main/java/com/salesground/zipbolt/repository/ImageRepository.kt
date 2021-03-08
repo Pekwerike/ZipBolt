@@ -292,7 +292,7 @@ private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRep
              "${MediaStore.Images.Media.DISPLAY_NAME} LIMIT 1"
          )*/
 
-        val imageFile = File(mainDirectory, "Image" + System.currentTimeMillis() + ".jpg")
+        val imageFile = File(imagesBaseDirectory, "Image" + System.currentTimeMillis() + ".jpg")
         // Log.i("NewTransfer", "right here in media store filename = ${imageFile.name}")
 
         val contentValues = ContentValues().apply {
@@ -308,7 +308,7 @@ private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRep
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                    mainDirectory.name
+                    imagesBaseDirectory.name
                 )
             }
         }
