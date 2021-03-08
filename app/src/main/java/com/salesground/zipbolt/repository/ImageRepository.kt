@@ -237,6 +237,10 @@ class ImageRepository @Inject constructor
         return imageFiles
     }
 
+    fun searchForImageByNameInMediaStore(imageName : String){
+
+    }
+
     fun insertImageIntoMediaStore(
         mediaName: String?,
         mediaSize: Long,
