@@ -18,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import org.intellij.lang.annotations.Language
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -26,11 +25,14 @@ import java.io.FileOutputStream
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.min
+import kotlin.random.Random.Default.nextInt
 
 
 class ImageRepository @Inject constructor
-    (@ApplicationContext private val applicationContext: Context,
-private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRepositoryInterface {
+    (
+    @ApplicationContext private val applicationContext: Context,
+    private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository
+) : ImageRepositoryInterface {
 
 
     fun fetchAllImagesOnDeviceOnce(): MutableList<MediaModel> {
@@ -241,7 +243,17 @@ private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRep
         return imageFiles
     }
 
-    fun searchForImageByNameInMediaStore(imageName: String) : Boolean {
+    private fun confirmImageName(mediaName: String?): String {
+        return if (mediaName != null) {
+            if (searchForImageByNameInMediaStore(mediaName)) {
+              "IMG" + Random().nextInt(30).toString() + mediaName
+            } else {
+                mediaName
+            }
+        } else "IMG" + System.currentTimeMillis() + ".jpg"
+    }
+
+    private fun searchForImageByNameInMediaStore(imageName: String): Boolean {
         val collection = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -263,7 +275,7 @@ private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRep
                 cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             if (cursor.moveToFirst()) {
                 val retrievedImageDisplayName = cursor.getString(imageDisplayNameColumnIndex)
-                if(retrievedImageDisplayName == imageName) return true
+                if (retrievedImageDisplayName == imageName) return true
             }
         }
         return false
@@ -280,20 +292,9 @@ private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRep
         val imagesBaseDirectory = zipBoltSavedFilesRepository
             .getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
 
-
-        /* TODO Create a function that searches the mediaStore for an image with the exact same name
-        as mediaName before trying to create a file for the image
-
-        applicationContext.contentResolver.query(
-             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-             null,
-             "${MediaStore.Images.Media.DISPLAY_NAME} = ?",
-             arrayOf(mediaName),
-             "${MediaStore.Images.Media.DISPLAY_NAME} LIMIT 1"
-         )*/
-
-        val imageFile = File(imagesBaseDirectory, "Image" + System.currentTimeMillis() + ".jpg")
-        // Log.i("NewTransfer", "right here in media store filename = ${imageFile.name}")
+        // check if an image with this name is already in the mediaStore
+        val verifiedImageName = confirmImageName(mediaName)
+        val imageFile = File(imagesBaseDirectory, verifiedImageName)
 
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
@@ -302,6 +303,7 @@ private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) : ImageRep
             put(MediaStore.Images.Media.MIME_TYPE, mediaMimeType)
             put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
             put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+            put(MediaStore.Images.Media.DATE_MODIFIED, System.currentTimeMillis())
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
                 put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
