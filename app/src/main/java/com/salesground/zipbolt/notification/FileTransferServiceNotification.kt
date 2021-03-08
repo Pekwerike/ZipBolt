@@ -10,8 +10,7 @@ import androidx.core.app.NotificationCompat
 const val FILE_TRANSFER_SERVICE_NOTIFICATION_ID = "FileTransferServiceNotificationID"
 const val FILE_TRANSFER_SERVICE_CHANNEL_NAME = "ZipBolt File Transfer Service Notification"
 
-class FileTransferServiceNotification(private val notificationManager: NotificationManager) {
-
+class FileTransferServiceNotification (private val notificationManager: NotificationManager) {
 
     fun createFTSNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
