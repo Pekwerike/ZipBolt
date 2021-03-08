@@ -24,7 +24,8 @@ class ImageRepositoryTest {
 
     @Before
     fun setUp() {
-        imageRepository = ImageRepository(applicationContext = applicationContext)
+        imageRepository = ImageRepository(applicationContext = applicationContext,
+        ZipBoltSavedFilesRepository())
     }
 
     @Test
@@ -57,13 +58,13 @@ class ImageRepositoryTest {
     @Test
     fun insertImageIntoMediaStoreTest() = runBlocking {
         val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
-       val (mediaUri, mediaDisplayName, mediaDateAdded, mediaSize, mediaCategory, mimeType, mediaBucketName, mediaDuration) = allImagesOnDevice[1]
+        val (mediaUri, mediaDisplayName, mediaDateAdded, mediaSize, mediaCategory, mimeType, mediaBucketName, mediaDuration) = allImagesOnDevice[1]
 
         applicationContext.contentResolver.openFileDescriptor(mediaUri, "r")?.also {
             val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
             imageRepository.insertImageIntoMediaStore(
                 mediaDisplayName, mediaSize,
-               mimeType,
+                mimeType,
                 DIS
             )
         }
@@ -74,12 +75,31 @@ class ImageRepositoryTest {
     }
 
     @Test
-    fun searchForImageByNameInMediaStoreTest(){
-        val (mediaUri, mediaDisplayName, mediaDateAdded, mediaSize, mediaCategory, mimeType, mediaBucketName, mediaDuration)
-        = imageRepository.fetchAllImagesOnDeviceOnce()
-            .last()
-        mediaDisplayName?.let {
-            assertTrue(imageRepository.searchForImageByNameInMediaStore(mediaDisplayName))
+    fun insertImageWithTheSameNameTwice() {
+        val allImagesOnDevice = imageRepository.fetchAllImagesOnDeviceOnce()
+        val (mediaUri, mediaDisplayName, mediaDateAdded, mediaSize, mediaCategory, mimeType, mediaBucketName, mediaDuration) = allImagesOnDevice[1]
+
+        applicationContext.contentResolver.openFileDescriptor(mediaUri, "r")?.also {
+            val DIS = DataInputStream(FileInputStream(it.fileDescriptor))
+            val nameUsedToSaveImage = imageRepository.insertImageIntoMediaStore(
+                mediaDisplayName, mediaSize,
+                mimeType,
+                DIS
+            )
+            val nameUsedToSaveImageForTheSecondTime = imageRepository.insertImageIntoMediaStore(
+                mediaDisplayName, mediaSize,
+                mimeType,
+                DIS
+            )
+            val nameUsedToSaveImageForTheThirdTime = imageRepository.insertImageIntoMediaStore(
+                mediaDisplayName, mediaSize,
+                mimeType,
+                DIS
+            )
+            assertTrue(imageRepository.searchForImageByNameInMediaStore(nameUsedToSaveImage))
+            assertTrue(imageRepository.searchForImageByNameInMediaStore(nameUsedToSaveImageForTheSecondTime))
+            assertTrue(imageRepository.searchForImageByNameInMediaStore(nameUsedToSaveImageForTheThirdTime))
         }
+
     }
 }

@@ -5,17 +5,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
-import android.util.Size
-import androidx.annotation.RequiresApi
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.io.DataInputStream
@@ -25,7 +20,6 @@ import java.io.FileOutputStream
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.min
-import kotlin.random.Random.Default.nextInt
 
 
 class ImageRepository @Inject constructor
@@ -124,6 +118,7 @@ class ImageRepository @Inject constructor
                         )
                 )
             }
+            close()
         }
         return allImagesOnDevice
     }
@@ -213,6 +208,7 @@ class ImageRepository @Inject constructor
                     )
                 )
             }
+            close()
         }
     }.flowOn(Dispatchers.IO)
 
@@ -246,14 +242,14 @@ class ImageRepository @Inject constructor
     private fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {
             if (searchForImageByNameInMediaStore(mediaName)) {
-              "IMG" + Random().nextInt(30).toString() + mediaName
+                "IMG" + Random().nextInt(30).toString() + mediaName
             } else {
                 mediaName
             }
         } else "IMG" + System.currentTimeMillis() + ".jpg"
     }
 
-    private fun searchForImageByNameInMediaStore(imageName: String): Boolean {
+    fun searchForImageByNameInMediaStore(imageName: String): Boolean {
         val collection = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -286,7 +282,7 @@ class ImageRepository @Inject constructor
         mediaSize: Long,
         mediaMimeType: String,
         DIS: DataInputStream
-    ) {
+    ): String {
         var mediaSize1 = mediaSize
 
         val imagesBaseDirectory = zipBoltSavedFilesRepository
@@ -352,5 +348,7 @@ class ImageRepository @Inject constructor
                 applicationContext.contentResolver.update(imageUri, contentValues, null, null)
             }
         }
+        return verifiedImageName
     }
+
 }

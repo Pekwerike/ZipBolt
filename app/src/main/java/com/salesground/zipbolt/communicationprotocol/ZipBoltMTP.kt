@@ -10,11 +10,18 @@ import android.util.Log
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import java.util.Collections.min
+import javax.inject.Inject
+
+
 import kotlin.math.min
 
-class ZipBoltMTP(private val context: Context) {
+class ZipBoltMTP @Inject constructor (
+    @ApplicationContext private val context: Context,
+    private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository) {
 
     fun transferMedia(mediaItems: MutableList<MediaModel>, DOS: DataOutputStream) {
         DOS.writeInt(mediaItems.size)
@@ -52,7 +59,7 @@ class ZipBoltMTP(private val context: Context) {
             // read media bytes and save it into the media store based on the mime type
             when {
                 mediaType.contains("image" , true) -> {
-                    ImageRepository(context).insertImageIntoMediaStore(mediaName,
+                    ImageRepository(context, zipBoltSavedFilesRepository).insertImageIntoMediaStore(mediaName,
                     mediaSize, mediaType, DIS)
                 }
                 mediaType.contains("video", true) -> {

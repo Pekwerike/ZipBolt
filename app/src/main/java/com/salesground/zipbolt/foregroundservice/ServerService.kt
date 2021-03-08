@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,13 +19,16 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.*
 import java.nio.channels.AlreadyBoundException
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ServerService : Service() {
     private val serverServiceBinder: ServerServiceBinder = ServerServiceBinder()
-    private lateinit var zipBoltMTP: ZipBoltMTP
     private var mediaItemsToTransfer: MutableList<MediaModel> = mutableListOf()
     private var isDataAvailableToTransfer: Boolean = false
     private lateinit var serverSocket: ServerSocket
+    @Inject
+    lateinit var zipBoltMTP: ZipBoltMTP
 
     override fun onDestroy() {
         serverSocket.let {
@@ -36,7 +40,6 @@ class ServerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        zipBoltMTP = ZipBoltMTP(this)
     }
 
     inner class ServerServiceBinder : Binder() {

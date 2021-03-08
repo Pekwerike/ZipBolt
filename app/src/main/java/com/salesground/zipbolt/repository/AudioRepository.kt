@@ -78,9 +78,8 @@ class AudioRepository(private val context: Context) {
                     )
                 )
             }
+        cursor.close()
         }
-
-
     }
 
 }

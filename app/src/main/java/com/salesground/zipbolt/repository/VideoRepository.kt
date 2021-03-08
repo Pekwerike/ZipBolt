@@ -94,6 +94,7 @@ class VideoRepository(private val context: Context) {
                     )
                 )
             }
+         cursor.close()
         }
     }
 }
