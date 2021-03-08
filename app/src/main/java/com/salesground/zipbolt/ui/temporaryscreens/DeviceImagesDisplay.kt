@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import coil.request.ImageRequest
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.MediaModel
@@ -105,7 +106,8 @@ fun SingleImageOnDevice(
                 request = ImageRequest.Builder(context)
                     .apply {
                         size(100, 100)
-                        data(image.mediaUri)
+                        data("https://egbemhenghe-abel.medium.com/how-to-stay-confident-when-job-hunting-in-nigeria-33394a5e184f"
+                            .toUri())
                         dispatcher(Dispatchers.Default)
                         allowHardware(true)
                     }.build(),

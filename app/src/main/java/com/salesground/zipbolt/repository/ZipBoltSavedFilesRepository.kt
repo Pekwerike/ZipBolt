@@ -7,12 +7,17 @@ import java.io.File
 import javax.inject.Inject
 
 const val ZIP_BOLT_MAIN_DIRECTORY = "ZipBolt"
+const val ZIP_BOLT_IMAGES_BASE_DIRECTORY = "Images"
 class ZipBoltSavedFilesRepository @Inject constructor(@ApplicationContext private val
 applicationContext: Context) {
 
     fun getZipBoltBaseDirectory() : File{
-      return File(Environment.getExternalStorageDirectory(), ZIP_BOLT_MAIN_DIRECTORY)
+        val baseDirectory = File(Environment.getExternalStorageDirectory(), ZIP_BOLT_MAIN_DIRECTORY)
+        if(!baseDirectory.exists()) baseDirectory.mkdirs()
+        return baseDirectory
     }
 
-    fun getZipBoltImagesBaseDirectory()
+    fun getZipBoltImagesBaseDirectory() : File {
+        return File(getZipBoltBaseDirectory(), ZIP_BOLT_IMAGES_BASE_DIRECTORY)
+    }
 }
