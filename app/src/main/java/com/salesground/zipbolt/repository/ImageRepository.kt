@@ -259,7 +259,8 @@ class ImageRepository @Inject constructor
             val imageDisplayNameColumnIndex =
                 cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
             if (cursor.moveToFirst()) {
-                return true
+                val retrievedImageDisplayName = cursor.getString(imageDisplayNameColumnIndex)
+                if(retrievedImageDisplayName == imageName) return true
             }
         }
         return false

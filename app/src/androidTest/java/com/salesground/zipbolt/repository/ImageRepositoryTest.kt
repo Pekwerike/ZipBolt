@@ -76,7 +76,7 @@ class ImageRepositoryTest {
     fun searchForImageByNameInMediaStoreTest(){
         val (mediaUri, mediaDisplayName, mediaDateAdded, mediaSize, mediaCategory, mimeType, mediaBucketName, mediaDuration)
         = imageRepository.fetchAllImagesOnDeviceOnce()
-            .first()
+            .last()
         mediaDisplayName?.let {
             assertTrue(imageRepository.searchForImageByNameInMediaStore(mediaDisplayName))
         }
