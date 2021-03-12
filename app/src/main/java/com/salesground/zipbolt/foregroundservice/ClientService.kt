@@ -17,6 +17,7 @@ import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
+import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,9 @@ class ClientService : Service() {
     private var isDataToTransferAvailable: Boolean = false
     @Inject
     lateinit var zipBoltMTP: ZipBoltMTP
+    @Inject
+    lateinit var fileTransferServiceNotification: FileTransferServiceNotification
+
     private var mediaItemsToTransfer: MutableList<MediaModel> = mutableListOf()
 
 
@@ -50,7 +54,8 @@ class ClientService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
+        startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID,
+        fileTransferServiceNotification.configureFileTransferNotification())
 
         intent?.let { mainIntent: Intent ->
             CoroutineScope(Dispatchers.IO).launch {

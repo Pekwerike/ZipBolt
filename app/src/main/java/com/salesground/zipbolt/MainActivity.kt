@@ -3,11 +3,9 @@ package com.salesground.zipbolt
 
 import android.Manifest.*
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.app.NotificationManager
 import android.content.*
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
@@ -28,9 +26,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
@@ -38,15 +33,12 @@ import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.HomeScreen
 import com.salesground.zipbolt.ui.temporaryscreens.HomeScreenTwo
-import com.salesground.zipbolt.ui.temporaryscreens.TempHomeScreen
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 import com.salesground.zipbolt.viewmodel.MediaViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
+
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
 private const val READ_WRITE_STORAGE_REQUEST_CODE = 101
@@ -62,16 +54,15 @@ class MainActivity : AppCompatActivity() {
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
     }
-    private val notificationManager: NotificationManager by lazy(LazyThreadSafetyMode.NONE) {
-        getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    }
+    @Inject
+    lateinit var ftsNotification: FileTransferServiceNotification
+
     private val wifiManager: WifiManager by lazy(LazyThreadSafetyMode.NONE) {
         applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     }
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var intentFilter: IntentFilter
-    private lateinit var ftsNotification: FileTransferServiceNotification
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
 
@@ -118,7 +109,8 @@ class MainActivity : AppCompatActivity() {
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
                         selectedDevice = { connectToADevice(it) },
-                        this::transferImages)
+                        this::transferImages
+                    )
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }
@@ -143,7 +135,7 @@ class MainActivity : AppCompatActivity() {
                 mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
                 displayToast("transfering")
             }
-        } else if(mainActivityViewModel.serverService.value != null){
+        } else if (mainActivityViewModel.serverService.value != null) {
             selectedImages?.let {
                 mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
                 displayToast("transfering")
@@ -152,7 +144,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createNotificationChannel() {
-        ftsNotification = FileTransferServiceNotification(notificationManager)
         ftsNotification.createFTSNotificationChannel()
     }
 

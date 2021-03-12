@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
+import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,8 @@ class ServerService : Service() {
     private lateinit var serverSocket: ServerSocket
     @Inject
     lateinit var zipBoltMTP: ZipBoltMTP
+    @Inject
+    lateinit var fileTransferServiceNotification: FileTransferServiceNotification
 
     override fun onDestroy() {
         serverSocket.let {
@@ -50,7 +53,8 @@ class ServerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID, configureNotification(this))
+        startForeground(FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID,
+            fileTransferServiceNotification.configureFileTransferNotification())
 
         intent?.let {
             CoroutineScope(Dispatchers.IO).launch {
