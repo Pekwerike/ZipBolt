@@ -9,7 +9,7 @@ import com.salesground.zipbolt.model.ApplicationModel
 import dev.chrisbanes.accompanist.coil.CoilImage
 
 @Composable
-fun AppReview(application: ApplicationModel){
+fun DeviceApplication(application: ApplicationModel){
     val context = LocalContext.current
     Column {
         CoilImage(request = ImageRequest.Builder(context).apply {
