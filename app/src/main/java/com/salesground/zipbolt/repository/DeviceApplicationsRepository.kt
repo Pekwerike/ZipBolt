@@ -13,7 +13,7 @@ import java.io.File
 import javax.inject.Inject
 
 
-class AppsRepository @Inject constructor(@ApplicationContext private val context: Context) {
+class DeviceApplicationsRepository @Inject constructor(@ApplicationContext private val context: Context) {
 
 
     fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
