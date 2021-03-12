@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.DeviceApplication
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.DeviceMediaCategoryHeader
 import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
@@ -13,9 +14,11 @@ import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 @Composable
 fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
     val modalBottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden
+        )
+
     val allApplicationsOnDevice by deviceApplicationViewModel.allApplicationsOnDevice.observeAsState(
-        listOf())
+        listOf<ApplicationModel>())
     ModalBottomSheetLayout(
         sheetContent = { },
         sheetState = modalBottomSheetState
@@ -24,7 +27,7 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
             item {
                 DeviceMediaCategoryHeader(categoryName = "App")
             }
-            items(count = allApplicationsOnDevice.size ?: 0, key = {
+            items(count = allApplicationsOnDevice.size, key = {
                 allApplicationsOnDevice.get(it).apkPath
             }) { index : Int ->
                 DeviceApplication(application = allApplicationsOnDevice.get(index))
