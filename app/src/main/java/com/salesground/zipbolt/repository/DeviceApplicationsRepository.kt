@@ -24,6 +24,17 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
         }
     }
 
+    fun getAllDeviceApplication() : List<ApplicationModel> {
+        return getAllAppsOnDevice().map {
+            ApplicationModel(
+                applicationName = it.name,
+                apkPath = it.sourceDir,
+                appIcon = it.loadIcon(context.packageManager),
+                appSize = File(it.sourceDir).length()
+            )
+        }
+    }
+
     fun getAllApplicationAsCustomModel(): Flow<ApplicationModel> = flow {
         val allAppsOnDevice = getAllAppsOnDevice()
         allAppsOnDevice.map {
