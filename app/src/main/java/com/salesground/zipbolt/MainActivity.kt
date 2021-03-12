@@ -31,9 +31,10 @@ import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
-import com.salesground.zipbolt.ui.screen.HomeScreen
+import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
 import com.salesground.zipbolt.ui.temporaryscreens.HomeScreenTwo
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
+import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 import com.salesground.zipbolt.viewmodel.MediaViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,6 +57,9 @@ class MainActivity : AppCompatActivity() {
     }
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
+
+
+    private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
 
     private val wifiManager: WifiManager by lazy(LazyThreadSafetyMode.NONE) {
         applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -103,13 +107,16 @@ class MainActivity : AppCompatActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     HomeScreenTwo(mediaViewModel, this, this::imageSelected)
-                    HomeScreen(
+                  /*  HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         // sendAction = { createWifiDirectGroup() },
                         sendAction = { beginPeerDiscovery() },
                         receiveAction = { beginPeerDiscovery() },
                         selectedDevice = { connectToADevice(it) },
                         this::transferImages
+                    )*/
+                   HomeScreen(
+                        deviceApplicationViewModel = deviceApplicationViewModel
                     )
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
