@@ -6,12 +6,14 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import com.salesground.zipbolt.model.ApplicationModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.File
+import javax.inject.Inject
 
 
-class AppsRepository(private val context: Context) {
+class AppsRepository @Inject constructor(@ApplicationContext private val context: Context) {
 
 
     fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
