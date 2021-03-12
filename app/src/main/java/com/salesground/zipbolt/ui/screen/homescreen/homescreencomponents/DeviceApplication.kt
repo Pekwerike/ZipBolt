@@ -1,22 +1,51 @@
 package com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents
 
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.util.Size
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.core.widget.ImageViewCompat
 import coil.request.ImageRequest
+import com.bumptech.glide.Glide
+import com.salesground.zipbolt.databinding.AppIconImageViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
 import dev.chrisbanes.accompanist.coil.CoilImage
+import java.io.File
 
 @Composable
-fun DeviceApplication(application: ApplicationModel){
+fun DeviceApplication(application: ApplicationModel) {
     val context = LocalContext.current
-    Column {
-        CoilImage(request = ImageRequest.Builder(context).apply {
-            data(application.appIcon)
-        }.build()) {
-
+    Column(modifier = Modifier.fillMaxWidth(),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally) {
+            //AppIconDisplay(application.appIcon)
+        AndroidView(factory = { AppCompatImageView(it)}){
+            Glide.with(it)
+                .load(application.appIcon)
+                .override(100)
+                .into(it)
+                
         }
-        Text(text = application.applicationName ?: "NaN")
+        Text(text = application.applicationName ?: "")
+    }
+}
+
+@Composable
+private fun AppIconDisplay(drawable: Drawable?) {
+    AndroidViewBinding(factory = AppIconImageViewBinding::inflate){
+        this.appIconView.setImageDrawable(drawable)
     }
 }

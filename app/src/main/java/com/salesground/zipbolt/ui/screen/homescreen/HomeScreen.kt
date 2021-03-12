@@ -1,10 +1,12 @@
 package com.salesground.zipbolt.ui.screen.homescreen
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.DeviceApplication
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.DeviceMediaCategoryHeader
@@ -14,13 +16,17 @@ import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 @Composable
 fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
     val modalBottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden
+        rememberModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden
         )
 
     val allApplicationsOnDevice by deviceApplicationViewModel.allApplicationsOnDevice.observeAsState(
-        listOf<ApplicationModel>())
+        listOf<ApplicationModel>()
+    )
     ModalBottomSheetLayout(
-        sheetContent = { },
+        sheetContent = {
+                       Text("")
+        },
         sheetState = modalBottomSheetState
     ) {
         LazyColumn(content = {
@@ -28,11 +34,11 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
                 DeviceMediaCategoryHeader(categoryName = "App")
             }
             items(count = allApplicationsOnDevice.size, key = {
-                allApplicationsOnDevice.get(it).apkPath
-            }) { index : Int ->
-                DeviceApplication(application = allApplicationsOnDevice.get(index))
+                allApplicationsOnDevice[it].apkPath
+            }) { index: Int ->
+                DeviceApplication(application = allApplicationsOnDevice[index])
             }
 
-        })
+        }, modifier = Modifier.fillMaxSize())
     }
 }

@@ -26,6 +26,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.ImageViewCompat
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    HomeScreenTwo(mediaViewModel, this, this::imageSelected)
+                   // HomeScreenTwo(mediaViewModel, this, this::imageSelected)
                   /*  HomeScreen(
                         mainActivityViewModel = mainActivityViewModel,
                         // sendAction = { createWifiDirectGroup() },

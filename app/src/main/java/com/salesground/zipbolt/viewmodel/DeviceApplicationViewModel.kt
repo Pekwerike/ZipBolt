@@ -29,7 +29,7 @@ class DeviceApplicationViewModel @Inject constructor(
 
     private suspend fun getAllApplicationsOnDevice() {
         _allApplicationsOnDevice.value =  viewModelScope.async(Dispatchers.IO) {
-            deviceApplicationsRepository.getAllDeviceApplication()
+            deviceApplicationsRepository.getNonSystemAppsOnDevice()
         }.await()
 
     }

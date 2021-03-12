@@ -24,10 +24,12 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
         }
     }
 
-    fun getAllDeviceApplication() : List<ApplicationModel> {
-        return getAllAppsOnDevice().map {
+    fun getNonSystemAppsOnDevice(): List<ApplicationModel> {
+        return getAllAppsOnDevice().filter {
+            context.packageManager.getLaunchIntentForPackage(it.packageName) != null
+        }.map {
             ApplicationModel(
-                applicationName = it.name,
+                applicationName = it.loadLabel(context.packageManager).toString(),
                 apkPath = it.sourceDir,
                 appIcon = it.loadIcon(context.packageManager),
                 appSize = File(it.sourceDir).length()
