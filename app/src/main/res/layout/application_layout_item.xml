@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+        <variable
+            name="application_label"
+            type="String" />
+    </data>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/application_icon_image_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/application_label_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-</LinearLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/application_icon_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/application_label_text_view"
+            android:layout_width="match_parent"
+            android:text="@{application_label}"
+            android:textAlignment="center"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+</layout>
