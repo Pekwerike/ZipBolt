@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/category_labe_text_viewl"
+            android:id="@+id/category_labe_text_view"
             android:text="@{categoryLabel}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
