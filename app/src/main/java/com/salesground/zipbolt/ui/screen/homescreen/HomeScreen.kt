@@ -7,9 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.salesground.zipbolt.databinding.HomeScreenRecyclerViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.DeviceApplication
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.DeviceMediaCategoryHeader
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.DataCategory
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerViewAdapter
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerviewDataModel
 import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 
 @ExperimentalMaterialApi
@@ -25,7 +30,7 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
     )
     ModalBottomSheetLayout(
         sheetContent = {
-                       Text("")
+            Text("")
         },
         sheetState = modalBottomSheetState
     ) {
@@ -40,5 +45,16 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
             }
 
         }, modifier = Modifier.fillMaxSize())
+
+        AndroidViewBinding(factory = HomeScreenRecyclerViewBinding::inflate){
+            val hSRAdapter = HomeScreenRecyclerViewAdapter()
+            hSRAdapter.submitList(mutableListOf(HomeScreenRecyclerviewDataModel(
+                dataCategory = "Apps",
+                mediaCollection = allApplicationsOnDevice.map {
+                    DataCategory.Application(it)
+                } as MutableList<DataCategory>
+            )))
+            homeScreenRecyclerView.adapter
+        }
     }
 }

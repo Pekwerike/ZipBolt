@@ -4,22 +4,32 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.HomeScreenRecyclerviewLayoutItemBinding
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.DataCategory
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HSCategoryRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerviewDataModel
 
 class HomeScreenRecyclerViewHolder(
     private val
     homeScreenRecyclerviewLayoutItemBinding: HomeScreenRecyclerviewLayoutItemBinding
 ) : RecyclerView.ViewHolder(homeScreenRecyclerviewLayoutItemBinding.root) {
+
     fun bindData(homeScreenRecyclerviewDataModel: HomeScreenRecyclerviewDataModel) {
         homeScreenRecyclerviewLayoutItemBinding.categoryLabel =
             homeScreenRecyclerviewDataModel.dataCategory
+        homeScreenRecyclerviewLayoutItemBinding.categoryItemsRecyclerview
 
+        val hSRCAdapter = HSCategoryRecyclerViewAdapter()
+        hSRCAdapter.submitList(homeScreenRecyclerviewDataModel.mediaCollection)
+        homeScreenRecyclerviewLayoutItemBinding.categoryItemsRecyclerview.adapter = hSRCAdapter
+        val hSRCLayoutManager =
+            GridLayoutManager(homeScreenRecyclerviewLayoutItemBinding.root.context, 5)
 
+        homeScreenRecyclerviewLayoutItemBinding.categoryItemsRecyclerview.layoutManager = hSRCLayoutManager
     }
 
     companion object {
