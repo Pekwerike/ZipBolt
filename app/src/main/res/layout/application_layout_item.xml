@@ -4,7 +4,7 @@
 
     <data>
         <variable
-            name="application_label"
+            name="applicationLabel"
             type="String" />
     </data>
 
@@ -22,7 +22,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_label_text_view"
             android:layout_width="match_parent"
-            android:text="@{application_label}"
+            android:text="@{applicationLabel}"
             android:textAlignment="center"
             android:layout_height="wrap_content" />
 
