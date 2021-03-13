@@ -8,16 +8,17 @@ import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ApplicationLayoutItemBinding
 import com.salesground.zipbolt.model.ApplicationModel
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.DataCategory
 
 class HSApplicationCategoryViewHolder(
     private val applicationLayoutItemBinding:
     ApplicationLayoutItemBinding
 ) : RecyclerView.ViewHolder(applicationLayoutItemBinding.root) {
 
-    fun bindApplicationData(data : ApplicationModel){
-        applicationLayoutItemBinding.applicationLabel = data.applicationName
+    fun bindApplicationData(dataCategory: DataCategory.Application){
+        applicationLayoutItemBinding.applicationLabel = dataCategory.applicationModel.applicationName
         Glide.with(applicationLayoutItemBinding.applicationIconImageView.context)
-            .load(data.appIcon)
+            .load(dataCategory.applicationModel.appIcon)
             .override(50)
             .into(applicationLayoutItemBinding.applicationIconImageView)
 
