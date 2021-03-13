@@ -11,31 +11,6 @@ import com.salesground.zipbolt.databinding.HomeScreenRecyclerviewLayoutItemBindi
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.DataCategory
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerviewDataModel
 
-enum class HomeScreenCategoryRecyclerViewAdapterViewType(val viewType: Int){
-
-}
-class HomeScreenCategoryRecyclerViewAdapter
-    : ListAdapter<DataCategory, RecyclerView.ViewHolder>(HomeScreenCategoryRecyclerViewDiffUtil){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        TODO("Not yet implemented")
-    }
-}
-
-object HomeScreenCategoryRecyclerViewDiffUtil: DiffUtil.ItemCallback<DataCategory>(){
-    override fun areItemsTheSame(oldItem: DataCategory, newItem: DataCategory): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: DataCategory, newItem: DataCategory): Boolean {
-        return oldItem.itemId == newItem.itemId
-    }
-
-}
-
 class HomeScreenRecyclerViewHolder(
     private val
     homeScreenRecyclerviewLayoutItemBinding: HomeScreenRecyclerviewLayoutItemBinding
