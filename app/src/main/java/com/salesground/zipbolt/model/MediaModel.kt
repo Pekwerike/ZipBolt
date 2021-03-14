@@ -18,5 +18,6 @@ data class MediaModel(
     val mediaCategory: MediaCategory,
     val mimeType: String,
     val mediaBucketName: String,
-    val mediaDuration: Long = 0
+    val mediaDuration: Long = 0,
+    val mediaAlbumArt: String = ""
 )
