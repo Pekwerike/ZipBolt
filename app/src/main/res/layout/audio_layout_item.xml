@@ -41,7 +41,7 @@
                     android:id="@+id/audio_artist_name_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.5f"
+                    android:alpha="0.5"
                     android:text="Wizkid"
                     android:textSize="12sp" />
 

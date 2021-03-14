@@ -3,33 +3,36 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+
         <variable
             name="applicationLabel"
             type="String" />
     </data>
 
     <LinearLayout
-        android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:orientation="vertical">
 
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:padding="8dp"
             android:id="@+id/application_icon_image_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="2dp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_label_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="8dp"
             android:lines="1"
-            android:textSize="12sp"
             android:text="@{applicationLabel}"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textSize="12sp" />
 
     </LinearLayout>
 </layout>

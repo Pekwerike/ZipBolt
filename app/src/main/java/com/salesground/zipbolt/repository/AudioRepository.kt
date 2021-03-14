@@ -149,8 +149,21 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
                 val audioSize = cursor.getLong(audioSizeColumnIndex)
                 val audioUri = ContentUris.withAppendedId(collection, audioId)
                 val audioDuration = audioUri.getMediaDuration(context)
-                val audioAlbumArt = context.contentResolver.query(collection,
-                arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Album))
+                val audioAlbumId = cursor.getLong(audioAlbumIdColumnIndex)
+
+                var audioAlbumArtPath = ""
+                context.contentResolver.query(
+                    collection,
+                    arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
+                    "${MediaStore.Audio.Albums.ALBUM_ID} =?",
+                    arrayOf(audioAlbumId.toString()),
+                    null
+                )?.let {
+                    if (it.moveToFirst()) {
+                        audioAlbumArtPath =
+                            it.getString(it.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
+                    }
+                }
 
                 allAudioFilesOnDevice.add(
                     MediaModel(
@@ -161,7 +174,8 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
                         mediaCategory = MediaCategory.AUDIO,
                         mediaBucketName = "",
                         mediaDuration = audioDuration.toLong(),
-                        mimeType = audioMimeType
+                        mimeType = audioMimeType,
+                        mediaAlbumArtPath = audioAlbumArtPath
                     )
                 )
             }
