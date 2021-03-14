@@ -35,8 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="all"
                 android:textAllCaps="false"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textStyle="bold"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_margin="10dp"
                 android:textSize="16sp"/>
 
