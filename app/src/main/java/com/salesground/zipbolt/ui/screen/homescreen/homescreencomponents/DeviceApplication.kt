@@ -15,6 +15,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -23,6 +24,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.ImageViewCompat
 import coil.request.ImageRequest
 import com.bumptech.glide.Glide
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.AppIconImageViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
 import dev.chrisbanes.accompanist.coil.CoilImage
@@ -39,16 +41,8 @@ fun DeviceApplication(application: ApplicationModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //AppIconDisplay(application.appIcon)
-        CoilImage(request = ImageRequest.Builder(context)
-            .apply {
-                size(100, 100)
-                data(application.appIcon)
-                dispatcher(Dispatchers.Default)
-                allowHardware(true)
-            }.build()
-        ) {
-
-        }
+        CoilImage(data = application.appIcon!!.toBitmap(),
+            modifier = Modifier.size(70.dp), contentDescription = "")
 
        /* application.appIcon?.let {
             Image(painter = application.appIcon.toPainter(), contentDescription = "")

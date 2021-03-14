@@ -1,12 +1,16 @@
 package com.salesground.zipbolt.ui.screen.homescreen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.salesground.zipbolt.databinding.HomeScreenRecyclerViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
@@ -17,6 +21,7 @@ import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScre
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerviewDataModel
 import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
@@ -34,19 +39,13 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
         },
         sheetState = modalBottomSheetState
     ) {
-      /*LazyColumn(content = {
-            item {
-                DeviceMediaCategoryHeader(categoryName = "App")
-            }
-            items(count = allApplicationsOnDevice.size, key = {
-                allApplicationsOnDevice[it].apkPath
-            }) { index: Int ->
+        LazyVerticalGrid(cells = GridCells.Adaptive(128.dp)){
+            items(count = allApplicationsOnDevice.size) { index: Int ->
                 DeviceApplication(application = allApplicationsOnDevice[index])
             }
+        }
 
-        }, modifier = Modifier.fillMaxSize())*/
-
-        AndroidViewBinding(factory = HomeScreenRecyclerViewBinding::inflate){
+      /*  AndroidViewBinding(factory = HomeScreenRecyclerViewBinding::inflate){
             val hSRAdapter = HomeScreenRecyclerViewAdapter()
             hSRAdapter.submitList(mutableListOf(HomeScreenRecyclerviewDataModel(
                 dataCategory = "Apps",
@@ -55,6 +54,6 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
                 }.take(10)
             )))
             homeScreenRecyclerView.adapter = hSRAdapter
-        }
+        }*/
     }
 }
