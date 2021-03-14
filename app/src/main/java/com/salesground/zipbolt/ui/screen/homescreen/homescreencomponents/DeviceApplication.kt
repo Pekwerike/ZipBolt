@@ -1,10 +1,12 @@
 package com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.Size
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,35 +19,40 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.widget.ImageViewCompat
 import coil.request.ImageRequest
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.databinding.AppIconImageViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
 import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.imageloading.toPainter
+import kotlinx.coroutines.Dispatchers
 import java.io.File
 
 @Composable
 fun DeviceApplication(application: ApplicationModel) {
     val context = LocalContext.current
-    Column(modifier = Modifier.fillMaxWidth(),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally) {
-            //AppIconDisplay(application.appIcon)
-        AndroidView(factory = { AppCompatImageView(it)}){
-            Glide.with(it)
-                .load(application.appIcon)
-                .override(100)
-                .into(it)
-                
-        }
-        Text(text = application.applicationName ?: "")
-    }
-}
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        //AppIconDisplay(application.appIcon)
+        CoilImage(request = ImageRequest.Builder(context)
+            .apply {
+                size(100, 100)
+                data(application.appIcon)
+                dispatcher(Dispatchers.Default)
+                allowHardware(true)
+            }.build()
+        ) {
 
-@Composable
-private fun AppIconDisplay(drawable: Drawable?) {
-    AndroidViewBinding(factory = AppIconImageViewBinding::inflate){
-        this.appIconView.setImageDrawable(drawable)
+        }
+
+       /* application.appIcon?.let {
+            Image(painter = application.appIcon.toPainter(), contentDescription = "")
+        }*/
+        Text(text = application.applicationName ?: "")
     }
 }

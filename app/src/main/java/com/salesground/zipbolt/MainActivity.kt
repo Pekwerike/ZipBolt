@@ -36,6 +36,7 @@ import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
 import com.salesground.zipbolt.ui.temporaryscreens.HomeScreenTwo
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
+import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
 import com.salesground.zipbolt.viewmodel.MainActivityViewModel
 import com.salesground.zipbolt.viewmodel.MediaViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +53,7 @@ const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
     private val mediaViewModel by viewModels<MediaViewModel>()
+    private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager

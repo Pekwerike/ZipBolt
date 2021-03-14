@@ -34,7 +34,7 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
         },
         sheetState = modalBottomSheetState
     ) {
-        LazyColumn(content = {
+      /*LazyColumn(content = {
             item {
                 DeviceMediaCategoryHeader(categoryName = "App")
             }
@@ -44,7 +44,7 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
                 DeviceApplication(application = allApplicationsOnDevice[index])
             }
 
-        }, modifier = Modifier.fillMaxSize())
+        }, modifier = Modifier.fillMaxSize())*/
 
         AndroidViewBinding(factory = HomeScreenRecyclerViewBinding::inflate){
             val hSRAdapter = HomeScreenRecyclerViewAdapter()
@@ -52,9 +52,9 @@ fun HomeScreen(deviceApplicationViewModel: DeviceApplicationViewModel) {
                 dataCategory = "Apps",
                 mediaCollection = allApplicationsOnDevice.map {
                     DataCategory.Application(it)
-                } as MutableList<DataCategory>
+                }.take(10)
             )))
-            homeScreenRecyclerView.adapter
+            homeScreenRecyclerView.adapter = hSRAdapter
         }
     }
 }

@@ -44,7 +44,4 @@ object HomeScreenRecyclerViewDiffUtil : DiffUtil.ItemCallback<HomeScreenRecycler
     }
 }
 
-data class HomeScreenRecyclerviewDataModel(
-    val dataCategory: String,
-    val mediaCollection: MutableList<DataCategory>
-)
+

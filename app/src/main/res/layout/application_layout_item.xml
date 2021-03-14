@@ -9,22 +9,27 @@
     </data>
 
     <LinearLayout
+        android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:padding="8dp"
             android:id="@+id/application_icon_image_view"
             android:layout_width="match_parent"
-            android:layout_height="100dp" />
+            android:layout_height="wrap_content" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_label_text_view"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/chivo"
+            android:lines="1"
             android:text="@{applicationLabel}"
-            android:textAlignment="center"
-            android:layout_height="wrap_content" />
+            android:textAlignment="center" />
 
     </LinearLayout>
 </layout>
