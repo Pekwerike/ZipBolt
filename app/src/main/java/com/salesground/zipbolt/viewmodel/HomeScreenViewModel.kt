@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.MediaModel
+import com.salesground.zipbolt.repository.AudioRepository
 import com.salesground.zipbolt.repository.DeviceApplicationsRepository
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.VideoRepository
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val applicationsRepository: DeviceApplicationsRepository,
     private val imageRepository: ImageRepository,
-    private val videoRepository: VideoRepository
+    private val videoRepository: VideoRepository,
+    private val audioRepository: AudioRepository
 ) : ViewModel() {
 
     private var _homeScreenData = MutableLiveData<MutableList<HomeScreenRecyclerviewDataModel>>()
@@ -47,6 +49,10 @@ class HomeScreenViewModel @Inject constructor(
                 videoRepository.getAllVideoFromDevice()
             }.await()
 
+            val allAudioOnDevice = async(Dispatchers.IO) {
+                audioRepository.getAllAudioFilesOnDeviceList()
+            }.await()
+
             _homeScreenData.value = mutableListOf<HomeScreenRecyclerviewDataModel>(
                 HomeScreenRecyclerviewDataModel(dataCategory = "Apps",
                     mediaCollection = allApplicationsOnDevice.map {
@@ -60,7 +66,11 @@ class HomeScreenViewModel @Inject constructor(
                 HomeScreenRecyclerviewDataModel(dataCategory = "Videos",
                 mediaCollection = allVideosOnDevice.map{
                     DataCategory.Video(it)
-                }.take(8))
+                }.take(8)),
+                HomeScreenRecyclerviewDataModel(dataCategory = "Music",
+                mediaCollection = allAudioOnDevice.map{
+                    DataCategory.Music(it)
+                }.take(6))
             )
         }
     }

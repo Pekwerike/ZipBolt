@@ -26,6 +26,8 @@ class HomeScreenRecyclerViewHolder(
         val hSRCLayoutManager = when (homeScreenRecyclerviewDataModel.dataCategory) {
             "Apps" -> GridLayoutManager(homeScreenRecyclerviewLayoutItemBinding.root.context, 5)
             "Images" -> GridLayoutManager(homeScreenRecyclerviewLayoutItemBinding.root.context, 4)
+            "Videos" -> GridLayoutManager(homeScreenRecyclerviewLayoutItemBinding.root.context, 4)
+            "Music" -> GridLayoutManager(homeScreenRecyclerviewLayoutItemBinding.root.context, 2)
             else -> GridLayoutManager(homeScreenRecyclerviewLayoutItemBinding.root.context, 4)
         }
 
