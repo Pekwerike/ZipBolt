@@ -31,9 +31,9 @@
                 android:textSize="18sp"/>
 
             <com.google.android.material.button.MaterialButton
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=">"
+                android:text="all"
                 android:textAllCaps="false"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:textStyle="bold"

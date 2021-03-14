@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder.HSApplicationCategoryViewHolder
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder.HSImageCategoryViewHolder
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder.HSVideoCategoryViewHolder
 
 enum class HSCategoryRecyclerViewAdapterViewType(val viewType: Int) {
     APPLICATION(1),
@@ -33,12 +34,10 @@ class HSCategoryRecyclerViewAdapter
 
             }
             HSCategoryRecyclerViewAdapterViewType.IMAGE.viewType -> {
-                // TODO, return ViewHolder for image
                HSImageCategoryViewHolder.createHSImageCategoryViewHolder(parent)
             }
             HSCategoryRecyclerViewAdapterViewType.VIDEO.viewType -> {
-                // TODO, return ViewHolder for video
-                HSApplicationCategoryViewHolder.createHSApplicationCategoryViewHolder(parent)
+               HSVideoCategoryViewHolder.createHSVideoCategoryViewHolder(parent)
             }
             HSCategoryRecyclerViewAdapterViewType.MUSIC.viewType ->{
                 // TODO, return ViewHolder for music
@@ -52,6 +51,7 @@ class HSCategoryRecyclerViewAdapter
         when(holder){
             is HSApplicationCategoryViewHolder -> holder.bindApplicationData(currentList[position] as DataCategory.Application)
             is HSImageCategoryViewHolder -> holder.bindImageDisplay(currentList[position] as DataCategory.Image)
+            is HSVideoCategoryViewHolder -> holder.bindVideoData(currentList[position] as DataCategory.Video)
         }
     }
 }
