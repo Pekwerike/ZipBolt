@@ -45,7 +45,7 @@ class HomeScreenViewModel @Inject constructor(
                 HomeScreenRecyclerviewDataModel(dataCategory = "Images",
                     mediaCollection = allImagesOnDevice.map {
                         DataCategory.Image(it)
-                    })
+                    }.take(8))
             )
         }
     }

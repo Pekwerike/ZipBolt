@@ -14,15 +14,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/category_labe_text_view"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{categoryLabel}"
-            android:textStyle="bold"
-            android:layout_margin="10dp"
-            android:textSize="18sp"/>
+            android:layout_gravity="center"
+            android:orientation="horizontal">
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/category_labe_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{categoryLabel}"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:textSize="18sp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text=">"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textStyle="bold"
+                android:layout_margin="10dp"
+                android:textSize="16sp"/>
+
+        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/category_items_recyclerview"
             android:layout_width="match_parent"
