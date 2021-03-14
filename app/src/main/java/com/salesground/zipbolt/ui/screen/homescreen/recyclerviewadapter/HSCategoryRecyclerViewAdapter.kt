@@ -4,7 +4,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder.HSApplicationCategoryViewHolder
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder.HSImageCategoryViewHolder
 
 enum class HSCategoryRecyclerViewAdapterViewType(val viewType: Int) {
     APPLICATION(1),
@@ -32,7 +34,7 @@ class HSCategoryRecyclerViewAdapter
             }
             HSCategoryRecyclerViewAdapterViewType.IMAGE.viewType -> {
                 // TODO, return ViewHolder for image
-                HSApplicationCategoryViewHolder.createHSApplicationCategoryViewHolder(parent)
+               HSImageCategoryViewHolder.createHSImageCategoryViewHolder(parent)
             }
             HSCategoryRecyclerViewAdapterViewType.VIDEO.viewType -> {
                 // TODO, return ViewHolder for video
@@ -49,6 +51,7 @@ class HSCategoryRecyclerViewAdapter
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder){
             is HSApplicationCategoryViewHolder -> holder.bindApplicationData(currentList[position] as DataCategory.Application)
+            is HSImageCategoryViewHolder -> holder.bindImageDisplay(currentList[position] as DataCategory.Image)
         }
     }
 }

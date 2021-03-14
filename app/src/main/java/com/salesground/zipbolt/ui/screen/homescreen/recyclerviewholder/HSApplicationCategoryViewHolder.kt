@@ -7,8 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ApplicationLayoutItemBinding
-import com.salesground.zipbolt.model.ApplicationModel
-import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.DataCategory
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
 
 class HSApplicationCategoryViewHolder(
     private val applicationLayoutItemBinding:

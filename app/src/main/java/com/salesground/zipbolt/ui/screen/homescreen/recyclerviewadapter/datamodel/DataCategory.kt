@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter
+package com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel
 
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.MediaModel

@@ -119,8 +119,8 @@ class MainActivity : AppCompatActivity() {
                         this::transferImages
                     )*/
                    HomeScreen(
-                        deviceApplicationViewModel = deviceApplicationViewModel
-                    )
+                        deviceApplicationViewModel = deviceApplicationViewModel,
+                    homeScreenViewModel = homeScreenViewModel)
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
             }

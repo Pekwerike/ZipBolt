@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.repository.DeviceApplicationsRepository
 import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.DataCategory
-import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerviewDataModel
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.HomeScreenRecyclerviewDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,8 +27,8 @@ class HomeScreenViewModel @Inject constructor(
         getHomeScreenData()
     }
 
-    fun getHomeScreenData() {
-        viewModelScope.launch(Dispatchers.IO) {
+  private fun getHomeScreenData() {
+        viewModelScope.launch {
             val allApplicationsOnDevice = async(Dispatchers.IO) {
                 applicationsRepository.getNonSystemAppsOnDevice()
             }.await()

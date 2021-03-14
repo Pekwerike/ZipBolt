@@ -3,10 +3,7 @@ package com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.salesground.zipbolt.model.ApplicationModel
-import com.salesground.zipbolt.model.MediaModel
-import com.salesground.zipbolt.model.VideoModel
+import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.HomeScreenRecyclerviewDataModel
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder.HomeScreenRecyclerViewHolder
 
 
