@@ -10,9 +10,6 @@ import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -28,6 +25,100 @@ class ImageRepository @Inject constructor
     private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository
 ) : ImageRepositoryInterface {
 
+
+    fun fetchAllImagesOnDevicePreviewList(): MutableList<MediaModel> {
+        val allImagesOnDevicePreviewList: MutableList<MediaModel> = mutableListOf()
+
+        val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(
+                MediaStore.VOLUME_EXTERNAL_PRIMARY
+            )
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+
+        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME
+            )
+        } else {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.DATA
+            )
+        }
+
+        val selection = null
+        val selectionArgs = null
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC LIMIT 10"
+
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )?.apply {
+            val imageIdColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val imageDateAddedColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val imageDisplayNameColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val imageSizeColumnIndex = getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val imageMimeTypeColumnIndex =
+                getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+
+
+            while (moveToNext()) {
+                val imageId = getLong(imageIdColumnIndex)
+                val imageDateAdded = getLong(imageDateAddedColumnIndex)
+                val imageDisplayName = getString(imageDisplayNameColumnIndex)
+                val imageSize = getLong(imageSizeColumnIndex)
+                val imageMimeType = getString(imageMimeTypeColumnIndex)
+
+                val imageUri = ContentUris.withAppendedId(
+                    collection,
+                    imageId
+                )
+                val imageParentFolderName =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        val imageBucketNameColumnIndex =
+                            getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+                        getString(imageBucketNameColumnIndex)
+                    } else {
+                        val imageDataColumnIndex = getColumnIndex(MediaStore.Images.Media.DATA)
+                        File(getString(imageDataColumnIndex)).parentFile!!.name
+                    }
+
+
+
+                allImagesOnDevicePreviewList.add(
+                    MediaModel(
+                        mediaUri = imageUri,
+                        mediaDateAdded = imageDateAdded,
+                        mediaDisplayName = imageDisplayName,
+                        mediaSize = imageSize,
+                        mediaCategory = MediaCategory.IMAGE,
+                        mimeType = imageMimeType,
+                        mediaBucketName = imageParentFolderName,
+
+                        )
+                )
+            }
+            close()
+        }
+        return allImagesOnDevicePreviewList
+    }
 
     fun fetchAllImagesOnDeviceOnce(): MutableList<MediaModel> {
         val allImagesOnDevice: MutableList<MediaModel> = mutableListOf()
@@ -62,7 +153,7 @@ class ImageRepository @Inject constructor
 
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} ASC"
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
 
         applicationContext.contentResolver.query(
             collection,

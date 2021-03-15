@@ -33,7 +33,7 @@ class MediaViewModel @Inject constructor(
 
     init {
         fetchAllImagesOnDeviceOnce()
-        addImages()
+
     }
 
     fun imageSelected(imageSelected : MediaModel){
@@ -49,12 +49,4 @@ class MediaViewModel @Inject constructor(
         }
     }
 
-    private fun addImages() {
-        viewModelScope.launch {
-            imageRepository.fetchAllImagesOnDevice().collect {
-                imagesList.add(it)
-                allImagesOnDevice.value = imagesList
-            }
-        }
-    }
 }

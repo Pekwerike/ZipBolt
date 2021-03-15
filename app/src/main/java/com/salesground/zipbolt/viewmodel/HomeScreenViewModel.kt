@@ -57,19 +57,19 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             launch(Dispatchers.IO) {
-                val deviceImages = imageRepository.fetchAllImagesOnDeviceOnce().take(8)
+                val deviceImages = imageRepository.fetchAllImagesOnDevicePreviewList()
                 withContext(Dispatchers.Main) {
                     _deviceImages.value = deviceImages
                 }
             }
             launch(Dispatchers.IO) {
-                val deviceVideos = videoRepository.getAllVideoFromDevice().take(8)
+                val deviceVideos = videoRepository.getAllVideoFromDevicePreviewList()
                 withContext(Dispatchers.Main) {
                     _deviceVideos.value = deviceVideos
                 }
             }
             launch(Dispatchers.IO) {
-                val deviceAudio = audioRepository.getAllAudioFilesOnDeviceList()
+                val deviceAudio = audioRepository.getAudioPreviewList()
                 withContext(Dispatchers.Main){
                     _deviceAudio.value = deviceAudio
                 }

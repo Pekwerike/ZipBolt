@@ -10,16 +10,13 @@ import com.salesground.zipbolt.extensions.getMediaDuration
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import java.io.File
 import javax.inject.Inject
 
 class VideoRepository @Inject constructor(@ApplicationContext private val context: Context) {
 
-    fun getAllVideoFromDeviceAsFlow(): Flow<MediaModel> = flow {
+    fun getAllVideoFromDevicePreviewList(): MutableList<MediaModel> {
+        val videosOnDevicePreviewList: MutableList<MediaModel> = mutableListOf()
         val collection: Uri = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -46,7 +43,7 @@ class VideoRepository @Inject constructor(@ApplicationContext private val contex
         }
         val selection = null
         val selectionArguments = null
-        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
+        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC LIMIT 10"
 
         context.contentResolver.query(
             collection,
@@ -87,7 +84,7 @@ class VideoRepository @Inject constructor(@ApplicationContext private val contex
                 val videoDuration = videoUri.getMediaDuration(context)
 
 
-                emit(
+                videosOnDevicePreviewList.add(
                     MediaModel(
                         mediaUri = videoUri,
                         mediaDisplayName = videoDisplayName,
@@ -102,10 +99,11 @@ class VideoRepository @Inject constructor(@ApplicationContext private val contex
             }
             cursor.close()
         }
+        return videosOnDevicePreviewList
     }
 
     fun getAllVideoFromDevice(): MutableList<MediaModel> {
-        val videosOnDevice : MutableList<MediaModel> = mutableListOf()
+        val videosOnDevice: MutableList<MediaModel> = mutableListOf()
         val collection: Uri = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
