@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.ui.screen.homescreen.recyclerviewholder
 
+import android.animation.ValueAnimator
 import android.os.Build
 import android.util.Size
 import android.view.LayoutInflater
@@ -17,6 +18,7 @@ class HSAudioCategoryViewHolder(
 
     fun bindAudioData(audioData : DataCategory.Music){
         audioLayoutItemBinding.apply {
+
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
                 Glide.with(root.context)
                     .load(root.context.

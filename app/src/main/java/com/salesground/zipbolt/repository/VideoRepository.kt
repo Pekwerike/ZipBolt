@@ -38,6 +38,7 @@ class VideoRepository @Inject constructor(@ApplicationContext private val contex
                 MediaStore.Video.Media.DATE_ADDED,
                 MediaStore.Video.Media.MIME_TYPE,
                 MediaStore.Video.Media.DATA,
+
                 MediaStore.Video.Media.DURATION
             )
         }
