@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 
-enum class MediaCategory(private val mediaType : String) {
+enum class MediaCategory(private val mediaType: String) {
     IMAGE("image"),
     VIDEO("video"),
     AUDIO("audio")
@@ -19,5 +19,7 @@ data class MediaModel(
     val mimeType: String,
     val mediaBucketName: String,
     val mediaDuration: Long = 0,
-    val mediaAlbumArtPath: String = ""
+    val mediaAlbumArtPath: String = "",
+    val mediaTitle: String = "",
+    val mediaArtist: String = ""
 )

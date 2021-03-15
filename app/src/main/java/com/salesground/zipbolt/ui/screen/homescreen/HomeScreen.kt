@@ -31,7 +31,12 @@ homeScreenViewModel: HomeScreenViewModel) {
     val allApplicationsOnDevice by deviceApplicationViewModel.allApplicationsOnDevice.observeAsState(
         listOf<ApplicationModel>()
     )
+    val deviceImages by homeScreenViewModel.deviceImages.observeAsState(mutableListOf())
+    val deviceVideos by homeScreenViewModel.deviceVideos.observeAsState(mutableListOf())
+    val deviceApplication by homeScreenViewModel.deviceApplications.observeAsState(mutableListOf())
+    val deviceAudio by homeScreenViewModel.deviceAudio.observeAsState(mutableListOf())
     val homeScreenData by homeScreenViewModel.homeScreenData.observeAsState(mutableListOf())
+
     ModalBottomSheetLayout(
         sheetContent = {
             Text("")
@@ -46,7 +51,26 @@ homeScreenViewModel: HomeScreenViewModel) {
 
         AndroidViewBinding(factory = HomeScreenRecyclerViewBinding::inflate){
             val hSRAdapter = HomeScreenRecyclerViewAdapter()
-            hSRAdapter.submitList(homeScreenData)
+            hSRAdapter.submitList(
+                mutableListOf(
+                    HomeScreenRecyclerviewDataModel("Apps",
+                    deviceApplication.map {
+                        DataCategory.Application(it)
+                    }),
+                    HomeScreenRecyclerviewDataModel("Images",
+                    deviceImages.map{
+                        DataCategory.Image(it)
+                    }),
+                    HomeScreenRecyclerviewDataModel("Videos",
+                    deviceVideos.map{
+                        DataCategory.Video(it)
+                    }),
+                    HomeScreenRecyclerviewDataModel("Music",
+                    deviceAudio.map{
+                        DataCategory.Music(it)
+                    })
+                )
+            )
             homeScreenRecyclerView.adapter = hSRAdapter
         }
     }

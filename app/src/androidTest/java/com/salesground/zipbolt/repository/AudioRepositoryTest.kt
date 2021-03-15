@@ -19,11 +19,4 @@ class AudioRepositoryTest {
         audioRepository = AudioRepository(applicationContext)
     }
 
-    @Test
-    fun testThat_theDurationOfEachVideoIsReturned() = runBlocking{
-        audioRepository.getAllAudioFilesOnDevice().collect {
-
-            assertTrue(it.mediaDuration > 10)
-        }
-    }
 }

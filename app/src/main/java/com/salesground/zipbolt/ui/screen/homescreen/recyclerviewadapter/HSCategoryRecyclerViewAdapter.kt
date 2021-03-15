@@ -26,6 +26,7 @@ class HSCategoryRecyclerViewAdapter
             is DataCategory.Image -> HSCategoryRecyclerViewAdapterViewType.IMAGE.viewType
             is DataCategory.Music -> HSCategoryRecyclerViewAdapterViewType.MUSIC.viewType
             is DataCategory.Video -> HSCategoryRecyclerViewAdapterViewType.VIDEO.viewType
+            else -> HSCategoryRecyclerViewAdapterViewType.IMAGE.viewType
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -59,11 +60,11 @@ class HSCategoryRecyclerViewAdapter
 
 object HSCategoryRecyclerViewDiffUtil : DiffUtil.ItemCallback<DataCategory>() {
     override fun areItemsTheSame(oldItem: DataCategory, newItem: DataCategory): Boolean {
-        return oldItem == newItem
+        return oldItem.itemId == newItem.itemId
     }
 
     override fun areContentsTheSame(oldItem: DataCategory, newItem: DataCategory): Boolean {
-        return oldItem.itemId == newItem.itemId
+        return oldItem == newItem
     }
 
 }

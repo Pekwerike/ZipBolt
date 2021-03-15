@@ -30,14 +30,14 @@ object HomeScreenRecyclerViewDiffUtil : DiffUtil.ItemCallback<HomeScreenRecycler
         oldItem: HomeScreenRecyclerviewDataModel,
         newItem: HomeScreenRecyclerviewDataModel
     ): Boolean {
-        return oldItem == newItem
+        return oldItem.dataCategory == newItem.dataCategory
     }
 
     override fun areContentsTheSame(
         oldItem: HomeScreenRecyclerviewDataModel,
         newItem: HomeScreenRecyclerviewDataModel
     ): Boolean {
-        return oldItem.dataCategory == newItem.dataCategory
+        return oldItem == newItem
     }
 }
 

@@ -23,7 +23,7 @@ class DeviceApplicationViewModel @Inject constructor(
 
     init{
         viewModelScope.launch {
-            getAllApplicationsOnDevice()
+          //  getAllApplicationsOnDevice()
         }
     }
 

@@ -132,7 +132,7 @@ class VideoRepository @Inject constructor(@ApplicationContext private val contex
         }
         val selection = null
         val selectionArguments = null
-        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC"
+        val sortOrder = "${MediaStore.Video.Media.DATE_ADDED} DESC LIMIT 10"
 
         context.contentResolver.query(
             collection,

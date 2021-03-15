@@ -15,84 +15,12 @@ import javax.inject.Inject
 
 class AudioRepository @Inject constructor(@ApplicationContext private val context: Context) {
 
-
-    fun getAllAudioFilesOnDevice(): Flow<MediaModel> = flow {
-        val collection = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
-            MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
-            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-
-        val projection: Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            arrayOf(
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.MIME_TYPE,
-                MediaStore.Audio.Media.DATE_ADDED,
-                MediaStore.Audio.Media.SIZE,
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.DURATION
-            )
-        } else {
-            arrayOf(
-                MediaStore.Audio.Media._ID,
-                MediaStore.Audio.Media.DISPLAY_NAME,
-                MediaStore.Audio.Media.MIME_TYPE,
-                MediaStore.Audio.Media.DATE_ADDED,
-                MediaStore.Audio.Media.SIZE
-            )
-        }
-
-        val selection = null
-        val selectionArgs = null
-        val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
-
-        context.contentResolver.query(
-            collection,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
-        )?.let { cursor: Cursor ->
-            val audioIDColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-            val audioDisplayNameColumnIndex =
-                cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
-            val audioMimeTypeColumnIndex =
-                cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE)
-            val audioDateAddedColumnIndex =
-                cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_ADDED)
-            val audioSizeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
-
-
-            while (cursor.moveToNext()) {
-                val audioId = cursor.getLong(audioIDColumnIndex)
-                val audioDisplayName = cursor.getString(audioDisplayNameColumnIndex)
-                val audioMimeType = cursor.getString(audioMimeTypeColumnIndex)
-                val audioDateAdded = cursor.getLong(audioDateAddedColumnIndex)
-                val audioSize = cursor.getLong(audioSizeColumnIndex)
-                val audioUri = ContentUris.withAppendedId(collection, audioId)
-                val audioDuration = audioUri.getMediaDuration(context)
-
-                emit(
-                    MediaModel(
-                        mediaUri = audioUri,
-                        mediaDisplayName = audioDisplayName,
-                        mediaDateAdded = audioDateAdded,
-                        mediaSize = audioSize,
-                        mediaCategory = MediaCategory.AUDIO,
-                        mediaBucketName = "",
-                        mediaDuration = audioDuration.toLong(),
-                        mimeType = audioMimeType
-                    )
-                )
-            }
-            cursor.close()
-        }
-    }
+    
 
     fun getAllAudioFilesOnDeviceList(): MutableList<MediaModel> {
         val allAudioFilesOnDevice: MutableList<MediaModel> = mutableListOf()
 
-        val collection = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
@@ -100,6 +28,8 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
             arrayOf(
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.MIME_TYPE,
                 MediaStore.Audio.Media.DATE_ADDED,
                 MediaStore.Audio.Media.SIZE,
@@ -112,6 +42,7 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
             arrayOf(
                 MediaStore.Audio.Media._ID,
                 MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.MIME_TYPE,
                 MediaStore.Audio.Media.DATE_ADDED,
                 MediaStore.Audio.Media.SIZE,
@@ -140,6 +71,8 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
             val audioSizeColumnIndex = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
             val audioAlbumIdColumnIndex =
                 cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+            val audioTitleColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+
 
 
             while (cursor.moveToNext()) {
@@ -151,18 +84,29 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
                 val audioUri = ContentUris.withAppendedId(collection, audioId)
                 val audioDuration = audioUri.getMediaDuration(context)
                 val audioAlbumId = cursor.getLong(audioAlbumIdColumnIndex)
+                val audioTitle = cursor.getString(audioTitleColumnIndex)
 
                 var audioAlbumArtPath = ""
-                context.contentResolver.query(
-                    collection,
-                    arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART),
-                    "${MediaStore.Audio.Albums.ALBUM_ID} =?",
-                    arrayOf(audioAlbumId.toString()),
-                    null
-                )?.let {
-                    if (it.moveToFirst()) {
-                        audioAlbumArtPath =
-                            it.getString(it.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
+                var audioAlbumArtist = ""
+                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                    context.contentResolver.query(
+                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        arrayOf(
+                            MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART,
+                            MediaStore.Audio.Albums.ARTIST
+                        ),
+                        "${MediaStore.Audio.Albums._ID} =?",
+                        arrayOf(audioAlbumId.toString()),
+                        "${MediaStore.Audio.Albums._ID} DESC LIMIT 1"
+                    )?.let {
+                        if (it.moveToFirst()) {
+                            audioAlbumArtPath =
+                                it.getString(it.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART))
+                                    ?: ""
+                            audioAlbumArtist =
+                                it.getString(it.getColumnIndex(MediaStore.Audio.Albums.ARTIST))
+                                    ?: ""
+                        }
                     }
                 }
 
@@ -176,7 +120,9 @@ class AudioRepository @Inject constructor(@ApplicationContext private val contex
                         mediaBucketName = "",
                         mediaDuration = audioDuration.toLong(),
                         mimeType = audioMimeType,
-                        mediaAlbumArtPath = audioAlbumArtPath
+                        mediaAlbumArtPath = audioAlbumArtPath,
+                        mediaTitle = audioTitle,
+                        mediaArtist = audioAlbumArtist
                     )
                 )
             }

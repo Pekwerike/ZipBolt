@@ -28,10 +28,11 @@ class HSAudioCategoryViewHolder(
                     .into(audioArtImageView)
             }else {
                 Glide.with(root.context)
-                    .load(audioData.musicModel.mediaUri)
+                    .load(audioData.musicModel.mediaAlbumArtPath)
                     .into(audioArtImageView)
             }
-            audioTitle = audioData.musicModel.mediaDisplayName
+            audioTitle = audioData.musicModel.mediaTitle
+            artistName = audioData.musicModel.mediaArtist
         }
     }
     companion object {
