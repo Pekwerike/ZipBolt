@@ -30,14 +30,14 @@ class ImageRepositoryTest {
 
     @Test
     fun fetchAllImage_TestCollectionIsNotEmpty() = runBlocking {
-        val deviceMedia = imageRepository.fetchAllImagesOnDevice().toList()
+        val deviceMedia = imageRepository.fetchAllImagesOnDeviceOnce()
         assertTrue(deviceMedia.size != 0)
     }
 
     @Test
     fun convertImageModelToFile_Test() = runBlocking {
         val deviceMedia: MutableList<MediaModel> =
-            imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
+            imageRepository.fetchAllImagesOnDeviceOnce()
 
         val imageFiles =
             imageRepository.convertImageModelToFile(mutableListOf(deviceMedia[0]))
@@ -48,7 +48,7 @@ class ImageRepositoryTest {
     @Test
     fun convertImageModelToFile_TestForFileSize() = runBlocking {
         val deviceMedia: MutableList<MediaModel> =
-            imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
+            imageRepository.fetchAllImagesOnDeviceOnce()
         val imageFiles = imageRepository.convertImageModelToFile(mutableListOf(deviceMedia.get(0)))
         assertEquals(imageFiles.get(0).length(), deviceMedia.get(0).mediaSize)
     }
@@ -56,7 +56,7 @@ class ImageRepositoryTest {
 
     @Test
     fun insertImageIntoMediaStoreTest() = runBlocking {
-        val allImagesOnDevice = imageRepository.fetchAllImagesOnDevice().toList().toMutableList()
+        val allImagesOnDevice = imageRepository.fetchAllImagesOnDeviceOnce()
         val (mediaUri, mediaDisplayName, mediaDateAdded, mediaSize, mediaCategory, mimeType, mediaBucketName, mediaDuration) = allImagesOnDevice[2]
 
         applicationContext.contentResolver.openFileDescriptor(mediaUri, "r")?.also {
@@ -67,7 +67,7 @@ class ImageRepositoryTest {
                 DIS
             )
         }
-        val zipBoltImages = imageRepository.fetchAllImagesOnDevice().filter {
+        val zipBoltImages = imageRepository.fetchAllImagesOnDeviceOnce().filter {
             it.mediaBucketName == ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY.categoryName
         }.toList()
         assertTrue(zipBoltImages.isNotEmpty())

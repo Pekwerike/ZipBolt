@@ -5,6 +5,5 @@ import kotlinx.coroutines.flow.Flow
 import java.io.File
 
 interface ImageRepositoryInterface {
-    fun fetchAllImagesOnDevice(): Flow<MediaModel>
     fun convertImageModelToFile(imagesToConvert: MutableList<MediaModel>): MutableList<File>
 }
