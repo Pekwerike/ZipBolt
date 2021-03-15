@@ -59,7 +59,7 @@ class ImageRepository @Inject constructor
 
         val selection = null
         val selectionArgs = null
-        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC LIMIT 10"
+        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC LIMIT 8"
 
         applicationContext.contentResolver.query(
             collection,
