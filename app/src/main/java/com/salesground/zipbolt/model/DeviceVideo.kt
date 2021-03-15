@@ -2,7 +2,7 @@ package com.salesground.zipbolt.model
 
 import android.net.Uri
 
-data class DeviceVideoModel(
+data class DeviceVideo(
     val videoId: Long,
     val videoUri: Uri,
     val videoDuration: Long,
