@@ -44,6 +44,7 @@ fun HomeScreen(
     val deviceAudio by homeScreenViewModel.deviceAudio.observeAsState(mutableListOf())
     val homeScreenData by homeScreenViewModel.homeScreenData.observeAsState(mutableListOf())
 
+
     Column(modifier = Modifier.fillMaxSize()) {
         HomeScreenAppBar()
         HomeScreenRecyclerViewComposeConfiguration(

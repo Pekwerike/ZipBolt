@@ -10,8 +10,8 @@ enum class ScreenRoutes(val route: String){
 }
 
 sealed class AppScreens(val route : String) {
-    object HomeScreen : AppScreens("Home")
-    object NotificationScreen : AppScreens("Notification")
+    object HomeScreen : AppScreens(ScreenRoutes.HOME_SCREEN.route)
+    object NotificationScreen : AppScreens(ScreenRoutes.NOTIFICATION_SCREEN.route)
 }
 
 class NavigationAction(private val navController: NavHostController){
@@ -19,14 +19,14 @@ class NavigationAction(private val navController: NavHostController){
     val navigateToNotificationScreen = {
         navController.navigate(ScreenRoutes.NOTIFICATION_SCREEN.route){
             popUpTo = navController.graph.startDestination
-            launchSingleTop
+            launchSingleTop = true
         }
     }
 
     val navigateToHomeScreen = {
         navController.navigate(ScreenRoutes.HOME_SCREEN.route){
             popUpTo = navController.graph.startDestination
-            launchSingleTop
+            launchSingleTop = true
         }
     }
 }
