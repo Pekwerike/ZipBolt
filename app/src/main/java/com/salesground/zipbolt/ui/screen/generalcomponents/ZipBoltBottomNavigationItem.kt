@@ -40,7 +40,8 @@ fun ZipBoltBottomNavigationItem(currentScreen: String?, navigationAction: Naviga
                         AppScreens.NotificationScreen -> Text(text = "Notification")
                     }
                 },
-                selectedContentColor = MaterialTheme.colors.primary
+                selectedContentColor = MaterialTheme.colors.primary,
+                unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
             )
         }
     }
