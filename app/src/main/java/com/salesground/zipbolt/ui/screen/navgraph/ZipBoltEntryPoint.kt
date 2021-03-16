@@ -1,19 +1,19 @@
 package com.salesground.zipbolt.ui.screen.navgraph
 
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Notifications
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.salesground.zipbolt.ui.navigation.AppScreens
+import com.salesground.zipbolt.ui.navigation.NavigationAction
 import com.salesground.zipbolt.ui.navigation.ScreenRoutes
+import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.HomeScreenBottomNavigationItem
 
-val bottomNavigationScreens = listOf<AppScreens>(
-    AppScreens.HomeScreen,
-    AppScreens.NotificationScreen
-)
 
 @Composable
 fun ZipBoltNavGraph(navController: NavHostController) {
@@ -31,20 +31,15 @@ fun ZipBoltNavGraph(navController: NavHostController) {
 @Composable
 fun ZipBoltEntryPoint() {
     val navController = rememberNavController()
-    val currentScreen =
+    val currentScreen = navController.currentBackStackEntryAsState().value?.arguments?.getString(
+        KEY_ROUTE)
+    val navigationActions = remember(navController){ NavigationAction(navController) }
         ModalBottomSheetLayout(sheetContent = {
             Text(text = "")
         }) {
             Scaffold(bottomBar = {
-                BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
-                    bottomNavigationScreens.forEach {
-                        BottomNavigationItem(
-                            selected = it == currentScreen,
-                            onClick = { /*TODO*/ }) {
-
-                        }
-                    }
-                }
+                HomeScreenBottomNavigationItem(currentScreen = currentScreen, navigationAction =
+                navigationActions)
             }) {
                 ZipBoltNavGraph(navController = navController)
             }
