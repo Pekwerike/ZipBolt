@@ -17,20 +17,25 @@ val bottomNavigationScreens = listOf<AppScreens>(
 )
 
 @Composable
-fun HomeScreenBottomNavigationItem(currentScreen: String?, navigationAction: NavigationAction){
+fun ZipBoltBottomNavigationItem(currentScreen: String?, navigationAction: NavigationAction) {
     BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
         bottomNavigationScreens.forEach {
             BottomNavigationItem(
                 selected = it.route == currentScreen,
-                onClick = when(it){
+                onClick = when (it) {
                     AppScreens.HomeScreen -> navigationAction.navigateToHomeScreen
                     AppScreens.NotificationScreen -> navigationAction.navigateToNotificationScreen
-                }, icon = {when(it){
-                    AppScreens.HomeScreen -> Icon(imageVector = Icons.Rounded.Home, contentDescription = "")
-                    AppScreens.NotificationScreen -> {
-                        Icon(imageVector = Icons.Rounded.Notifications, contentDescription = "")
+                }, icon = {
+                    when (it) {
+                        AppScreens.HomeScreen -> Icon(
+                            imageVector = Icons.Rounded.Home,
+                            contentDescription = ""
+                        )
+                        AppScreens.NotificationScreen -> {
+                            Icon(imageVector = Icons.Rounded.Notifications, contentDescription = "")
+                        }
                     }
-                }})
+                })
         }
     }
 }

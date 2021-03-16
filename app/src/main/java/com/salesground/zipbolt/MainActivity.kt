@@ -3,7 +3,6 @@ package com.salesground.zipbolt
 
 import android.Manifest.*
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
@@ -15,7 +14,6 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,13 +24,12 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.core.app.ActivityCompat
-import androidx.core.widget.ImageViewCompat
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
-import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
+import com.salesground.zipbolt.ui.screen.navgraph.ZipBoltUIEntryPoint
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
@@ -108,16 +105,7 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                   // HomeScreenTwo(mediaViewModel, this, this::imageSelected)
-                  /*  HomeScreen(
-                        mainActivityViewModel = mainActivityViewModel,
-                        // sendAction = { createWifiDirectGroup() },
-                        sendAction = { beginPeerDiscovery() },
-                        receiveAction = { beginPeerDiscovery() },
-                        selectedDevice = { connectToADevice(it) },
-                        this::transferImages
-                    )*/
-                   HomeScreen(
+                  ZipBoltUIEntryPoint(
                         homeScreenViewModel = homeScreenViewModel)
                     //   TempHomeScreen(mediaViewModel = mediaViewModel)
                 }
