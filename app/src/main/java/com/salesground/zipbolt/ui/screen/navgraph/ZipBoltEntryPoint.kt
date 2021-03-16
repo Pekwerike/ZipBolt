@@ -13,33 +13,30 @@ import com.salesground.zipbolt.ui.navigation.AppScreens
 import com.salesground.zipbolt.ui.navigation.NavigationAction
 import com.salesground.zipbolt.ui.navigation.ScreenRoutes
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.HomeScreenBottomNavigationItem
+import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 
-
-@Composable
-fun ZipBoltNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = ScreenRoutes.HOME_SCREEN.route) {
-        composable(ScreenRoutes.HOME_SCREEN.route) {
-
-        }
-        composable(ScreenRoutes.NOTIFICATION_SCREEN.route) {
-
-        }
-    }
-}
 
 @ExperimentalMaterialApi
 @Composable
 fun ZipBoltEntryPoint() {
-    val navController = rememberNavController()
-    val currentScreen = navController.currentBackStackEntryAsState().value?.arguments?.getString(
-        KEY_ROUTE)
-    val navigationActions = remember(navController){ NavigationAction(navController) }
+        val navController = rememberNavController()
+        val currentScreen =
+            navController.currentBackStackEntryAsState().value?.arguments?.getString(
+                KEY_ROUTE
+            )
+        val navigationActions = remember(navController) { NavigationAction(navController) }
+
         ModalBottomSheetLayout(sheetContent = {
             Text(text = "")
         }) {
             Scaffold(bottomBar = {
-                HomeScreenBottomNavigationItem(currentScreen = currentScreen, navigationAction =
-                navigationActions)
+                HomeScreenBottomNavigationItem(
+                    currentScreen = currentScreen, navigationAction =
+                    navigationActions
+                )
+            }, floatingActionButtonPosition = FabPosition.End,
+            floatingActionButton = {
+
             }) {
                 ZipBoltNavGraph(navController = navController)
             }
