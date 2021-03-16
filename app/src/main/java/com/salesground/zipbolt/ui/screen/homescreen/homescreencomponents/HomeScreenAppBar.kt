@@ -15,5 +15,5 @@ fun HomeScreenAppBar() {
         Text(text = "ZipBolt", textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth())
     }, backgroundColor = MaterialTheme.colors.surface,
-    modifier = Modifier.fillMaxWidth(), elevation = 0.dp)
+    modifier = Modifier.fillMaxWidth(), elevation = 2.dp)
 }

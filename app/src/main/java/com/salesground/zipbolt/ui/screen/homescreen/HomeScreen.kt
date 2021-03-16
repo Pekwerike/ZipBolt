@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Home
+import androidx.compose.material.icons.rounded.Notifications
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -49,7 +53,24 @@ fun HomeScreen(
         },
         sheetState = modalBottomSheetState
     ) {
-        Scaffold(topBar = { HomeScreenAppBar() }) {
+        Scaffold(topBar = { HomeScreenAppBar() },
+        bottomBar = {
+            BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
+                BottomNavigationItem(selected = true, onClick = { /*TODO*/ },
+                icon = { Icon(Icons.Rounded.Home, "")},
+                label = {Text(text="Home")},
+                selectedContentColor = MaterialTheme.colors.primary)
+
+                BottomNavigationItem(selected = false, onClick = { /*TODO*/ },
+                    icon = { Icon(Icons.Rounded.Notifications, "")},
+                    label = {Text(text="Notification")})
+            }
+        }, floatingActionButton = {
+            ExtendedFloatingActionButton(text = { Text("Discover") }, onClick = { /*TODO*/ },
+            icon = {Icon(Icons.Rounded.Notifications, "")},backgroundColor = MaterialTheme.colors.primary)
+            },
+        floatingActionButtonPosition = FabPosition.End,
+        isFloatingActionButtonDocked = false) {
             Column(modifier = Modifier.padding(it)) {
                 HomeScreenRecyclerViewComposeIntegration(
                     deviceApplication,
