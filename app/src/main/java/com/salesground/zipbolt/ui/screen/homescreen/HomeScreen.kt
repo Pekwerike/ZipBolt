@@ -13,12 +13,16 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.salesground.zipbolt.databinding.HomeScreenRecyclerViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.MediaModel
+import com.salesground.zipbolt.ui.navigation.NavigationAction
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.HomeScreenAppBar
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
@@ -38,9 +42,11 @@ fun HomeScreen(
             initialValue = ModalBottomSheetValue.Hidden
         )
 
-    val allApplicationsOnDevice by deviceApplicationViewModel.allApplicationsOnDevice.observeAsState(
-        listOf<ApplicationModel>()
-    )
+    val navController = rememberNavController()
+    val navigationAction = remember(navController) {
+        NavigationAction(navController = navController)
+    }
+
     val deviceImages by homeScreenViewModel.deviceImages.observeAsState(mutableListOf())
     val deviceVideos by homeScreenViewModel.deviceVideos.observeAsState(mutableListOf())
     val deviceApplication by homeScreenViewModel.deviceApplications.observeAsState(mutableListOf())
@@ -54,23 +60,30 @@ fun HomeScreen(
         sheetState = modalBottomSheetState
     ) {
         Scaffold(topBar = { HomeScreenAppBar() },
-        bottomBar = {
-            BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
-                BottomNavigationItem(selected = true, onClick = { /*TODO*/ },
-                icon = { Icon(Icons.Rounded.Home, "")},
-                label = {Text(text="Home")},
-                selectedContentColor = MaterialTheme.colors.primary)
+            bottomBar = {
+                BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
 
-                BottomNavigationItem(selected = false, onClick = { /*TODO*/ },
-                    icon = { Icon(Icons.Rounded.Notifications, "")},
-                    label = {Text(text="Notification")})
-            }
-        }, floatingActionButton = {
-            ExtendedFloatingActionButton(text = { Text("Discover") }, onClick = { /*TODO*/ },
-            icon = {Icon(Icons.Rounded.Notifications, "")},backgroundColor = MaterialTheme.colors.primary)
+                    BottomNavigationItem(
+                        selected = true, onClick = { /*TODO*/ },
+                        icon = { Icon(Icons.Rounded.Home, "") },
+                        label = { Text(text = "Home") },
+                        selectedContentColor = MaterialTheme.colors.primary
+                    )
+
+                    BottomNavigationItem(selected = false, onClick = { /*TODO*/ },
+                        icon = { Icon(Icons.Rounded.Notifications, "") },
+                        label = { Text(text = "Notification") })
+                }
+            }, floatingActionButton = {
+                ExtendedFloatingActionButton(text = { Text("Discover") },
+                    onClick = { /*TODO*/ },
+                    icon = { Icon(Icons.Rounded.Notifications, "") },
+                    backgroundColor = MaterialTheme.colors.primary
+                )
             },
-        floatingActionButtonPosition = FabPosition.End,
-        isFloatingActionButtonDocked = false) {
+            floatingActionButtonPosition = FabPosition.End,
+            isFloatingActionButtonDocked = false
+        ) {
             Column(modifier = Modifier.padding(it)) {
                 HomeScreenRecyclerViewComposeIntegration(
                     deviceApplication,

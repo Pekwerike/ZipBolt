@@ -33,7 +33,6 @@ import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
-import com.salesground.zipbolt.ui.temporaryscreens.HomeScreenTwo
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
 import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
 import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
