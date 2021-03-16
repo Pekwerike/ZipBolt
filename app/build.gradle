@@ -16,7 +16,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -75,4 +74,5 @@ dependencies {
 
     implementation "com.github.skydoves:landscapist-glide:1.1.7"
 
+    implementation "androidx.navigation:navigation-compose:1.0.0-alpha09"
 }
