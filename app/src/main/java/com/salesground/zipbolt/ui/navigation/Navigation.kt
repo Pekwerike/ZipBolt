@@ -1,26 +1,30 @@
 package com.salesground.zipbolt.ui.navigation
 
-import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.navigate
 
 
-sealed class AppScreen(val route : String) {
-    object HomeScreen : AppScreen("Home")
-    object NotificationScreen : AppScreen("Notification")
+enum class ScreenRoutes(val route: String){
+    HOME_SCREEN("home"),
+    NOTIFICATION_SCREEN("notification")
 }
 
-class NavigationAction(private val navController: NavController){
+sealed class AppScreens(val route : String) {
+    object HomeScreen : AppScreens("Home")
+    object NotificationScreen : AppScreens("Notification")
+}
+
+class NavigationAction(private val navController: NavHostController){
 
     val navigateToNotificationScreen = {
-        navController.navigate(AppScreen.NotificationScreen.route){
+        navController.navigate(ScreenRoutes.NOTIFICATION_SCREEN.route){
             popUpTo = navController.graph.startDestination
             launchSingleTop
         }
     }
 
     val navigateToHomeScreen = {
-        navController.navigate(AppScreen.HomeScreen.route){
+        navController.navigate(ScreenRoutes.HOME_SCREEN.route){
             popUpTo = navController.graph.startDestination
             launchSingleTop
         }

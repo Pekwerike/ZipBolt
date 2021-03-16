@@ -34,7 +34,6 @@ import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
 @ExperimentalMaterialApi
 @Composable
 fun HomeScreen(
-    deviceApplicationViewModel: DeviceApplicationViewModel,
     homeScreenViewModel: HomeScreenViewModel
 ) {
     val modalBottomSheetState =
