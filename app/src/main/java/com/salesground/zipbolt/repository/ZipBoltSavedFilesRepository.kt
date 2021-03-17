@@ -2,7 +2,7 @@ package com.salesground.zipbolt.repository
 /*
 * Overview
 *  This class is responsible for generating the base directories for other repositories like
-* ImageRepository, VideoRepository etc to saved the files of received items before inserting
+* ImageRepositoryInitial, VideoRepository etc to saved the files of received items before inserting
 * them into the media store of the various category
 *
 * Functions description

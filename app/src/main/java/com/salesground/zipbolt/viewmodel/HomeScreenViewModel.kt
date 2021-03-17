@@ -1,31 +1,25 @@
 package com.salesground.zipbolt.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.AudioRepository
 import com.salesground.zipbolt.repository.DeviceApplicationsRepository
-import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.repository.ImageRepositoryInitial
 import com.salesground.zipbolt.repository.VideoRepository
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
-import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.HomeScreenRecyclerviewDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val applicationsRepository: DeviceApplicationsRepository,
-    private val imageRepository: ImageRepository,
+    private val imageRepositoryInitial: ImageRepositoryInitial,
     private val videoRepository: VideoRepository,
     private val audioRepository: AudioRepository
 ) : ViewModel() {
@@ -53,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun transformDeviceImagesToImagesDisplayModel()
     : MutableList<ImagesDisplayModel>{
         val imagesModelForImageDetailsRecyclerView = mutableListOf<ImagesDisplayModel>()
-        val allImagesOnDevice = imageRepository.fetchAllImagesOnDeviceOnce()
+        val allImagesOnDevice = imageRepositoryInitial.fetchAllImagesOnDeviceOnce()
         allImagesOnDevice.groupBy {
             // todo convert mediaDateAdded to string date, that will be used to group images
             it.mediaDateAdded
@@ -79,7 +73,7 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
             launch(Dispatchers.IO) {
-                val deviceImages = imageRepository.fetchAllImagesOnDevicePreviewList()
+                val deviceImages = imageRepositoryInitial.fetchAllImagesOnDevicePreviewList()
                 withContext(Dispatchers.Main) {
                     _deviceImages.value = deviceImages
                 }
