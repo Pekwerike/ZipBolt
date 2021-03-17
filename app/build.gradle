@@ -15,7 +15,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "com.salesground.zipbolt.testrunner.HilTestRunner"
+        testInstrumentationRunner "com.salesground.zipbolt.HiltTestRunner"
     }
 
     buildTypes {
