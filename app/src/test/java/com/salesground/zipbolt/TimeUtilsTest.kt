@@ -11,7 +11,6 @@ class TimeUtilsTest {
 
     @Test
     fun test_parseDate(){
-        val currentTime = System.currentTimeMillis()
-        assertEquals("March, 2021", currentTime.parseDate())
+        assertEquals("March, 2021", System.currentTimeMillis().parseDate())
     }
 }

@@ -78,6 +78,7 @@ class ZipBoltImageRepository @Inject constructor(
 
                 deviceImages.add(
                     DataToTransfer.DeviceImage(
+                        imageId = imageId,
                         imageUri = ContentUris.withAppendedId(collection, imageId),
                         imageDateModified = imageDateModified.parseDate(),
                         imageBucketName = imageBucketDisplayName
@@ -94,8 +95,45 @@ class ZipBoltImageRepository @Inject constructor(
         return firstTenImagesOnDevice
     }
 
-    override suspend fun getMetaDataOfImage(imageUri: Uri): DataToTransfer {
+    override suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer {
+        val imageToExtractData = image as DataToTransfer.DeviceImage
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+        val projection = arrayOf(
+            MediaStore.Images.Media.MIME_TYPE,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.DISPLAY_NAME
+        )
+        val selection = "${MediaStore.Images.Media._ID} =? "
+        val selectionArguments = arrayOf(imageToExtractData.imageId.toString())
 
-        return mutableListOf<DataToTransfer>().first()
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArguments,
+            null
+        )?.let { cursor->
+            if(cursor.moveToFirst()){
+                val imageMimeType = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
+                val imageSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.SIZE))
+                val imageDisplayName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
+
+                return DataToTransfer.DeviceImage(
+                    imageId =  imageToExtractData.imageId,
+                    imageUri = imageToExtractData.imageUri,
+                    imageDateModified = imageToExtractData.imageDateModified,
+                    imageDisplayName = imageDisplayName,
+                    imageBucketName = imageToExtractData.imageBucketName,
+                    imageMimeType = imageMimeType,
+                    imageSize = imageSize
+                )
+
+            }
+        }
+        return imageToExtractData
     }
 }

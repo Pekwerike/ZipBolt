@@ -26,7 +26,6 @@ class ZipBoltImageRepositoryTest {
         hiltRule.inject()
     }
 
-
     @Test
     fun test_getAllImagesOnDevice() = runBlocking {
         val allImagesOnDevice = zipBoltImageRepository.getAllImagesOnDevice()
@@ -34,5 +33,14 @@ class ZipBoltImageRepositoryTest {
         val deviceImage = allImagesOnDevice[1] as DataToTransfer.DeviceImage
         assert(deviceImage.imageBucketName.isNotBlank())
 
+    }
+
+    @Test
+    fun test_getMetaDataOfImage() = runBlocking{
+        var firstImage = zipBoltImageRepository.getAllImagesOnDevice().first()
+        firstImage = zipBoltImageRepository.getMetaDataOfImage(firstImage) as DataToTransfer.DeviceImage
+        assert(firstImage.imageMimeType.contains("image"))
+        assert(firstImage.imageSize > 10)
+        assert(firstImage.imageDisplayName != "")
     }
 }

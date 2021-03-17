@@ -17,6 +17,7 @@ sealed class DataToTransfer {
     ) : DataToTransfer()
 
     data class DeviceImage(
+        val imageId : Long,
         val imageUri: Uri,
         val imageDateModified: String,
         val imageDisplayName: String = "",
