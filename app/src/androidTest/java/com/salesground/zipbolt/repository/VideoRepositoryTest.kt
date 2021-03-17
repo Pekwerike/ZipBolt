@@ -31,7 +31,7 @@ class VideoRepositoryTest {
     /*Test will fail if there are no videos on device*/
     @Test
     fun test_getAllVideosFromDeviceAsFlow_emitsValue() = runBlocking {
-        val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDeviceAsFlow().first()
+        val firstVideoOnDevice: MediaModel = videoRepository.getAllVideoFromDevice().first()
 
         // check that the video name is not empty
         assertTrue(firstVideoOnDevice.mediaDisplayName!!.isNotEmpty())
@@ -52,16 +52,16 @@ class VideoRepositoryTest {
         val allFilteredVideosOnDevice: MutableList<MediaModel> = mutableListOf()
 
         // check that multiple videos are collected
-        videoRepository.getAllVideoFromDeviceAsFlow().collect { video: MediaModel ->
+        videoRepository.getAllVideoFromDevice().forEach{ video: MediaModel ->
             allVideosOnDevice.add(video)
             allVideosOnDeviceState.value = allVideosOnDevice
         }
         assertTrue(allVideosOnDeviceState.value.size > 1)
 
         // test that the filter lambda functions as expected
-        videoRepository.getAllVideoFromDeviceAsFlow().filter {
+        videoRepository.getAllVideoFromDevice().filter {
             it.mediaCategory == MediaCategory.IMAGE
-        }.collect {
+        }.forEach {
             allFilteredVideosOnDevice.add(it)
         }
 
@@ -76,7 +76,7 @@ class VideoRepositoryTest {
     */
     @Test
     fun confirm_thatVideoRepositoryFetchsTheParentFolderOfEachVideo() = runBlocking {
-        videoRepository.getAllVideoFromDeviceAsFlow().collect { mediaModel ->
+        videoRepository.getAllVideoFromDevice().forEach { mediaModel ->
             assertEquals("Camera", mediaModel.mediaBucketName)
         }
     }
