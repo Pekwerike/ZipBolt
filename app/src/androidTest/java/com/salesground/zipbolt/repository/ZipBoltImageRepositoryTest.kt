@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.repository
 
+import android.util.Log
 import com.salesground.zipbolt.HiltTestRunner
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltImageRepository
@@ -10,6 +11,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
+import kotlinx.coroutines.*
 
 @HiltAndroidTest
 class ZipBoltImageRepositoryTest {
@@ -26,10 +28,11 @@ class ZipBoltImageRepositoryTest {
 
 
     @Test
-    fun test_getAllImagesOnDevice() {
+    fun test_getAllImagesOnDevice() = runBlocking {
         val allImagesOnDevice = zipBoltImageRepository.getAllImagesOnDevice()
         assert(allImagesOnDevice.isNotEmpty())
         val deviceImage = allImagesOnDevice[1] as DataToTransfer.DeviceImage
         assert(deviceImage.imageBucketName.isNotBlank())
+
     }
 }

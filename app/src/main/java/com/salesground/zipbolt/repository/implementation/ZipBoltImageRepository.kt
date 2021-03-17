@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.core.net.toUri
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.utils.parseDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.File
@@ -27,7 +28,7 @@ class ZipBoltImageRepository @Inject constructor(
 
     }
 
-    override fun getAllImagesOnDevice(): MutableList<DataToTransfer> {
+    override suspend fun getAllImagesOnDevice(): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -78,7 +79,7 @@ class ZipBoltImageRepository @Inject constructor(
                 deviceImages.add(
                     DataToTransfer.DeviceImage(
                         imageUri = ContentUris.withAppendedId(collection, imageId),
-                        imageDateModified = imageDateModified.toString(), // todo, write a utils function that converts time to date
+                        imageDateModified = imageDateModified.parseDate(),
                         imageBucketName = imageBucketDisplayName
                     )
                 )

@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.extensions
+package com.salesground.zipbolt.utils
 
 import android.content.Context
 import android.media.MediaMetadataRetriever

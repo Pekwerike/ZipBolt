@@ -6,7 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import com.salesground.zipbolt.extensions.getMediaDuration
+import com.salesground.zipbolt.utils.getMediaDuration
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import dagger.hilt.android.qualifiers.ApplicationContext
