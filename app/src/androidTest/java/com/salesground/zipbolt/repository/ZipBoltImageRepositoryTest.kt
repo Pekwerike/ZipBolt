@@ -31,7 +31,7 @@ class ZipBoltImageRepositoryTest {
         val deviceImage = allImagesOnDevice[1] as DataToTransfer.DeviceImage
         assert(deviceImage.imageBucketName.isNotBlank())
         val firstTenImagesOnDevice = zipBoltImageRepository.getImagesOnDevice(limit = 10)
-        assertEquals(10, firstTenImagesOnDevice.size)
+        assert(firstTenImagesOnDevice.size <= 10)
     }
 
     @Test

@@ -6,10 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.MediaModel
-import com.salesground.zipbolt.repository.AudioRepository
-import com.salesground.zipbolt.repository.DeviceApplicationsRepository
-import com.salesground.zipbolt.repository.ImageRepositoryInitial
-import com.salesground.zipbolt.repository.VideoRepository
+import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.HomeScreenRecyclerviewDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel

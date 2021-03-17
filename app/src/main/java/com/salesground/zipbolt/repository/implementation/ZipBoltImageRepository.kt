@@ -28,7 +28,6 @@ class ZipBoltImageRepository @Inject constructor(
 
     }
 
-
     override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
