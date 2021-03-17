@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.viewmodel
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +13,7 @@ import com.salesground.zipbolt.repository.AudioRepository
 import com.salesground.zipbolt.repository.DeviceApplicationsRepository
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.VideoRepository
+import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.HomeScreenRecyclerviewDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +50,17 @@ class HomeScreenViewModel @Inject constructor(
         getHomeScreenDataTwo()
     }
 
+    private fun transformDeviceImagesToImagesDisplayModelForRecyclerView()
+    : MutableList<ImagesDisplayModel>{
+        val allImagesOnDevice = imageRepository.fetchAllImagesOnDeviceOnce()
+        allImagesOnDevice.groupBy {
+            // todo convert mediaDateAdded to string date, that will be used to group images
+            it.mediaDateAdded
+        }.forEach { (l, list) ->
+
+        }
+    }
+
     private fun getHomeScreenDataTwo() {
         viewModelScope.launch(Dispatchers.IO) {
             launch(Dispatchers.IO) {
@@ -74,42 +88,6 @@ class HomeScreenViewModel @Inject constructor(
                     _deviceAudio.value = deviceAudio
                 }
             }
-        }
-    }
-
-    private fun getHomeScreenData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val allApplicationsOnDevice = async(Dispatchers.IO) {
-                applicationsRepository.getNonSystemAppsOnDevice()
-            }
-            val allImagesOnDevice = async(Dispatchers.IO) {
-                imageRepository.fetchAllImagesOnDeviceOnce()
-            }
-
-            val allVideosOnDevice = async(Dispatchers.IO) {
-                videoRepository.getAllVideoFromDevice()
-            }
-
-            val allAudioOnDevice = async(Dispatchers.IO) {
-                audioRepository.getAllAudioFilesOnDeviceList()
-            }
-
-            _homeScreenData.value = mutableListOf<HomeScreenRecyclerviewDataModel>(
-                HomeScreenRecyclerviewDataModel(dataCategory = "Images",
-                    mediaCollection = allImagesOnDevice.await().map {
-                        DataCategory.Image(it)
-                    }.take(8)
-                ),
-                HomeScreenRecyclerviewDataModel(dataCategory = "Videos",
-                    mediaCollection = allVideosOnDevice.await().map {
-                        DataCategory.Video(it)
-                    }.take(8)
-                ),
-                HomeScreenRecyclerviewDataModel(dataCategory = "Music",
-                    mediaCollection = allAudioOnDevice.await().map {
-                        DataCategory.Music(it)
-                    })
-            )
         }
     }
 
