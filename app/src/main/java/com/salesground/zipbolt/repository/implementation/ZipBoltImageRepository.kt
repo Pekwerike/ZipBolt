@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.repository.implementation
 
+import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -9,6 +10,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
+import java.io.File
 import javax.inject.Inject
 
 
@@ -63,26 +65,36 @@ class ZipBoltImageRepository @Inject constructor(
             } else {
                 cursor.getColumnIndex(MediaStore.Images.Media.DATA)
             }
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 val imageId = cursor.getLong(imageIdColumnIndex)
                 val imageDateModified = cursor.getLong(imageDateModifiedColumnIndex)
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                    cursor.getString(imageBucketNameIndex)
-                }else {
+                val imageBucketDisplayName =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        cursor.getString(imageBucketNameIndex)
+                    } else {
+                        File(cursor.getString(imageBucketNameIndex)).parentFile!!.name
+                    }
 
-                }
+                deviceImages.add(
+                    DataToTransfer.DeviceImage(
+                        imageUri = ContentUris.withAppendedId(collection, imageId),
+                        imageDateModified = imageDateModified.toString(), // todo, write a utils function that converts time to date
+                        imageBucketName = imageBucketDisplayName
+                    )
+                )
             }
         }
-
-
         return deviceImages
     }
 
     override suspend fun getTenImagesOnDevice(): MutableList<DataToTransfer> {
-        TODO("Not yet implemented")
+        val firstTenImagesOnDevice = mutableListOf<DataToTransfer>()
+
+        return firstTenImagesOnDevice
     }
 
     override suspend fun getMetaDataOfImage(imageUri: Uri): DataToTransfer {
-        TODO("Not yet implemented")
+
+        return mutableListOf<DataToTransfer>().first()
     }
 }
