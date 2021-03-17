@@ -23,8 +23,7 @@ interface ImageRepository {
         mimeType: String,
         dataInputStream: DataInputStream
     )
-
     suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer
-    suspend fun getAllImagesOnDevice(): MutableList<DataToTransfer>
-    suspend fun getTenImagesOnDevice(): MutableList<DataToTransfer>
+    suspend fun getImagesOnDevice(limit: Int = 0): MutableList<DataToTransfer>
+
 }

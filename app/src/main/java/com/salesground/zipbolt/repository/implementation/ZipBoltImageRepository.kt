@@ -28,7 +28,8 @@ class ZipBoltImageRepository @Inject constructor(
 
     }
 
-    override suspend fun getAllImagesOnDevice(): MutableList<DataToTransfer> {
+
+    override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -48,8 +49,8 @@ class ZipBoltImageRepository @Inject constructor(
                 MediaStore.Images.Media.DATE_MODIFIED
             )
         }
-
-        val sortOrder = "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
+        val sortOrder = if (limit != 0) "${MediaStore.Images.Media.DATE_MODIFIED} DESC LIMIT $limit"
+        else "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
 
         applicationContext.contentResolver.query(
             collection,
@@ -89,11 +90,6 @@ class ZipBoltImageRepository @Inject constructor(
         return deviceImages
     }
 
-    override suspend fun getTenImagesOnDevice(): MutableList<DataToTransfer> {
-        val firstTenImagesOnDevice = mutableListOf<DataToTransfer>()
-
-        return firstTenImagesOnDevice
-    }
 
     override suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer {
         val imageToExtractData = image as DataToTransfer.DeviceImage
@@ -116,14 +112,16 @@ class ZipBoltImageRepository @Inject constructor(
             selection,
             selectionArguments,
             null
-        )?.let { cursor->
-            if(cursor.moveToFirst()){
-                val imageMimeType = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
+        )?.let { cursor ->
+            if (cursor.moveToFirst()) {
+                val imageMimeType =
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
                 val imageSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.SIZE))
-                val imageDisplayName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
+                val imageDisplayName =
+                    cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
                 return DataToTransfer.DeviceImage(
-                    imageId =  imageToExtractData.imageId,
+                    imageId = imageToExtractData.imageId,
                     imageUri = imageToExtractData.imageUri,
                     imageDateModified = imageToExtractData.imageDateModified,
                     imageDisplayName = imageDisplayName,
