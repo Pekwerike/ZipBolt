@@ -18,7 +18,7 @@ class HSApplicationCategoryViewHolder(
         applicationLayoutItemBinding.applicationLabel = dataCategory.applicationModel.applicationName
         Glide.with(applicationLayoutItemBinding.applicationIconImageView.context)
             .load(dataCategory.applicationModel.appIcon)
-            .override(150)
+            .override(100)
             .into(applicationLayoutItemBinding.applicationIconImageView)
 
     }

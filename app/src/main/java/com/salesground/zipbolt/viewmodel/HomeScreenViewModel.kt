@@ -110,26 +110,6 @@ class HomeScreenViewModel @Inject constructor(
                         DataCategory.Music(it)
                     })
             )
-
-            /*   _homeScreenData.value = mutableListOf<HomeScreenRecyclerviewDataModel>(
-                   HomeScreenRecyclerviewDataModel(dataCategory = "Apps",
-                       mediaCollection = allApplicationsOnDevice.await().map {
-                           DataCategory.Application(it)
-                       }.take(10)
-                   ),
-                   HomeScreenRecyclerviewDataModel(dataCategory = "Images",
-                       mediaCollection = allImagesOnDevice.await().map {
-                           DataCategory.Image(it)
-                       }.take(8)),
-                   HomeScreenRecyclerviewDataModel(dataCategory = "Videos",
-                   mediaCollection = allVideosOnDevice.await().map{
-                       DataCategory.Video(it)
-                   }.take(8)),
-                   HomeScreenRecyclerviewDataModel(dataCategory = "Music",
-                   mediaCollection = allAudioOnDevice.await().map{
-                       DataCategory.Music(it)
-                   })
-               )*/
         }
     }
 

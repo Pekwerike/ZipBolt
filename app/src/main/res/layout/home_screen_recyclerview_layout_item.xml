@@ -22,13 +22,15 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/category_labe_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{categoryLabel}"
-                android:textStyle="bold"
-                android:layout_weight="1"
                 android:layout_margin="10dp"
-                android:textSize="18sp"/>
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-thin"
+                android:text="@{categoryLabel}"
+                android:textSize="18sp"
+                style="@style/DataCategoryTextViewTheme"
+                android:textStyle="bold" />
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"

@@ -16,12 +16,15 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="DataCategoryTextViewTheme" parent="Theme.SpeedForce">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
     <style name="CustomThemeForHomeScreenRecylerView" parent="Theme.SpeedForce">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
     </style>
-
 
 
     <style name="Theme.SpeedForce.NoActionBar">
