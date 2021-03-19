@@ -6,15 +6,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.MediaDateModifiedHeaderBinding
+import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
 
 class DateModifiedHeaderViewHolder(
     private val mediaDateModifiedHeaderBinding:
     MediaDateModifiedHeaderBinding
 ) : RecyclerView.ViewHolder(mediaDateModifiedHeaderBinding.root) {
 
-    fun bindDateModified(dateModified: String) {
+    fun bindDateModified(dateModified: ImagesDisplayModel.ImagesDateModifiedHeader) {
       mediaDateModifiedHeaderBinding.apply {
-          this.dateModified = dateModified
+          this.dateModified = dateModified.dateModified
       }
     }
 
