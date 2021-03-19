@@ -23,11 +23,11 @@ class DeviceMediaViewModel @Inject constructor(
         _deviceImagesGroupedByDateModified
 
     init {
-      transformDeviceImagesToImagesDisplayModel()
+        transformDeviceImagesToImagesDisplayModel()
     }
 
-     fun transformDeviceImagesToImagesDisplayModel() {
-        viewModelScope.launch{
+    private fun transformDeviceImagesToImagesDisplayModel() {
+        viewModelScope.launch {
             val deviceImagesTem: MutableList<ImagesDisplayModel> = mutableListOf()
             val allImagesOnDevice =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
@@ -39,7 +39,7 @@ class DeviceMediaViewModel @Inject constructor(
                     ImagesDisplayModel.DeviceImageDisplay(it)
                 })
             }
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 _deviceImagesGroupedByDateModified.value = deviceImagesTem
             }
         }
