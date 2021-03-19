@@ -41,25 +41,6 @@ class HomeScreenViewModel @Inject constructor(
         getHomeScreenDataTwo()
     }
 
-    private fun transformDeviceImagesToImagesDisplayModel()
-    : MutableList<ImagesDisplayModel>{
-        val imagesModelForImageDetailsRecyclerView = mutableListOf<ImagesDisplayModel>()
-        val allImagesOnDevice = imageRepositoryInitial.fetchAllImagesOnDeviceOnce()
-        allImagesOnDevice.groupBy {
-            // todo convert mediaDateAdded to string date, that will be used to group images
-            it.mediaDateAdded
-        }.forEach { (header, deviceImages) ->
-            imagesModelForImageDetailsRecyclerView
-                .add(ImagesDisplayModel.ImagesDateModifiedHeader(dateModified = header.toString()))
-
-            deviceImages.forEach {
-                imagesModelForImageDetailsRecyclerView.add(
-                    ImagesDisplayModel.DeviceImageDisplay(it))
-            }
-        }
-        return imagesModelForImageDetailsRecyclerView
-    }
-
     private fun getHomeScreenDataTwo() {
         viewModelScope.launch(Dispatchers.IO) {
             launch(Dispatchers.IO) {
@@ -89,5 +70,4 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
-
 }
