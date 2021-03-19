@@ -42,8 +42,26 @@ class FakeZipBoltImageRepository : ImageRepository {
             imageMimeType = "<image>/jpeg",
             imageSize = 1020452L,
             imageBucketName = "Camera"
+        ), DataToTransfer.DeviceImage(
+            imageId = 5,
+            imageUri = "content://externalstorage//images/05".toUri(),
+            imageDateModified = "February 2021",
+            imageDisplayName = "IMG-1203945.jpeg",
+            imageMimeType = "<image>/jpeg",
+            imageSize = 102042L,
+            imageBucketName = "ZipBolt"
+        ),
+        DataToTransfer.DeviceImage(
+            imageId = 6,
+            imageUri = "content://externalstorage//images/06".toUri(),
+            imageDateModified = "February 2021",
+            imageDisplayName = "IMG-12039456.jpeg",
+            imageMimeType = "<image>/jpeg",
+            imageSize = 1020425L,
+            imageBucketName = "Whatsapp"
         )
     )
+
     override suspend fun insertImageIntoMediaStore(
         displayName: String,
         size: Long,
@@ -58,6 +76,7 @@ class FakeZipBoltImageRepository : ImageRepository {
     }
 
     override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
-        return allImagesOnDevice.take(limit).toMutableList()
+        return if (limit == 0) allImagesOnDevice
+        else allImagesOnDevice.take(limit).toMutableList()
     }
 }

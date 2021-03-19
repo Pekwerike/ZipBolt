@@ -23,11 +23,11 @@ class DeviceMediaViewModel @Inject constructor(
         _deviceImagesGroupedByDateModified
 
     init {
-        transformDeviceImagesToImagesDisplayModel()
+      transformDeviceImagesToImagesDisplayModel()
     }
 
-    private fun transformDeviceImagesToImagesDisplayModel() {
-        viewModelScope.launch(Dispatchers.IO) {
+     fun transformDeviceImagesToImagesDisplayModel() {
+        viewModelScope.launch{
             val deviceImagesTem: MutableList<ImagesDisplayModel> = mutableListOf()
             val allImagesOnDevice =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
