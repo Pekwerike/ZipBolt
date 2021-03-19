@@ -3,6 +3,7 @@ buildscript {
     ext {
         compose_version = '1.0.0-beta02'
         hilt_version = '2.33-beta'
+        arch_components_test_version = '2.1.0'
     }
     repositories {
         google()

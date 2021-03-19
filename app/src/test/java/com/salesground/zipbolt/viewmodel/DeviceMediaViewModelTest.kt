@@ -1,8 +1,10 @@
 package com.salesground.zipbolt.viewmodel
 
 import com.salesground.zipbolt.fakerepository.FakeZipBoltImageRepository
+import com.salesground.zipbolt.getOrAwaitValue
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 
 class DeviceMediaViewModelTest {
@@ -15,6 +17,10 @@ class DeviceMediaViewModelTest {
 
     @Test
     fun testing(){
-        
+        val deviceImagesGroupedByDateAdded = deviceMediaViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue(
+            time = 1,
+            timeUnit = TimeUnit.MINUTES
+        )
+
     }
 }
