@@ -1,10 +1,7 @@
 package com.salesground.zipbolt.viewmodel
 
-import com.salesground.zipbolt.fakedatasource.FakeZipBoltImageRepository
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
+import com.salesground.zipbolt.fakerepository.FakeZipBoltImageRepository
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 

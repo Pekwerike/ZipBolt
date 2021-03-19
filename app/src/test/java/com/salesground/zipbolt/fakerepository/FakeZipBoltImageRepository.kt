@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.fakedatasource
+package com.salesground.zipbolt.fakerepository
 
 import androidx.core.net.toUri
 import com.salesground.zipbolt.model.DataToTransfer
