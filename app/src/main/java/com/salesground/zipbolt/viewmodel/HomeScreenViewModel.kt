@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.*
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.HomeScreenRecyclerviewDataModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*

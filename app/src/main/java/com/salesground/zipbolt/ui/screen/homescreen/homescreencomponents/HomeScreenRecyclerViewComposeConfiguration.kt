@@ -1,8 +1,15 @@
 package com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents
 
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.salesground.zipbolt.databinding.HomeScreenRecyclerViewBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.salesground.zipbolt.databinding.MainRecyclerViewBinding
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.HomeScreenRecyclerViewAdapter
@@ -16,7 +23,12 @@ fun HomeScreenRecyclerViewComposeConfiguration(
     deviceVideos: List<MediaModel>,
     deviceAudio: List<MediaModel>
 ) {
-    AndroidViewBinding(factory = HomeScreenRecyclerViewBinding::inflate) {
+    val context = LocalContext.current
+
+    AndroidViewBinding(
+        factory = MainRecyclerViewBinding::inflate,
+        modifier = Modifier.padding(bottom = 60.dp)
+    ) {
         val hSRAdapter = HomeScreenRecyclerViewAdapter()
         hSRAdapter.submitList(
             mutableListOf(
@@ -38,6 +50,8 @@ fun HomeScreenRecyclerViewComposeConfiguration(
                     })
             )
         )
-        homeScreenRecyclerView.adapter = hSRAdapter
+        mainRecyclerView.layoutManager = LinearLayoutManager(context)
+        mainRecyclerView.adapter = hSRAdapter
+
     }
 }

@@ -7,8 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ImageLayoutItemBinding
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
-import com.salesground.zipbolt.ui.screen.homescreen.recyclerviewadapter.datamodel.DataCategory
+import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
 
 class DeviceImageViewHolder(
     private val imageLayoutItemBinding:

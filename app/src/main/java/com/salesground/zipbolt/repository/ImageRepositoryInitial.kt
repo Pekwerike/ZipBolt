@@ -3,15 +3,12 @@ package com.salesground.zipbolt.repository
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
-import android.media.Image
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.annotation.RequiresApi
 import com.salesground.zipbolt.model.MediaCategory
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.repository.repositoryinterface.ImageRepositoryInterface
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesDisplayModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.File
