@@ -29,12 +29,10 @@ import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.DeviceImagesDisplayComposable
 import com.salesground.zipbolt.ui.screen.navgraph.ZipBoltUIEntryPoint
 import com.salesground.zipbolt.ui.theme.SpeedForceTheme
-import com.salesground.zipbolt.viewmodel.DeviceApplicationViewModel
-import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
-import com.salesground.zipbolt.viewmodel.MainActivityViewModel
-import com.salesground.zipbolt.viewmodel.MediaViewModel
+import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -49,6 +47,7 @@ const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
     private val mediaViewModel by viewModels<MediaViewModel>()
+    private val deviceMediaViewModel by viewModels<DeviceMediaViewModel>()
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
@@ -105,9 +104,10 @@ class MainActivity : AppCompatActivity() {
             SpeedForceTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                  ZipBoltUIEntryPoint(
-                        homeScreenViewModel = homeScreenViewModel)
-                    //   TempHomeScreen(mediaViewModel = mediaViewModel)
+                    DeviceImagesDisplayComposable(deviceMediaViewModel = deviceMediaViewModel)
+                  /*ZipBoltUIEntryPoint(
+                        homeScreenViewModel = homeScreenViewModel)*/
+
                 }
             }
         }
