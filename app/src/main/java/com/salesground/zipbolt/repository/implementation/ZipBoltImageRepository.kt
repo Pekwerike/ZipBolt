@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.core.net.toUri
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.utils.customizeDate
 import com.salesground.zipbolt.utils.parseDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
@@ -80,7 +81,7 @@ class ZipBoltImageRepository @Inject constructor(
                     DataToTransfer.DeviceImage(
                         imageId = imageId,
                         imageUri = ContentUris.withAppendedId(collection, imageId),
-                        imageDateModified = (imageDateModified * 1000).parseDate(),
+                        imageDateModified = (imageDateModified * 1000).parseDate().customizeDate(),
                         imageBucketName = imageBucketDisplayName
                     )
                 )

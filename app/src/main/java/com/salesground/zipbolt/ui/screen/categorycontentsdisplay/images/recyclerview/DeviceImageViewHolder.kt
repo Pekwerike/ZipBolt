@@ -1,7 +1,10 @@
 package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview
 
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -9,6 +12,7 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ImageLayoutItemBinding
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
 
+val imagePlaceHolder = ColorDrawable(Color.LightGray.copy(alpha = 0.5f).toArgb())
 class DeviceImageViewHolder(
     private val imageLayoutItemBinding:
     ImageLayoutItemBinding
@@ -18,6 +22,7 @@ class DeviceImageViewHolder(
         imageLayoutItemBinding.apply{
             Glide.with(root.context)
                 .load(data.deviceImage.imageUri)
+                .placeholder(imagePlaceHolder)
                 .into(deviceImageDisplayImageView)
         }
     }
