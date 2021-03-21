@@ -23,8 +23,8 @@ class DeviceMediaViewModel @Inject constructor(
 
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
 
-    private var _deviceImagesBucketNames = MutableLiveData<ArrayMap<String, Int>>()
-    val deviceImagesBucketName: LiveData<ArrayMap<String, Int>> = _deviceImagesBucketNames
+    private var _deviceImagesBucketNames = MutableLiveData<HashMap<String, Int>>()
+    val deviceImagesBucketName: LiveData<HashMap<String, Int>> = _deviceImagesBucketNames
 
     private var _deviceImagesGroupedByDateModified =
         MutableLiveData<MutableList<ImagesDisplayModel>>()
@@ -43,8 +43,8 @@ class DeviceMediaViewModel @Inject constructor(
     }
 
     private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>):
-            ArrayMap<String, Int> {
-        val deviceImagesBucketNames: ArrayMap<String, Int> = ArrayMap()
+            HashMap<String, Int> {
+        val deviceImagesBucketNames: HashMap<String, Int> = hashMapOf()
         allImagesOnDevice.forEach {
             deviceImagesBucketNames[it.imageBucketName] = 1
         }

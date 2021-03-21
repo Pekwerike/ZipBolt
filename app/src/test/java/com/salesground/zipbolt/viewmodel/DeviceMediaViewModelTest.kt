@@ -37,6 +37,15 @@ class DeviceMediaViewModelTest {
     }
 
     @Test
+    fun testThat_deviceImagesBucketName_isNotEmpty(){
+        val imageBucketNames = deviceMediaViewModel.deviceImagesBucketName.getOrAwaitValue()
+        assert(imageBucketNames.isNotEmpty())
+        assert(imageBucketNames.containsKey("Camera"))
+        assert(imageBucketNames.containsKey("ZipBolt"))
+        assert(imageBucketNames.containsKey("Whatsapp"))
+    }
+
+    @Test
     fun test_filterDeviceImages() = runBlocking{
         deviceMediaViewModel.filterDeviceImages(bucketName = "Whatsapp")
         delay(1000) // simulate delay so that a new live data value can be observed
