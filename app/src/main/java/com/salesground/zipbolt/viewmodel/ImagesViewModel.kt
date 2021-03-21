@@ -15,7 +15,9 @@ import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 @HiltViewModel
 class ImagesViewModel @Inject constructor(
@@ -52,6 +54,7 @@ class ImagesViewModel @Inject constructor(
         allImagesOnDevice.forEach {
             deviceImagesBucketNames[it.imageBucketName] = deviceImagesBucketNames.getOrPut(it.imageBucketName, {0}) + 1
         }
+
         deviceImagesBucketNames.forEach { (s, i) ->
             listOfArrangedBuckets.add(BucketNameAndSize(bucketName = s, bucketSize = i))
         }
@@ -124,8 +127,4 @@ class ImagesViewModel @Inject constructor(
     }
 }
 
-data class BucketNameAndSize(val bucketName: String, val bucketSize : Int) : Comparable<Int>{
-    override fun compareTo(other: Int): Int {
-        return other.compareTo(bucketSize)
-    }
-}
+data class BucketNameAndSize(val bucketName: String, val bucketSize : Int)
