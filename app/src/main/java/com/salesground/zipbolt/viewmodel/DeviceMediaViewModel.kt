@@ -1,6 +1,9 @@
 package com.salesground.zipbolt.viewmodel
 
 
+import android.util.ArrayMap
+import android.util.SparseArray
+import android.util.SparseIntArray
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +23,8 @@ class DeviceMediaViewModel @Inject constructor(
 
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
 
+    private var _deviceImagesBucketNames = MutableLiveData<ArrayMap<String, Int>>()
+    val deviceImagesBucketName: LiveData<ArrayMap<String, Int>> = _deviceImagesBucketNames
 
     private var _deviceImagesGroupedByDateModified =
         MutableLiveData<MutableList<ImagesDisplayModel>>()
@@ -30,8 +35,20 @@ class DeviceMediaViewModel @Inject constructor(
         viewModelScope.launch {
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
-           filterDeviceImages()
+            launch(Dispatchers.IO) {
+                _deviceImagesBucketNames.value = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
+            }
+            filterDeviceImages()
         }
+    }
+
+    private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>):
+            ArrayMap<String, Int> {
+        val deviceImagesBucketNames: ArrayMap<String, Int> = ArrayMap()
+        allImagesOnDevice.forEach {
+            deviceImagesBucketNames[it.imageBucketName] = 1
+        }
+        return deviceImagesBucketNames
     }
 
 
