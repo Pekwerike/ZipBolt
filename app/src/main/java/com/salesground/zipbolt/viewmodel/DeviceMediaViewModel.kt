@@ -17,6 +17,8 @@ class DeviceMediaViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
+    private val deviceImagesAsImageDisplayModel: MutableList<ImagesDisplayModel> = mutableListOf()
+
     private var _deviceImagesGroupedByDateModified =
         MutableLiveData<MutableList<ImagesDisplayModel>>()
     val deviceImagesGroupedByDateModified: LiveData<MutableList<ImagesDisplayModel>> =
@@ -26,21 +28,24 @@ class DeviceMediaViewModel @Inject constructor(
         transformDeviceImagesToImagesDisplayModel()
     }
 
+    fun filterDeviceImagesByBucketName(bucketName: String){
+
+    }
+
     private fun transformDeviceImagesToImagesDisplayModel() {
         viewModelScope.launch {
-            val deviceImagesTem: MutableList<ImagesDisplayModel> = mutableListOf()
             val allImagesOnDevice =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
             allImagesOnDevice.groupBy {
                 it.imageDateModified
             }.forEach { (header, deviceImages) ->
-                deviceImagesTem.add(ImagesDisplayModel.ImagesDateModifiedHeader(dateModified = header))
-                deviceImagesTem.addAll(deviceImages.map {
+                deviceImagesAsImageDisplayModel.add(ImagesDisplayModel.ImagesDateModifiedHeader(dateModified = header))
+                deviceImagesAsImageDisplayModel.addAll(deviceImages.map {
                     ImagesDisplayModel.DeviceImageDisplay(it)
                 })
             }
             withContext(Dispatchers.Main) {
-                _deviceImagesGroupedByDateModified.value = deviceImagesTem
+                _deviceImagesGroupedByDateModified.value = deviceImagesAsImageDisplayModel
             }
         }
     }
