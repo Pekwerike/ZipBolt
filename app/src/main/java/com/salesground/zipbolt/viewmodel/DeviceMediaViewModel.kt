@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
@@ -17,7 +18,8 @@ class DeviceMediaViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
-    private val deviceImagesAsImageDisplayModel: MutableList<ImagesDisplayModel> = mutableListOf()
+    private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
+
 
     private var _deviceImagesGroupedByDateModified =
         MutableLiveData<MutableList<ImagesDisplayModel>>()
@@ -25,28 +27,73 @@ class DeviceMediaViewModel @Inject constructor(
         _deviceImagesGroupedByDateModified
 
     init {
-        transformDeviceImagesToImagesDisplayModel()
-    }
-
-    fun filterDeviceImagesByBucketName(bucketName: String){
-
-    }
-
-    private fun transformDeviceImagesToImagesDisplayModel() {
         viewModelScope.launch {
-            val allImagesOnDevice =
+            allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
-            allImagesOnDevice.groupBy {
-                it.imageDateModified
-            }.forEach { (header, deviceImages) ->
-                deviceImagesAsImageDisplayModel.add(ImagesDisplayModel.ImagesDateModifiedHeader(dateModified = header))
-                deviceImagesAsImageDisplayModel.addAll(deviceImages.map {
-                    ImagesDisplayModel.DeviceImageDisplay(it)
-                })
-            }
-            withContext(Dispatchers.Main) {
-                _deviceImagesGroupedByDateModified.value = deviceImagesAsImageDisplayModel
+            filterDeviceImages()
+        }
+    }
+
+
+    fun filterDeviceImages(bucketName: String = "All") {
+        viewModelScope.launch {
+            if (bucketName == "All") {
+                // don't filter
+                _deviceImagesGroupedByDateModified.value =
+                    withContext(Dispatchers.IO) {
+                        allDeviceImagesToImagesDisplayModel(allImagesOnDevice = allImagesOnDeviceRaw)
+                    }
+            } else {
+                // filter
+                _deviceImagesGroupedByDateModified.value = withContext(Dispatchers.IO) {
+                    filterDeviceImagesByBucketName(
+                        allImagesOnDevice = allImagesOnDeviceRaw,
+                        bucketName = bucketName
+                    )
+                }
             }
         }
     }
+
+    private fun allDeviceImagesToImagesDisplayModel(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>)
+            : MutableList<ImagesDisplayModel> {
+        val deviceImagesReadyAsImageDisplayModel: MutableList<ImagesDisplayModel> = mutableListOf()
+        allImagesOnDevice.groupBy {
+            it.imageDateModified
+        }.forEach { (header, deviceImages) ->
+            deviceImagesReadyAsImageDisplayModel.add(
+                ImagesDisplayModel.ImagesDateModifiedHeader(
+                    dateModified = header
+                )
+            )
+            deviceImagesReadyAsImageDisplayModel.addAll(deviceImages.map {
+                ImagesDisplayModel.DeviceImageDisplay(it)
+            })
+        }
+        return deviceImagesReadyAsImageDisplayModel
+    }
+
+    private fun filterDeviceImagesByBucketName(
+        allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>,
+        bucketName: String
+    ): MutableList<ImagesDisplayModel> {
+        val deviceImagesReadyAsImageDisplayModel: MutableList<ImagesDisplayModel> = mutableListOf()
+        allImagesOnDevice.filter {
+            it.imageDisplayName == bucketName
+        }.groupBy {
+            it.imageDateModified
+        }.forEach { (header, deviceImages) ->
+            deviceImagesReadyAsImageDisplayModel.add(
+                ImagesDisplayModel.ImagesDateModifiedHeader(
+                    dateModified = header
+                )
+            )
+            deviceImagesReadyAsImageDisplayModel.addAll(deviceImages.map {
+                ImagesDisplayModel.DeviceImageDisplay(it)
+            })
+        }
+        return deviceImagesReadyAsImageDisplayModel
+    }
+
+
 }
