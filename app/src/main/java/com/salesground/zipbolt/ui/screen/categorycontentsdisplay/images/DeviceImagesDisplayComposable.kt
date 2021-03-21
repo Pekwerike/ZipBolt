@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.databinding.MainRecyclerViewBinding
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayViewHolderType
-import com.salesground.zipbolt.viewmodel.DeviceMediaViewModel
+import com.salesground.zipbolt.viewmodel.ImagesViewModel
 
 @Composable
-fun DeviceImagesDisplayComposable(deviceMediaViewModel: DeviceMediaViewModel) {
-    val groupedDeviceImages by deviceMediaViewModel.deviceImagesGroupedByDateModified.observeAsState()
+fun DeviceImagesDisplayComposable(imagesViewModel: ImagesViewModel) {
+    val groupedDeviceImages by imagesViewModel.deviceImagesGroupedByDateModified.observeAsState()
     val context = LocalContext.current
 
     AndroidViewBinding(factory = MainRecyclerViewBinding::inflate) {

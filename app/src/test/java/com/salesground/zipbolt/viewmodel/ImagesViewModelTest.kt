@@ -1,6 +1,5 @@
 package com.salesground.zipbolt.viewmodel
 
-import android.os.Looper.getMainLooper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.salesground.zipbolt.TestCoroutineRule
@@ -16,13 +15,12 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
-import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(manifest=Config.NONE)
-class DeviceMediaViewModelTest {
-    private lateinit var deviceMediaViewModel: DeviceMediaViewModel
+class ImagesViewModelTest {
+    private lateinit var mImagesViewModel: ImagesViewModel
 
     @get:Rule
     var instantTaskExecutorRule: TestRule = InstantTaskExecutorRule()
@@ -33,12 +31,12 @@ class DeviceMediaViewModelTest {
 
     @Before
     fun setUp() {
-        deviceMediaViewModel = DeviceMediaViewModel(imageRepository = FakeZipBoltImageRepository())
+        mImagesViewModel = ImagesViewModel(imageRepository = FakeZipBoltImageRepository())
     }
 
     @Test
     fun testThat_deviceImagesBucketName_isNotEmpty(){
-        val imageBucketNames = deviceMediaViewModel.deviceImagesBucketName.getOrAwaitValue()
+        val imageBucketNames = mImagesViewModel.deviceImagesBucketName.getOrAwaitValue()
         assert(imageBucketNames.isNotEmpty())
         assert(imageBucketNames.containsKey("Camera"))
         assert(imageBucketNames.containsKey("ZipBolt"))
@@ -47,9 +45,9 @@ class DeviceMediaViewModelTest {
 
     @Test
     fun test_filterDeviceImages() = runBlocking{
-        deviceMediaViewModel.filterDeviceImages(bucketName = "Whatsapp")
+        mImagesViewModel.filterDeviceImages(bucketName = "Whatsapp")
         delay(1000) // simulate delay so that a new live data value can be observed
-        val whatsAppImages = deviceMediaViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue()
+        val whatsAppImages = mImagesViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue()
         assert(whatsAppImages.isNotEmpty())
         whatsAppImages.forEach {
             when(it){
@@ -60,9 +58,9 @@ class DeviceMediaViewModelTest {
                 is ImagesDisplayModel.ImagesDateModifiedHeader -> assert(it.dateModified.isNotBlank())
             }
         }
-        deviceMediaViewModel.filterDeviceImages(bucketName = "ZipBolt")
+        mImagesViewModel.filterDeviceImages(bucketName = "ZipBolt")
         delay(1000) // simulate delay so that a new live data value can be observed
-        val zipBoltImages = deviceMediaViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue()
+        val zipBoltImages = mImagesViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue()
         assert(zipBoltImages.isNotEmpty())
         zipBoltImages.forEach {
             when(it){
@@ -80,7 +78,7 @@ class DeviceMediaViewModelTest {
     fun test_deviceImagesGroupedByDateModified_liveData() {
      //   shadowOf(getMainLooper()).idle()
         val imagesOnDevice =
-            deviceMediaViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue()
+            mImagesViewModel.deviceImagesGroupedByDateModified.getOrAwaitValue()
         assert(!imagesOnDevice.isNullOrEmpty())
         imagesOnDevice.forEach {
             when(it){
