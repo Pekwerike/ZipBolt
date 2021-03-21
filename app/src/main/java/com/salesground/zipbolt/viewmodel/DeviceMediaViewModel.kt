@@ -30,7 +30,7 @@ class DeviceMediaViewModel @Inject constructor(
         viewModelScope.launch {
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
-            filterDeviceImages()
+           filterDeviceImages()
         }
     }
 
@@ -79,10 +79,11 @@ class DeviceMediaViewModel @Inject constructor(
     ): MutableList<ImagesDisplayModel> {
         val deviceImagesReadyAsImageDisplayModel: MutableList<ImagesDisplayModel> = mutableListOf()
         allImagesOnDevice.filter {
-            it.imageDisplayName == bucketName
+            it.imageBucketName == bucketName
         }.groupBy {
             it.imageDateModified
         }.forEach { (header, deviceImages) ->
+
             deviceImagesReadyAsImageDisplayModel.add(
                 ImagesDisplayModel.ImagesDateModifiedHeader(
                     dateModified = header
@@ -94,6 +95,4 @@ class DeviceMediaViewModel @Inject constructor(
         }
         return deviceImagesReadyAsImageDisplayModel
     }
-
-
 }

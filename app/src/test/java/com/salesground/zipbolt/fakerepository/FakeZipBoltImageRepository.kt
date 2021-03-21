@@ -59,6 +59,15 @@ class FakeZipBoltImageRepository : ImageRepository {
             imageMimeType = "<image>/jpeg",
             imageSize = 1020425L,
             imageBucketName = "Whatsapp"
+        ),
+        DataToTransfer.DeviceImage(
+            imageId = 7,
+            imageUri = "content://externalstorage//images/07".toUri(),
+            imageDateModified = "February 2021",
+            imageDisplayName = "IMG-120394567.jpeg",
+            imageMimeType = "<image>/jpeg",
+            imageSize = 10204256L,
+            imageBucketName = "Whatsapp"
         )
     )
 
