@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.viewmodel
 
 
+import android.app.usage.NetworkStats
 import android.util.ArrayMap
 import android.util.SparseArray
 import android.util.SparseIntArray
@@ -23,8 +24,8 @@ class ImagesViewModel @Inject constructor(
 
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
 
-    private var _deviceImagesBucketNames = MutableLiveData<HashMap<String, Int>>()
-    val deviceImagesBucketName: LiveData<HashMap<String, Int>> = _deviceImagesBucketNames
+    private var _deviceImagesBucketNames = MutableLiveData<MutableList<BucketNameAndSize>>()
+    val deviceImagesBucketName: LiveData<MutableList<BucketNameAndSize>> = _deviceImagesBucketNames
 
     private var _deviceImagesGroupedByDateModified =
         MutableLiveData<MutableList<ImagesDisplayModel>>()
@@ -42,13 +43,22 @@ class ImagesViewModel @Inject constructor(
         }
     }
 
-    private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>):
-            HashMap<String, Int> {
+    private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>)
+    : MutableList<BucketNameAndSize>{
+        val listOfArrangedBuckets : MutableList<BucketNameAndSize> = mutableListOf()
         val deviceImagesBucketNames: HashMap<String, Int> = hashMapOf()
+
+        deviceImagesBucketNames["All"] = allImagesOnDevice.size
         allImagesOnDevice.forEach {
-            deviceImagesBucketNames[it.imageBucketName] = 1
+            deviceImagesBucketNames[it.imageBucketName] = deviceImagesBucketNames.getOrPut(it.imageBucketName, {0}) + 1
         }
-        return deviceImagesBucketNames
+        deviceImagesBucketNames.forEach { (s, i) ->
+            listOfArrangedBuckets.add(BucketNameAndSize(bucketName = s, bucketSize = i))
+        }
+        listOfArrangedBuckets.sortByDescending {
+            it.bucketSize
+        }
+        return listOfArrangedBuckets
     }
 
 
@@ -111,5 +121,11 @@ class ImagesViewModel @Inject constructor(
             })
         }
         return deviceImagesReadyAsImageDisplayModel
+    }
+}
+
+data class BucketNameAndSize(val bucketName: String, val bucketSize : Int) : Comparable<Int>{
+    override fun compareTo(other: Int): Int {
+        return other.compareTo(bucketSize)
     }
 }

@@ -38,9 +38,8 @@ class ImagesViewModelTest {
     fun testThat_deviceImagesBucketName_isNotEmpty(){
         val imageBucketNames = mImagesViewModel.deviceImagesBucketName.getOrAwaitValue()
         assert(imageBucketNames.isNotEmpty())
-        assert(imageBucketNames.containsKey("Camera"))
-        assert(imageBucketNames.containsKey("ZipBolt"))
-        assert(imageBucketNames.containsKey("Whatsapp"))
+        assertEquals("All", imageBucketNames.first().bucketName)
+        assertEquals("Whatsapp", imageBucketNames[1].bucketName)
     }
 
     @Test
