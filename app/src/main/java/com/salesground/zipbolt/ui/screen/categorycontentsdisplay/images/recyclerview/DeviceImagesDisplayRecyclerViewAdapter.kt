@@ -14,10 +14,10 @@ enum class DeviceImagesDisplayViewHolderType(val type: Int) {
 
 
 class DeviceImagesDisplayRecyclerViewAdapter(
-    //TODO pass onclick listener to listen for click events on images
+    private val onImageClicked: (ImagesDisplayModel) -> Unit,
+    private val imagesClicked: ArrayMap<ImagesDisplayModel, Boolean>
 ) : ListAdapter<ImagesDisplayModel, RecyclerView.ViewHolder>(DeviceImagesDisplayRecyclerViewDiffUtil) {
 
-    private val collectionOfClickedImages: ArrayMap<ImagesDisplayModel, Boolean> = ArrayMap()
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
@@ -46,16 +46,9 @@ class DeviceImagesDisplayRecyclerViewAdapter(
                 val imageForViewHolder = getItem(position) as ImagesDisplayModel.DeviceImageDisplay
                 holder.bindImageDisplay(
                     data = imageForViewHolder,
-                    onClick = {
-                        if(collectionOfClickedImages.containsKey(it)){
-                            // un clicked
-                            collectionOfClickedImages.remove(it)
-                        }else{
-                            // clicked
-                            collectionOfClickedImages[it] = true
-                        }
-                    },
-                  clickedImages = collectionOfClickedImages)
+                    onClick = onImageClicked,
+                    clickedImages = imagesClicked
+                )
 
             }
             is DateModifiedHeaderViewHolder -> holder.bindDateModified(getItem(position) as ImagesDisplayModel.ImagesDateModifiedHeader)

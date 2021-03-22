@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.viewmodel
 
 
+import androidx.collection.ArrayMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -122,6 +123,18 @@ class ImagesViewModel @Inject constructor(
             })
         }
         return deviceImagesReadyAsImageDisplayModel
+    }
+
+    val collectionOfClickedImages: ArrayMap<ImagesDisplayModel, Boolean> = ArrayMap()
+
+    fun onImageClicked(imageClicked : ImagesDisplayModel){
+        if(collectionOfClickedImages.containsKey(imageClicked)){
+            // un clicked
+            collectionOfClickedImages.remove(imageClicked)
+        }else{
+            // clicked
+            collectionOfClickedImages[imageClicked] = true
+        }
     }
 }
 

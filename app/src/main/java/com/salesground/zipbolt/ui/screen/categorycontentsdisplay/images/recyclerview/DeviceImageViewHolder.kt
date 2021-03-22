@@ -24,13 +24,14 @@ import com.salesground.zipbolt.ui.animationutils.scaleUpAnimation
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImageViewwHolderConstants.imagePlaceHolder
 
-object DeviceImageViewwHolderConstants{
+object DeviceImageViewwHolderConstants {
     val imagePlaceHolder = ColorDrawable(Color.LightGray.copy(alpha = 0.5f).toArgb())
     val clickedForegroundOverlayColor = Color.Blue.copy(0.12f).toArgb()
+    val unClickedForegroundOverlayColor = Color.Transparent.toArgb()
     val clickedForegroundOverlayDrawable = ColorDrawable(clickedForegroundOverlayColor)
-    val unClickedForegroundOverlay = Color.Transparent.toArgb()
-    val unClickedForegroundOverlayDrawable = ColorDrawable(unClickedForegroundOverlay)
+    val unClickedForegroundOverlayDrawable = ColorDrawable(unClickedForegroundOverlayColor)
 }
+
 class DeviceImageViewHolder(
     private val imageLayoutItemBinding:
     ImageLayoutItemBinding
@@ -38,8 +39,8 @@ class DeviceImageViewHolder(
 
     fun bindImageDisplay(
         data: ImagesDisplayModel.DeviceImageDisplay,
-        onClick : (ImagesDisplayModel.DeviceImageDisplay) -> Unit,
-        clickedImages : ArrayMap<ImagesDisplayModel, Boolean>
+        onClick: (ImagesDisplayModel.DeviceImageDisplay) -> Unit,
+        clickedImages: ArrayMap<ImagesDisplayModel, Boolean>
     ) {
         imageLayoutItemBinding.apply {
             Glide.with(root.context)
@@ -50,21 +51,27 @@ class DeviceImageViewHolder(
             if (clickedImages.contains(data)) {
                 deviceImageDisplayImageView.scaleX = 0.7f
                 deviceImageDisplayImageView.scaleY = 0.7f
-                deviceImageDisplayImageViewGroup.foreground = DeviceImageViewwHolderConstants.clickedForegroundOverlayDrawable
+                deviceImageDisplayImageViewGroup.foreground =
+                    DeviceImageViewwHolderConstants.clickedForegroundOverlayDrawable
 
             } else {
                 deviceImageDisplayImageView.scaleX = 1f
                 deviceImageDisplayImageView.scaleY = 1f
-                deviceImageDisplayImageViewGroup.foreground = DeviceImageViewwHolderConstants.unClickedForegroundOverlayDrawable
+                deviceImageDisplayImageViewGroup.foreground =
+                    DeviceImageViewwHolderConstants.unClickedForegroundOverlayDrawable
             }
 
             deviceImageDisplayImageView.setOnClickListener {
                 if (clickedImages.contains(data)) {
-                    deviceImageDisplayImageView.scaleUpAnimation(parent= deviceImageDisplayImageViewGroup,
-                    currentParentForegroundColor = DeviceImageViewwHolderConstants.clickedForegroundOverlayColor)
+                    deviceImageDisplayImageView.scaleUpAnimation(
+                        parent = deviceImageDisplayImageViewGroup,
+                        currentParentForegroundColor = DeviceImageViewwHolderConstants.unClickedForegroundOverlayColor
+                    )
                 } else {
-                    deviceImageDisplayImageView.scaleDownAnimation(parent = deviceImageDisplayImageViewGroup,
-                    targetParentForegroundValue = DeviceImageViewwHolderConstants.unClickedForegroundOverlay)
+                    deviceImageDisplayImageView.scaleDownAnimation(
+                        parent = deviceImageDisplayImageViewGroup,
+                        targetParentForegroundValue = DeviceImageViewwHolderConstants.clickedForegroundOverlayColor
+                    )
                 }
                 onClick(data)
             }

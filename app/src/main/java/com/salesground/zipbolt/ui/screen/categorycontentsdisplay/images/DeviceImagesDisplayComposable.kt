@@ -17,7 +17,12 @@ fun DeviceImagesDisplayComposable(imagesViewModel: ImagesViewModel) {
     val context = LocalContext.current
 
     AndroidViewBinding(factory = MainRecyclerViewBinding::inflate) {
-        val adapter = DeviceImagesDisplayRecyclerViewAdapter()
+        val adapter = DeviceImagesDisplayRecyclerViewAdapter(
+            onImageClicked = {
+                imagesViewModel.onImageClicked(it)
+            },
+            imagesClicked = imagesViewModel.collectionOfClickedImages
+        )
         adapter.submitList(groupedDeviceImages)
         val layoutManager = GridLayoutManager(context, 4)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
