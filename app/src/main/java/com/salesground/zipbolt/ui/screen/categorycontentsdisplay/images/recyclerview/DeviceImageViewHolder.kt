@@ -56,7 +56,7 @@ class DeviceImageViewHolder(
                     DeviceImageViewHolderConstants.unClickedForegroundOverlayDrawable
             }
 
-            deviceImageDisplayImageView.setOnClickListener {
+            deviceImageDisplayImageViewGroup.setOnClickListener {
                 if (clickedImages.contains(data)) {
                     deviceImageDisplayImageView.scaleUpAnimation(
                         parent = deviceImageDisplayImageViewGroup,

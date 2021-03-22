@@ -20,6 +20,7 @@ class ImagesViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
+    val collectionOfClickedImages: ArrayMap<ImagesDisplayModel, Boolean> = ArrayMap()
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
 
     private var _deviceImagesBucketNames = MutableLiveData<MutableList<BucketNameAndSize>>()
@@ -29,6 +30,9 @@ class ImagesViewModel @Inject constructor(
         MutableLiveData<MutableList<ImagesDisplayModel>>()
     val deviceImagesGroupedByDateModified: LiveData<MutableList<ImagesDisplayModel>> =
         _deviceImagesGroupedByDateModified
+
+    private var _chosenBucket = MutableLiveData<String>()
+    val chosenBucket : LiveData<String> = _chosenBucket
 
     init {
         viewModelScope.launch {
@@ -65,6 +69,8 @@ class ImagesViewModel @Inject constructor(
 
 
     fun filterDeviceImages(bucketName: String = "All") {
+        if(bucketName != "All" && bucketName == _chosenBucket.value) return
+        _chosenBucket.value = bucketName
         viewModelScope.launch {
             if (bucketName == "All") {
                 // don't filter
@@ -125,7 +131,6 @@ class ImagesViewModel @Inject constructor(
         return deviceImagesReadyAsImageDisplayModel
     }
 
-    val collectionOfClickedImages: ArrayMap<ImagesDisplayModel, Boolean> = ArrayMap()
 
     fun onImageClicked(imageClicked : ImagesDisplayModel){
         if(collectionOfClickedImages.containsKey(imageClicked)){
