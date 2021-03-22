@@ -1,10 +1,12 @@
 package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview
 
+
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.collection.ArrayMap
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.*
 import androidx.compose.ui.graphics.toArgb
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +20,8 @@ import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recycler
 
 object DeviceImageViewHolderConstants {
     val imagePlaceHolder = ColorDrawable(Color.LightGray.copy(alpha = 0.5f).toArgb())
-    val clickedForegroundOverlayColor = Color.Gray.copy(0.25f).toArgb()
+    //val clickedForegroundOverlayColor = Color(android.graphics.Color.parseColor("#38A377")).copy(alpha = 0.4f).toArgb()
+    val clickedForegroundOverlayColor = Color(46, 157, 255).copy(alpha = 0.4f).toArgb()
     val unClickedForegroundOverlayColor = Color.Transparent.toArgb()
     val clickedForegroundOverlayDrawable = ColorDrawable(clickedForegroundOverlayColor)
     val unClickedForegroundOverlayDrawable = ColorDrawable(unClickedForegroundOverlayColor)
