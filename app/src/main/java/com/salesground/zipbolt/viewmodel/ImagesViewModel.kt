@@ -1,15 +1,10 @@
 package com.salesground.zipbolt.viewmodel
 
 
-import android.app.usage.NetworkStats
-import android.util.ArrayMap
-import android.util.SparseArray
-import android.util.SparseIntArray
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
@@ -39,7 +34,10 @@ class ImagesViewModel @Inject constructor(
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
             launch(Dispatchers.IO) {
-                _deviceImagesBucketNames.value = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
+                val imageBucketNames = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
+                withContext(Dispatchers.Main) {
+                    _deviceImagesBucketNames.value = imageBucketNames
+                }
             }
             filterDeviceImages()
         }
