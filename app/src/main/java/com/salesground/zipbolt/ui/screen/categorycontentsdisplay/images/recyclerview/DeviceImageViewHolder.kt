@@ -25,24 +25,37 @@ import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.Imag
 val imagePlaceHolder = ColorDrawable(Color.LightGray.copy(alpha = 0.5f).toArgb())
 
 
-
 class DeviceImageViewHolder(
     private val imageLayoutItemBinding:
     ImageLayoutItemBinding
 ) : RecyclerView.ViewHolder(imageLayoutItemBinding.root) {
 
-    fun bindImageDisplay(data: ImagesDisplayModel.DeviceImageDisplay,
-    isViewClicked : Boolean = false) {
+    fun bindImageDisplay(
+        data: ImagesDisplayModel.DeviceImageDisplay,
+        isViewClicked: Boolean = false
+    ) {
         imageLayoutItemBinding.apply {
             Glide.with(root.context)
                 .load(data.deviceImage.imageUri)
                 .placeholder(imagePlaceHolder)
                 .into(deviceImageDisplayImageView)
 
+            if (isViewClicked) {
+                deviceImageDisplayImageView.scaleX = 0.7f
+                deviceImageDisplayImageView.scaleY = 0.7f
+                deviceImageDisplayImageViewGroup.foreground =
+                    ColorDrawable(Color.Blue.copy(0.12f).toArgb())
+            } else {
+                deviceImageDisplayImageView.scaleX = 1f
+                deviceImageDisplayImageView.scaleY = 1f
+                deviceImageDisplayImageViewGroup.foreground =
+                    ColorDrawable(Color.Transparent.toArgb())
+            }
+
             deviceImageDisplayImageView.setOnClickListener {
-                if(isViewClicked){
+                if (isViewClicked) {
                     deviceImageDisplayImageView.scaleUpAnimation(deviceImageDisplayImageViewGroup)
-                }else {
+                } else {
                     deviceImageDisplayImageView.scaleDownAnimation(deviceImageDisplayImageViewGroup)
                 }
             }

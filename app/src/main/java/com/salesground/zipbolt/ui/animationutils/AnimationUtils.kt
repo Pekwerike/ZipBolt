@@ -10,9 +10,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 
-fun ImageView.scaleUpAnimation(parent:FrameLayout){
-    val scaleUpAnimation = ValueAnimator.ofFloat(0.7f, 1f).apply {
-        duration = 350
+fun ImageView.scaleUpAnimation(
+    parent: FrameLayout,
+    currentScaleValue: Float = 0.7f,
+    currentParentForegroundColor: Int = Color.Blue.copy(0.12f).toArgb(),
+    animationDuration: Long = 350
+) {
+    val scaleUpAnimation = ValueAnimator.ofFloat(currentScaleValue, 1f).apply {
+        duration = animationDuration
         interpolator = AccelerateDecelerateInterpolator()
     }
     scaleUpAnimation.addUpdateListener {
@@ -21,8 +26,8 @@ fun ImageView.scaleUpAnimation(parent:FrameLayout){
         scaleY = currentScale
     }
     val viewGroupColorChangeAnimation =
-        ValueAnimator.ofArgb(Color.Blue.copy(0.12f).toArgb(), Color.Transparent.toArgb()).apply {
-            duration = 350
+        ValueAnimator.ofArgb(currentParentForegroundColor, Color.Transparent.toArgb()).apply {
+            duration = animationDuration
         }
     viewGroupColorChangeAnimation.addUpdateListener {
         parent.foreground = ColorDrawable(it.animatedValue as Int)
@@ -34,9 +39,15 @@ fun ImageView.scaleUpAnimation(parent:FrameLayout){
     }
 
 }
-fun ImageView.scaleDownAnimation(parent: FrameLayout) {
-    val scaleDownAnimation = ValueAnimator.ofFloat(1f, 0.7f).apply {
-        duration = 350
+
+fun ImageView.scaleDownAnimation(
+    parent: FrameLayout,
+    targetScaleValue: Float = 0.7f,
+    targetParentForegroundValue: Int = Color.Blue.copy(0.12f).toArgb(),
+    animationDuration: Long = 350
+) {
+    val scaleDownAnimation = ValueAnimator.ofFloat(1f, targetScaleValue).apply {
+        duration = animationDuration
         interpolator = AccelerateDecelerateInterpolator()
     }
     scaleDownAnimation.addUpdateListener {
@@ -45,8 +56,8 @@ fun ImageView.scaleDownAnimation(parent: FrameLayout) {
         scaleY = currentScale
     }
     val viewGroupColorChangeAnimation =
-        ValueAnimator.ofArgb(Color.Transparent.toArgb(), Color.Blue.copy(0.12f).toArgb()).apply {
-            duration = 350
+        ValueAnimator.ofArgb(Color.Transparent.toArgb(), targetParentForegroundValue).apply {
+            duration = animationDuration
         }
     viewGroupColorChangeAnimation.addUpdateListener {
         parent.foreground = ColorDrawable(it.animatedValue as Int)
