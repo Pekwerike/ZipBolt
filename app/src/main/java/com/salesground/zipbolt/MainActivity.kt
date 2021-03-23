@@ -30,7 +30,7 @@ import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.DeviceImagesDisplayComposable
-import com.salesground.zipbolt.ui.theme.SpeedForceTheme
+import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            SpeedForceTheme {
+            ZipBoltTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     DeviceImagesDisplayComposable(imagesViewModel = deviceMediaViewModel)

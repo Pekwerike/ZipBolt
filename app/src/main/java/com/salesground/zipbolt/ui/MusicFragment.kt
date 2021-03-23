@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.platform.ComposeView
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 
 
 class MusicFragment : Fragment() {
@@ -24,7 +27,11 @@ class MusicFragment : Fragment() {
         // Inflate the layout for this fragment
         return ComposeView(requireActivity()).apply {
             setContent {
-                Text("Compose inside MusicFragment, their fada")
+                ZipBoltTheme() {
+                    Surface(color = MaterialTheme.colors.background) {
+                        Text("Compose inside MusicFragment, their fada")
+                    }
+                }
             }
         }
     }
