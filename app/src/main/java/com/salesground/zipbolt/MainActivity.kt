@@ -29,6 +29,7 @@ import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import com.salesground.zipbolt.ui.screen.allmedia.AllMediaOnDevice
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.DeviceImagesDisplayComposable
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
     }
+
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
 
@@ -103,13 +105,18 @@ class MainActivity : AppCompatActivity() {
             ZipBoltTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    DeviceImagesDisplayComposable(imagesViewModel = deviceMediaViewModel)
-                  /*ZipBoltUIEntryPoint(
-                        homeScreenViewModel = homeScreenViewModel)*/
-
+                    //DeviceImagesDisplayComposable(imagesViewModel = deviceMediaViewModel)
+                    /*ZipBoltUIEntryPoint(
+                          homeScreenViewModel = homeScreenViewModel)*/
+                    AllMediaOnDevice(
+                        supportFragmentManager =
+                        supportFragmentManager, viewPagerAdapterLifecycle =
+                        lifecycle
+                    )
                 }
             }
         }
+
 
         createNotificationChannel()
         checkReadAndWriteExternalStoragePermission()
