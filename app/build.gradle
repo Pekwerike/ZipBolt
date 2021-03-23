@@ -83,4 +83,6 @@ dependencies {
 
   
     implementation "androidx.navigation:navigation-compose:1.0.0-alpha09"
+
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
 }

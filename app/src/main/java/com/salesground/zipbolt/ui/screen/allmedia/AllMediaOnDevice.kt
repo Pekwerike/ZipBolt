@@ -14,9 +14,9 @@ fun AllMediaOnDevice(
     viewPagerAdapterLifecycle: Lifecycle
 ) {
     AndroidViewBinding(AllMediaOnDeviceBinding::inflate) {
-        allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceFragmentsAdapter(
-            supportFragmentManager, viewPagerAdapterLifecycle
-        )
+        //allMediaOnDeviceViewPager.isUserInputEnabled = false
+        allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceFragmentsAdapter(supportFragmentManager,
+            viewPagerAdapterLifecycle)
         TabLayoutMediator(
             allMediaOnDeviceTabLayout,
             allMediaOnDeviceViewPager
@@ -28,7 +28,6 @@ fun AllMediaOnDevice(
                 3 -> tab.text = "Music"
                 4 -> tab.text = "Files"
             }
-
         }.attach()
     }
 }
