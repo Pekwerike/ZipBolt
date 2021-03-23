@@ -37,7 +37,7 @@ class TestImageFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val rootView = FragmentTestImageBinding.inflate(
             inflater, container,
             false
@@ -50,22 +50,25 @@ class TestImageFragment : Fragment() {
                     }
                 }
             }
+
             allDeviceImagesRecyclerview.apply {
-                val dLayoutManager = GridLayoutManager(context, 4)
-                dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when ((dAdapter as DeviceImagesDisplayRecyclerViewAdapter).getItemViewType(
-                            position
-                        )) {
-                            DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
-                            DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 4
-                            else -> 1
+                mainRecyclerView.apply {
+                    val dLayoutManager = GridLayoutManager(context, 4)
+                    dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when ((dAdapter as DeviceImagesDisplayRecyclerViewAdapter).getItemViewType(
+                                position
+                            )) {
+                                DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
+                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 4
+                                else -> 1
+                            }
                         }
                     }
+                    // mainRecyclerView.isNestedScrollingEnabled = true
+                    this.adapter = dAdapter
+                    this.layoutManager = dLayoutManager
                 }
-                // mainRecyclerView.isNestedScrollingEnabled = true
-                this.adapter = dAdapter
-                this.layoutManager = dLayoutManager
             }
         }
 
