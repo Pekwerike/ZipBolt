@@ -17,7 +17,7 @@ import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recycler
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 
-class TestImageFragment : Fragment() {
+class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
 

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context=".ui.TestImageFragment">
+    tools:context=".ui.ImageFragment">
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/compose_view_test"
