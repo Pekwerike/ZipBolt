@@ -31,7 +31,7 @@ fun BucketChip(
         }
     }
     Box(
-        modifier = Modifier.padding(horizontal = 3.dp, vertical = 1.dp)
+        modifier = Modifier.padding(horizontal = 3.dp, vertical = 2.dp)
             .clip(shape = MaterialTheme.shapes.small.copy(CornerSize(5.dp)))
             .clickable {
                 onClick(bucketName)

@@ -38,13 +38,13 @@ class ImagesViewModel @Inject constructor(
         viewModelScope.launch {
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
+            filterDeviceImages()
             launch(Dispatchers.IO) {
                 val imageBucketNames = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
                 withContext(Dispatchers.Main) {
                     _deviceImagesBucketNames.value = imageBucketNames
                 }
             }
-            filterDeviceImages()
         }
     }
 
