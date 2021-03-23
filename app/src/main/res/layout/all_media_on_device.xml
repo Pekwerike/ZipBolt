@@ -8,6 +8,7 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/all_media_on_device_tab_layout"
         android:layout_width="match_parent"
+        app:tabTextAppearance="@style/CustomTabTextAppearance"
         android:layout_height="wrap_content" />
 
 

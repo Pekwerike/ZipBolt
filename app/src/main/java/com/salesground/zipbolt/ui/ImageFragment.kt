@@ -10,7 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
-import com.salesground.zipbolt.databinding.FragmentTestImageBinding
+import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.DeviceImagesDisplayComposable
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayViewHolderType
@@ -38,7 +38,7 @@ class ImageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val rootView = FragmentTestImageBinding.inflate(
+        val rootView = FragmentImageBinding.inflate(
             inflater, container,
             false
         )
