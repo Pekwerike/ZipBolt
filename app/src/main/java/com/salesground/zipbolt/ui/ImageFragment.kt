@@ -5,13 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentImageBinding
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.DeviceImagesDisplayComposable
+import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesBucketDisplayComposable
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
@@ -46,7 +43,7 @@ class ImageFragment : Fragment() {
             composeViewTest.apply {
                 setContent {
                     ZipBoltTheme {
-                        DeviceImagesDisplayComposable(imagesViewModel = imagesViewModel)
+                        ImagesBucketDisplayComposable(imagesViewModel = imagesViewModel)
                     }
                 }
             }
