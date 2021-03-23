@@ -20,20 +20,24 @@ import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recycler
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 
 @Composable
-fun ImagesBucketDisplayComposable(imagesViewModel: ImagesViewModel) {
+fun ImagesBucketsDisplayComposable(imagesViewModel: ImagesViewModel) {
     val deviceImagesBuckets by imagesViewModel.deviceImagesBucketName.observeAsState()
     val chosenBucketName by imagesViewModel.chosenBucket.observeAsState()
-    BucketChipGroup(
-        modifier = Modifier
-            .padding(10.dp)
-            .wrapContentHeight()
-    ) {
-        deviceImagesBuckets?.forEach {
-            BucketChip(
-                bucketName = it.bucketName,
-                isChosen = it.bucketName == chosenBucketName
-            ) {
-                imagesViewModel.filterDeviceImages(bucketName = it)
+
+    Column(modifier = Modifier
+        .wrapContentHeight()) {
+        BucketChipGroup(
+            modifier = Modifier
+                .padding(10.dp)
+                .wrapContentHeight()
+        ) {
+            deviceImagesBuckets?.forEach {
+                BucketChip(
+                    bucketName = it.bucketName,
+                    isChosen = it.bucketName == chosenBucketName
+                ) {
+                    imagesViewModel.filterDeviceImages(bucketName = it)
+                }
             }
         }
     }
