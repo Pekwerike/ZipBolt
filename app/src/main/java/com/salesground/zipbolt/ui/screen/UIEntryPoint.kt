@@ -52,7 +52,7 @@ fun UIEntryPoint() {
             bottomSheetBehavior.addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-
+                    // for each state change, update the bottomSheet mutableState variable
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
