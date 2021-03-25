@@ -70,6 +70,7 @@ class DeviceImageViewHolder(
                 }
                 onClick(data)
             }
+            executePendingBindings()
         }
     }
 

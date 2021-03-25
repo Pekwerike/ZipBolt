@@ -40,7 +40,7 @@ class ImageFragment : Fragment() {
             false
         )
         rootView.apply {
-            composeViewTest.apply {
+            fragmentImageImagesBucketViewGroup.apply {
                 setContent {
                     ZipBoltTheme {
                         ImagesBucketsDisplayComposable(imagesViewModel = imagesViewModel)
@@ -48,8 +48,7 @@ class ImageFragment : Fragment() {
                 }
             }
 
-            allDeviceImagesRecyclerview.apply {
-                mainRecyclerView.apply {
+                fragmentImageRecyclerview.apply {
                     val dLayoutManager = GridLayoutManager(context, 4)
                     dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
@@ -67,8 +66,6 @@ class ImageFragment : Fragment() {
                     this.layoutManager = dLayoutManager
                 }
             }
-        }
-
         return rootView.root
     }
 

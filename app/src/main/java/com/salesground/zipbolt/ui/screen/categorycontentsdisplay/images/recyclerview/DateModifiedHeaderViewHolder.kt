@@ -16,6 +16,7 @@ class DateModifiedHeaderViewHolder(
     fun bindDateModified(dateModified: ImagesDisplayModel.ImagesDateModifiedHeader) {
       mediaDateModifiedHeaderBinding.apply {
           this.dateModified = dateModified.dateModified
+          executePendingBindings()
       }
     }
 

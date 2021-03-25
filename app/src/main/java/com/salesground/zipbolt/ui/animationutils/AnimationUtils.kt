@@ -14,7 +14,7 @@ fun ImageView.scaleUpAnimation(
     parent: FrameLayout,
     currentScaleValue: Float = 0.7f,
     currentParentForegroundColor: Int = Color.Blue.copy(0.12f).toArgb(),
-    animationDuration: Long = 350
+    animationDuration: Long = 300
 ) {
     val scaleUpAnimation = ValueAnimator.ofFloat(currentScaleValue, 1f).apply {
         duration = animationDuration
@@ -44,7 +44,7 @@ fun ImageView.scaleDownAnimation(
     parent: FrameLayout,
     targetScaleValue: Float = 0.7f,
     targetParentForegroundValue: Int = Color.Blue.copy(0.12f).toArgb(),
-    animationDuration: Long = 350
+    animationDuration: Long = 300
 ) {
     val scaleDownAnimation = ValueAnimator.ofFloat(1f, targetScaleValue).apply {
         duration = animationDuration
