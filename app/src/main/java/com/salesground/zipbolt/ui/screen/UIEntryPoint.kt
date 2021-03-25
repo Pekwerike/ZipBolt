@@ -28,7 +28,10 @@ fun UIEntryPoint() {
             zipBoltEntryPointComposeView.setContent {
                 Scaffold(
                     floatingActionButton = {
-
+                        // TODO
+                        /* if bottom sheet is hidden show connect button
+                        if bottom sheet is collapsed show send button
+                        * */
                     }
                 ) {
                     // Place navHost here
