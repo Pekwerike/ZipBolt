@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -41,9 +42,10 @@ fun BucketChip(
         if (isChosen) {
             Surface(color = MaterialTheme.colors.primary.copy(alpha = 0.3f)) {
                 Text(
-                    modifier = Modifier.padding(horizontal = 10.dp, 5.dp),
+                    modifier = Modifier.padding(horizontal = 10.dp, 5.dp)
+                        .animateContentSize(),
                     text = editedBucketName, color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.caption,
+                    style = MaterialTheme.typography.body2,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold
                 )
