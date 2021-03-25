@@ -54,7 +54,7 @@ class ImageFragment : Fragment() {
                     val dLayoutManager = GridLayoutManager(context, 4)
                     dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
-                            return when ((dAdapter as DeviceImagesDisplayRecyclerViewAdapter).getItemViewType(
+                            return when (dAdapter.getItemViewType(
                                 position
                             )) {
                                 DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
@@ -63,15 +63,18 @@ class ImageFragment : Fragment() {
                             }
                         }
                     }
+                    // mainRecyclerView.isNestedScrollingEnabled = true
+                    this.adapter = dAdapter
+                    this.layoutManager = dLayoutManager
                 } else {
-                    val dLayoutManager = GridLayoutManager(context, 8)
+                    val dLayoutManager = GridLayoutManager(context, 6)
                     dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
-                            return when ((dAdapter as DeviceImagesDisplayRecyclerViewAdapter).getItemViewType(
+                            return when (dAdapter.getItemViewType(
                                 position
                             )) {
                                 DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
-                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 8
+                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 6
                                 else -> 1
                             }
                         }
