@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview
+package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.MediaDateModifiedHeaderBinding
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto.ImagesDisplayModel
 
 class DateModifiedHeaderViewHolder(
     private val mediaDateModifiedHeaderBinding:

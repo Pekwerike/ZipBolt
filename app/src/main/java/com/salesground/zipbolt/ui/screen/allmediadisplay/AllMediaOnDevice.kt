@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.allmedia
+package com.salesground.zipbolt.ui.screen.allmediadisplay
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.viewinterop.AndroidViewBinding

@@ -29,7 +29,7 @@ import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
-import com.salesground.zipbolt.ui.screen.allmedia.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint

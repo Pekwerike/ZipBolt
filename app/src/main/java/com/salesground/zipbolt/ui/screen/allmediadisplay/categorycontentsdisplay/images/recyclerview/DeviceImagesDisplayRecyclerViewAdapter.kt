@@ -1,11 +1,11 @@
-package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview
+package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview
 
 import android.view.ViewGroup
 import androidx.collection.ArrayMap
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto.ImagesDisplayModel
 
 enum class DeviceImagesDisplayViewHolderType(val type: Int) {
     IMAGE(1),

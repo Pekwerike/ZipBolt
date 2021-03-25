@@ -1,6 +1,5 @@
-package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview
+package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview
 
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

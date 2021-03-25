@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.allmedia
+package com.salesground.zipbolt.ui.screen.allmediadisplay
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

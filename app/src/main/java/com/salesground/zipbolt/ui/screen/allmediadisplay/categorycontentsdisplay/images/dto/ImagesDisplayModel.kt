@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto
+package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto
 
 import com.salesground.zipbolt.model.DataToTransfer
 

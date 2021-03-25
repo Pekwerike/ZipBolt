@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview
+package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview
 
 
 import android.graphics.drawable.ColorDrawable
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.collection.ArrayMap
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.*
 import androidx.compose.ui.graphics.toArgb
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +14,8 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ImageLayoutItemBinding
 import com.salesground.zipbolt.ui.animationutils.scaleDownAnimation
 import com.salesground.zipbolt.ui.animationutils.scaleUpAnimation
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.dto.ImagesDisplayModel
-import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImageViewHolderConstants.imagePlaceHolder
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto.ImagesDisplayModel
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview.DeviceImageViewHolderConstants.imagePlaceHolder
 
 object DeviceImageViewHolderConstants {
     val imagePlaceHolder = ColorDrawable(Color.LightGray.copy(alpha = 0.5f).toArgb())

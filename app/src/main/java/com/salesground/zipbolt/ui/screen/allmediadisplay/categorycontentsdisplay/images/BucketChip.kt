@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images
+package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
