@@ -10,6 +10,7 @@
         android:layout_height="match_parent" />
 
     <LinearLayout
+        android:id="@+id/zip_bolt_persistent_bottom_sheet_view_group"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:behavior_hideable="false"
