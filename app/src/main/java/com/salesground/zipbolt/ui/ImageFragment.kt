@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -48,7 +49,8 @@ class ImageFragment : Fragment() {
                 }
             }
 
-                fragmentImageRecyclerview.apply {
+            fragmentImageRecyclerview.apply {
+                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     val dLayoutManager = GridLayoutManager(context, 4)
                     dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
@@ -61,12 +63,25 @@ class ImageFragment : Fragment() {
                             }
                         }
                     }
+                } else {
+                    val dLayoutManager = GridLayoutManager(context, 8)
+                    dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when ((dAdapter as DeviceImagesDisplayRecyclerViewAdapter).getItemViewType(
+                                position
+                            )) {
+                                DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
+                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 8
+                                else -> 1
+                            }
+                        }
+                    }
                     // mainRecyclerView.isNestedScrollingEnabled = true
                     this.adapter = dAdapter
                     this.layoutManager = dLayoutManager
                 }
             }
-        return rootView.root
+            return rootView.root
+        }
     }
-
 }
