@@ -23,14 +23,21 @@ fun UIEntryPoint() {
 
     ModalBottomSheetLayout(sheetContent = {
         // TODO Display the various categories for connection
+        /* The only peer connection supported now is for android devices
+        when Connect to android is clicked, do the following
+        1. Expand the bottomSheet to show searching for peers screen
+        2. Update the mutableState for the bottom sheet with the new expanded state
+        3. Update the bottom sheet peek height to 70.dp
+        **/
     }) {
         AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
             zipBoltEntryPointComposeView.setContent {
                 Scaffold(
                     floatingActionButton = {
                         // TODO
-                        /* if bottom sheet is hidden show connect button
-                        if bottom sheet is collapsed show send button
+                        /* 1. if bottom sheet is hidden show connect button
+                        2. if bottom sheet is collapsed show send button
+                        2b. increase the padding of the send button by the bottom sheet peek height
                         * */
                     }
                 ) {
