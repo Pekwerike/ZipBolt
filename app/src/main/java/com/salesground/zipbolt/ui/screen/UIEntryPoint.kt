@@ -35,10 +35,12 @@ fun UIEntryPoint() {
                 }
             }
 
-            val bottomSheetBehavior = BottomSheetBehavior.from(zipBoltPersistentBottomSheetViewGroup)
+            val bottomSheetBehavior =
+                BottomSheetBehavior.from(zipBoltPersistentBottomSheetViewGroup)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-            bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
+            bottomSheetBehavior.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
 
                 }
@@ -56,39 +58,3 @@ fun UIEntryPoint() {
     }
 }
 
-
-enum class ConnectionCategory(
-    val actionLabel: String,
-    val categoryLogo: ImageVector? = null
-) {
-    ANDROID(actionLabel = "Connect to Android device"),
-    IPHONE(actionLabel = "Connect to Iphone"),
-    DESKTOP(actionLabel = "Connect to Desktop"),
-    SHARE_ZIP_BOLT(actionLabel = "Share ZipBolt")
-}
-
-@Composable
-fun ModalBottomSheetConnectionCategory(
-    platformLogo: ImageVector, platformLogoContentDescription: String,
-    actionLabel: String, onConnectionCategoryClicked: (String) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .padding(4.dp)
-            .clickable {
-                onConnectionCategoryClicked(actionLabel)
-            }
-            .padding(4.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = platformLogo, contentDescription = platformLogoContentDescription,
-            modifier = Modifier.padding(5.dp)
-        )
-        Text(
-            text = actionLabel, modifier = Modifier.padding(5.dp),
-            style = MaterialTheme.typography.body2
-        )
-    }
-}
