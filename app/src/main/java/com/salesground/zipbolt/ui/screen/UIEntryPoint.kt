@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.ui.screen
 
+import android.view.View
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 
 @ExperimentalMaterialApi
@@ -32,6 +34,20 @@ fun UIEntryPoint() {
                     // Place navHost here
                 }
             }
+
+            val bottomSheetBehavior = BottomSheetBehavior.from(zipBoltPersistentBottomSheetViewGroup)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+            bottomSheetBehavior.addBottomSheetCallback(object: BottomSheetBehavior.BottomSheetCallback(){
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+                }
+
+            })
 
             zipBoltPersistentBottomSheetComposeView.setContent {
                 // place different bottom sheet contents here

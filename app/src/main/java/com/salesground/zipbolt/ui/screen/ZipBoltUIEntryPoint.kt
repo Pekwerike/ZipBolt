@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.*
 import com.salesground.zipbolt.ui.navigation.NavigationAction
-import com.salesground.zipbolt.ui.screen.generalcomponents.DiscoverPeerButton
+import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltMainFloatingActionButton
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.ZipBoltBottomNavigationItem
 import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
 
@@ -36,7 +36,7 @@ fun ZipBoltUIEntryPoint(homeScreenViewModel: HomeScreenViewModel) {
                 )
             }, floatingActionButtonPosition = FabPosition.End,
             floatingActionButton = {
-                DiscoverPeerButton(openPeersDiscoverySheet = { /*TODO*/ })
+                ZipBoltMainFloatingActionButton(onClick = { /*TODO*/ })
             }) {
                 ZipBoltNavGraph(navController = navController,
                 homeScreenViewModel = homeScreenViewModel)
