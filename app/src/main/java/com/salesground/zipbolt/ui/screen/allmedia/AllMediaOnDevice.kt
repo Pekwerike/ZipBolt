@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.databinding.AllMediaOnDeviceBinding
-import com.salesground.zipbolt.ui.AllMediaOnDeviceFragmentsAdapter
 
 @Composable
 fun AllMediaOnDevice(
@@ -15,7 +14,7 @@ fun AllMediaOnDevice(
 ) {
     AndroidViewBinding(AllMediaOnDeviceBinding::inflate) {
         //allMediaOnDeviceViewPager.isUserInputEnabled = false
-        allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceFragmentsAdapter(supportFragmentManager,
+        allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(supportFragmentManager,
             viewPagerAdapterLifecycle)
         TabLayoutMediator(
             allMediaOnDeviceTabLayout,
