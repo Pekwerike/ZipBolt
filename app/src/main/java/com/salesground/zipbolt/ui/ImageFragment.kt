@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.ImagesBucketsDisplayComposable
 import com.salesground.zipbolt.ui.screen.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayRecyclerViewAdapter
