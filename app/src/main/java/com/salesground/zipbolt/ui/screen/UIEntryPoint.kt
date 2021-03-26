@@ -1,7 +1,6 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.view.View
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
@@ -10,10 +9,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 import com.salesground.zipbolt.ui.screen.generalcomponents.ConnectionCategory
 import com.salesground.zipbolt.ui.screen.generalcomponents.DevicesConnectionCategoryDisplay
@@ -49,22 +49,22 @@ fun UIEntryPoint() {
                 ) {
 
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = ConnectionCategory.ANDROID.categoryLogo,
+                        platformLogo = painterResource(id = R.drawable.android_icon),
                         platformLogoContentDescription = ConnectionCategory.ANDROID.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.ANDROID.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = ConnectionCategory.IPHONE.categoryLogo,
+                        platformLogo = painterResource(id = R.drawable.multi_colored_apple_icon),
                         platformLogoContentDescription = ConnectionCategory.IPHONE.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.IPHONE.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = ConnectionCategory.DESKTOP.categoryLogo,
+                        platformLogo = painterResource(id = R.drawable.pc_icon),
                         platformLogoContentDescription = ConnectionCategory.DESKTOP.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.DESKTOP.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogo,
+                        platformLogo = painterResource(id = R.drawable.share_icon),
                         platformLogoContentDescription = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.SHARE_ZIP_BOLT.actionLabel,
                         onConnectionCategoryClicked = {})

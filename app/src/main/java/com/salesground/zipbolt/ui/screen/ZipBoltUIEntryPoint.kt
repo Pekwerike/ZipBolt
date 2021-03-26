@@ -4,7 +4,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.*
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.ui.navigation.NavigationAction
 import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltMainFloatingActionButton
 import com.salesground.zipbolt.ui.screen.homescreen.homescreencomponents.ZipBoltBottomNavigationItem
@@ -15,6 +17,8 @@ import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
 @ExperimentalMaterialApi
 @Composable
 fun ZipBoltUIEntryPoint(homeScreenViewModel: HomeScreenViewModel) {
+
+
     val modalBottomSheetState =
         rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden
