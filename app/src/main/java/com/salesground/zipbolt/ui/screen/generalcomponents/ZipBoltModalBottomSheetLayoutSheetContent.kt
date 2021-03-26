@@ -48,13 +48,20 @@ enum class ConnectionCategory(
 }
 
 @Composable
-fun ZipBoltModalBottomSheetContent() {
+fun ZipBoltModalBottomSheetContent(
+    onAndroidClicked: () -> Unit = {},
+    onIPhoneClicked: () -> Unit = {},
+    onDesktopClicked: () -> Unit = {},
+    onShareZipBoltClicked: () -> Unit = {}
+) {
     Surface {
         Column(
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
-            Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
                 Surface(
                     modifier = Modifier.requiredSize(width = 50.dp, height = 5.dp),
                     shape = MaterialTheme.shapes.large.copy(all = CornerSize(20.dp)),
@@ -73,7 +80,13 @@ fun ZipBoltModalBottomSheetContent() {
                     platformLogoResourceId = it.categoryLogoResourceId,
                     platformLogoContentDescription = it.categoryLogoContentDescription,
                     actionLabel = it.actionLabel,
-                    onConnectionCategoryClicked = {})
+                    onConnectionCategoryClicked = when (it) {
+                        ConnectionCategory.ANDROID -> onAndroidClicked
+                        ConnectionCategory.IPHONE -> onIPhoneClicked
+                        ConnectionCategory.DESKTOP -> onDesktopClicked
+                        ConnectionCategory.SHARE_ZIP_BOLT -> onShareZipBoltClicked
+                    }
+                )
             }
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -112,13 +125,13 @@ fun ZipBoltModalBottomSheetContent() {
 @Composable
 fun DevicesConnectionCategoryDisplay(
     platformLogoResourceId: Int, platformLogoContentDescription: String,
-    actionLabel: String, onConnectionCategoryClicked: (String) -> Unit
+    actionLabel: String, onConnectionCategoryClicked: () -> Unit
 ) {
 
     Row(
         modifier = Modifier
             .clickable {
-                onConnectionCategoryClicked(actionLabel)
+                onConnectionCategoryClicked()
             }
             .padding(8.dp)
             .fillMaxWidth(),
