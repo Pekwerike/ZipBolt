@@ -3,6 +3,7 @@ package com.salesground.zipbolt.ui.screen.generalcomponents
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -52,6 +53,16 @@ fun ZipBoltModalBottomSheetContent() {
         Column(
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center) {
+                Surface(
+                    modifier = Modifier.requiredSize(width = 50.dp, height = 5.dp),
+                    shape = MaterialTheme.shapes.large.copy(all = CornerSize(20.dp)),
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                ) {
+
+                }
+            }
             Text(
                 text = "Connect to", style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.SemiBold,
@@ -70,7 +81,8 @@ fun ZipBoltModalBottomSheetContent() {
                         modifier = Modifier
                             .fillMaxWidth(0.48f)
                             .padding(
-                                end = 8.dp
+                                end = 8.dp,
+                                start = 4.dp
                             )
                     )
                     Text(
@@ -80,7 +92,10 @@ fun ZipBoltModalBottomSheetContent() {
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth(1f)
-                            .padding(start = 8.dp)
+                            .padding(
+                                start = 8.dp,
+                                end = 4.dp
+                            )
                     )
                 }
             }
