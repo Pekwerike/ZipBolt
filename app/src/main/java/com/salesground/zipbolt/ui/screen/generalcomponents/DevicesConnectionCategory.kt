@@ -27,17 +27,17 @@ enum class ConnectionCategory(
     val categoryLogoContentDescription: String
 ) {
     ANDROID(
-        actionLabel = "Connect to Android",
+        actionLabel = "Android",
         categoryLogoResourceId = R.drawable.android_icon,
         categoryLogoContentDescription = "Connect to Android"
     ),
     IPHONE(
-        actionLabel = "Connect to iPhone",
+        actionLabel = "iPhone",
         categoryLogoResourceId = R.drawable.multi_colored_apple_icon,
         categoryLogoContentDescription = "Connect to iPhone"
     ),
     DESKTOP(
-        actionLabel = "Connect to PC",
+        actionLabel = "Desktop",
         categoryLogoResourceId = R.drawable.pc_icon,
         categoryLogoContentDescription = "Connect to PC"
     ),
@@ -56,16 +56,16 @@ fun DevicesConnectionCategoryDisplay(
 
     Row(
         modifier = Modifier
-            .padding(4.dp)
             .clickable {
                 onConnectionCategoryClicked(actionLabel)
             }
-            .padding(4.dp)
+            .padding(8.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CoilImage(
-            data = platformLogoResourceId, contentDescription = platformLogoContentDescription,
+        Image(
+            painter = painterResource(platformLogoResourceId),
+            contentDescription = platformLogoContentDescription,
             modifier = Modifier
                 .padding(5.dp)
                 .requiredSize(24.dp)

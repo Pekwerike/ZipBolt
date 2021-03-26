@@ -1,15 +1,16 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.view.View
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -45,8 +46,13 @@ fun UIEntryPoint() {
             **/
             Surface {
                 Column(
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp)
                 ) {
+                    Text(
+                        text = "Connect to", style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
 
                     DevicesConnectionCategoryDisplay(
                         platformLogoResourceId = ConnectionCategory.ANDROID.categoryLogoResourceId,
@@ -59,10 +65,21 @@ fun UIEntryPoint() {
                         actionLabel = ConnectionCategory.IPHONE.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogoResourceId =ConnectionCategory.DESKTOP.categoryLogoResourceId,
+                        platformLogoResourceId = ConnectionCategory.DESKTOP.categoryLogoResourceId,
                         platformLogoContentDescription = ConnectionCategory.DESKTOP.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.DESKTOP.actionLabel,
                         onConnectionCategoryClicked = {})
+
+
+                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+                        Row (verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()){
+                            Divider(modifier = Modifier.fillMaxWidth(0.48f))
+                            Text(text = "Or", style = MaterialTheme.typography.caption,
+                                modifier = Modifier.wrapContentWidth())
+                            Divider(modifier = Modifier.fillMaxWidth(1f))
+                        }
+                    }
                     DevicesConnectionCategoryDisplay(
                         platformLogoResourceId = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoResourceId,
                         platformLogoContentDescription = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoContentDescription,
