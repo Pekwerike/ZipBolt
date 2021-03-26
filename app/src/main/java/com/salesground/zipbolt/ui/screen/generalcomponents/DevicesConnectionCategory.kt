@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,7 +17,8 @@ import androidx.compose.ui.unit.dp
 
 enum class ConnectionCategory(
     val actionLabel: String,
-    val categoryLogo: ImageVector? = null
+    val categoryLogo: ImageVector = Icons.Rounded.Settings,
+    val categoryLogoContentDescription: String = ""
 ) {
     ANDROID(actionLabel = "Connect to Android device"),
     IPHONE(actionLabel = "Connect to Iphone"),
@@ -44,7 +47,7 @@ fun DevicesConnectionCategoryDisplay(
         )
         Text(
             text = actionLabel, modifier = Modifier.padding(5.dp),
-            style = MaterialTheme.typography.body2
+            style = MaterialTheme.typography.body1
         )
     }
 }

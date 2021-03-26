@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.view.View
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
@@ -14,9 +15,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
+import com.salesground.zipbolt.ui.screen.generalcomponents.ConnectionCategory
+import com.salesground.zipbolt.ui.screen.generalcomponents.DevicesConnectionCategoryDisplay
 import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltMainFloatingActionButton
 import kotlinx.coroutines.launch
 
+/**TODO Trailing
+ * Download svg icons for Android Green, IPhone Black or any color, Desktop Icon,
+ * Find out how to link drawables icons into composables
+ * **/
 @ExperimentalMaterialApi
 @Composable
 fun UIEntryPoint() {
@@ -26,25 +33,49 @@ fun UIEntryPoint() {
     var modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
-    ModalBottomSheetLayout(sheetContent = {
-                                          
-        // TODO Display the various categories for connection
-        /* The only peer connection supported now is for android devices
-        when Connect to android is clicked, do the following
-        1. Expand the bottomSheet to show searching for peers screen
-        2. Update the mutableState for the bottom sheet with the new expanded state
-        3. Update the bottom sheet peek height to 70.dp
-        **/
-        Column(modifier = Modifier.clip(shape = MaterialTheme.shapes.large.copy(
-            topStart = CornerSize(10.dp),
-            topEnd = CornerSize(10.dp)
-        ))) {
-            Surface(modifier = Modifier.padding(8.dp)) {
-                
-            }
-        }                                  
+    ModalBottomSheetLayout(
+        sheetContent = {
 
-    }, sheetState = modalBottomSheetState) {
+            // TODO Display the various categories for connection
+            /* The only peer connection supported now is for android devices
+            when Connect to android is clicked, do the following
+            1. Expand the bottomSheet to show searching for peers screen
+            2. Update the mutableState for the bottom sheet with the new expanded state
+            3. Update the bottom sheet peek height to 70.dp
+            **/
+            Surface {
+                Column(
+                    modifier = Modifier.padding(8.dp)
+                ) {
+
+                    DevicesConnectionCategoryDisplay(
+                        platformLogo = ConnectionCategory.ANDROID.categoryLogo,
+                        platformLogoContentDescription = ConnectionCategory.ANDROID.categoryLogoContentDescription,
+                        actionLabel = ConnectionCategory.ANDROID.actionLabel,
+                        onConnectionCategoryClicked = {})
+                    DevicesConnectionCategoryDisplay(
+                        platformLogo = ConnectionCategory.IPHONE.categoryLogo,
+                        platformLogoContentDescription = ConnectionCategory.IPHONE.categoryLogoContentDescription,
+                        actionLabel = ConnectionCategory.IPHONE.actionLabel,
+                        onConnectionCategoryClicked = {})
+                    DevicesConnectionCategoryDisplay(
+                        platformLogo = ConnectionCategory.DESKTOP.categoryLogo,
+                        platformLogoContentDescription = ConnectionCategory.DESKTOP.categoryLogoContentDescription,
+                        actionLabel = ConnectionCategory.DESKTOP.actionLabel,
+                        onConnectionCategoryClicked = {})
+                    DevicesConnectionCategoryDisplay(
+                        platformLogo = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogo,
+                        platformLogoContentDescription = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoContentDescription,
+                        actionLabel = ConnectionCategory.SHARE_ZIP_BOLT.actionLabel,
+                        onConnectionCategoryClicked = {})
+                }
+            }
+
+        }, sheetState = modalBottomSheetState,
+        sheetShape = MaterialTheme.shapes.large.copy(
+            topStart = CornerSize(12.dp), topEnd = CornerSize(12.dp)
+        )
+    ) {
         AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
             zipBoltEntryPointComposeView.setContent {
                 Scaffold(
