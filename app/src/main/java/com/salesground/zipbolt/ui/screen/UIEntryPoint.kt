@@ -6,8 +6,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collection.mutableVectorOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,10 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
+import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltMainFloatingActionButton
 
 @ExperimentalMaterialApi
 @Composable
 fun UIEntryPoint() {
+
+    var bottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
 
     ModalBottomSheetLayout(sheetContent = {
         // TODO Display the various categories for connection
@@ -39,6 +48,19 @@ fun UIEntryPoint() {
                         2. if bottom sheet is collapsed show send button
                         2b. increase the padding of the send button by the bottom sheet peek height
                         * */
+                        if(bottomSheetState == BottomSheetBehavior.STATE_HIDDEN){
+                            ZipBoltMainFloatingActionButton(
+                                label = "Connect",
+                                onClick = { }
+                            )
+                        }else{
+                            ZipBoltMainFloatingActionButton(
+                                modifier = Modifier.padding(50.dp),
+                                label = "Send",
+                                icon = Icons.Rounded.Send,
+                                onClick = { }
+                            )
+                        }
                     }
                 ) {
                     // Place navHost here
