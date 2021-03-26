@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +58,7 @@ fun UIEntryPoint(
                     }
                     persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     persistentBottomSheetBehavior.peekHeight =
-                        (50 * context.resources.displayMetrics.scaledDensity).roundToInt()
+                        (70 * context.resources.displayMetrics.scaledDensity).roundToInt()
                 }
             )
 
@@ -86,12 +87,12 @@ fun UIEntryPoint(
                                 }
                             )
                         } else {
-                            ZipBoltMainFloatingActionButton(
+                            /*ZipBoltMainFloatingActionButton(
                                 modifier = Modifier.padding(bottom = 50.dp),
                                 label = "Send",
                                 icon = Icons.Rounded.Send,
                                 onClick = { }
-                            )
+                            )*/
                         }
                     }
                 ) {
@@ -117,9 +118,15 @@ fun UIEntryPoint(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(color = Color.Red)
+                        .background(color = Color.Red),
+                    horizontalAlignment = Alignment.End
                 ) {
-
+                    ZipBoltMainFloatingActionButton(
+                        modifier = Modifier.padding(8.dp),
+                        label = "Send",
+                        icon = Icons.Rounded.Send,
+                        onClick = { }
+                    )
                 }
             }
         }
