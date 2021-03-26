@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.salesground.zipbolt.R
+import dev.chrisbanes.accompanist.coil.CoilImage
 
 enum class ConnectionCategory(
     val actionLabel: String,
@@ -47,8 +48,13 @@ fun DevicesConnectionCategoryDisplay(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painter = platformLogo, contentDescription = platformLogoContentDescription,
-        modifier = Modifier.padding(5.dp).requiredSize(24.dp))
+        CoilImage(
+            data = platformLogo, contentDescription = platformLogoContentDescription,
+            modifier = Modifier
+                .padding(5.dp)
+                .requiredSize(24.dp)
+        )
+
         Text(
             text = actionLabel, modifier = Modifier.padding(5.dp),
             style = MaterialTheme.typography.body1
