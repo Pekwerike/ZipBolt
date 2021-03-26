@@ -69,11 +69,11 @@ class ClientService : Service() {
                     Toast.makeText(this@ClientService, "Connected to server", Toast.LENGTH_SHORT)
                         .show()
                 }
-                CoroutineScope(Dispatchers.IO).launch {
+                launch (Dispatchers.IO){
                     listenForAvailableFilesToTransfer(socketDOS)
                 }
 
-                CoroutineScope(Dispatchers.IO).launch {
+                launch(Dispatchers.IO){
                     listenForIncomingFiles(socketDIS)
                 }
             }
@@ -81,22 +81,6 @@ class ClientService : Service() {
         return START_NOT_STICKY
     }
 
-    /*   private fun listenForAvailableFilesToTransfer(socketDOS: DataOutputStream) {
-           while (true) {
-               try {
-                   if (!isDataToTransferAvailable) {
-                       socketDOS.writeUTF(NO_DATA_AVAILABLE)
-                   } else {
-                       socketDOS.writeUTF(DATA_AVAILABLE)
-                       zipBoltMTP.transferMedia(mediaItemsToTransfer, socketDOS)
-                       isDataToTransferAvailable = false
-                   }
-               } catch (connectionReset: SocketException) {
-                   stopSelf()
-                   break
-               }
-           }
-       }*/
 
     private fun listenForAvailableFilesToTransfer(DOS: DataOutputStream) {
         while (true) {
@@ -104,8 +88,7 @@ class ClientService : Service() {
                 isDataToTransferAvailable = false
                 DOS.writeUTF(DATA_AVAILABLE)
                 zipBoltMTP.transferMedia(mediaItemsToTransfer, DOS)
-                //  Log.i("NewTransfer", "Transfer completed " +
-                //        "isDataAvailableToTransfer value is ${isDataToTransferAvailable}")
+
             } else {
                 DOS.writeUTF(NO_DATA_AVAILABLE)
             }
@@ -117,7 +100,6 @@ class ClientService : Service() {
             try {
                 val isDataToReceiveAvailable = socketDIS.readUTF()
                 if (isDataToReceiveAvailable == DATA_AVAILABLE) {
-                    //    Log.i("NewTransfer", "Data is available")
                     zipBoltMTP.receiveMedia(socketDIS)
                 }
             } catch (exception: Exception) {
@@ -129,7 +111,6 @@ class ClientService : Service() {
     fun transferMediaItems(mediaCollection: MutableList<MediaModel>) {
         mediaItemsToTransfer = mediaCollection
         isDataToTransferAvailable = true
-        // Log.i("NewTransfer", "Items available, items count is ${mediaItemsToTransfer.size}")
     }
 
 }

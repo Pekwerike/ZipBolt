@@ -53,5 +53,4 @@ class MainActivityViewModel : ViewModel() {
         peeredDeviceConnectionInfoState.value = connectionInfo
     }
 
-
 }
