@@ -19,18 +19,16 @@ import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import kotlinx.coroutines.launch
 
-/**TODO Trailing
- * Download svg icons for Android Green, IPhone Black or any color, Desktop Icon,
- * Find out how to link drawables icons into composables
- * **/
 
 @ExperimentalMaterialApi
 @Composable
-fun UIEntryPoint() {
+fun UIEntryPoint(
+    beginPeerDiscovery : () -> Unit
+) {
 
     val coroutineScope = rememberCoroutineScope()
     var persistentBottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
-    val modalBottomSheetState =
+    var modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     ModalBottomSheetLayout(
@@ -42,7 +40,20 @@ fun UIEntryPoint() {
             2. Update the mutableState for the bottom sheet with the new expanded state
             3. Update the bottom sheet peek height to 70.dp
             **/
-            ZipBoltModalBottomSheetContent()
+            ZipBoltModalBottomSheetContent(
+                onAndroidClicked = {
+                    beginPeerDiscovery()
+                    /* TODO,
+                    1. Close the modal bottom sheet
+                    2. Open the persistent bottom sheet in full screen
+                    3. increase the peekHeight state of the persistent bottom sheet,
+                    so that the send button can appear over the collapsed persistent bottom sheet
+                    */
+                    coroutineScope.launch {
+                        modalBottomSheetState.hide()
+                    }
+                }
+            )
 
         }, sheetState = modalBottomSheetState,
         sheetShape = MaterialTheme.shapes.large.copy(

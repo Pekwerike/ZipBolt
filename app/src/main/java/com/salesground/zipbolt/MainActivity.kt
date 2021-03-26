@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                         supportFragmentManager, viewPagerAdapterLifecycle =
                         lifecycle
                     )*/
-                    UIEntryPoint()
+                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery)
                 }
             }
         }
