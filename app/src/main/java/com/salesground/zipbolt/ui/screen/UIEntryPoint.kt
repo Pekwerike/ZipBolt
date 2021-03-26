@@ -1,35 +1,38 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.view.View
+import android.widget.LinearLayout
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 
 @ExperimentalMaterialApi
 @Composable
 fun UIEntryPoint(
-    beginPeerDiscovery : () -> Unit
+    beginPeerDiscovery: () -> Unit
 ) {
-
+    lateinit var persistentBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var persistentBottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
-    var modalBottomSheetState =
+    val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -44,14 +47,17 @@ fun UIEntryPoint(
                 onAndroidClicked = {
                     beginPeerDiscovery()
                     /* TODO,
-                    1. Close the modal bottom sheet
-                    2. Open the persistent bottom sheet in full screen
-                    3. increase the peekHeight state of the persistent bottom sheet,
+                    1. Close the modal bottom sheet *
+                    2. Open the persistent bottom sheet in full screen *
+                    3. increase the peekHeight state of the persistent bottom sheet, *
                     so that the send button can appear over the collapsed persistent bottom sheet
                     */
                     coroutineScope.launch {
                         modalBottomSheetState.hide()
                     }
+                    persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    persistentBottomSheetBehavior.peekHeight =
+                        (50 * context.resources.displayMetrics.scaledDensity).roundToInt()
                 }
             )
 
@@ -93,51 +99,27 @@ fun UIEntryPoint(
                 }
             }
 
-            val bottomSheetBehavior =
+            persistentBottomSheetBehavior =
                 BottomSheetBehavior.from(zipBoltPersistentBottomSheetViewGroup)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-            bottomSheetBehavior.addBottomSheetCallback(object :
-                BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    // for each state change, update the bottomSheet mutableState variable
-                    when (newState) {
-                        BottomSheetBehavior.STATE_COLLAPSED -> {
-                            persistentBottomSheetState = BottomSheetBehavior.STATE_COLLAPSED
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                        }
-                        BottomSheetBehavior.STATE_EXPANDED -> {
-                            persistentBottomSheetState = BottomSheetBehavior.STATE_EXPANDED
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        }
-                        BottomSheetBehavior.STATE_HIDDEN -> {
-                            persistentBottomSheetState = BottomSheetBehavior.STATE_HIDDEN
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                        }
-                        BottomSheetBehavior.STATE_HALF_EXPANDED -> {
-                            persistentBottomSheetState = BottomSheetBehavior.STATE_HALF_EXPANDED
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                        }
-                        BottomSheetBehavior.STATE_DRAGGING -> {
-                            persistentBottomSheetState = BottomSheetBehavior.STATE_DRAGGING
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_DRAGGING
-                        }
-                        BottomSheetBehavior.STATE_SETTLING -> {
-                            persistentBottomSheetState = BottomSheetBehavior.STATE_SETTLING
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_SETTLING
-                        }
+            persistentBottomSheetBehavior.addBottomSheetCallback(
+                PersistentBottomSheetCallBack(
+                    persistentBottomSheetBehavior,
+                    persistentBottomSheetStateChanged = {
+                        persistentBottomSheetState = it
                     }
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-                }
-            })
+                )
+            )
 
             zipBoltPersistentBottomSheetComposeView.setContent {
                 // place different bottom sheet contents here
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Red)) {
+
+                }
             }
         }
     }
 }
-
