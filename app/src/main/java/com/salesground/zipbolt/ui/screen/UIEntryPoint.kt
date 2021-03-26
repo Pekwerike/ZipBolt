@@ -16,27 +16,25 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
-import com.salesground.zipbolt.ui.screen.generalcomponents.ConnectionCategory
-import com.salesground.zipbolt.ui.screen.generalcomponents.DevicesConnectionCategoryDisplay
-import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltMainFloatingActionButton
+import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import kotlinx.coroutines.launch
 
 /**TODO Trailing
  * Download svg icons for Android Green, IPhone Black or any color, Desktop Icon,
  * Find out how to link drawables icons into composables
  * **/
+
 @ExperimentalMaterialApi
 @Composable
 fun UIEntryPoint() {
 
     val coroutineScope = rememberCoroutineScope()
     var persistentBottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
-    var modalBottomSheetState =
+    val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     ModalBottomSheetLayout(
         sheetContent = {
-
             // TODO Display the various categories for connection
             /* The only peer connection supported now is for android devices
             when Connect to android is clicked, do the following
@@ -44,49 +42,7 @@ fun UIEntryPoint() {
             2. Update the mutableState for the bottom sheet with the new expanded state
             3. Update the bottom sheet peek height to 70.dp
             **/
-            Surface {
-                Column(
-                    modifier = Modifier.padding(vertical = 8.dp)
-                ) {
-                    Text(
-                        text = "Connect to", style = MaterialTheme.typography.h6,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
-
-                    DevicesConnectionCategoryDisplay(
-                        platformLogoResourceId = ConnectionCategory.ANDROID.categoryLogoResourceId,
-                        platformLogoContentDescription = ConnectionCategory.ANDROID.categoryLogoContentDescription,
-                        actionLabel = ConnectionCategory.ANDROID.actionLabel,
-                        onConnectionCategoryClicked = {})
-                    DevicesConnectionCategoryDisplay(
-                        platformLogoResourceId = ConnectionCategory.IPHONE.categoryLogoResourceId,
-                        platformLogoContentDescription = ConnectionCategory.IPHONE.categoryLogoContentDescription,
-                        actionLabel = ConnectionCategory.IPHONE.actionLabel,
-                        onConnectionCategoryClicked = {})
-                    DevicesConnectionCategoryDisplay(
-                        platformLogoResourceId = ConnectionCategory.DESKTOP.categoryLogoResourceId,
-                        platformLogoContentDescription = ConnectionCategory.DESKTOP.categoryLogoContentDescription,
-                        actionLabel = ConnectionCategory.DESKTOP.actionLabel,
-                        onConnectionCategoryClicked = {})
-
-
-                    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                        Row (verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()){
-                            Divider(modifier = Modifier.fillMaxWidth(0.48f))
-                            Text(text = "Or", style = MaterialTheme.typography.caption,
-                                modifier = Modifier.wrapContentWidth())
-                            Divider(modifier = Modifier.fillMaxWidth(1f))
-                        }
-                    }
-                    DevicesConnectionCategoryDisplay(
-                        platformLogoResourceId = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoResourceId,
-                        platformLogoContentDescription = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoContentDescription,
-                        actionLabel = ConnectionCategory.SHARE_ZIP_BOLT.actionLabel,
-                        onConnectionCategoryClicked = {})
-                }
-            }
+            ZipBoltModalBottomSheetContent()
 
         }, sheetState = modalBottomSheetState,
         sheetShape = MaterialTheme.shapes.large.copy(
@@ -165,7 +121,6 @@ fun UIEntryPoint() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
 
                 }
-
             })
 
             zipBoltPersistentBottomSheetComposeView.setContent {
