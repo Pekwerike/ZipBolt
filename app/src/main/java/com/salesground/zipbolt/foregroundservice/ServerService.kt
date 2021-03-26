@@ -80,10 +80,10 @@ class ServerService : Service() {
                         .show()
                 }
 
-                CoroutineScope(Dispatchers.IO).launch {
+                launch(Dispatchers.IO) {
                     listenForNewMediaCollectionToTransfer(socketDOS)
                 }
-                CoroutineScope(Dispatchers.IO).launch {
+                launch(Dispatchers.IO){
                     listenForIncomingMediaItemsToReceive(socketDIS)
                 }
             }
@@ -92,20 +92,11 @@ class ServerService : Service() {
         return START_NOT_STICKY
     }
 
-   /* private fun listenForIncomingMediaItemsToReceive(DIS: DataInputStream) {
-        while (true) {
-            val isMediaAvailable = DIS.readUTF()
-            if (isMediaAvailable == DATA_AVAILABLE) {
-                zipBoltMTP.receiveMedia(DIS)
-            }
-        }
-    }*/
     private fun listenForIncomingMediaItemsToReceive(socketDIS: DataInputStream){
         while (true) {
             try {
                 val isDataToReceiveAvailable = socketDIS.readUTF()
                 if (isDataToReceiveAvailable == DATA_AVAILABLE) {
-                   // Log.i("NewTransfer", "Data is now available")
                     zipBoltMTP.receiveMedia(socketDIS)
                 }
             } catch (exception: Exception) {
@@ -120,8 +111,6 @@ class ServerService : Service() {
                 isDataAvailableToTransfer = false
                 DOS.writeUTF(DATA_AVAILABLE)
                 zipBoltMTP.transferMedia(mediaItemsToTransfer, DOS)
-                //Log.i("NewTransfer", "Transfer completed " +
-                  //      "isDataAvailableToTransfer value is ${isDataAvailableToTransfer}")
             } else {
                 DOS.writeUTF(NO_DATA_AVAILABLE)
             }
@@ -131,6 +120,5 @@ class ServerService : Service() {
     fun transferMediaItems(mediaItems: MutableList<MediaModel>) {
         mediaItemsToTransfer = mediaItems
         isDataAvailableToTransfer = true
-        //Log.i("NewTransfer", "Items available, items count is ${mediaItemsToTransfer.size}")
     }
 }

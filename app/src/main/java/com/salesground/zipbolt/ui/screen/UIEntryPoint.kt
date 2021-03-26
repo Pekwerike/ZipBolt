@@ -1,12 +1,15 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.view.View
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -20,10 +23,11 @@ fun UIEntryPoint() {
 
     val coroutineScope = rememberCoroutineScope()
     var persistentBottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
-    var modalBottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    var modalBottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     ModalBottomSheetLayout(sheetContent = {
-        Text("")
+                                          
         // TODO Display the various categories for connection
         /* The only peer connection supported now is for android devices
         when Connect to android is clicked, do the following
@@ -31,6 +35,15 @@ fun UIEntryPoint() {
         2. Update the mutableState for the bottom sheet with the new expanded state
         3. Update the bottom sheet peek height to 70.dp
         **/
+        Column(modifier = Modifier.clip(shape = MaterialTheme.shapes.large.copy(
+            topStart = CornerSize(10.dp),
+            topEnd = CornerSize(10.dp)
+        ))) {
+            Surface(modifier = Modifier.padding(8.dp)) {
+                
+            }
+        }                                  
+
     }, sheetState = modalBottomSheetState) {
         AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
             zipBoltEntryPointComposeView.setContent {
@@ -42,7 +55,7 @@ fun UIEntryPoint() {
                         2b. increase the padding of the send button by the bottom sheet peek height
                         3. OnClick of the connect button, open the modal bottom sheet action options
                         * */
-                        if(persistentBottomSheetState == BottomSheetBehavior.STATE_HIDDEN){
+                        if (persistentBottomSheetState == BottomSheetBehavior.STATE_HIDDEN) {
                             ZipBoltMainFloatingActionButton(
                                 label = "Connect",
                                 onClick = {
@@ -51,7 +64,7 @@ fun UIEntryPoint() {
                                     }
                                 }
                             )
-                        }else{
+                        } else {
                             ZipBoltMainFloatingActionButton(
                                 modifier = Modifier.padding(bottom = 50.dp),
                                 label = "Send",
@@ -73,7 +86,7 @@ fun UIEntryPoint() {
                 BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     // for each state change, update the bottomSheet mutableState variable
-                    when(newState){
+                    when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
                             persistentBottomSheetState = BottomSheetBehavior.STATE_COLLAPSED
                             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
