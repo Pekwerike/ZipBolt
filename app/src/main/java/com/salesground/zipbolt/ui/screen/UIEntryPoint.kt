@@ -49,22 +49,22 @@ fun UIEntryPoint() {
                 ) {
 
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = painterResource(id = R.drawable.android_icon),
+                        platformLogoResourceId = ConnectionCategory.ANDROID.categoryLogoResourceId,
                         platformLogoContentDescription = ConnectionCategory.ANDROID.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.ANDROID.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = painterResource(id = R.drawable.multi_colored_apple_icon),
+                        platformLogoResourceId = ConnectionCategory.IPHONE.categoryLogoResourceId,
                         platformLogoContentDescription = ConnectionCategory.IPHONE.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.IPHONE.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = painterResource(id = R.drawable.pc_icon),
+                        platformLogoResourceId =ConnectionCategory.DESKTOP.categoryLogoResourceId,
                         platformLogoContentDescription = ConnectionCategory.DESKTOP.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.DESKTOP.actionLabel,
                         onConnectionCategoryClicked = {})
                     DevicesConnectionCategoryDisplay(
-                        platformLogo = painterResource(id = R.drawable.share_icon),
+                        platformLogoResourceId = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoResourceId,
                         platformLogoContentDescription = ConnectionCategory.SHARE_ZIP_BOLT.categoryLogoContentDescription,
                         actionLabel = ConnectionCategory.SHARE_ZIP_BOLT.actionLabel,
                         onConnectionCategoryClicked = {})

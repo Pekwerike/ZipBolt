@@ -23,18 +23,34 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 
 enum class ConnectionCategory(
     val actionLabel: String,
-    val categoryLogo: Painter? = null,
-    val categoryLogoContentDescription: String = ""
+    val categoryLogoResourceId: Int,
+    val categoryLogoContentDescription: String
 ) {
-    ANDROID(actionLabel = "Connect to Android device"),
-    IPHONE(actionLabel = "Connect to Iphone"),
-    DESKTOP(actionLabel = "Connect to PC"),
-    SHARE_ZIP_BOLT(actionLabel = "Share ZipBolt")
+    ANDROID(
+        actionLabel = "Connect to Android",
+        categoryLogoResourceId = R.drawable.android_icon,
+        categoryLogoContentDescription = "Connect to Android"
+    ),
+    IPHONE(
+        actionLabel = "Connect to iPhone",
+        categoryLogoResourceId = R.drawable.multi_colored_apple_icon,
+        categoryLogoContentDescription = "Connect to iPhone"
+    ),
+    DESKTOP(
+        actionLabel = "Connect to PC",
+        categoryLogoResourceId = R.drawable.pc_icon,
+        categoryLogoContentDescription = "Connect to PC"
+    ),
+    SHARE_ZIP_BOLT(
+        actionLabel = "Share ZipBolt",
+        categoryLogoResourceId = R.drawable.share_icon,
+        categoryLogoContentDescription = "Share ZipBolt"
+    )
 }
 
 @Composable
 fun DevicesConnectionCategoryDisplay(
-    platformLogo: Painter, platformLogoContentDescription: String,
+    platformLogoResourceId: Int, platformLogoContentDescription: String,
     actionLabel: String, onConnectionCategoryClicked: (String) -> Unit
 ) {
 
@@ -49,7 +65,7 @@ fun DevicesConnectionCategoryDisplay(
         verticalAlignment = Alignment.CenterVertically
     ) {
         CoilImage(
-            data = platformLogo, contentDescription = platformLogoContentDescription,
+            data = platformLogoResourceId, contentDescription = platformLogoContentDescription,
             modifier = Modifier
                 .padding(5.dp)
                 .requiredSize(24.dp)
