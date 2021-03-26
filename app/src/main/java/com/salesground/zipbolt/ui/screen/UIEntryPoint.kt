@@ -105,18 +105,20 @@ fun UIEntryPoint(
 
             persistentBottomSheetBehavior.addBottomSheetCallback(
                 PersistentBottomSheetCallBack(
-                    persistentBottomSheetBehavior,
-                    persistentBottomSheetStateChanged = {
-                        persistentBottomSheetState = it
+                    persistentBottomSheetStateChanged = { newState ->
+                        persistentBottomSheetState = newState
+                        persistentBottomSheetBehavior.state = newState
                     }
                 )
             )
 
             zipBoltPersistentBottomSheetComposeView.setContent {
                 // place different bottom sheet contents here
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .background(color = Color.Red)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = Color.Red)
+                ) {
 
                 }
             }
