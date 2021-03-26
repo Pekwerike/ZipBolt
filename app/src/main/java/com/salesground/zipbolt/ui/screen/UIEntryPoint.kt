@@ -75,6 +75,32 @@ fun UIEntryPoint() {
                 BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     // for each state change, update the bottomSheet mutableState variable
+                    when(newState){
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            bottomSheetState = BottomSheetBehavior.STATE_COLLAPSED
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                        }
+                        BottomSheetBehavior.STATE_EXPANDED -> {
+                            bottomSheetState = BottomSheetBehavior.STATE_EXPANDED
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                        }
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            bottomSheetState = BottomSheetBehavior.STATE_HIDDEN
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        }
+                        BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                            bottomSheetState = BottomSheetBehavior.STATE_HALF_EXPANDED
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                        }
+                        BottomSheetBehavior.STATE_DRAGGING -> {
+                            bottomSheetState = BottomSheetBehavior.STATE_DRAGGING
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_DRAGGING
+                        }
+                        BottomSheetBehavior.STATE_SETTLING -> {
+                            bottomSheetState = BottomSheetBehavior.STATE_SETTLING
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_SETTLING
+                        }
+                    }
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
