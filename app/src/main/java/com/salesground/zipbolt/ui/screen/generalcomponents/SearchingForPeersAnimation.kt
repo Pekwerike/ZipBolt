@@ -20,6 +20,7 @@ import kotlin.math.max
 
 @Composable
 fun SearchingForPeersAnimation(
+    modifier : Modifier = Modifier,
     circlePeekRadius: Float,
     circleBaseRadius: Float = circlePeekRadius * 0.17f,
     baseColor: Color = Color(0XFF006FCB),
@@ -45,7 +46,8 @@ fun SearchingForPeersAnimation(
         )
     )
 
-    Box(contentAlignment = Alignment.Center) {
+    Box(contentAlignment = Alignment.Center,
+    modifier = Modifier) {
         // draw circles
         Canvas(modifier = Modifier.requiredSize(circlePeekRadius.dp)) {
 

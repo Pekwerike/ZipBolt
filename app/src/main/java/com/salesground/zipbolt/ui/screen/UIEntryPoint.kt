@@ -4,6 +4,7 @@ import android.net.wifi.p2p.WifiP2pDevice
 import android.widget.LinearLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -148,13 +149,13 @@ fun UIEntryPoint(
                         is ConnectivityState.PeersDiscoveryInitiated -> {
                             when (persistentBottomSheetState) {
                                 BottomSheetBehavior.STATE_EXPANDED -> {
-                                    AnimatedVisibility(visible = true, initiallyVisible = false) {
                                         ExpandedSearchingForPeers(onStopSearchingClicked = { },
                                             onArrowDownClicked = {})
-                                    }
                                 }
                                 BottomSheetBehavior.STATE_COLLAPSED -> {
-                                    AnimatedVisibility(visible = true, initiallyVisible = false) {
+                                    AnimatedVisibility(visible = true,
+                                        enter = fadeIn(),
+                                        initiallyVisible = false) {
                                         CollapsedSearchingForPeers(
                                             onCancel = {
                                                 /*TODO
@@ -190,12 +191,15 @@ fun ExpandedSearchingForPeers(
     alpha: Float = 1f, onStopSearchingClicked: () -> Unit,
     onArrowDownClicked: () -> Unit
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .alpha(alpha)
+            .alpha(alpha),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+        ) {
             IconButton(onClick = onArrowDownClicked) {
                 Icon(
                     painter = painterResource(R.drawable.arrow_down),
@@ -204,11 +208,16 @@ fun ExpandedSearchingForPeers(
             }
             Text(
                 text = "Searching for Peers", style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
         }
+        SearchingForPeersAnimation(
+            modifier = Modifier.padding(8.dp),
+            circlePeekRadius =
+            context.resources.displayMetrics.widthPixels * 0.25f
+        )
     }
 
 }
