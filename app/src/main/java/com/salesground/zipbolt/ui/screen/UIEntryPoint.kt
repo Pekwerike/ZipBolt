@@ -4,6 +4,8 @@ import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.view.View
 import android.widget.LinearLayout
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +39,7 @@ sealed class ConnectivityState() {
     data class PeersDiscovered(val peersList: MutableList<WifiP2pDevice>) : ConnectivityState()
 }
 
+@ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
@@ -144,7 +148,22 @@ fun UIEntryPoint(
                         is ConnectivityState.PeersDiscoveryInitiated -> {
                             when(persistentBottomSheetState){
                               BottomSheetBehavior.STATE_EXPANDED -> { }
-                              BottomSheetBehavior.STATE_COLLAPSED -> { }
+                              BottomSheetBehavior.STATE_COLLAPSED -> {
+                                  AnimatedVisibility(visible = true, initiallyVisible = false) {
+                                      CollapsedSearchingForPeers(
+                                          onCancel = {
+                                               /*TODO
+                   1. Cancel searching for peers
+                    2. Set the peek height of the bottom sheet to 0
+                    3. set the bottom sheet state to hidden*/
+
+                                          }
+                                      ) {
+                                          persistentBottomSheetBehavior.state =
+                                              BottomSheetBehavior.STATE_EXPANDED
+                                      }
+                                  }
+                              }
                               else ->  {
                                   // show both expanded searching for peers layout and
                                   // collapsed searching for peers layout but control their visibility using alpha
@@ -154,9 +173,6 @@ fun UIEntryPoint(
                         }
                         is ConnectivityState.PeersDiscovered -> {}
                     }
-                    CollapsedSearchingForPeers {
-                        persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                    }
                 }
             }
         }
@@ -164,12 +180,17 @@ fun UIEntryPoint(
 }
 
 @Composable
-fun CollapsedSearchingForPeers(onClick: () -> Unit) {
+fun
+
+@Composable
+fun CollapsedSearchingForPeers(alpha : Float = 1f, onCancel : () -> Unit,
+                               expand: () -> Unit) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() },
+            .alpha(alpha)
+            .clickable { expand() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -192,11 +213,7 @@ fun CollapsedSearchingForPeers(onClick: () -> Unit) {
             }
         }
         IconButton(
-            onClick = { /*TODO
-                   1. Cancel searching for peers
-                    2. Set the peek height of the bottom sheet to 0
-                    3. set the bottom sheet state to hidden*/
-            }
+            onClick = onCancel
         ) {
             Icon(imageVector = Icons.Default.Close, contentDescription = "")
         }
