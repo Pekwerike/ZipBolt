@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:theme="@style/AppBarLayoutCustomTheme"
-        android:elevation="0dp"
+        app:elevation="0dp"
         android:layout_height="wrap_content">
 
         <androidx.compose.ui.platform.ComposeView
