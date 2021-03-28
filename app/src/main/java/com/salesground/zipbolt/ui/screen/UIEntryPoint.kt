@@ -162,36 +162,33 @@ fun UIEntryPoint(
                                         onArrowDownClicked = {})
                                 }
                                 BottomSheetBehavior.STATE_COLLAPSED -> {
-                                    AnimatedVisibility(
-                                        visible = true,
-                                        enter = fadeIn(),
-                                        initiallyVisible = false
-                                    ) {
-                                        CollapsedSearchingForPeers(
-                                            onCancel = {
-                                                /*TODO
-                    1. Cancel searching for peers
-                     2. Set the peek height of the bottom sheet to 0
-                     3. set the bottom sheet state to hidden*/
+                                    CollapsedSearchingForPeers(
+                                        onCancel = {
+                                            /*TODO
+                1. Cancel searching for peers
+                 2. Set the peek height of the bottom sheet to 0
+                 3. set the bottom sheet state to hidden*/
 
-                                            },
-                                            onClick = {
-                                                persistentBottomSheetBehavior.state =
-                                                    BottomSheetBehavior.STATE_EXPANDED
-                                            })
-                                    }
+                                        },
+                                        onClick = {
+                                            persistentBottomSheetBehavior.state =
+                                                BottomSheetBehavior.STATE_EXPANDED
+                                        })
                                 }
                                 else -> {
                                     // show both expanded searching for peers layout and
                                     // collapsed searching for peers layout but control their visibility using alpha
                                     Box(modifier = Modifier.fillMaxSize()) {
-                                        CollapsedSearchingForPeers(onCancel = { /*TODO*/ },
+                                        CollapsedSearchingForPeers(
+                                            onCancel = { /*TODO*/ },
                                             onClick = {},
-                                            alpha = 1 - (persistentBottomSheetSlideValue * 1.5f)
+                                            alpha = 1 - (persistentBottomSheetSlideValue * 2f)
                                         )
-                                        ExpandedSearchingForPeers(onStopSearchingClicked = { },
+                                        ExpandedSearchingForPeers(
+                                            onStopSearchingClicked = { },
                                             onArrowDownClicked = {},
-                                        alpha = persistentBottomSheetSlideValue)
+                                            alpha = persistentBottomSheetSlideValue
+                                        )
                                     }
                                 }
                             }
@@ -255,24 +252,24 @@ fun ExpandedSearchingForPeers(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Start,
-                    style = MaterialTheme.typography.h6,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.SemiBold
                 )
             }
 
             // TODO show list of discovered peers here
-            items(5) {
+            items(50) {
 
             }
         }
         Button(
             onClick = { /*TODO*/ }, modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red.copy(alpha = 0.5f))
-        ) {
-            Text(text = "Stop Search")
+                .fillMaxWidth())
+         {
+            Text(text = "Stop Search",  modifier = Modifier
+                .padding(8.dp))
         }
     }
 }
