@@ -1,8 +1,6 @@
 package com.salesground.zipbolt.ui.screen
 
 import android.net.wifi.p2p.WifiP2pDevice
-import android.net.wifi.p2p.WifiP2pInfo
-import android.view.View
 import android.widget.LinearLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -14,12 +12,10 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -180,17 +176,25 @@ fun UIEntryPoint(
 }
 
 @Composable
-fun
+fun ExpandedSearchingForPeers(alpha : Float = 1f, onStopSearchingClicked : () -> Unit,
+                              onArrowDownClicked: () -> Unit){
+    Column(modifier = Modifier.fillMaxSize()){
+        Row(modifier = Modifier.fillMaxWidth()){
+
+        }
+    }
+
+}
 
 @Composable
 fun CollapsedSearchingForPeers(alpha : Float = 1f, onCancel : () -> Unit,
-                               expand: () -> Unit) {
+                               onClick: () -> Unit) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .alpha(alpha)
-            .clickable { expand() },
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
