@@ -1,9 +1,12 @@
 package com.salesground.zipbolt.ui.screen
 
+import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pInfo
 import android.view.View
 import android.widget.LinearLayout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
@@ -27,6 +30,12 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
+sealed class ConnectivityState() {
+    object NoAction : ConnectivityState()
+    object PeersDiscoveryInitiated : ConnectivityState()
+    data class PeersDiscovered(val peersList: MutableList<WifiP2pDevice>) : ConnectivityState()
+}
+
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
@@ -40,7 +49,7 @@ fun UIEntryPoint(
     var persistentBottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
     val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-
+    var connectivityState : ConnectivityState by remember { mutableStateOf(ConnectivityState.NoAction) }
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -54,6 +63,8 @@ fun UIEntryPoint(
             ZipBoltModalBottomSheetContent(
                 onAndroidClicked = {
                     beginPeerDiscovery()
+                    connectivityState = ConnectivityState.PeersDiscoveryInitiated
+
                     /* TODO,
                     1. Close the modal bottom sheet *
                     2. Open the persistent bottom sheet in full screen *
@@ -123,43 +134,71 @@ fun UIEntryPoint(
 
             zipBoltPersistentBottomSheetComposeView.setContent {
                 // place different bottom sheet contents here
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colors.surface),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        SearchingForPeersAnimation(
-                            circlePeekRadius =
-                            context.resources.displayMetrics.widthPixels * 0.05f
-                        )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colors.surface)
+                ) {
+                    when(connectivityState){
+                        is ConnectivityState.NoAction ->{}
+                        is ConnectivityState.PeersDiscoveryInitiated -> {
+                            when(persistentBottomSheetState){
+                              BottomSheetBehavior.STATE_EXPANDED -> { }
+                              BottomSheetBehavior.STATE_COLLAPSED -> { }
+                              else ->  {
+                                  // show both expanded searching for peers layout and
+                                  // collapsed searching for peers layout but control their visibility using alpha
 
-                        Column() {
-                            Text(
-                                text = "Searching for peers",
-                                style = MaterialTheme.typography.body2,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = "0 peers found",
-                                style = MaterialTheme.typography.caption
-                            )
+                              }
+                            }
                         }
-                        IconButton(
-                            onClick = { /*TODO
-                   1. Cancel searching for peers
-                    2. Set the peek height of the bottom sheet to 0
-                    3. set the bottom sheet state to hidden*/
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = "")
-                        }
+                        is ConnectivityState.PeersDiscovered -> {}
+                    }
+                    CollapsedSearchingForPeers {
+                        persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CollapsedSearchingForPeers(onClick: () -> Unit) {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SearchingForPeersAnimation(
+                circlePeekRadius =
+                context.resources.displayMetrics.widthPixels * 0.05f
+            )
+
+            Column() {
+                Text(
+                    text = "Searching for peers",
+                    style = MaterialTheme.typography.body2,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "0 devices found",
+                    style = MaterialTheme.typography.caption
+                )
+            }
+        }
+        IconButton(
+            onClick = { /*TODO
+                   1. Cancel searching for peers
+                    2. Set the peek height of the bottom sheet to 0
+                    3. set the bottom sheet state to hidden*/
+            }
+        ) {
+            Icon(imageVector = Icons.Default.Close, contentDescription = "")
         }
     }
 }
