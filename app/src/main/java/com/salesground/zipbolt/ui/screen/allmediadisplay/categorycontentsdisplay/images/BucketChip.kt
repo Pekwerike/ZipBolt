@@ -45,7 +45,7 @@ fun BucketChip(
                     modifier = Modifier.padding(horizontal = 10.dp, 5.dp)
                         .animateContentSize(),
                     text = editedBucketName, color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.caption,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold
                 )

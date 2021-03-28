@@ -23,6 +23,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
@@ -31,6 +32,7 @@ import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.UIEntryPoint
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.generalcomponents.SearchingForPeersAnimation
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,10 +109,15 @@ class MainActivity : AppCompatActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     /*ZipBoltUIEntryPoint(
                           homeScreenViewModel = homeScreenViewModel)*/
-                    AllMediaOnDevice(
+                  /*  AllMediaOnDevice(
                         supportFragmentManager =
                         supportFragmentManager, viewPagerAdapterLifecycle =
                         lifecycle
+                    )*/
+                    SearchingForPeersAnimation(
+                        circlePeekRadius = resources.displayMetrics.widthPixels * 0.5f,
+                        baseColor = Color(0XFF006FCB),
+                        peekColor = MaterialTheme.colors.primary
                     )
                    // UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery)
                 }
