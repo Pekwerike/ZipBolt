@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                         lifecycle
                     )*/
                     SearchingForPeersAnimation(
-                        circlePeekRadius = resources.displayMetrics.widthPixels * 0.5f,
+                        circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
                         baseColor = Color(0XFF006FCB),
                         peekColor = MaterialTheme.colors.primary
                     )
