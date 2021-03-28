@@ -4,5 +4,5 @@
     android:id="@+id/main_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/CustomThemeForHomeScreenRecylerView"
+    android:theme="@style/CustomThemeForHomeScreenRecyclerView"
     tools:listitem="@layout/home_screen_recyclerview_layout_item" />

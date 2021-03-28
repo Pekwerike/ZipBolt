@@ -27,7 +27,7 @@
         <item name="colorPrimary">@color/white</item>
     </style>
 
-    <style name="CustomThemeForHomeScreenRecylerView" parent="Theme.SpeedForce">
+    <style name="CustomThemeForHomeScreenRecyclerView" parent="Theme.SpeedForce">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
