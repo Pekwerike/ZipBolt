@@ -114,12 +114,13 @@ class MainActivity : AppCompatActivity() {
                         supportFragmentManager, viewPagerAdapterLifecycle =
                         lifecycle
                     )*/
-                    SearchingForPeersAnimation(
+                    /*SearchingForPeersAnimation(
                         circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
                         baseColor = Color(0XFF006FCB),
                         peekColor = MaterialTheme.colors.primary
-                    )
-                   // UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery)
+                    )*/
+                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
+                    homeScreenViewModel = homeScreenViewModel)
                 }
             }
         }

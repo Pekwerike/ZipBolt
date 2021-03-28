@@ -6,6 +6,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
@@ -20,9 +21,9 @@ import kotlin.math.max
 @Composable
 fun SearchingForPeersAnimation(
     circlePeekRadius: Float,
-    circleBaseRadius: Float = circlePeekRadius * 0.2f,
-    baseColor: Color,
-    peekColor: Color,
+    circleBaseRadius: Float = circlePeekRadius * 0.17f,
+    baseColor: Color = Color(0XFF006FCB),
+    peekColor: Color = MaterialTheme.colors.primary,
     duration: Int = 1000
 ) {
 

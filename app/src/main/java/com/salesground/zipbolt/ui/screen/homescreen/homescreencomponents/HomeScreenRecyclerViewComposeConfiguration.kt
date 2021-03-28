@@ -26,9 +26,8 @@ fun HomeScreenRecyclerViewComposeConfiguration(
     val context = LocalContext.current
 
     AndroidViewBinding(
-        factory = MainRecyclerViewBinding::inflate,
-        modifier = Modifier.padding(bottom = 60.dp)
-    ) {
+        factory = MainRecyclerViewBinding::inflate)
+    {
         val hSRAdapter = HomeScreenRecyclerViewAdapter()
         hSRAdapter.submitList(
             mutableListOf(

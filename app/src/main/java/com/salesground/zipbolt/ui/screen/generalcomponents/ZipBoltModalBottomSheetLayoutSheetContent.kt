@@ -32,7 +32,7 @@ enum class ConnectionCategory(
     ),
     IPHONE(
         actionLabel = "iPhone",
-        categoryLogoResourceId = R.drawable.multi_colored_apple_icon,
+        categoryLogoResourceId = R.drawable.apple_icon,
         categoryLogoContentDescription = "Connect to iPhone"
     ),
     DESKTOP(

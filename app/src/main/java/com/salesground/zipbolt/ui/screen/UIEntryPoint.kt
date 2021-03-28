@@ -2,30 +2,37 @@ package com.salesground.zipbolt.ui.screen
 
 import android.view.View
 import android.widget.LinearLayout
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
+import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
+import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun UIEntryPoint(
-    beginPeerDiscovery: () -> Unit
+    beginPeerDiscovery: () -> Unit,
+    homeScreenViewModel: HomeScreenViewModel
 ) {
     lateinit var persistentBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     val context = LocalContext.current
@@ -58,7 +65,7 @@ fun UIEntryPoint(
                     }
                     persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     persistentBottomSheetBehavior.peekHeight =
-                        (70 * context.resources.displayMetrics.scaledDensity).roundToInt()
+                        (context.resources.displayMetrics.widthPixels * 0.15f).roundToInt()
                 }
             )
 
@@ -97,6 +104,7 @@ fun UIEntryPoint(
                     }
                 ) {
                     // Place navHost here
+                    HomeScreen(homeScreenViewModel = homeScreenViewModel)
                 }
             }
 
@@ -115,18 +123,41 @@ fun UIEntryPoint(
 
             zipBoltPersistentBottomSheetComposeView.setContent {
                 // place different bottom sheet contents here
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = Color.Red),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    ZipBoltMainFloatingActionButton(
-                        modifier = Modifier.padding(8.dp),
-                        label = "Send",
-                        icon = Icons.Rounded.Send,
-                        onClick = { }
-                    )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colors.surface),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        SearchingForPeersAnimation(
+                            circlePeekRadius =
+                            context.resources.displayMetrics.widthPixels * 0.05f
+                        )
+
+                        Column() {
+                            Text(
+                                text = "Searching for peers",
+                                style = MaterialTheme.typography.body2,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = "0 peers found",
+                                style = MaterialTheme.typography.caption
+                            )
+                        }
+                        IconButton(
+                            onClick = { /*TODO
+                   1. Cancel searching for peers
+                    2. Set the peek height of the bottom sheet to 0
+                    3. set the bottom sheet state to hidden*/
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "")
+                        }
+                    }
                 }
             }
         }
