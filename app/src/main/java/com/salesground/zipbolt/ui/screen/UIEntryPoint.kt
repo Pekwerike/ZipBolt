@@ -241,7 +241,7 @@ fun ExpandedSearchingForPeers(
             item {
                 SearchingForPeersAnimation(
                     modifier = Modifier.padding(8.dp).requiredSize(
-                        (context.resources.displayMetrics.widthPixels * 0.30f).dp),
+                        ((context.resources.displayMetrics.widthPixels * 0.30f) * 2).dp),
                     circlePeekRadius = context.resources.displayMetrics.widthPixels * 0.30f
                 )
             }

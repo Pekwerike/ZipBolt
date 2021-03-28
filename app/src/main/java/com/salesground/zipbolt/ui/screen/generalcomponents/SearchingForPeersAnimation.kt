@@ -49,8 +49,7 @@ fun SearchingForPeersAnimation(
     Box(contentAlignment = Alignment.Center,
     modifier = Modifier) {
         // draw circles
-        Canvas(modifier = Modifier.requiredSize(circlePeekRadius.dp)) {
-
+        Canvas(modifier = Modifier) {
             drawCircle(
                 brush = Brush.radialGradient(
                     listOf(
