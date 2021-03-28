@@ -8,4 +8,5 @@
     <color name="blue_415">#2E9DFF</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="material_color_surface_dark">#FF121212</color>
 </resources>

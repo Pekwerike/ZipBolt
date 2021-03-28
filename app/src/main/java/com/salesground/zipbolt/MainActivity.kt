@@ -107,12 +107,12 @@ class MainActivity : AppCompatActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     /*ZipBoltUIEntryPoint(
                           homeScreenViewModel = homeScreenViewModel)*/
-                   /* AllMediaOnDevice(
+                    AllMediaOnDevice(
                         supportFragmentManager =
                         supportFragmentManager, viewPagerAdapterLifecycle =
                         lifecycle
-                    )*/
-                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery)
+                    )
+                   // UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery)
                 }
             }
         }

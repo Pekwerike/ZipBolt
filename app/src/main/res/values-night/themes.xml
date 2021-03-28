@@ -18,4 +18,8 @@
         <item name="android:textStyle">bold</item>
         <item name="android:alpha">0.75</item>
     </style>
+
+    <style name="AppBarLayoutCustomTheme" parent="Theme.SpeedForce">
+        <item name="colorPrimary">@color/material_color_surface_dark</item>
+    </style>
 </resources>

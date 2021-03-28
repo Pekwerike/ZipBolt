@@ -2,18 +2,23 @@ package com.salesground.zipbolt.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.ImagesBucketsDisplayComposable
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
+import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
@@ -48,8 +53,47 @@ class ImageFragment : Fragment() {
                     }
                 }
             }
-
             fragmentImageRecyclerview.apply {
+              /*  addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    var lastY = 0
+                    var secondLastY = lastY
+                    var thirdLastY = secondLastY
+                    var accum = 0
+                    var prvAccum = accum
+                    var mHeight = 0
+
+                    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                        super.onScrolled(recyclerView, dx, dy)
+                        val height = fragmentImageImagesBucketViewGroup.height
+                        fragmentImageRecyclerview.bottom += height + 20
+
+                        if (dy >= 0 && lastY >= 0 && secondLastY >= 0 && thirdLastY >= 0) {
+                            accum += dy
+                            accum = if (accum + 5 >= height) height else accum
+                            if (prvAccum != accum) {
+                                *//*fragmentImageRecyclerview.bottom += height
+                                fragmentImageImagesBucketViewGroup.animate()
+                                    .translationY(-accum.toFloat())
+                                fragmentImageRecyclerview.animate().translationY(-accum.toFloat())*//*
+                                fragmentImageImagesBucketViewGroup.translationY = -accum.toFloat()
+                                fragmentImageRecyclerview.translationY = -accum.toFloat()
+                               // fragmentImageRecyclerview.bottom += accum
+                            }
+                            prvAccum = accum
+                        } else if (dy <= 0 && lastY <= 0 && secondLastY <= 0 && thirdLastY <= 0) {
+                            accum += dy
+                            accum = if (accum - 5 <= 0) 0 else accum
+                            if (prvAccum != accum) {
+                                fragmentImageImagesBucketViewGroup.translationY = -accum.toFloat()
+                                fragmentImageRecyclerview.translationY = -accum.toFloat()
+                            }
+                            prvAccum = accum
+                        }
+                        thirdLastY = secondLastY
+                        secondLastY = lastY
+                        lastY = dy
+                    }
+                })*/
                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     val dLayoutManager = GridLayoutManager(context, 4)
                     dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
