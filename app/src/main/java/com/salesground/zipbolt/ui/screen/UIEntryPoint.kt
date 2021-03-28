@@ -5,10 +5,9 @@ import android.widget.LinearLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +54,8 @@ fun UIEntryPoint(
     val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     var connectivityState: ConnectivityState by remember { mutableStateOf(ConnectivityState.NoAction) }
+
+    var persistentBottomSheetSlideValue by remember { mutableStateOf(0f) }
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -129,9 +131,16 @@ fun UIEntryPoint(
 
             persistentBottomSheetBehavior.addBottomSheetCallback(
                 PersistentBottomSheetCallBack(
-                    persistentBottomSheetStateChanged = { newState ->
-                        persistentBottomSheetState = newState
-                        persistentBottomSheetBehavior.state = newState
+                    actionCallback = object : PersistentBottomSheetCallBack.OnActionCallback {
+                        override fun bottomSheetStateChanged(state: Int) {
+                            persistentBottomSheetState = state
+                            persistentBottomSheetBehavior.state = state
+                        }
+
+                        override fun bottomSheetSlide(slideValue: Float) {
+                            persistentBottomSheetSlideValue = slideValue
+                        }
+
                     }
                 )
             )
@@ -149,13 +158,15 @@ fun UIEntryPoint(
                         is ConnectivityState.PeersDiscoveryInitiated -> {
                             when (persistentBottomSheetState) {
                                 BottomSheetBehavior.STATE_EXPANDED -> {
-                                        ExpandedSearchingForPeers(onStopSearchingClicked = { },
-                                            onArrowDownClicked = {})
+                                    ExpandedSearchingForPeers(onStopSearchingClicked = { },
+                                        onArrowDownClicked = {})
                                 }
                                 BottomSheetBehavior.STATE_COLLAPSED -> {
-                                    AnimatedVisibility(visible = true,
+                                    AnimatedVisibility(
+                                        visible = true,
                                         enter = fadeIn(),
-                                        initiallyVisible = false) {
+                                        initiallyVisible = false
+                                    ) {
                                         CollapsedSearchingForPeers(
                                             onCancel = {
                                                 /*TODO
@@ -173,7 +184,15 @@ fun UIEntryPoint(
                                 else -> {
                                     // show both expanded searching for peers layout and
                                     // collapsed searching for peers layout but control their visibility using alpha
-
+                                    Box(modifier = Modifier.fillMaxSize()) {
+                                        CollapsedSearchingForPeers(onCancel = { /*TODO*/ },
+                                            onClick = {},
+                                            alpha = 1 - (persistentBottomSheetSlideValue * 1.5f)
+                                        )
+                                        ExpandedSearchingForPeers(onStopSearchingClicked = { },
+                                            onArrowDownClicked = {},
+                                        alpha = persistentBottomSheetSlideValue)
+                                    }
                                 }
                             }
                         }
@@ -192,34 +211,70 @@ fun ExpandedSearchingForPeers(
     onArrowDownClicked: () -> Unit
 ) {
     val context = LocalContext.current
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .alpha(alpha),
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.BottomCenter
     ) {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(onClick = onArrowDownClicked) {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_down),
-                    "Collapse searching for peers screen"
+            item {
+                Box(
+                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterStart
+                ) {
+                    IconButton(onClick = onArrowDownClicked) {
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_down),
+                            "Collapse searching for peers screen"
+                        )
+                    }
+                    Text(
+                        text = "Searching for Peers", style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            item {
+                SearchingForPeersAnimation(
+                    modifier = Modifier.padding(12.dp),
+                    circlePeekRadius =
+                    context.resources.displayMetrics.widthPixels * 0.30f
                 )
             }
-            Text(
-                text = "Searching for Peers", style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-        }
-        SearchingForPeersAnimation(
-            modifier = Modifier.padding(8.dp),
-            circlePeekRadius =
-            context.resources.displayMetrics.widthPixels * 0.25f
-        )
-    }
 
+            item {
+                Text(
+                    text = "Discovered Peers",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.h6,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            // TODO show list of discovered peers here
+            items(5) {
+
+            }
+        }
+        Button(
+            onClick = { /*TODO*/ }, modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red.copy(alpha = 0.5f))
+        ) {
+            Text(text = "Stop Search")
+        }
+    }
 }
 
 @Composable
