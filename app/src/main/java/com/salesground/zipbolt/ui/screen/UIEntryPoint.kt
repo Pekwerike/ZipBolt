@@ -17,10 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
@@ -49,7 +52,7 @@ fun UIEntryPoint(
     var persistentBottomSheetState by remember { mutableStateOf(BottomSheetBehavior.STATE_HIDDEN) }
     val modalBottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    var connectivityState : ConnectivityState by remember { mutableStateOf(ConnectivityState.NoAction) }
+    var connectivityState: ConnectivityState by remember { mutableStateOf(ConnectivityState.NoAction) }
 
     ModalBottomSheetLayout(
         sheetContent = {
@@ -139,35 +142,42 @@ fun UIEntryPoint(
                         .fillMaxSize()
                         .background(MaterialTheme.colors.surface)
                 ) {
-                    when(connectivityState){
-                        is ConnectivityState.NoAction ->{}
+                    when (connectivityState) {
+                        is ConnectivityState.NoAction -> {
+                        }
                         is ConnectivityState.PeersDiscoveryInitiated -> {
-                            when(persistentBottomSheetState){
-                              BottomSheetBehavior.STATE_EXPANDED -> { }
-                              BottomSheetBehavior.STATE_COLLAPSED -> {
-                                  AnimatedVisibility(visible = true, initiallyVisible = false) {
-                                      CollapsedSearchingForPeers(
-                                          onCancel = {
-                                               /*TODO
-                   1. Cancel searching for peers
-                    2. Set the peek height of the bottom sheet to 0
-                    3. set the bottom sheet state to hidden*/
+                            when (persistentBottomSheetState) {
+                                BottomSheetBehavior.STATE_EXPANDED -> {
+                                    AnimatedVisibility(visible = true, initiallyVisible = false) {
+                                        ExpandedSearchingForPeers(onStopSearchingClicked = { },
+                                            onArrowDownClicked = {})
+                                    }
+                                }
+                                BottomSheetBehavior.STATE_COLLAPSED -> {
+                                    AnimatedVisibility(visible = true, initiallyVisible = false) {
+                                        CollapsedSearchingForPeers(
+                                            onCancel = {
+                                                /*TODO
+                    1. Cancel searching for peers
+                     2. Set the peek height of the bottom sheet to 0
+                     3. set the bottom sheet state to hidden*/
 
-                                          }
-                                      ) {
-                                          persistentBottomSheetBehavior.state =
-                                              BottomSheetBehavior.STATE_EXPANDED
-                                      }
-                                  }
-                              }
-                              else ->  {
-                                  // show both expanded searching for peers layout and
-                                  // collapsed searching for peers layout but control their visibility using alpha
+                                            },
+                                            onClick = {
+                                                persistentBottomSheetBehavior.state =
+                                                    BottomSheetBehavior.STATE_EXPANDED
+                                            })
+                                    }
+                                }
+                                else -> {
+                                    // show both expanded searching for peers layout and
+                                    // collapsed searching for peers layout but control their visibility using alpha
 
-                              }
+                                }
                             }
                         }
-                        is ConnectivityState.PeersDiscovered -> {}
+                        is ConnectivityState.PeersDiscovered -> {
+                        }
                     }
                 }
             }
@@ -176,19 +186,38 @@ fun UIEntryPoint(
 }
 
 @Composable
-fun ExpandedSearchingForPeers(alpha : Float = 1f, onStopSearchingClicked : () -> Unit,
-                              onArrowDownClicked: () -> Unit){
-    Column(modifier = Modifier.fillMaxSize()){
-        Row(modifier = Modifier.fillMaxWidth()){
-
+fun ExpandedSearchingForPeers(
+    alpha: Float = 1f, onStopSearchingClicked: () -> Unit,
+    onArrowDownClicked: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(alpha)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            IconButton(onClick = onArrowDownClicked) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_down),
+                    "Collapse searching for peers screen"
+                )
+            }
+            Text(
+                text = "Searching for Peers", style = MaterialTheme.typography.h6,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
     }
 
 }
 
 @Composable
-fun CollapsedSearchingForPeers(alpha : Float = 1f, onCancel : () -> Unit,
-                               onClick: () -> Unit) {
+fun CollapsedSearchingForPeers(
+    alpha: Float = 1f, onCancel: () -> Unit,
+    onClick: () -> Unit
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
