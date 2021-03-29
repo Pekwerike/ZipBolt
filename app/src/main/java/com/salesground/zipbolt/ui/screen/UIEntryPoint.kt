@@ -86,7 +86,7 @@ fun UIEntryPoint(
                     }
                     persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     persistentBottomSheetBehavior.peekHeight =
-                        (context.resources.displayMetrics.widthPixels * 0.15f).roundToInt()
+                        (context.resources.displayMetrics.widthPixels * 0.125f).roundToInt()
                 }
             )
 
@@ -192,7 +192,7 @@ fun UIEntryPoint(
                                         CollapsedSearchingForPeers(
                                             onCancel = { /*TODO*/ },
                                             onClick = {},
-                                            alpha = 1 - (persistentBottomSheetSlideValue * 2f)
+                                            alpha = 1 - (persistentBottomSheetSlideValue * 2.5f)
                                         )
                                         ExpandedSearchingForPeers(
                                             onStopSearchingClicked = { },
@@ -298,6 +298,7 @@ fun CollapsedSearchingForPeers(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             SearchingForPeersAnimation(
+                modifier = Modifier.padding(4.dp),
                 circlePeekRadius =
                 context.resources.displayMetrics.widthPixels * 0.05f,
             )
