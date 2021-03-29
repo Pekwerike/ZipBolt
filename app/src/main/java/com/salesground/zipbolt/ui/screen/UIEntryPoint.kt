@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -124,14 +125,12 @@ fun UIEntryPoint(
                         }
                     }
                 ) {
-                    Column(modifier = Modifier.fillMaxSize()) {
                         // Place navHost here
                         AllMediaOnDevice(
                             supportFragmentManager =
                             supportFragmentManager, viewPagerAdapterLifecycle =
                             viewPagerAdapterLifecycle
                         )
-                    }
                 }
             }
 
@@ -271,10 +270,13 @@ fun ExpandedSearchingForPeers(
 
             }
         }
-        Button(
+        OutlinedButton(
             onClick = { /*TODO*/ }, modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth())
+                .fillMaxWidth(), 
+        border = BorderStroke(width = 1.5.dp, brush = Brush.linearGradient(listOf(
+            MaterialTheme.colors.primary.copy(0.6f), MaterialTheme.colors.primary.copy(0.3f)
+        ))))
          {
             Text(text = "Stop Search",  modifier = Modifier
                 .padding(8.dp))
