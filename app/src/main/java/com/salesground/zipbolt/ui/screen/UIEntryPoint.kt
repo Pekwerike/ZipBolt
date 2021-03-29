@@ -26,13 +26,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
 import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
+import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -43,6 +46,7 @@ sealed class ConnectivityState() {
     data class PeersDiscovered(val peersList: MutableList<WifiP2pDevice>) : ConnectivityState()
 }
 
+@ExperimentalPagerApi
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -50,6 +54,7 @@ sealed class ConnectivityState() {
 fun UIEntryPoint(
     beginPeerDiscovery: () -> Unit,
     supportFragmentManager: FragmentManager,
+    imagesViewModel : ImagesViewModel,
     viewPagerAdapterLifecycle: Lifecycle
 ) {
     lateinit var persistentBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -126,11 +131,12 @@ fun UIEntryPoint(
                     }
                 ) {
                         // Place navHost here
-                        AllMediaOnDevice(
+                       /* AllMediaOnDevice(
                             supportFragmentManager =
                             supportFragmentManager, viewPagerAdapterLifecycle =
                             viewPagerAdapterLifecycle
-                        )
+                        )*/
+                    AllMediaOnDeviceComposable(imagesViewModel = imagesViewModel)
                 }
             }
 

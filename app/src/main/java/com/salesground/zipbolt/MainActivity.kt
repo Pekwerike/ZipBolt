@@ -122,11 +122,12 @@ class MainActivity : AppCompatActivity() {
                         baseColor = Color(0XFF006FCB),
                         peekColor = MaterialTheme.colors.primary
                     )*/
-                    AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
-                   /* UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
+                   // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
+                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
                         supportFragmentManager =
                         supportFragmentManager, viewPagerAdapterLifecycle =
-                        lifecycle)*/
+                        lifecycle,
+                    imagesViewModel = deviceMediaViewModel)
                 }
             }
         }

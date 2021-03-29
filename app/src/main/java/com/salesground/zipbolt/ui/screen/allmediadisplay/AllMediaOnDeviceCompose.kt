@@ -4,11 +4,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -73,6 +70,7 @@ fun AllMediaOnDeviceComposable(imagesViewModel: ImagesViewModel) {
                         Text(text = "Hello 0")
                     }
                     1 -> {
+                        key(1){
                         AndroidViewBinding(FragmentImageBinding::inflate) {
 
                             val dAdapter = DeviceImagesDisplayRecyclerViewAdapter(
@@ -128,7 +126,7 @@ fun AllMediaOnDeviceComposable(imagesViewModel: ImagesViewModel) {
                                     this.layoutManager = dLayoutManager
                                 }
                             }
-
+                        }
                         }
                     }
                     2 -> {
