@@ -25,6 +25,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
@@ -32,6 +33,7 @@ import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.UIEntryPoint
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
 import com.salesground.zipbolt.ui.screen.generalcomponents.SearchingForPeersAnimation
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
@@ -97,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @ExperimentalPagerApi
     @ExperimentalMaterialApi
     @ExperimentalAnimationApi
     @ExperimentalFoundationApi
@@ -119,10 +122,11 @@ class MainActivity : AppCompatActivity() {
                         baseColor = Color(0XFF006FCB),
                         peekColor = MaterialTheme.colors.primary
                     )*/
-                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
+                    AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
+                   /* UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
                         supportFragmentManager =
                         supportFragmentManager, viewPagerAdapterLifecycle =
-                        lifecycle)
+                        lifecycle)*/
                 }
             }
         }
