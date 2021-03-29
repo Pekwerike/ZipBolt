@@ -23,9 +23,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
+import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
 import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
@@ -45,7 +48,8 @@ sealed class ConnectivityState() {
 @Composable
 fun UIEntryPoint(
     beginPeerDiscovery: () -> Unit,
-    homeScreenViewModel: HomeScreenViewModel
+    supportFragmentManager: FragmentManager,
+    viewPagerAdapterLifecycle: Lifecycle
 ) {
     lateinit var persistentBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     val context = LocalContext.current
@@ -120,8 +124,14 @@ fun UIEntryPoint(
                         }
                     }
                 ) {
-                    // Place navHost here
-                    HomeScreen(homeScreenViewModel = homeScreenViewModel)
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        // Place navHost here
+                        AllMediaOnDevice(
+                            supportFragmentManager =
+                            supportFragmentManager, viewPagerAdapterLifecycle =
+                            viewPagerAdapterLifecycle
+                        )
+                    }
                 }
             }
 
@@ -214,11 +224,11 @@ fun ExpandedSearchingForPeers(
             .alpha(alpha),
         contentAlignment = Alignment.BottomCenter
     ) {
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             item {
                 Box(
@@ -237,14 +247,12 @@ fun ExpandedSearchingForPeers(
                         textAlign = TextAlign.Center
                     )
                 }
-            }
-            item {
                 SearchingForPeersAnimation(
-                    modifier = Modifier.padding(8.dp).requiredSize(
-                        ((context.resources.displayMetrics.widthPixels * 0.30f) * 2).dp),
-                    circlePeekRadius = context.resources.displayMetrics.widthPixels * 0.30f
-                )
+                    modifier = Modifier.padding(16.dp),
+                    circlePeekRadius = context.resources.displayMetrics.widthPixels * 0.30f)
+
             }
+
 
             item {
                 Text(
@@ -291,7 +299,7 @@ fun CollapsedSearchingForPeers(
         Row(verticalAlignment = Alignment.CenterVertically) {
             SearchingForPeersAnimation(
                 circlePeekRadius =
-                context.resources.displayMetrics.widthPixels * 0.05f
+                context.resources.displayMetrics.widthPixels * 0.05f,
             )
 
             Column() {

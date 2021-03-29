@@ -120,7 +120,9 @@ class MainActivity : AppCompatActivity() {
                         peekColor = MaterialTheme.colors.primary
                     )*/
                     UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
-                    homeScreenViewModel = homeScreenViewModel)
+                        supportFragmentManager =
+                        supportFragmentManager, viewPagerAdapterLifecycle =
+                        lifecycle)
                 }
             }
         }

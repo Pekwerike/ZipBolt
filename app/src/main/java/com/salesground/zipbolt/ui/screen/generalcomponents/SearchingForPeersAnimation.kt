@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlin.math.max
 
@@ -28,6 +29,7 @@ fun SearchingForPeersAnimation(
     duration: Int = 1000
 ) {
 
+    val deviceDensity = LocalContext.current.resources.displayMetrics.density
     val infiniteTransition = rememberInfiniteTransition()
     val animatedRadius by infiniteTransition.animateFloat(
         initialValue = circleBaseRadius,
@@ -47,9 +49,10 @@ fun SearchingForPeersAnimation(
     )
 
     Box(contentAlignment = Alignment.Center,
-    modifier = Modifier) {
+    modifier = modifier) {
         // draw circles
-        Canvas(modifier = Modifier) {
+        Canvas(modifier = Modifier.requiredSize(((circlePeekRadius * 2)/ deviceDensity).dp)) {
+
             drawCircle(
                 brush = Brush.radialGradient(
                     listOf(
@@ -98,7 +101,7 @@ fun SearchingForPeersAnimation(
         Icon(
             imageVector = Icons.Rounded.Person, contentDescription = "",
             modifier = Modifier
-                .requiredSize((circleBaseRadius * 0.55).dp)
+                .requiredSize((circleBaseRadius / deviceDensity).dp)
         )
     }
 }
