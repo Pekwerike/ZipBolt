@@ -27,9 +27,11 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.databinding.ActivityMainLayoutBinding
+import com.salesground.zipbolt.databinding.ZipBoltConnectionOptionsBottomSheetLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
@@ -39,6 +41,7 @@ import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
 import com.salesground.zipbolt.ui.screen.generalcomponents.SearchingForPeersAnimation
+import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltModalBottomSheetContent
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,10 +115,12 @@ class MainActivity : AppCompatActivity() {
 
         val activityMainLayoutBinding = ActivityMainLayoutBinding.inflate(layoutInflater)
         setContentView(activityMainLayoutBinding.root)
-        activityMainLayoutBinding.apply{
+        activityMainLayoutBinding.apply {
             mainActivityAllMediaOnDevice.apply {
-                allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(supportFragmentManager,
-                    lifecycle)
+                allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
+                    supportFragmentManager,
+                    lifecycle
+                )
                 TabLayoutMediator(
                     allMediaOnDeviceTabLayout,
                     allMediaOnDeviceViewPager
@@ -129,13 +134,27 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
+            val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
+            val modalBottomSheetLayoutBinding = ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
+            modalBottomSheetDialog.setContentView(
+                R.layout.zip_bolt_connection_options_bottom_sheet_layout
+            )
+            modalBottomSheetLayoutBinding.apply {
+                zipBoltConnectionOptionsBottomSheetLayout.setContent {
+                    ZipBoltTheme() {
+                        Surface() {
+                            ZipBoltModalBottomSheetContent()
+                        }
+                    }
+                }
+            }
         }
 
-       /* setContent {
-            ZipBoltTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    *//*ZipBoltUIEntryPoint(
+        /* setContent {
+             ZipBoltTheme {
+                 // A surface container using the 'background' color from the theme
+                 Surface(color = MaterialTheme.colors.background) {
+                     *//*ZipBoltUIEntryPoint(
                           homeScreenViewModel = homeScreenViewModel)*//*
                     *//*AllMediaOnDevice(
                         supportFragmentManager =
