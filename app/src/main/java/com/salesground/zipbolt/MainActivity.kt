@@ -14,6 +14,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,13 +27,16 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
+import com.salesground.zipbolt.databinding.ActivityMainLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.UIEntryPoint
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
 import com.salesground.zipbolt.ui.screen.generalcomponents.SearchingForPeersAnimation
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
@@ -106,22 +110,43 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
+        val activityMainLayoutBinding = ActivityMainLayoutBinding.inflate(layoutInflater)
+        setContentView(activityMainLayoutBinding.root)
+        activityMainLayoutBinding.apply{
+            mainActivityAllMediaOnDevice.apply {
+                allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(supportFragmentManager,
+                    lifecycle)
+                TabLayoutMediator(
+                    allMediaOnDeviceTabLayout,
+                    allMediaOnDeviceViewPager
+                ) { tab, position ->
+                    when (position) {
+                        0 -> tab.text = "Apps"
+                        1 -> tab.text = "Images"
+                        2 -> tab.text = "Videos"
+                        3 -> tab.text = "Music"
+                        4 -> tab.text = "Files"
+                    }
+                }.attach()
+            }
+        }
+
+       /* setContent {
             ZipBoltTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    /*ZipBoltUIEntryPoint(
-                          homeScreenViewModel = homeScreenViewModel)*/
-                    /*AllMediaOnDevice(
+                    *//*ZipBoltUIEntryPoint(
+                          homeScreenViewModel = homeScreenViewModel)*//*
+                    *//*AllMediaOnDevice(
                         supportFragmentManager =
                         supportFragmentManager, viewPagerAdapterLifecycle =
                         lifecycle
-                    )*/
-                    /*SearchingForPeersAnimation(
+                    )*//*
+                    *//*SearchingForPeersAnimation(
                         circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
                         baseColor = Color(0XFF006FCB),
                         peekColor = MaterialTheme.colors.primary
-                    )*/
+                    )*//*
                    // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
                     UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
                         supportFragmentManager =
@@ -130,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                     imagesViewModel = deviceMediaViewModel)
                 }
             }
-        }
+        }*/
 
 
         createNotificationChannel()
