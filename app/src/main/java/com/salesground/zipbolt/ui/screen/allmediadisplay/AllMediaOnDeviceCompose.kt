@@ -81,13 +81,13 @@ fun AllMediaOnDeviceComposable(imagesViewModel: ImagesViewModel) {
                             )
                             dAdapter.submitList(deviceImages.value)
 
-                            fragmentImageImagesBucketViewGroup.apply {
+                            /*fragmentImageImagesBucketViewGroup.apply {
                                 setContent {
                                     ZipBoltTheme {
                                         ImagesBucketsDisplayComposable(imagesViewModel = imagesViewModel)
                                     }
                                 }
-                            }
+                            }*/
                             fragmentImageRecyclerview.apply {
 
                                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {

@@ -101,7 +101,121 @@ fun UIEntryPoint(
             topStart = CornerSize(12.dp), topEnd = CornerSize(12.dp)
         )
     ) {
-        AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
+        Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd){
+            Box(){
+                // TODO
+                /* 1. if bottom sheet is hidden show connect button
+                2. if bottom sheet is collapsed show send button
+                2b. increase the padding of the send button by the bottom sheet peek height
+                3. OnClick of the connect button, open the modal bottom sheet action options
+                * */
+                if (persistentBottomSheetState == BottomSheetBehavior.STATE_HIDDEN) {
+                    ZipBoltMainFloatingActionButton(
+                        label = "Connect",
+                        onClick = {
+                            coroutineScope.launch {
+                                modalBottomSheetState.show()
+                            }
+                        }
+                    )
+                } else {
+                    /*ZipBoltMainFloatingActionButton(
+                        modifier = Modifier.padding(bottom = 50.dp),
+                        label = "Send",
+                        icon = Icons.Rounded.Send,
+                        onClick = { }
+                    )*/
+                }
+            }
+            AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
+                zipBoltEntryPointComposeView.setContent {
+
+                        // Place navHost here
+                         AllMediaOnDevice(
+                             supportFragmentManager =
+                             supportFragmentManager, viewPagerAdapterLifecycle =
+                             viewPagerAdapterLifecycle
+                         )
+                        //AllMediaOnDeviceComposable(imagesViewModel = imagesViewModel)
+                }
+
+                persistentBottomSheetBehavior =
+                    BottomSheetBehavior.from(zipBoltPersistentBottomSheetViewGroup)
+                persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+                persistentBottomSheetBehavior.addBottomSheetCallback(
+                    PersistentBottomSheetCallBack(
+                        actionCallback = object : PersistentBottomSheetCallBack.OnActionCallback {
+                            override fun bottomSheetStateChanged(state: Int) {
+                                persistentBottomSheetState = state
+                                persistentBottomSheetBehavior.state = state
+                            }
+
+                            override fun bottomSheetSlide(slideValue: Float) {
+                                persistentBottomSheetSlideValue = slideValue
+                            }
+
+                        }
+                    )
+                )
+
+                zipBoltPersistentBottomSheetComposeView.setContent {
+                    // place different bottom sheet contents here
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colors.surface)
+                    ) {
+                        when (connectivityState) {
+                            is ConnectivityState.NoAction -> {
+                            }
+                            is ConnectivityState.PeersDiscoveryInitiated -> {
+                                when (persistentBottomSheetState) {
+                                    BottomSheetBehavior.STATE_EXPANDED -> {
+                                        ExpandedSearchingForPeers(onStopSearchingClicked = { },
+                                            onArrowDownClicked = {})
+                                    }
+                                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                                        CollapsedSearchingForPeers(
+                                            onCancel = {
+                                                /*TODO
+                    1. Cancel searching for peers
+                     2. Set the peek height of the bottom sheet to 0
+                     3. set the bottom sheet state to hidden*/
+
+                                            },
+                                            onClick = {
+                                                persistentBottomSheetBehavior.state =
+                                                    BottomSheetBehavior.STATE_EXPANDED
+                                            })
+                                    }
+                                    else -> {
+                                        // show both expanded searching for peers layout and
+                                        // collapsed searching for peers layout but control their visibility using alpha
+                                        Box(modifier = Modifier.fillMaxSize()) {
+                                            CollapsedSearchingForPeers(
+                                                onCancel = { /*TODO*/ },
+                                                onClick = {},
+                                                alpha = 1 - (persistentBottomSheetSlideValue * 2.5f)
+                                            )
+                                            ExpandedSearchingForPeers(
+                                                onStopSearchingClicked = { },
+                                                onArrowDownClicked = {},
+                                                alpha = persistentBottomSheetSlideValue
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            is ConnectivityState.PeersDiscovered -> {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+       /* AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
             zipBoltEntryPointComposeView.setContent {
                 Scaffold(
                     floatingActionButton = {
@@ -213,7 +327,7 @@ fun UIEntryPoint(
                     }
                 }
             }
-        }
+        }*/
     }
 }
 

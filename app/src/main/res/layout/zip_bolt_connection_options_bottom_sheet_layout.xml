@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.compose.ui.platform.ComposeView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/zip_bolt_connection_options_bottom_sheet_layout"/>
+    android:layout_height="wrap_content">
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/zip_bolt_connection_options_bottom_sheet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

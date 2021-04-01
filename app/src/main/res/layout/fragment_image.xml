@@ -14,10 +14,11 @@
         android:layout_height="wrap_content">
 
         <androidx.compose.ui.platform.ComposeView
-            android:id="@+id/fragment_image_images_bucket_view_group"
+            android:id="@+id/fragmentImageImagesBucketViewGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -30,7 +30,8 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
-import com.salesground.zipbolt.databinding.ActivityMainLayoutBinding
+import com.salesground.zipbolt.databinding.ActivityMainBinding
+
 import com.salesground.zipbolt.databinding.ZipBoltConnectionOptionsBottomSheetLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
@@ -113,9 +114,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val activityMainLayoutBinding = ActivityMainLayoutBinding.inflate(layoutInflater)
-        setContentView(activityMainLayoutBinding.root)
-        activityMainLayoutBinding.apply {
+        val activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(activityMainBinding.root)
+
+       activityMainBinding.apply {
             mainActivityAllMediaOnDevice.apply {
                 allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
                     supportFragmentManager,
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
-            val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
+           /* val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
             val modalBottomSheetLayoutBinding = ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
             modalBottomSheetDialog.setContentView(
                 R.layout.zip_bolt_connection_options_bottom_sheet_layout
@@ -148,24 +150,25 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            modalBottomSheetDialog.show()*/
         }
 
-        /* setContent {
+         /*setContent {
              ZipBoltTheme {
                  // A surface container using the 'background' color from the theme
                  Surface(color = MaterialTheme.colors.background) {
-                     *//*ZipBoltUIEntryPoint(
-                          homeScreenViewModel = homeScreenViewModel)*//*
-                    *//*AllMediaOnDevice(
+                     /*ZipBoltUIEntryPoint(
+                          homeScreenViewModel = homeScreenViewModel)*/
+                    /*AllMediaOnDevice(
                         supportFragmentManager =
                         supportFragmentManager, viewPagerAdapterLifecycle =
                         lifecycle
-                    )*//*
-                    *//*SearchingForPeersAnimation(
+                    )*/
+                   /* SearchingForPeersAnimation(
                         circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
                         baseColor = Color(0XFF006FCB),
                         peekColor = MaterialTheme.colors.primary
-                    )*//*
+                    )*/
                    // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
                     UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
                         supportFragmentManager =
