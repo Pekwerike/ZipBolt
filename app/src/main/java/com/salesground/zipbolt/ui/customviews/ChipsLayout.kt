@@ -16,7 +16,7 @@ class ChipsLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private var maxRowCount = 2
-    private val screenWidth = resources.displayMetrics.widthPixels - marginLeft - marginRight
+    private val screenWidth = resources.displayMetrics.widthPixels
 
     fun getMaxRowCount(): Int = maxRowCount
 
