@@ -7,14 +7,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentImageBinding
+import com.salesground.zipbolt.ui.customviews.ChipsLayout
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.ImagesBucketsDisplayComposable
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.recyclerview.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
+import com.salesground.zipbolt.viewmodel.BucketNameAndSize
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import kotlin.math.abs
 import kotlin.math.min
@@ -23,6 +28,8 @@ import kotlin.math.roundToInt
 class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
+    private lateinit var chipsLayout: ChipsLayout
+    private var selectedCategory: BucketNameAndSize? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +42,27 @@ class ImageFragment : Fragment() {
         imagesViewModel.deviceImagesGroupedByDateModified.observe(this) {
             dAdapter.submitList(it)
         }
-        imagesViewModel.deviceImagesBucketName.observe(this){
-            it?.let{
+        imagesViewModel.deviceImagesBucketName.observe(this) {
+            it?.let {buckets->
+                if(selectedCategory == null ) selectedCategory = buckets.first()
 
+                it.forEach { bucketNameAndSize ->
+                    val layout = layoutInflater.inflate(R.layout.category_chip, chipsLayout, false)
+                    val chip = layout.findViewById<Chip>(R.id.category_chip)
+                    chip.text = bucketNameAndSize.bucketName
+                    chip.setOnClickListener {
+                        chip.isChecked = true
+                        if (bucketNameAndSize.bucketName != selectedCategory?.bucketName) {
+                            chipsLayout.refresh(buckets.indexOf(selectedCategory))
+                            selectedCategory = bucketNameAndSize
+                            imagesViewModel.filterDeviceImages(bucketName = bucketNameAndSize.bucketName)
+                        }
+                    }
+                    if (bucketNameAndSize.bucketName == selectedCategory?.bucketName) {
+                        chip.isChecked = true
+                    }
+                    chipsLayout.addView(chip)
+                }
             }
         }
     }
@@ -51,9 +76,7 @@ class ImageFragment : Fragment() {
             false
         )
         rootView.apply {
-            imagesCategoryChipsLayout.apply {
-
-            }
+            chipsLayout = imagesCategoryChipsLayout
             fragmentImageRecyclerview.apply {
 
                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
