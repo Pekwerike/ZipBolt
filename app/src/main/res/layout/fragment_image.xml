@@ -13,8 +13,8 @@
         app:elevation="0dp"
         android:layout_height="wrap_content">
 
-        <androidx.compose.ui.platform.ComposeView
-            android:id="@+id/fragmentImageImagesBucketViewGroup"
+        <com.salesground.zipbolt.ui.customviews.ChipsLayout
+            android:id="@+id/images_category_chips_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways"/>
