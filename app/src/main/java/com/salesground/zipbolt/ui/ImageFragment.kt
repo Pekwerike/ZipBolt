@@ -35,6 +35,11 @@ class ImageFragment : Fragment() {
         imagesViewModel.deviceImagesGroupedByDateModified.observe(this) {
             dAdapter.submitList(it)
         }
+        imagesViewModel.deviceImagesBucketName.observe(this){
+            it?.let{
+
+            }
+        }
     }
 
     override fun onCreateView(
@@ -46,12 +51,8 @@ class ImageFragment : Fragment() {
             false
         )
         rootView.apply {
-            fragmentImageImagesBucketViewGroup.apply {
-                setContent {
-                    ZipBoltTheme {
-                        ImagesBucketsDisplayComposable(imagesViewModel = imagesViewModel)
-                    }
-                }
+            imagesCategoryChipsLayout.apply {
+
             }
             fragmentImageRecyclerview.apply {
 
