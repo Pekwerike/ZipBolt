@@ -15,12 +15,12 @@ class AllMediaOnDeviceViewPager2Adapter(fragmentManager: FragmentManager, lifecy
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> DeviceAppsFragment()
-            1 -> DeviceAppsFragment()
-            2 -> DeviceAppsFragment()
-            3 -> DeviceAppsFragment()
-            4 -> DeviceAppsFragment()
-            else -> DeviceAppsFragment()
+            0 -> ImageFragment()
+            1 -> ImageFragment()
+            2 -> ImageFragment()
+            3 -> ImageFragment()
+            4 -> ImageFragment()
+            else -> ImageFragment()
         }
     }
 }

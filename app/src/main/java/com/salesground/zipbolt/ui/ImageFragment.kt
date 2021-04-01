@@ -49,8 +49,19 @@ class ImageFragment : Fragment() {
                 it.forEach { bucketNameAndSize ->
                     val layout = layoutInflater.inflate(R.layout.category_chip, chipsLayout, false)
                     val chip = layout.findViewById<Chip>(R.id.category_chip)
-                    chip.text = bucketNameAndSize.bucketName
+                    chip.text = when {
+                        bucketNameAndSize.bucketName.length > 11 -> {
+                            "${bucketNameAndSize.bucketName.take(8)}..."
+                        }
+                        bucketNameAndSize.bucketName.length < 4 -> {
+                            " ${bucketNameAndSize.bucketName} "
+                        }
+                        else -> {
+                            bucketNameAndSize.bucketName
+                        }
+                    }
                     chip.setOnClickListener {
+
                         chip.isChecked = true
                         if (bucketNameAndSize.bucketName != selectedCategory?.bucketName) {
                             chipsLayout.refresh(buckets.indexOf(selectedCategory))
