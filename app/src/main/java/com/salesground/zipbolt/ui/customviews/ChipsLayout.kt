@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
 import androidx.core.view.marginEnd
+import androidx.core.view.marginLeft
+import androidx.core.view.marginRight
 import androidx.core.view.marginStart
 import com.google.android.material.chip.Chip
 import kotlin.math.max
@@ -14,7 +16,7 @@ class ChipsLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private var maxRowCount = 2
-    private val screenWidth = resources.displayMetrics.widthPixels - marginStart - marginEnd
+    private val screenWidth = resources.displayMetrics.widthPixels - marginLeft - marginRight
 
     fun getMaxRowCount(): Int = maxRowCount
 
@@ -54,6 +56,7 @@ class ChipsLayout @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var maxWidth = 0
+        var layoutWidth = screenWidth - marginLeft - marginRight
         var maxHeight = 0
         var temporaryAccumulatedWidth = 0
         var temporaryAccumulatedHeight = 0
@@ -67,7 +70,7 @@ class ChipsLayout @JvmOverloads constructor(
                 val childWidth = child.measuredWidth
                 val childHeight = child.measuredHeight
 
-                if (temporaryAccumulatedWidth + childWidth >= screenWidth) {
+                if (temporaryAccumulatedWidth + childWidth + child.paddingRight >= layoutWidth) {
                     temporaryAccumulatedWidth = 0
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
