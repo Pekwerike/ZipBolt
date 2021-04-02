@@ -80,7 +80,7 @@ class ChipsLayout @JvmOverloads constructor(
                 val childHeight =
                     child.measuredHeight + childLayoutParams.topMargin + childLayoutParams.bottomMargin
 
-                if (temporaryAccumulatedWidth + childWidth + child.paddingRight >= layoutWidth) {
+                if (temporaryAccumulatedWidth + childWidth >= layoutWidth) {
                     temporaryAccumulatedWidth = 0
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
