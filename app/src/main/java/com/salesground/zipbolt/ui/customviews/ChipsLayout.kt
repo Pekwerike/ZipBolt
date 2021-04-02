@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import com.google.android.material.chip.Chip
+import com.salesground.zipbolt.R
 import kotlin.math.max
 
 //TODO Add feature that allow a user to specify the maximum rows in the layout from xml
@@ -15,6 +16,13 @@ class ChipsLayout @JvmOverloads constructor(
     private var maxRowCount = 2
     private val screenWidth = resources.displayMetrics.widthPixels
 
+    init{
+        context.theme.obtainStyledAttributes(attrs,
+        R.styleable.ChipsLayout, defStyleAttr, 0).apply {
+            maxRowCount = getInteger(R.styleable.ChipsLayout_maxRows, 2)
+            recycle()
+        }
+    }
 
     fun refresh(viewIndex: Int) {
         val child = getChildAt(viewIndex) as Chip
