@@ -108,6 +108,7 @@ class ImageFragment : Fragment() {
         rootView.apply {
             chipsLayout = imagesCategoryChipsLayout
             fragmentImageRecyclerview.apply {
+                setHasFixedSize(true)
 
                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     val dLayoutManager = GridLayoutManager(context, 4)
