@@ -3,13 +3,10 @@ package com.salesground.zipbolt.ui.customviews
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
-import androidx.core.view.marginEnd
 import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
-import androidx.core.view.marginStart
 import com.google.android.material.chip.Chip
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 //TODO Add feature that allow a user to specify the maximum rows in the layout from xml
 class ChipsLayout @JvmOverloads constructor(
@@ -18,7 +15,6 @@ class ChipsLayout @JvmOverloads constructor(
     private var maxRowCount = 2
     private val screenWidth = resources.displayMetrics.widthPixels
 
-    fun getMaxRowCount(): Int = maxRowCount
 
     fun refresh(viewIndex : Int){
         val child = getChildAt(viewIndex) as Chip
@@ -38,7 +34,7 @@ class ChipsLayout @JvmOverloads constructor(
             if (child.visibility != GONE) {
                 val childWidth = child.measuredWidth
                 val childHeight = child.measuredHeight
-                maxHeight = max(childHeight, maxHeight)
+                maxHeight = max(childHeight + child.paddingTop, maxHeight)
                 if (childWidth + left >= right) {
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
@@ -77,7 +73,7 @@ class ChipsLayout @JvmOverloads constructor(
                 }
                 temporaryAccumulatedWidth += childWidth
                 temporaryAccumulatedHeight =
-                    max(temporaryAccumulatedHeight, childHeight)
+                    max(temporaryAccumulatedHeight, childHeight + child.paddingTop)
 
                 maxWidth = max(temporaryAccumulatedWidth, maxWidth)
                 maxHeight = temporaryAccumulatedHeight * localRowCount

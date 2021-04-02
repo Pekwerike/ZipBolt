@@ -4,6 +4,8 @@
     android:id="@+id/category_chip"
     android:layout_width="wrap_content"
     android:textSize="12sp"
+    android:paddingTop="8dp"
     style="@style/Widget.MaterialComponents.Chip.Choice"
     android:layout_height="wrap_content"
-    app:chipCornerRadius="5dp" />
+    app:chipCornerRadius="5dp"
+    app:ensureMinTouchTargetSize="false" />

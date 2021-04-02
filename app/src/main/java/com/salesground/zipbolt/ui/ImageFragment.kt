@@ -43,15 +43,20 @@ class ImageFragment : Fragment() {
             dAdapter.submitList(it)
         }
         imagesViewModel.deviceImagesBucketName.observe(this) {
-            it?.let {buckets->
-                if(selectedCategory == null ) selectedCategory = buckets.first()
+            it?.let { it ->
+                if (selectedCategory == null) selectedCategory = it.first()
+                val buckets =
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        it.take(12)
+                    } else it.take(20)
 
-                it.forEach { bucketNameAndSize ->
-                    val layout = layoutInflater.inflate(R.layout.category_chip, chipsLayout, false)
+                buckets.forEach { bucketNameAndSize ->
+                    val layout =
+                        layoutInflater.inflate(R.layout.category_chip, chipsLayout, false)
                     val chip = layout.findViewById<Chip>(R.id.category_chip)
                     chip.text = when {
-                        bucketNameAndSize.bucketName.length > 11 -> {
-                            "${bucketNameAndSize.bucketName.take(8)}..."
+                        bucketNameAndSize.bucketName.length > 13 -> {
+                            "${bucketNameAndSize.bucketName.take(10)}..."
                         }
                         bucketNameAndSize.bucketName.length < 4 -> {
                             " ${bucketNameAndSize.bucketName} "
@@ -64,9 +69,9 @@ class ImageFragment : Fragment() {
 
                         chip.isChecked = true
                         if (bucketNameAndSize.bucketName != selectedCategory?.bucketName) {
+                            imagesViewModel.filterDeviceImages(bucketName = bucketNameAndSize.bucketName)
                             chipsLayout.refresh(buckets.indexOf(selectedCategory))
                             selectedCategory = bucketNameAndSize
-                            imagesViewModel.filterDeviceImages(bucketName = bucketNameAndSize.bucketName)
                         }
                     }
                     if (bucketNameAndSize.bucketName == selectedCategory?.bucketName) {
