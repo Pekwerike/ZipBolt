@@ -7,7 +7,6 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import com.google.android.material.chip.Chip
 import kotlin.math.max
-import kotlin.math.roundToInt
 
 //TODO Add feature that allow a user to specify the maximum rows in the layout from xml
 class ChipsLayout @JvmOverloads constructor(
@@ -33,25 +32,22 @@ class ChipsLayout @JvmOverloads constructor(
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility != GONE) {
-                val childLayoutParams = child.layoutParams as MarginLayoutParams
+                val childLp = child.layoutParams as MarginLayoutParams
                 val childWidth = child.measuredWidth
                 val childHeight = child.measuredHeight
-                left += childLayoutParams.leftMargin
+                left += childLp.leftMargin
 
-                val childRightMargin = childLayoutParams.rightMargin
-                val childTopMargin = childLayoutParams.topMargin
-
-                maxHeight = max(childHeight, maxHeight)
+                maxHeight = max(childHeight + childLp.bottomMargin + childLp.topMargin, maxHeight)
                 if (childWidth + left >= right) {
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
-                    left = leftPadding
+                    left = leftPadding + childLp.leftMargin
                     top += maxHeight
-                    child.layout(left, top, left + childWidth, top + childHeight)
-                    left += childWidth + childRightMargin
+                    child.layout(left, top + childLp.topMargin, left + childWidth, top + childLp.topMargin + childHeight)
+                    left += childWidth + childLp.rightMargin
                 } else {
-                    child.layout(left, top + childTopMargin, left + childWidth, top + childHeight)
-                    left += childWidth + childRightMargin
+                    child.layout(left, top + childLp.topMargin, left + childWidth, top + childLp.topMargin + childHeight )
+                    left += childWidth + childLp.rightMargin
                 }
             }
         }

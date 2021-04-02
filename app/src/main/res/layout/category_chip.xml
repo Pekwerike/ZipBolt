@@ -6,5 +6,6 @@
     android:layout_width="wrap_content"
     android:layout_height="29dp"
     android:textSize="12sp"
+    android:layout_margin="4dp"
     app:chipCornerRadius="5dp"
     app:ensureMinTouchTargetSize="false" />
