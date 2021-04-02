@@ -29,12 +29,12 @@ class ChipsLayout @JvmOverloads constructor(
         child.isChecked = false
     }
 
-    override fun onLayout(p0: Boolean, p1: Int, p2: Int, p3: Int, p4: Int) {
+    override fun onLayout(changed: Boolean, left : Int, top: Int, right: Int, bottom: Int) {
         val leftPadding = paddingLeft
         var maxHeight = 0
         var left = leftPadding
         var top = paddingTop
-        var right = measuredWidth - paddingRight
+        var right = right - paddingRight
         var localRowCount = 1
 
         for (i in 0 until childCount) {
