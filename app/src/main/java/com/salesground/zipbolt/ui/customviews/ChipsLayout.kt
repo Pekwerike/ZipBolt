@@ -15,10 +15,9 @@ class ChipsLayout @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private var maxRowCount = 2
     private val screenWidth = resources.displayMetrics.widthPixels
-    private val childPadding = resources.displayMetrics.density * 8
 
 
-    fun refresh(viewIndex : Int){
+    fun refresh(viewIndex: Int) {
         val child = getChildAt(viewIndex) as Chip
         child.isChecked = false
     }
@@ -34,19 +33,25 @@ class ChipsLayout @JvmOverloads constructor(
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility != GONE) {
+                val childLayoutParams = child.layoutParams as MarginLayoutParams
                 val childWidth = child.measuredWidth
                 val childHeight = child.measuredHeight
-                maxHeight = max(childHeight + childPadding.roundToInt(), maxHeight)
+                left += childLayoutParams.leftMargin
+
+                val childRightMargin = childLayoutParams.rightMargin
+                val childTopMargin = childLayoutParams.topMargin
+
+                maxHeight = max(childHeight, maxHeight)
                 if (childWidth + left >= right) {
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
                     left = leftPadding
                     top += maxHeight
                     child.layout(left, top, left + childWidth, top + childHeight)
-                    left += childWidth + child.paddingRight
+                    left += childWidth + childRightMargin
                 } else {
-                    child.layout(left, top, left + childWidth, top + childHeight)
-                    left += childWidth + child.paddingRight
+                    child.layout(left, top + childTopMargin, left + childWidth, top + childHeight)
+                    left += childWidth + childRightMargin
                 }
             }
         }
@@ -64,9 +69,12 @@ class ChipsLayout @JvmOverloads constructor(
         for (i in 0 until childCount) {
             val child = getChildAt(i)
             if (child.visibility != GONE) {
-                measureChild(child, widthMeasureSpec, heightMeasureSpec)
-                val childWidth = child.measuredWidth
-                val childHeight = child.measuredHeight
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
+                val childLayoutParams = child.layoutParams as MarginLayoutParams
+                val childWidth =
+                    child.measuredWidth + childLayoutParams.leftMargin + childLayoutParams.rightMargin
+                val childHeight =
+                    child.measuredHeight + childLayoutParams.topMargin + childLayoutParams.bottomMargin
 
                 if (temporaryAccumulatedWidth + childWidth + child.paddingRight >= layoutWidth) {
                     temporaryAccumulatedWidth = 0
@@ -75,10 +83,10 @@ class ChipsLayout @JvmOverloads constructor(
                 }
                 temporaryAccumulatedWidth += childWidth
                 temporaryAccumulatedHeight =
-                    max(temporaryAccumulatedHeight, childHeight + childPadding.roundToInt())
+                    max(temporaryAccumulatedHeight, childHeight)
 
-                maxWidth = max(temporaryAccumulatedWidth, maxWidth)
-                maxHeight = temporaryAccumulatedHeight * localRowCount
+                maxWidth = max(temporaryAccumulatedWidth, maxWidth) + paddingLeft + paddingRight
+                maxHeight = temporaryAccumulatedHeight * localRowCount + paddingTop + paddingBottom
                 childState = combineMeasuredStates(childState, child.measuredState)
             }
         }
@@ -87,5 +95,17 @@ class ChipsLayout @JvmOverloads constructor(
             resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
             resolveSizeAndState(maxHeight, heightMeasureSpec, childState)
         )
+    }
+
+    override fun checkLayoutParams(p: LayoutParams?): Boolean {
+        return p is MarginLayoutParams
+    }
+
+    override fun generateDefaultLayoutParams(): LayoutParams {
+        return MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+    }
+
+    override fun generateLayoutParams(attrs: AttributeSet?): LayoutParams {
+        return MarginLayoutParams(context, attrs!!)
     }
 }
