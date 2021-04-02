@@ -9,7 +9,7 @@ import com.google.android.material.chip.Chip
 import com.salesground.zipbolt.R
 import kotlin.math.max
 
-//TODO Add feature that allow a user to specify the maximum rows in the layout from xml
+
 class ChipsLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
