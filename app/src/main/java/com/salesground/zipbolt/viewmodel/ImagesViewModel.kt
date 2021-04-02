@@ -33,6 +33,7 @@ class ImagesViewModel @Inject constructor(
     private var _chosenBucket = MutableLiveData<String>()
     val chosenBucket : LiveData<String> = _chosenBucket
 
+
     init {
         viewModelScope.launch {
             allImagesOnDeviceRaw =
@@ -70,6 +71,7 @@ class ImagesViewModel @Inject constructor(
     fun filterDeviceImages(bucketName: String = "All") {
         if(bucketName != "All" && bucketName == _chosenBucket.value) return
         _chosenBucket.value = bucketName
+
         viewModelScope.launch {
             if (bucketName == "All") {
                 // don't filter

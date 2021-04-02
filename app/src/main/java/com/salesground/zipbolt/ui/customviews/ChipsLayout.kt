@@ -7,6 +7,7 @@ import androidx.core.view.marginLeft
 import androidx.core.view.marginRight
 import com.google.android.material.chip.Chip
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 //TODO Add feature that allow a user to specify the maximum rows in the layout from xml
 class ChipsLayout @JvmOverloads constructor(
@@ -14,6 +15,7 @@ class ChipsLayout @JvmOverloads constructor(
 ) : ViewGroup(context, attrs, defStyleAttr) {
     private var maxRowCount = 2
     private val screenWidth = resources.displayMetrics.widthPixels
+    private val childPadding = resources.displayMetrics.density * 8
 
 
     fun refresh(viewIndex : Int){
@@ -34,7 +36,7 @@ class ChipsLayout @JvmOverloads constructor(
             if (child.visibility != GONE) {
                 val childWidth = child.measuredWidth
                 val childHeight = child.measuredHeight
-                maxHeight = max(childHeight + child.paddingTop, maxHeight)
+                maxHeight = max(childHeight + childPadding.roundToInt(), maxHeight)
                 if (childWidth + left >= right) {
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
@@ -73,7 +75,7 @@ class ChipsLayout @JvmOverloads constructor(
                 }
                 temporaryAccumulatedWidth += childWidth
                 temporaryAccumulatedHeight =
-                    max(temporaryAccumulatedHeight, childHeight + child.paddingTop)
+                    max(temporaryAccumulatedHeight, childHeight + childPadding.roundToInt())
 
                 maxWidth = max(temporaryAccumulatedWidth, maxWidth)
                 maxHeight = temporaryAccumulatedHeight * localRowCount

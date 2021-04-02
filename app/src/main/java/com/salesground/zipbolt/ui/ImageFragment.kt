@@ -29,7 +29,8 @@ class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
     private lateinit var chipsLayout: ChipsLayout
-    private var selectedCategory: BucketNameAndSize? = null
+    private var selectedCategory: String = "All"
+    private val bucketNames = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,37 +45,44 @@ class ImageFragment : Fragment() {
         }
         imagesViewModel.deviceImagesBucketName.observe(this) {
             it?.let { it ->
-                if (selectedCategory == null) selectedCategory = it.first()
+
+                selectedCategory =  imagesViewModel.chosenBucket.value?: selectedCategory
+
                 val buckets =
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                         it.take(12)
                     } else it.take(20)
 
-                buckets.forEach { bucketNameAndSize ->
+
+                buckets.forEach { bucket ->
+                    bucketNames.add(bucket.bucketName)
+                }
+
+                bucketNames.forEach { bucketName ->
                     val layout =
                         layoutInflater.inflate(R.layout.category_chip, chipsLayout, false)
                     val chip = layout.findViewById<Chip>(R.id.category_chip)
                     chip.text = when {
-                        bucketNameAndSize.bucketName.length > 13 -> {
-                            "${bucketNameAndSize.bucketName.take(10)}..."
+                        bucketName.length > 13 -> {
+                            "${bucketName.take(10)}..."
                         }
-                        bucketNameAndSize.bucketName.length < 4 -> {
-                            " ${bucketNameAndSize.bucketName} "
+                        bucketName.length < 4 -> {
+                            " $bucketName "
                         }
                         else -> {
-                            bucketNameAndSize.bucketName
+                            bucketName
                         }
                     }
                     chip.setOnClickListener {
 
                         chip.isChecked = true
-                        if (bucketNameAndSize.bucketName != selectedCategory?.bucketName) {
-                            imagesViewModel.filterDeviceImages(bucketName = bucketNameAndSize.bucketName)
-                            chipsLayout.refresh(buckets.indexOf(selectedCategory))
-                            selectedCategory = bucketNameAndSize
+                        if (bucketName!= imagesViewModel.chosenBucket.value) {
+                            imagesViewModel.filterDeviceImages(bucketName = bucketName)
+                            chipsLayout.refresh(bucketNames.indexOf(selectedCategory))
+                            selectedCategory = imagesViewModel.chosenBucket.value?: selectedCategory
                         }
                     }
-                    if (bucketNameAndSize.bucketName == selectedCategory?.bucketName) {
+                    if (bucketName == imagesViewModel.chosenBucket.value) {
                         chip.isChecked = true
                     }
                     chipsLayout.addView(chip)
