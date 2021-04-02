@@ -46,12 +46,12 @@ class ImageFragment : Fragment() {
         imagesViewModel.deviceImagesBucketName.observe(this) {
             it?.let { it ->
 
-                selectedCategory =  imagesViewModel.chosenBucket.value?: selectedCategory
+                selectedCategory = imagesViewModel.chosenBucket.value ?: selectedCategory
 
                 val buckets =
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                         it.take(12)
-                    } else it.take(20)
+                    } else it.take(24)
 
 
                 buckets.forEach { bucket ->
@@ -76,10 +76,16 @@ class ImageFragment : Fragment() {
                     chip.setOnClickListener {
 
                         chip.isChecked = true
-                        if (bucketName!= imagesViewModel.chosenBucket.value) {
+                        if (bucketName != imagesViewModel.chosenBucket.value) {
                             imagesViewModel.filterDeviceImages(bucketName = bucketName)
-                            chipsLayout.refresh(bucketNames.indexOf(selectedCategory))
-                            selectedCategory = imagesViewModel.chosenBucket.value?: selectedCategory
+                            try {
+                                val indexOfLastSelectedBucket  = bucketNames.indexOf(selectedCategory)
+                                chipsLayout.refresh(indexOfLastSelectedBucket)
+                            } catch (noSuchElementException: Exception) {
+
+                            }
+                            selectedCategory =
+                                imagesViewModel.chosenBucket.value ?: selectedCategory
                         }
                     }
                     if (bucketName == imagesViewModel.chosenBucket.value) {
