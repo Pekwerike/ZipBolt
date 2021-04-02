@@ -4,7 +4,7 @@
     android:id="@+id/category_chip"
     style="@style/Widget.MaterialComponents.Chip.Choice"
     android:layout_width="wrap_content"
-    android:layout_height="29dp"
+    android:layout_height="28dp"
     android:textSize="12sp"
     android:layout_margin="4dp"
     app:chipCornerRadius="5dp"
