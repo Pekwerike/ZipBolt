@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     private var isClientServiceBound: Boolean = false
 
     // ui variables
-    private lateinit var modalBottomSheetDialog : BottomSheetDialog
+    private lateinit var modalBottomSheetDialog: BottomSheetDialog
 
     private val clientServiceConnection = object : ServiceConnection {
 
@@ -146,10 +146,20 @@ class MainActivity : AppCompatActivity() {
             modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
             val modalBottomSheetLayoutBinding =
                 ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
+            modalBottomSheetLayoutBinding.apply {
 
-            modalBottomSheetDialog.setContentView(
-                modalBottomSheetLayoutBinding.root
-            )
+                connectToAndroid.setOnClickListener {
+                    displayToast("Connect to Android")
+                }
+                connectToIphone.setOnClickListener {
+                    displayToast("Connect to iPhone")
+                }
+                connectToDesktop.setOnClickListener {
+                    displayToast("Connect to Desktop")
+                }
+                modalBottomSheetDialog.setContentView(root)
+            }
+
         }
 
         /*setContent {
