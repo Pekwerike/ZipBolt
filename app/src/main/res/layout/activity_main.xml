@@ -18,8 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="12dp"
-        android:paddingVertical="2dp"
-        style="@style/Widget.MaterialComponents.Button"
         android:text="@string/connect"
         app:cornerRadius="6dp"
         app:elevation="6dp"
