@@ -34,7 +34,7 @@ class ChipsLayout @JvmOverloads constructor(
         var maxHeight = 0
         var left = leftPadding
         var top = paddingTop
-        var right = right - paddingRight
+        var layoutWidth = measuredWidth - paddingRight
         var localRowCount = 1
 
         for (i in 0 until childCount) {
@@ -46,7 +46,7 @@ class ChipsLayout @JvmOverloads constructor(
                 left += childLp.leftMargin
 
                 maxHeight = max(childHeight + childLp.bottomMargin + childLp.topMargin, maxHeight)
-                if (childWidth + left >= right) {
+                if (childWidth + left >= layoutWidth) {
                     localRowCount += 1
                     if (localRowCount > maxRowCount) break
                     left = leftPadding + childLp.leftMargin
