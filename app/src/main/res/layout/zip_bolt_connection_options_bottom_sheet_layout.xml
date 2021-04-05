@@ -73,7 +73,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.textview.MaterialTextView
+    <com.salesground.zipbolt.ui.customviews.DividerLabel
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:alpha="0.5"
