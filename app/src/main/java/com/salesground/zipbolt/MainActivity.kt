@@ -136,11 +136,9 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
-           /* val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
+            val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
             val modalBottomSheetLayoutBinding = ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
-            modalBottomSheetDialog.setContentView(
-                R.layout.zip_bolt_connection_options_bottom_sheet_layout
-            )
+
             modalBottomSheetLayoutBinding.apply {
                 zipBoltConnectionOptionsBottomSheetLayout.setContent {
                     ZipBoltTheme() {
@@ -150,7 +148,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            modalBottomSheetDialog.show()*/
+           modalBottomSheetDialog.setContentView(
+               modalBottomSheetLayoutBinding.root
+           )
+            modalBottomSheetDialog.show()
         }
 
          /*setContent {
