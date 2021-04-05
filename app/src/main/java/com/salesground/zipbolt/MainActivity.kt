@@ -83,6 +83,8 @@ class MainActivity : AppCompatActivity() {
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
 
+    // ui variables
+    private lateinit var modalBottomSheetDialog : BottomSheetDialog
 
     private val clientServiceConnection = object : ServiceConnection {
 
@@ -120,6 +122,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(activityMainBinding.root)
 
         activityMainBinding.apply {
+            connectToPeerButton.setOnClickListener {
+                modalBottomSheetDialog.show()
+            }
             mainActivityAllMediaOnDevice.apply {
                 allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
                     supportFragmentManager,
@@ -138,25 +143,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
-          /*  val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
+            modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
             val modalBottomSheetLayoutBinding =
                 ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
 
-         modalBottomSheetLayoutBinding.apply {
-                zipBoltConnectionOptionsBottomSheetLayout.setContent {
-                    ZipBoltTheme() {
-                        Surface() {
-                            ZipBoltModalBottomSheetContent()
-                        }
-                    }
-                }
-            }
-            ViewTreeLifecycleOwner.set(modalBottomSheetLayoutBinding.root, this@MainActivity)
-            ViewTreeSavedStateRegistryOwner.set(modalBottomSheetLayoutBinding.root, this@MainActivity)
             modalBottomSheetDialog.setContentView(
                 modalBottomSheetLayoutBinding.root
             )
-            modalBottomSheetDialog.show()*/
         }
 
         /*setContent {
