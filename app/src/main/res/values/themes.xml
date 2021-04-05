@@ -17,6 +17,7 @@
         <!-- Customize your theme here. -->
     </style>
 
+
     <style name="DataCategoryTextViewTheme" parent="Theme.SpeedForce">
         <item name="android:textColor">@color/black</item>
         <item name="android:textStyle">bold</item>

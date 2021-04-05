@@ -26,6 +26,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
@@ -117,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         val activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(activityMainBinding.root)
 
-       activityMainBinding.apply {
+        activityMainBinding.apply {
             mainActivityAllMediaOnDevice.apply {
                 allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
                     supportFragmentManager,
@@ -136,10 +138,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
-            val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
-            val modalBottomSheetLayoutBinding = ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
+          /*  val modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
+            val modalBottomSheetLayoutBinding =
+                ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
 
-            modalBottomSheetLayoutBinding.apply {
+         modalBottomSheetLayoutBinding.apply {
                 zipBoltConnectionOptionsBottomSheetLayout.setContent {
                     ZipBoltTheme() {
                         Surface() {
@@ -148,37 +151,39 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-           modalBottomSheetDialog.setContentView(
-               modalBottomSheetLayoutBinding.root
-           )
-            modalBottomSheetDialog.show()
+            ViewTreeLifecycleOwner.set(modalBottomSheetLayoutBinding.root, this@MainActivity)
+            ViewTreeSavedStateRegistryOwner.set(modalBottomSheetLayoutBinding.root, this@MainActivity)
+            modalBottomSheetDialog.setContentView(
+                modalBottomSheetLayoutBinding.root
+            )
+            modalBottomSheetDialog.show()*/
         }
 
-         /*setContent {
-             ZipBoltTheme {
-                 // A surface container using the 'background' color from the theme
-                 Surface(color = MaterialTheme.colors.background) {
-                     /*ZipBoltUIEntryPoint(
-                          homeScreenViewModel = homeScreenViewModel)*/
-                    /*AllMediaOnDevice(
-                        supportFragmentManager =
-                        supportFragmentManager, viewPagerAdapterLifecycle =
-                        lifecycle
-                    )*/
-                   /* SearchingForPeersAnimation(
-                        circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
-                        baseColor = Color(0XFF006FCB),
-                        peekColor = MaterialTheme.colors.primary
-                    )*/
-                   // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
-                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
-                        supportFragmentManager =
-                        supportFragmentManager, viewPagerAdapterLifecycle =
-                        lifecycle,
-                    imagesViewModel = deviceMediaViewModel)
-                }
-            }
-        }*/
+        /*setContent {
+            ZipBoltTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(color = MaterialTheme.colors.background) {
+                    /*ZipBoltUIEntryPoint(
+                         homeScreenViewModel = homeScreenViewModel)*/
+                   /*AllMediaOnDevice(
+                       supportFragmentManager =
+                       supportFragmentManager, viewPagerAdapterLifecycle =
+                       lifecycle
+                   )*/
+                  /* SearchingForPeersAnimation(
+                       circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
+                       baseColor = Color(0XFF006FCB),
+                       peekColor = MaterialTheme.colors.primary
+                   )*/
+                  // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
+                   UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
+                       supportFragmentManager =
+                       supportFragmentManager, viewPagerAdapterLifecycle =
+                       lifecycle,
+                   imagesViewModel = deviceMediaViewModel)
+               }
+           }
+       }*/
 
 
         createNotificationChannel()
