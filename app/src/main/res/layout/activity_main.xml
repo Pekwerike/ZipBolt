@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include layout="@layout/all_media_on_device"
-        android:id="@+id/main_activity_all_media_on_device"/>
+    <include
+        android:id="@+id/main_activity_all_media_on_device"
+        layout="@layout/all_media_on_device" />
 
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/connection_to_peer_button"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="12dp"
+        android:paddingVertical="2dp"
+        style="@style/Widget.MaterialComponents.Button"
         android:text="@string/connect"
         app:cornerRadius="6dp"
         app:elevation="6dp"
-        android:layout_margin="8dp"
-        app:icon="@drawable/person_icon"
-        android:layout_gravity="end|bottom"
-        android:layout_height="wrap_content"
-        android:id="@+id/connection_to_peer_button"/>
+        app:icon="@drawable/person_icon" />
 
 </FrameLayout>
