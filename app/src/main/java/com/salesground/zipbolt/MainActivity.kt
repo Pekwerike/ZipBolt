@@ -118,10 +118,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(activityMainBinding.root)
-
-        activityMainBinding.apply {
+        ActivityMainBinding.inflate(layoutInflater).apply {
             connectToPeerButton.setOnClickListener {
                 modalBottomSheetDialog.show()
             }
@@ -143,9 +140,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
+
             modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
             val modalBottomSheetLayoutBinding =
                 ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
+
             modalBottomSheetLayoutBinding.apply {
 
                 connectToAndroid.setOnClickListener {
@@ -159,7 +158,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 modalBottomSheetDialog.setContentView(root)
             }
-
+            setContentView(root)
         }
 
         /*setContent {

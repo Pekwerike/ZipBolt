@@ -28,8 +28,8 @@
 
     <style name="CustomShapeAppearanceBottomSheetDialog" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopRight">12dp</item>
-        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>

@@ -4,9 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:cardElevation="0dp"
-    app:cardMaxElevation="0dp">
+    android:orientation="vertical">
 
 
     <com.google.android.material.textview.MaterialTextView
@@ -31,7 +29,6 @@
         android:focusable="true"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp"
-        app:cardForegroundColor="@android:color/transparent"
         app:cardMaxElevation="0dp">
 
         <com.google.android.material.textview.MaterialTextView
@@ -50,8 +47,7 @@
         android:clickable="true"
         android:focusable="true"
         app:cardBackgroundColor="@android:color/transparent"
-        app:cardElevation="0dp"
-        app:cardForegroundColor="@android:color/transparent">
+        app:cardElevation="0dp">
 
         <com.google.android.material.textview.MaterialTextView
             style="@style/ModalBottomSheetTextViewAppearance"
@@ -66,13 +62,13 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        app:cardElevation="0dp"
-        app:cardForegroundColor="@android:color/transparent">
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp">
 
         <com.google.android.material.textview.MaterialTextView
             style="@style/ModalBottomSheetTextViewAppearance"
             android:drawableStart="@drawable/pc_icon"
-            android:text="Computer"
+            android:text="Desktop"
             app:drawableStartCompat="@drawable/pc_icon" />
 
     </com.google.android.material.card.MaterialCardView>
