@@ -4,8 +4,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
+import android.os.Build
 import android.util.AttributeSet
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.ui.geometry.Offset
 import com.google.android.material.textview.MaterialTextView
 import com.salesground.zipbolt.R
 
@@ -14,6 +18,7 @@ class DividerLabel @JvmOverloads constructor(
 ) : MaterialTextView(context, attrs) {
 
     private val dividerPaint: Paint
+    private val textBounds = Rect(0, 0, 0, 0)
 
     init {
         context.theme.obtainStyledAttributes(R.styleable.DividerLabel).apply {
@@ -22,7 +27,10 @@ class DividerLabel @JvmOverloads constructor(
                 isAntiAlias = true
                 isDither = true
                 color = textColors.defaultColor
-                strokeWidth = getFloat(R.styleable.DividerLabel_strokeLineHeight, 1f)* context.resources.displayMetrics.scaledDensity
+                strokeWidth = getFloat(
+                    R.styleable.DividerLabel_strokeLineHeight,
+                    1f
+                ) * context.resources.displayMetrics.scaledDensity
                 strokeCap = Paint.Cap.ROUND
                 strokeJoin = Paint.Join.ROUND
             }
@@ -32,16 +40,18 @@ class DividerLabel @JvmOverloads constructor(
 
     }
 
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+
+
         canvas?.let {
-           val size = ((textSize / context.resources.displayMetrics.density)
-                    * length())
+
             drawDividerLine(
                 canvas = it,
                 viewHeight = measuredHeight,
                 viewWidth = measuredWidth,
-                writtenTextSize = size
+                writtenTextSize = paint.measureText(text.toString())
             )
         }
     }
