@@ -18,7 +18,6 @@ class DividerLabel @JvmOverloads constructor(
 ) : MaterialTextView(context, attrs) {
 
     private val dividerPaint: Paint
-    private val textBounds = Rect(0, 0, 0, 0)
 
     init {
         context.theme.obtainStyledAttributes(R.styleable.DividerLabel).apply {
@@ -43,10 +42,7 @@ class DividerLabel @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-
-
         canvas?.let {
-
             drawDividerLine(
                 canvas = it,
                 viewHeight = measuredHeight,
