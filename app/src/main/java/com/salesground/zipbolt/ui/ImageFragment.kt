@@ -50,8 +50,8 @@ class ImageFragment : Fragment() {
 
                 val buckets =
                     if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        it.take(12)
-                    } else it.take(24)
+                        it.take(14)
+                    } else it.take(25)
 
 
                 buckets.forEach { bucket ->
@@ -127,7 +127,7 @@ class ImageFragment : Fragment() {
                     this.adapter = dAdapter
                     this.layoutManager = dLayoutManager
                 } else {
-                    val dLayoutManager = GridLayoutManager(context, 6)
+                    val dLayoutManager = GridLayoutManager(context, 7)
                     dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                         override fun getSpanSize(position: Int): Int {
                             return when (dAdapter.getItemViewType(
