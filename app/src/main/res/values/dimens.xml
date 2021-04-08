@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="home_screen_connect_button_height">53dp</dimen>
+    <dimen name="modal_bottom_sheet_dialog_corner_radius_value">12dp</dimen>
+</resources>

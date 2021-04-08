@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -23,12 +24,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ZipBoltEntryPointLayoutBinding
+import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
 import com.salesground.zipbolt.ui.screen.generalcomponents.*
 import com.salesground.zipbolt.ui.screen.homescreen.HomeScreen
 import com.salesground.zipbolt.viewmodel.HomeScreenViewModel
+import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -39,13 +46,16 @@ sealed class ConnectivityState() {
     data class PeersDiscovered(val peersList: MutableList<WifiP2pDevice>) : ConnectivityState()
 }
 
+@ExperimentalPagerApi
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @Composable
 fun UIEntryPoint(
     beginPeerDiscovery: () -> Unit,
-    homeScreenViewModel: HomeScreenViewModel
+    supportFragmentManager: FragmentManager,
+    imagesViewModel : ImagesViewModel,
+    viewPagerAdapterLifecycle: Lifecycle
 ) {
     lateinit var persistentBottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     val context = LocalContext.current
@@ -82,7 +92,7 @@ fun UIEntryPoint(
                     }
                     persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     persistentBottomSheetBehavior.peekHeight =
-                        (context.resources.displayMetrics.widthPixels * 0.15f).roundToInt()
+                        (context.resources.displayMetrics.widthPixels * 0.125f).roundToInt()
                 }
             )
 
@@ -91,7 +101,121 @@ fun UIEntryPoint(
             topStart = CornerSize(12.dp), topEnd = CornerSize(12.dp)
         )
     ) {
-        AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
+        Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd){
+            Box(){
+                // TODO
+                /* 1. if bottom sheet is hidden show connect button
+                2. if bottom sheet is collapsed show send button
+                2b. increase the padding of the send button by the bottom sheet peek height
+                3. OnClick of the connect button, open the modal bottom sheet action options
+                * */
+                if (persistentBottomSheetState == BottomSheetBehavior.STATE_HIDDEN) {
+                    ZipBoltMainFloatingActionButton(
+                        label = "Connect",
+                        onClick = {
+                            coroutineScope.launch {
+                                modalBottomSheetState.show()
+                            }
+                        }
+                    )
+                } else {
+                    /*ZipBoltMainFloatingActionButton(
+                        modifier = Modifier.padding(bottom = 50.dp),
+                        label = "Send",
+                        icon = Icons.Rounded.Send,
+                        onClick = { }
+                    )*/
+                }
+            }
+            AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
+                zipBoltEntryPointComposeView.setContent {
+
+                        // Place navHost here
+                         AllMediaOnDevice(
+                             supportFragmentManager =
+                             supportFragmentManager, viewPagerAdapterLifecycle =
+                             viewPagerAdapterLifecycle
+                         )
+                        //AllMediaOnDeviceComposable(imagesViewModel = imagesViewModel)
+                }
+
+                persistentBottomSheetBehavior =
+                    BottomSheetBehavior.from(zipBoltPersistentBottomSheetViewGroup)
+                persistentBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+                persistentBottomSheetBehavior.addBottomSheetCallback(
+                    PersistentBottomSheetCallBack(
+                        actionCallback = object : PersistentBottomSheetCallBack.OnActionCallback {
+                            override fun bottomSheetStateChanged(state: Int) {
+                                persistentBottomSheetState = state
+                                persistentBottomSheetBehavior.state = state
+                            }
+
+                            override fun bottomSheetSlide(slideValue: Float) {
+                                persistentBottomSheetSlideValue = slideValue
+                            }
+
+                        }
+                    )
+                )
+
+                zipBoltPersistentBottomSheetComposeView.setContent {
+                    // place different bottom sheet contents here
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colors.surface)
+                    ) {
+                        when (connectivityState) {
+                            is ConnectivityState.NoAction -> {
+                            }
+                            is ConnectivityState.PeersDiscoveryInitiated -> {
+                                when (persistentBottomSheetState) {
+                                    BottomSheetBehavior.STATE_EXPANDED -> {
+                                        ExpandedSearchingForPeers(onStopSearchingClicked = { },
+                                            onArrowDownClicked = {})
+                                    }
+                                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                                        CollapsedSearchingForPeers(
+                                            onCancel = {
+                                                /*TODO
+                    1. Cancel searching for peers
+                     2. Set the peek height of the bottom sheet to 0
+                     3. set the bottom sheet state to hidden*/
+
+                                            },
+                                            onClick = {
+                                                persistentBottomSheetBehavior.state =
+                                                    BottomSheetBehavior.STATE_EXPANDED
+                                            })
+                                    }
+                                    else -> {
+                                        // show both expanded searching for peers layout and
+                                        // collapsed searching for peers layout but control their visibility using alpha
+                                        Box(modifier = Modifier.fillMaxSize()) {
+                                            CollapsedSearchingForPeers(
+                                                onCancel = { /*TODO*/ },
+                                                onClick = {},
+                                                alpha = 1 - (persistentBottomSheetSlideValue * 2.5f)
+                                            )
+                                            ExpandedSearchingForPeers(
+                                                onStopSearchingClicked = { },
+                                                onArrowDownClicked = {},
+                                                alpha = persistentBottomSheetSlideValue
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            is ConnectivityState.PeersDiscovered -> {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+       /* AndroidViewBinding(ZipBoltEntryPointLayoutBinding::inflate) {
             zipBoltEntryPointComposeView.setContent {
                 Scaffold(
                     floatingActionButton = {
@@ -120,8 +244,13 @@ fun UIEntryPoint(
                         }
                     }
                 ) {
-                    // Place navHost here
-                    HomeScreen(homeScreenViewModel = homeScreenViewModel)
+                        // Place navHost here
+                       /* AllMediaOnDevice(
+                            supportFragmentManager =
+                            supportFragmentManager, viewPagerAdapterLifecycle =
+                            viewPagerAdapterLifecycle
+                        )*/
+                    AllMediaOnDeviceComposable(imagesViewModel = imagesViewModel)
                 }
             }
 
@@ -182,7 +311,7 @@ fun UIEntryPoint(
                                         CollapsedSearchingForPeers(
                                             onCancel = { /*TODO*/ },
                                             onClick = {},
-                                            alpha = 1 - (persistentBottomSheetSlideValue * 2f)
+                                            alpha = 1 - (persistentBottomSheetSlideValue * 2.5f)
                                         )
                                         ExpandedSearchingForPeers(
                                             onStopSearchingClicked = { },
@@ -198,7 +327,7 @@ fun UIEntryPoint(
                     }
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -214,11 +343,11 @@ fun ExpandedSearchingForPeers(
             .alpha(alpha),
         contentAlignment = Alignment.BottomCenter
     ) {
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             item {
                 Box(
@@ -237,14 +366,12 @@ fun ExpandedSearchingForPeers(
                         textAlign = TextAlign.Center
                     )
                 }
-            }
-            item {
                 SearchingForPeersAnimation(
-                    modifier = Modifier.padding(8.dp).requiredSize(
-                        (context.resources.displayMetrics.widthPixels * 0.30f).dp),
-                    circlePeekRadius = context.resources.displayMetrics.widthPixels * 0.30f
-                )
+                    modifier = Modifier.padding(16.dp),
+                    circlePeekRadius = context.resources.displayMetrics.widthPixels * 0.30f)
+
             }
+
 
             item {
                 Text(
@@ -263,10 +390,13 @@ fun ExpandedSearchingForPeers(
 
             }
         }
-        Button(
+        OutlinedButton(
             onClick = { /*TODO*/ }, modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth())
+                .fillMaxWidth(), 
+        border = BorderStroke(width = 1.5.dp, brush = Brush.linearGradient(listOf(
+            MaterialTheme.colors.primary.copy(0.6f), MaterialTheme.colors.primary.copy(0.3f)
+        ))))
          {
             Text(text = "Stop Search",  modifier = Modifier
                 .padding(8.dp))
@@ -290,8 +420,9 @@ fun CollapsedSearchingForPeers(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             SearchingForPeersAnimation(
+                modifier = Modifier.padding(4.dp),
                 circlePeekRadius =
-                context.resources.displayMetrics.widthPixels * 0.05f
+                context.resources.displayMetrics.widthPixels * 0.05f,
             )
 
             Column() {

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/DataCategoryTextViewTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:drawableTop="@drawable/slide_down_indicator"
+        android:drawablePadding="10dp"
+        android:padding="4dp"
+        android:text="Connect to"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/connect_to_android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:elevation="0dp"
+        android:focusable="true"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp"
+        app:cardMaxElevation="0dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/ModalBottomSheetTextViewAppearance"
+            android:drawableStart="@drawable/android_icon"
+            android:text="Android"
+            app:drawableStartCompat="@drawable/android_icon" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/connect_to_iphone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/ModalBottomSheetTextViewAppearance"
+            android:drawableStart="@drawable/apple_icon"
+            android:text="iPhone"
+            app:drawableStartCompat="@drawable/apple_icon" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/connect_to_desktop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/ModalBottomSheetTextViewAppearance"
+            android:drawableStart="@drawable/pc_icon"
+            android:text="Desktop"
+            app:drawableStartCompat="@drawable/pc_icon" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.salesground.zipbolt.ui.customviews.DividerLabel
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alpha="0.7"
+        android:paddingHorizontal="8dp"
+        android:text="Or"
+        app:strokeLineHeight="0.6"
+        android:textAlignment="center" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/share_zip_bolt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            style="@style/ModalBottomSheetTextViewAppearance"
+            android:layout_marginBottom="8dp"
+            android:drawableStart="@drawable/share_icon"
+            android:text="Share ZipBolt"
+            app:drawableStartCompat="@drawable/share_icon" />
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

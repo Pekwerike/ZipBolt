@@ -14,6 +14,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -25,14 +26,25 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
+import com.salesground.zipbolt.databinding.ActivityMainBinding
+
+import com.salesground.zipbolt.databinding.ZipBoltConnectionOptionsBottomSheetLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.UIEntryPoint
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
+import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
+import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
 import com.salesground.zipbolt.ui.screen.generalcomponents.SearchingForPeersAnimation
+import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltModalBottomSheetContent
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,6 +83,8 @@ class MainActivity : AppCompatActivity() {
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
 
+    // ui variables
+    private lateinit var modalBottomSheetDialog: BottomSheetDialog
 
     private val clientServiceConnection = object : ServiceConnection {
 
@@ -97,33 +111,81 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @ExperimentalPagerApi
     @ExperimentalMaterialApi
     @ExperimentalAnimationApi
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
+        ActivityMainBinding.inflate(layoutInflater).apply {
+            connectToPeerButton.setOnClickListener {
+                modalBottomSheetDialog.show()
+            }
+            mainActivityAllMediaOnDevice.apply {
+                allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
+                    supportFragmentManager,
+                    lifecycle
+                )
+                TabLayoutMediator(
+                    allMediaOnDeviceTabLayout,
+                    allMediaOnDeviceViewPager
+                ) { tab, position ->
+                    when (position) {
+                        0 -> tab.text = "Apps"
+                        1 -> tab.text = "Images"
+                        2 -> tab.text = "Videos"
+                        3 -> tab.text = "Music"
+                        4 -> tab.text = "Files"
+                    }
+                }.attach()
+            }
+
+            modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
+            val modalBottomSheetLayoutBinding =
+                ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
+
+            modalBottomSheetLayoutBinding.apply {
+
+                connectToAndroid.setOnClickListener {
+                    displayToast("Connect to Android")
+                }
+                connectToIphone.setOnClickListener {
+                    displayToast("Connect to iPhone")
+                }
+                connectToDesktop.setOnClickListener {
+                    displayToast("Connect to Desktop")
+                }
+                modalBottomSheetDialog.setContentView(root)
+            }
+            setContentView(root)
+        }
+
+        /*setContent {
             ZipBoltTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     /*ZipBoltUIEntryPoint(
-                          homeScreenViewModel = homeScreenViewModel)*/
-                  /*  AllMediaOnDevice(
-                        supportFragmentManager =
-                        supportFragmentManager, viewPagerAdapterLifecycle =
-                        lifecycle
-                    )*/
-                    /*SearchingForPeersAnimation(
-                        circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
-                        baseColor = Color(0XFF006FCB),
-                        peekColor = MaterialTheme.colors.primary
-                    )*/
-                    UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
-                    homeScreenViewModel = homeScreenViewModel)
-                }
-            }
-        }
+                         homeScreenViewModel = homeScreenViewModel)*/
+                   /*AllMediaOnDevice(
+                       supportFragmentManager =
+                       supportFragmentManager, viewPagerAdapterLifecycle =
+                       lifecycle
+                   )*/
+                  /* SearchingForPeersAnimation(
+                       circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
+                       baseColor = Color(0XFF006FCB),
+                       peekColor = MaterialTheme.colors.primary
+                   )*/
+                  // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
+                   UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
+                       supportFragmentManager =
+                       supportFragmentManager, viewPagerAdapterLifecycle =
+                       lifecycle,
+                   imagesViewModel = deviceMediaViewModel)
+               }
+           }
+       }*/
 
 
         createNotificationChannel()

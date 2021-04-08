@@ -9,15 +9,17 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:theme="@style/AppBarLayoutCustomTheme"
-        app:elevation="0dp"
-        android:layout_height="wrap_content">
+        app:elevation="0dp">
 
-        <androidx.compose.ui.platform.ComposeView
-            android:id="@+id/fragment_image_images_bucket_view_group"
+        <com.salesground.zipbolt.ui.customviews.ChipsLayout
+            android:id="@+id/images_category_chips_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             app:layout_scrollFlags="scroll|enterAlways" />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 

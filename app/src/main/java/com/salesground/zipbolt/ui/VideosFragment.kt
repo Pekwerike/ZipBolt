@@ -10,6 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.platform.ComposeView
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.databinding.FragmentVideosBinding
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 
 class VideosFragment : Fragment() {
@@ -24,15 +25,8 @@ class VideosFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return ComposeView(requireActivity()).apply {
-            setContent {
-                ZipBoltTheme() {
-                    Surface(color = MaterialTheme.colors.background) {
-                        Text(text = "Compose in VideosFragment")
-                    }
-                }
-            }
-        }
+        val fragmentVideosLayout = FragmentVideosBinding.inflate(inflater, container, false)
+        return fragmentVideosLayout.root
 
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.ui.platform.ComposeView
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.databinding.FragmentFilesBinding
 import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 
 
@@ -25,14 +26,9 @@ class FilesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return ComposeView(requireContext()).apply {
-            setContent {
-                ZipBoltTheme() {
-                    Surface(color = MaterialTheme.colors.background) {
-                        Text(text = "Compose inside Files fragment osheyy")
-                    }
-                }
-            }
-        }
+        val filesFragmentLayout = FragmentFilesBinding.inflate(inflater, container, false)
+
+        return filesFragmentLayout.root
+
     }
 }
