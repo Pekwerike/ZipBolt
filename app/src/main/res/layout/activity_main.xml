@@ -24,7 +24,9 @@
         app:icon="@drawable/person_icon" />
 
     <include
+        android:id="@+id/connection_info_persistent_bottom_sheet_layout"
         layout="@layout/persistent_bottom_sheet_layout"
         />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

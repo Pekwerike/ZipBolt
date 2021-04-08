@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:layout_behavior="@string/bottom_sheet_behavior"
-    app:peakHeight="0dp"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="0dp"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/collaped_searching_for_peers_view_group"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:gravity="center"

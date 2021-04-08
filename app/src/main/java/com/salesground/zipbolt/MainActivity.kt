@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -29,6 +30,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewTreeLifecycleOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
@@ -85,6 +87,7 @@ class MainActivity : AppCompatActivity() {
 
     // ui variables
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
+    private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior
 
     private val clientServiceConnection = object : ServiceConnection {
 
@@ -148,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             modalBottomSheetLayoutBinding.apply {
 
                 connectToAndroid.setOnClickListener {
-                    displayToast("Connect to Android")
+                    openConnectionInfoBottomSheetLayout()
                 }
                 connectToIphone.setOnClickListener {
                     displayToast("Connect to iPhone")
@@ -158,6 +161,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 modalBottomSheetDialog.setContentView(root)
             }
+            connectionInfoBottomSheetBehavior = BottomSheetBehavior.from(connectionInfoPersistentBottomSheetLayout.root)
             setContentView(root)
         }
 
@@ -193,6 +197,9 @@ class MainActivity : AppCompatActivity() {
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
+    }
+    private fun openConnectionInfoBottomSheetLayout(){
+        connectionInfoBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
     }
 
     private fun imageSelected(image: MediaModel) {
