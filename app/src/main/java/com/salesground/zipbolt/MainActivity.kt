@@ -186,7 +186,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     sendFileButton.alpha = 0f
-                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.5f
+                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.6f
                     expandedSearchingForPeersInfoView.alpha = slideOffset
                 }
             })
