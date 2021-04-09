@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
     // ui variables
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
-    private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior
+    private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
 
     private val clientServiceConnection = object : ServiceConnection {
 
