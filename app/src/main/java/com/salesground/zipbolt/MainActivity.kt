@@ -17,6 +17,7 @@ import android.os.IBinder
 import android.view.View
 import android.view.ViewStub
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -124,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         inflate(layoutInflater).apply {
             setContentView(root)
             connectToPeerButton.setOnClickListener {
-                modalBottomSheetDialog.show()
+                if(it.alpha > 0f) modalBottomSheetDialog.show()
             }
             mainActivityAllMediaOnDevice.apply {
                 allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
@@ -154,7 +155,6 @@ class MainActivity : AppCompatActivity() {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
                         connectToPeerButton.alpha = 0f
-                        connectToPeerButton.visibility = View.GONE
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         connectionInfoBottomSheetBehavior.peekHeight =
                             (70 * resources.displayMetrics.density).roundToInt()
@@ -186,10 +186,14 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     sendFileButton.alpha = 0f
-                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.3f
+                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.5f
                     expandedSearchingForPeersInfoView.alpha = slideOffset
                 }
             })
+            expandedSearchingForPeersInfoView.findViewById<ImageButton>(R.id.collapse_expanded_searching_for_peers_image_button)
+                .setOnClickListener {
+                    connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
         }
 
         createNotificationChannel()
