@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewStub
 import android.widget.FrameLayout
 import android.widget.ImageButton
@@ -29,6 +30,7 @@ import androidx.core.view.isVisible
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
@@ -80,15 +82,13 @@ class MainActivity : AppCompatActivity() {
     // ui variables
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    private val expandedSearchingForPeersInfoView: View by lazy{
+    private val expandedSearchingForPeersInfoView: View by lazy {
         findViewById<ViewStub>(R.id.expanded_searching_for_peers_info_view_stub).inflate()
     }
-    private val collapsedSearchingForPeersInfoView: View by lazy{
+    private val collapsedSearchingForPeersInfoView: View by lazy {
         findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
     }
-    private val collapsedSearchingForPeersInfoViewStub: ViewStub by lazy {
-        findViewById(R.id.collapsed_searching_for_peers_info_view_stub)
-    }
+
 
     private val clientServiceConnection = object : ServiceConnection {
 
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         inflate(layoutInflater).apply {
             setContentView(root)
             connectToPeerButton.setOnClickListener {
-                if(it.alpha > 0f) modalBottomSheetDialog.show()
+                if (it.alpha > 0f) modalBottomSheetDialog.show()
             }
             mainActivityAllMediaOnDevice.apply {
                 allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
@@ -154,10 +154,7 @@ class MainActivity : AppCompatActivity() {
                 connectToAndroid.setOnClickListener {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
-                        connectToPeerButton.animate().alpha(0f).apply{
-                            duration = 1000
-                            start()
-                        }
+                        connectToPeerButton.animate().alpha(0f).start()
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         connectionInfoBottomSheetBehavior.peekHeight =
                             (70 * resources.displayMetrics.density).roundToInt()
@@ -174,13 +171,13 @@ class MainActivity : AppCompatActivity() {
             }
             connectionInfoBottomSheetBehavior =
                 BottomSheetBehavior.from(connectionInfoPersistentBottomSheetLayout.root)
-            collapsedSearchingForPeersInfoView.setOnClickListener{
+            collapsedSearchingForPeersInfoView.setOnClickListener {
                 connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
             connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
                 BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    when(newState){
+                    when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
                             sendFileButton.animate().alpha(1f).start()
                         }
@@ -188,7 +185,6 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    sendFileButton.animate().alpha(0f).start()
                     collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.6f
                     expandedSearchingForPeersInfoView.alpha = slideOffset
                 }
