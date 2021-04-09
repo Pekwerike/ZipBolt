@@ -134,7 +134,7 @@ class ImageFragment : Fragment() {
                                 position
                             )) {
                                 DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
-                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 6
+                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 7
                                 else -> 1
                             }
                         }
