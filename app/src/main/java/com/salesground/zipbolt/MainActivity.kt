@@ -14,44 +14,34 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewStub
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.ViewTreeLifecycleOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import androidx.core.view.isVisible
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
-import com.salesground.zipbolt.databinding.ActivityMainBinding
+import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 
 import com.salesground.zipbolt.databinding.ZipBoltConnectionOptionsBottomSheetLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
-import com.salesground.zipbolt.ui.screen.UIEntryPoint
-import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDevice
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
-import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.AllMediaOnDeviceComposable
-import com.salesground.zipbolt.ui.screen.generalcomponents.SearchingForPeersAnimation
-import com.salesground.zipbolt.ui.screen.generalcomponents.ZipBoltModalBottomSheetContent
-import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -89,6 +79,15 @@ class MainActivity : AppCompatActivity() {
     // ui variables
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
+    private val expandedSearchingForPeersInfoView: View by lazy{
+        findViewById<ViewStub>(R.id.expanded_searching_for_peers_info_view_stub).inflate()
+    }
+    private val collapsedSearchingForPeersInfoView: View by lazy{
+        findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
+    }
+    private val collapsedSearchingForPeersInfoViewStub: ViewStub by lazy {
+        findViewById(R.id.collapsed_searching_for_peers_info_view_stub)
+    }
 
     private val clientServiceConnection = object : ServiceConnection {
 
@@ -122,7 +121,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ActivityMainBinding.inflate(layoutInflater).apply {
+        inflate(layoutInflater).apply {
+            setContentView(root)
             connectToPeerButton.setOnClickListener {
                 modalBottomSheetDialog.show()
             }
@@ -150,9 +150,16 @@ class MainActivity : AppCompatActivity() {
                 ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
 
             modalBottomSheetLayoutBinding.apply {
-
                 connectToAndroid.setOnClickListener {
-                    openConnectionInfoBottomSheetLayout()
+                    connectionInfoPersistentBottomSheetLayout.apply {
+                        modalBottomSheetDialog.dismiss()
+                        connectToPeerButton.alpha = 0f
+                        connectToPeerButton.visibility = View.GONE
+                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                        connectionInfoBottomSheetBehavior.peekHeight =
+                            (70 * resources.displayMetrics.density).roundToInt()
+
+                    }
                 }
                 connectToIphone.setOnClickListener {
                     displayToast("Connect to iPhone")
@@ -162,45 +169,34 @@ class MainActivity : AppCompatActivity() {
                 }
                 modalBottomSheetDialog.setContentView(root)
             }
-            connectionInfoBottomSheetBehavior = BottomSheetBehavior.from(connectionInfoPersistentBottomSheetLayout.root)
-            setContentView(root)
+            connectionInfoBottomSheetBehavior =
+                BottomSheetBehavior.from(connectionInfoPersistentBottomSheetLayout.root)
+            collapsedSearchingForPeersInfoView.setOnClickListener{
+                connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+            connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when(newState){
+                        BottomSheetBehavior.STATE_COLLAPSED -> {
+                            sendFileButton.alpha = 1f
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    sendFileButton.alpha = 0f
+                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.3f
+                    expandedSearchingForPeersInfoView.alpha = slideOffset
+                }
+            })
         }
-
-        /*setContent {
-            ZipBoltTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    /*ZipBoltUIEntryPoint(
-                         homeScreenViewModel = homeScreenViewModel)*/
-                   /*AllMediaOnDevice(
-                       supportFragmentManager =
-                       supportFragmentManager, viewPagerAdapterLifecycle =
-                       lifecycle
-                   )*/
-                  /* SearchingForPeersAnimation(
-                       circlePeekRadius = resources.displayMetrics.widthPixels * 0.2f,
-                       baseColor = Color(0XFF006FCB),
-                       peekColor = MaterialTheme.colors.primary
-                   )*/
-                  // AllMediaOnDeviceComposable(imagesViewModel = deviceMediaViewModel)
-                   UIEntryPoint(beginPeerDiscovery = ::beginPeerDiscovery,
-                       supportFragmentManager =
-                       supportFragmentManager, viewPagerAdapterLifecycle =
-                       lifecycle,
-                   imagesViewModel = deviceMediaViewModel)
-               }
-           }
-       }*/
-
 
         createNotificationChannel()
         checkReadAndWriteExternalStoragePermission()
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
-    }
-    private fun openConnectionInfoBottomSheetLayout(){
-        connectionInfoBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
     }
 
     private fun imageSelected(image: MediaModel) {

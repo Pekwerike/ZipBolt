@@ -76,10 +76,10 @@
     <com.salesground.zipbolt.ui.customviews.DividerLabel
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:alpha="0.7"
+        android:alpha="0.5"
         android:paddingHorizontal="8dp"
         android:text="Or"
-        app:strokeLineHeight="0.6"
+        app:strokeLineHeight="0.5"
         android:textAlignment="center" />
 
     <com.google.android.material.card.MaterialCardView

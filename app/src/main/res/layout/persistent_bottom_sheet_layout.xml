@@ -20,5 +20,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:inflatedId="@+id/expanded_searching_for_peers_info"
-        android:layout="@layout/expanded_searching_for_peers_information" />
+        android:layout="@layout/expanded_searching_for_peers_information"/>
 </FrameLayout>

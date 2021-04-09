@@ -23,6 +23,19 @@
         app:elevation="6dp"
         app:icon="@drawable/person_icon" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/send_file_button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/home_screen_connect_button_height"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="72dp"
+        android:layout_marginHorizontal="12dp"
+        android:text="@string/send_label"
+        app:cornerRadius="6dp"
+        app:elevation="6dp"
+        android:alpha="0"
+        app:icon="@drawable/send_icon" />
+
     <include
         android:id="@+id/connection_info_persistent_bottom_sheet_layout"
         layout="@layout/persistent_bottom_sheet_layout"
