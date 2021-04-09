@@ -154,7 +154,10 @@ class MainActivity : AppCompatActivity() {
                 connectToAndroid.setOnClickListener {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
-                        connectToPeerButton.alpha = 0f
+                        connectToPeerButton.animate().alpha(0f).apply{
+                            duration = 1000
+                            start()
+                        }
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         connectionInfoBottomSheetBehavior.peekHeight =
                             (70 * resources.displayMetrics.density).roundToInt()
@@ -179,13 +182,13 @@ class MainActivity : AppCompatActivity() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when(newState){
                         BottomSheetBehavior.STATE_COLLAPSED -> {
-                            sendFileButton.alpha = 1f
+                            sendFileButton.animate().alpha(1f).start()
                         }
                     }
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    sendFileButton.alpha = 0f
+                    sendFileButton.animate().alpha(0f).start()
                     collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.6f
                     expandedSearchingForPeersInfoView.alpha = slideOffset
                 }
