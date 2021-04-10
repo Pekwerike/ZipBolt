@@ -27,18 +27,22 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
+import com.salesground.zipbolt.databinding.ActivityMainBinding
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
+import com.salesground.zipbolt.databinding.CollapsedSearchingForPeersInformationBinding
 
 import com.salesground.zipbolt.databinding.ZipBoltConnectionOptionsBottomSheetLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.MediaModel
+import com.salesground.zipbolt.model.ui.PeerConnectionState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
@@ -80,6 +84,7 @@ class MainActivity : AppCompatActivity() {
     private var isClientServiceBound: Boolean = false
 
     // ui variables
+    private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     private val expandedSearchingForPeersInfoView: View by lazy {
@@ -89,10 +94,19 @@ class MainActivity : AppCompatActivity() {
         findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
     }
 
+    private val collapsedSearchingForPeersInfoBinding:
+            CollapsedSearchingForPeersInformationBinding by lazy {
+        val collapsedSearchingForPeerView =
+            findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
+        DataBindingUtil.bind<CollapsedSearchingForPeersInformationBinding>(collapsedSearchingForPeerView)
+        DataBindingUtil.getBinding(collapsedSearchingForPeerView)!!
+    }
+
 
     private val clientServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+
             val clientServiceBinder = p1 as ClientService.ClientServiceBinder
             mainActivityViewModel.clientServiceRead(clientServiceBinder.getClientServiceBinder())
             isClientServiceBound = true
@@ -124,6 +138,7 @@ class MainActivity : AppCompatActivity() {
 
         inflate(layoutInflater).apply {
             setContentView(root)
+            activityMainBinding = this
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) modalBottomSheetDialog.show()
             }
@@ -171,7 +186,7 @@ class MainActivity : AppCompatActivity() {
             }
             connectionInfoBottomSheetBehavior =
                 BottomSheetBehavior.from(connectionInfoPersistentBottomSheetLayout.root)
-            collapsedSearchingForPeersInfoView.setOnClickListener {
+            collapsedSearchingForPeersInfoBinding.root.setOnClickListener {
                 connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
             connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
@@ -179,13 +194,27 @@ class MainActivity : AppCompatActivity() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_COLLAPSED -> {
+                            mainActivityViewModel.updatePeerConnectionState(
+                                peerConnectionState =
+                                PeerConnectionState.CollapsedSearchingForPeer(
+                                    numberOfDevicesFound =
+                                    0
+                                )
+                            )
                             sendFileButton.animate().alpha(1f).start()
+                        }
+                        BottomSheetBehavior.STATE_EXPANDED -> {
+                            mainActivityViewModel.updatePeerConnectionState(
+                                peerConnectionState = PeerConnectionState.ExpandedSearchingForPeer(
+                                    devices = mutableListOf()
+                                )
+                            )
                         }
                     }
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 3f
+                    collapsedSearchingForPeersInfoBinding.root.alpha = 1 - slideOffset * 3f
                     expandedSearchingForPeersInfoView.alpha = slideOffset
                 }
             })
@@ -315,9 +344,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
 
     private fun registerIntentFilter(): IntentFilter {
         return IntentFilter().apply {
@@ -348,6 +374,28 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun observeViewModelLiveData() {
+        mainActivityViewModel.peerConnectionState.observe(this) {
+            it?.let { peerConnectionState ->
+                when (peerConnectionState) {
+                    is PeerConnectionState.CollapsedConnectedToPeer -> TODO()
+                    is PeerConnectionState.CollapsedSearchingForPeer -> {
+                        connectionInfoBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
+                    }
+                    is PeerConnectionState.ExpandedConnectedToPeer -> TODO()
+                    is PeerConnectionState.ExpandedSearchingForPeer -> {
+                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                        collapsedSearchingForPeersInfoBinding.root.alpha = 0f
+                        activityMainBinding.connectToPeerButton.alpha = 0f
+                        connectionInfoBottomSheetBehavior.peekHeight =
+                            (70f * resources.displayMetrics.density).roundToInt()
+                    }
+                    PeerConnectionState.NoConnectionAction -> {
+                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    }
+                }
+            }
+        }
         // wifiP2p state changed, either enabled or disabled
         mainActivityViewModel.isWifiP2pEnabled.observe(this, {
             it?.let {
@@ -451,6 +499,10 @@ class MainActivity : AppCompatActivity() {
         permission.ACCESS_FINE_LOCATION
     ) ==
             PackageManager.PERMISSION_GRANTED
+
+    private fun displayToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun onResume() {
         super.onResume()

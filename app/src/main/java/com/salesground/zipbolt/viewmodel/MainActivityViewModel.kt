@@ -38,7 +38,22 @@ class MainActivityViewModel : ViewModel() {
     val serverService: LiveData<ServerService> = _serverService
 
     fun updatePeerConnectionState(peerConnectionState: PeerConnectionState) {
-        _peerConnectionState.value = peerConnectionState
+        when(peerConnectionState){
+            is PeerConnectionState.CollapsedConnectedToPeer -> TODO()
+            is PeerConnectionState.CollapsedSearchingForPeer -> {
+                _peerConnectionState.value = PeerConnectionState.CollapsedSearchingForPeer(
+                    numberOfDevicesFound = discoveredPeersListState.value.size
+                )
+            }
+            is PeerConnectionState.ExpandedConnectedToPeer -> TODO()
+            is PeerConnectionState.ExpandedSearchingForPeer -> {
+                _peerConnectionState.value = PeerConnectionState.ExpandedSearchingForPeer(
+                    devices = discoveredPeersListState.value
+                )
+            }
+            PeerConnectionState.NoConnectionAction -> TODO()
+        }
+
     }
 
     fun serverServiceReady(serverService: ServerService) {
