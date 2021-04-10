@@ -10,4 +10,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="connect">Connect</string>
     <string name="send_label">Send</string>
+    <string name="desktop_label">Desktop</string>
+    <string name="or_label">Or</string>
+    <string name="share_zipbolt_label">Share ZipBolt</string>
+    <string name="iphone_label">iPhone</string>
 </resources>

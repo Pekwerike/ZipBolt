@@ -24,12 +24,8 @@
         android:id="@+id/connect_to_android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:elevation="0dp"
-        android:focusable="true"
         app:cardBackgroundColor="@android:color/transparent"
-        app:cardElevation="0dp"
-        app:cardMaxElevation="0dp">
+        app:cardElevation="0dp">
 
         <com.google.android.material.textview.MaterialTextView
             style="@style/ModalBottomSheetTextViewAppearance"
@@ -44,15 +40,13 @@
         android:id="@+id/connect_to_iphone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp">
 
         <com.google.android.material.textview.MaterialTextView
             style="@style/ModalBottomSheetTextViewAppearance"
             android:drawableStart="@drawable/apple_icon"
-            android:text="iPhone"
+            android:text="@string/iphone_label"
             app:drawableStartCompat="@drawable/apple_icon" />
     </com.google.android.material.card.MaterialCardView>
 
@@ -60,15 +54,13 @@
         android:id="@+id/connect_to_desktop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp">
 
         <com.google.android.material.textview.MaterialTextView
             style="@style/ModalBottomSheetTextViewAppearance"
             android:drawableStart="@drawable/pc_icon"
-            android:text="Desktop"
+            android:text="@string/desktop_label"
             app:drawableStartCompat="@drawable/pc_icon" />
 
     </com.google.android.material.card.MaterialCardView>
@@ -78,16 +70,14 @@
         android:layout_height="wrap_content"
         android:alpha="0.5"
         android:paddingHorizontal="8dp"
-        android:text="Or"
-        app:strokeLineHeight="0.5"
-        android:textAlignment="center" />
+        android:text="@string/or_label"
+        android:textAlignment="center"
+        app:strokeLineHeight="0.5" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/share_zip_bolt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp">
 
@@ -95,7 +85,7 @@
             style="@style/ModalBottomSheetTextViewAppearance"
             android:layout_marginBottom="8dp"
             android:drawableStart="@drawable/share_icon"
-            android:text="Share ZipBolt"
+            android:text="@string/share_zipbolt_label"
             app:drawableStartCompat="@drawable/share_icon" />
     </com.google.android.material.card.MaterialCardView>
 

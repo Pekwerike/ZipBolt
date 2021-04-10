@@ -47,6 +47,15 @@
             app:layout_constraintStart_toEndOf="@+id/medium_searching_for_peers_animation"
             app:layout_constraintTop_toBottomOf="@+id/collapsed_searching_for_peers_label" />
 
+        <androidx.appcompat.widget.AppCompatImageButton
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="10dp"
+            android:src="@drawable/cancel_icon"
+            android:background="@android:color/transparent"
+            android:layout_width="30dp"
+            style="@style/ImageButtonStyle"
+            android:layout_height="30dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
