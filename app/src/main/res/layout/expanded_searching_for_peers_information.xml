@@ -34,12 +34,12 @@
                 android:text="Searching for peers" />
         </FrameLayout>
 
-        <ImageView
-            android:layout_width="400dp"
+        <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
             android:layout_height="400dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="400dp"
+            android:layout_gravity="center"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_launcher_background" />
+            />
 
 
     </LinearLayout>

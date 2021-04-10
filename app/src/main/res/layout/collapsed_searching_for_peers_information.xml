@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
         android:layout_width="match_parent"
+        android:padding="0dp"
         android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/medium_searching_for_peers_animation"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_margin="10dp"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,14 +49,14 @@
             app:layout_constraintTop_toBottomOf="@+id/collapsed_searching_for_peers_label" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="10dp"
-            android:src="@drawable/close_icon"
-            android:background="@android:color/transparent"
-            android:layout_width="30dp"
             style="@style/ImageButtonStyle"
-            android:layout_height="30dp"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/close_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
 </layout>

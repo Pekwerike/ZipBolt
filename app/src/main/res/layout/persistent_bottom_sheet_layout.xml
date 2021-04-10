@@ -7,7 +7,7 @@
     app:behavior_hideable="false"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="@string/bottom_sheet_behavior"
-    android:elevation="20dp">
+    android:elevation="30dp">
 
     <ViewStub
         android:id="@+id/collapsed_searching_for_peers_info_view_stub"

@@ -177,7 +177,8 @@ class MainActivity : AppCompatActivity() {
                 connectToAndroid.setOnClickListener {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
-                        connectToPeerButton.animate().alpha(0f).start()
+                      //  connectToPeerButton.animate().alpha(0f).start()
+                        connectToPeerButton.visibility = View.GONE
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
 
@@ -230,16 +231,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
+        observeViewModelLiveData()
         createNotificationChannel()
         checkReadAndWriteExternalStoragePermission()
-        observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
     }
 
     private fun getBottomSheetPeekHeight(): Int {
-        return (70 * resources.displayMetrics.density).roundToInt()
+        return (65 * resources.displayMetrics.density).roundToInt()
     }
 
     private fun imageSelected(image: MediaModel) {
@@ -320,7 +320,7 @@ class MainActivity : AppCompatActivity() {
         wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfiguration,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
-                    // Broadcast receiveer notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
+                    // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
                 }
 
                 override fun onFailure(p0: Int) {
@@ -388,7 +388,9 @@ class MainActivity : AppCompatActivity() {
         mainActivityViewModel.peerConnectionState.observe(this) {
             it?.let { peerConnectionState ->
                 when (peerConnectionState) {
-                    is PeerConnectionState.CollapsedConnectedToPeer -> TODO()
+                    is PeerConnectionState.CollapsedConnectedToPeer -> {
+
+                    }
                     is PeerConnectionState.CollapsedSearchingForPeer -> {
                         connectionInfoBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
@@ -397,7 +399,9 @@ class MainActivity : AppCompatActivity() {
                         activityMainBinding.sendFileButton.animate().alpha(1f).start()
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
                     }
-                    is PeerConnectionState.ExpandedConnectedToPeer -> TODO()
+                    is PeerConnectionState.ExpandedConnectedToPeer -> {
+
+                    }
                     is PeerConnectionState.ExpandedSearchingForPeer -> {
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         collapsedSearchingForPeersInfoBinding.root.alpha = 0f
