@@ -51,7 +51,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_margin="10dp"
-            android:src="@drawable/cancel_icon"
+            android:src="@drawable/close_icon"
             android:background="@android:color/transparent"
             android:layout_width="30dp"
             style="@style/ImageButtonStyle"
