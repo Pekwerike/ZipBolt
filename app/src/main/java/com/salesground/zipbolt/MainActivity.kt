@@ -37,6 +37,7 @@ import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.databinding.ActivityMainBinding
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.databinding.CollapsedSearchingForPeersInformationBinding
+import com.salesground.zipbolt.databinding.ExpandedSearchingForPeersInformationBinding
 
 import com.salesground.zipbolt.databinding.ZipBoltConnectionOptionsBottomSheetLayoutBinding
 import com.salesground.zipbolt.foregroundservice.ClientService
@@ -87,18 +88,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    private val expandedSearchingForPeersInfoView: View by lazy {
-        findViewById<ViewStub>(R.id.expanded_searching_for_peers_info_view_stub).inflate()
-    }
-    private val collapsedSearchingForPeersInfoView: View by lazy {
-        findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
+
+
+    private val expandedSearchingForPeersInfoBinding:
+            ExpandedSearchingForPeersInformationBinding by lazy {
+        val expandedSearchingForPeersInfoView =
+            findViewById<ViewStub>(R.id.expanded_searching_for_peers_info_view_stub).inflate()
+        DataBindingUtil.bind<ExpandedSearchingForPeersInformationBinding>(
+            expandedSearchingForPeersInfoView
+        )
+        DataBindingUtil.getBinding(expandedSearchingForPeersInfoView)!!
     }
 
     private val collapsedSearchingForPeersInfoBinding:
             CollapsedSearchingForPeersInformationBinding by lazy {
         val collapsedSearchingForPeerView =
             findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
-        DataBindingUtil.bind<CollapsedSearchingForPeersInformationBinding>(collapsedSearchingForPeerView)
+        DataBindingUtil.bind<CollapsedSearchingForPeersInformationBinding>(
+            collapsedSearchingForPeerView
+        )
         DataBindingUtil.getBinding(collapsedSearchingForPeerView)!!
     }
 
@@ -171,8 +179,7 @@ class MainActivity : AppCompatActivity() {
                         modalBottomSheetDialog.dismiss()
                         connectToPeerButton.animate().alpha(0f).start()
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        connectionInfoBottomSheetBehavior.peekHeight =
-                            (70 * resources.displayMetrics.density).roundToInt()
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
 
                     }
                 }
@@ -201,7 +208,6 @@ class MainActivity : AppCompatActivity() {
                                     0
                                 )
                             )
-                            sendFileButton.animate().alpha(1f).start()
                         }
                         BottomSheetBehavior.STATE_EXPANDED -> {
                             mainActivityViewModel.updatePeerConnectionState(
@@ -215,13 +221,14 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     collapsedSearchingForPeersInfoBinding.root.alpha = 1 - slideOffset * 3f
-                    expandedSearchingForPeersInfoView.alpha = slideOffset
+                    expandedSearchingForPeersInfoBinding.root.alpha = slideOffset
                 }
             })
-            expandedSearchingForPeersInfoView.findViewById<ImageButton>(R.id.collapse_expanded_searching_for_peers_image_button)
-                .setOnClickListener {
+            expandedSearchingForPeersInfoBinding.apply {
+                collapseExpandedSearchingForPeersImageButton.setOnClickListener {
                     connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
+            }
         }
 
         createNotificationChannel()
@@ -229,6 +236,10 @@ class MainActivity : AppCompatActivity() {
         observeViewModelLiveData()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
+    }
+
+    private fun getBottomSheetPeekHeight(): Int {
+        return (70 * resources.displayMetrics.density).roundToInt()
     }
 
     private fun imageSelected(image: MediaModel) {
@@ -381,14 +392,18 @@ class MainActivity : AppCompatActivity() {
                     is PeerConnectionState.CollapsedSearchingForPeer -> {
                         connectionInfoBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
+                        expandedSearchingForPeersInfoBinding.root.alpha = 0f
+                        activityMainBinding.connectToPeerButton.alpha = 0f
+                        activityMainBinding.sendFileButton.animate().alpha(1f).start()
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
                     }
                     is PeerConnectionState.ExpandedConnectedToPeer -> TODO()
                     is PeerConnectionState.ExpandedSearchingForPeer -> {
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         collapsedSearchingForPeersInfoBinding.root.alpha = 0f
                         activityMainBinding.connectToPeerButton.alpha = 0f
-                        connectionInfoBottomSheetBehavior.peekHeight =
-                            (70f * resources.displayMetrics.density).roundToInt()
+                        activityMainBinding.sendFileButton.animate().alpha(1f).start()
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
                     }
                     PeerConnectionState.NoConnectionAction -> {
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
