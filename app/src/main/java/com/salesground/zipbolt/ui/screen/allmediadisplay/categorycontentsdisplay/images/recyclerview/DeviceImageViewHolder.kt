@@ -4,6 +4,9 @@ package com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdispla
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.collection.ArrayMap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -82,6 +85,7 @@ class DeviceImageViewHolder(
                     parent,
                     false
                 )
+
             return DeviceImageViewHolder(layoutItemBinding)
         }
     }

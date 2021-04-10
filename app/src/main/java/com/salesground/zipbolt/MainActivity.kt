@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 2.6f
+                    collapsedSearchingForPeersInfoView.alpha = 1 - slideOffset * 3f
                     expandedSearchingForPeersInfoView.alpha = slideOffset
                 }
             })
