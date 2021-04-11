@@ -20,19 +20,18 @@
             <ImageButton
                 android:id="@+id/collapse_expanded_searching_for_peers_image_button"
                 style="@style/ImageButtonStyle"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:contentDescription="@string/collapse_searching_for_peers_content_description"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="1dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/arrow_down" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="1dp"
+                android:layout_height="48dp"
                 android:gravity="center"
-                android:text="Searching for peers"
+                android:text="@string/searching_for_peers_label"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
         </FrameLayout>
 

@@ -83,7 +83,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         center = PointF(w * 0.5f, h * 0.5f)
-        baseRadius = w * 0.10f
+        baseRadius = w * 0.12f
         coreCircleRadius = baseRadius + (baseRadius * 0.2f)
 
         // set the bounds of the drawable
@@ -96,7 +96,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
             drawableTop + (baseRadius.roundToInt() * 2)
         )
 
-        ValueAnimator.ofFloat(coreCircleRadius, w * 0.45f).apply {
+        ValueAnimator.ofFloat(coreCircleRadius, w * 0.5f).apply {
             repeatMode = ValueAnimator.REVERSE
             repeatCount = ValueAnimator.INFINITE
             duration = 1000

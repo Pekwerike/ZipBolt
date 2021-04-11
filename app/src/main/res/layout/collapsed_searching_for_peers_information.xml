@@ -12,12 +12,11 @@
         android:padding="0dp"
         android:layout_height="match_parent">
 
-        <ImageView
+        <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
             android:id="@+id/medium_searching_for_peers_animation"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_launcher_background"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="2dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,8 +48,9 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             style="@style/ImageButtonStyle"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/stop_searching_for_peers_content_description"
             android:layout_margin="5dp"
             android:background="@android:color/transparent"
             android:src="@drawable/close_icon"

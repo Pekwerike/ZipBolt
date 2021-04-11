@@ -14,4 +14,7 @@
     <string name="or_label">Or</string>
     <string name="share_zipbolt_label">Share ZipBolt</string>
     <string name="iphone_label">iPhone</string>
+    <string name="collapse_searching_for_peers_content_description">Collapse searching for peers</string>
+    <string name="searching_for_peers_label">Searching for peers</string>
+    <string name="stop_searching_for_peers_content_description">Stop searching for peers</string>
 </resources>
