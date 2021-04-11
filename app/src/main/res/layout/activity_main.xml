@@ -11,10 +11,6 @@
         android:id="@+id/main_activity_all_media_on_device"
         layout="@layout/all_media_on_device" />
 
-    <include
-        android:id="@+id/connection_info_persistent_bottom_sheet_layout"
-        layout="@layout/persistent_bottom_sheet_layout" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/connect_to_peer_button"
         android:layout_width="wrap_content"
@@ -39,6 +35,11 @@
         app:cornerRadius="6dp"
         app:elevation="6dp"
         app:icon="@drawable/send_icon" />
+
+    <include
+        android:id="@+id/connection_info_persistent_bottom_sheet_layout"
+        layout="@layout/persistent_bottom_sheet_layout" />
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

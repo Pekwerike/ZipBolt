@@ -177,8 +177,7 @@ class MainActivity : AppCompatActivity() {
                 connectToAndroid.setOnClickListener {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
-                      //  connectToPeerButton.animate().alpha(0f).start()
-                        connectToPeerButton.visibility = View.GONE
+                        connectToPeerButton.animate().alpha(0f).start()
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
 
