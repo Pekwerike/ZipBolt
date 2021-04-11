@@ -26,25 +26,33 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
     var radius = 20f * resources.displayMetrics.density
     var baseRadius: Float = 0f
 
-    val circlePaint = Paint().apply {
+    private val circlePaint = Paint().apply {
         style = Paint.Style.FILL
         color = ContextCompat.getColor(context, R.color.blue_415)
         isDither = true
         isAntiAlias = true
-        setAlpha(0.5f)
+        alpha = 30
+    }
+    private val coreCirclePaint = Paint().apply{
+        style = Paint.Style.FILL
+        color = ContextCompat.getColor(context, R.color.blue_415)
+        isDither = true
+        isAntiAlias = true
+        alpha = 90
     }
 
 
     override fun onDraw(canvas: Canvas?) {
         canvas?.let {
+            drawCircles(canvas = canvas)
             drawCore(canvas = canvas)
-            //    drawCircles(canvas = canvas)
         }
     }
 
     private fun drawCore(canvas: Canvas) {
+
         // draw base circle
-        canvas.drawCircle(center.x, center.y, baseRadius + (baseRadius * 0.2f), circlePaint)
+        canvas.drawCircle(center.x, center.y, baseRadius + (baseRadius * 0.2f), coreCirclePaint)
 
         // draw person drawable
         val drawableLeft = (center.x - baseRadius).roundToInt()
@@ -60,6 +68,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
     }
 
     private fun drawCircles(canvas: Canvas) {
+
         canvas.drawCircle(
             center.x, center.y, radius,
             circlePaint
@@ -71,8 +80,8 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
         center = PointF(w * 0.5f, h * 0.5f)
         baseRadius = w * 0.10f
 
-        ValueAnimator.ofFloat(0f, w * 0.3f).apply {
-            repeatMode = ValueAnimator.RESTART
+        ValueAnimator.ofFloat(baseRadius  + (baseRadius * 0.2f), w * 0.4f).apply {
+            repeatMode = ValueAnimator.REVERSE
             repeatCount = ValueAnimator.INFINITE
             duration = 1000
             start()
