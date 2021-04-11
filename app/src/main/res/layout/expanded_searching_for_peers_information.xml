@@ -35,8 +35,8 @@
         </FrameLayout>
 
         <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
-            android:layout_height="400dp"
-            android:layout_width="400dp"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
             android:layout_gravity="center"
             android:layout_margin="16dp"
             />
