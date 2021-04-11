@@ -26,7 +26,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
     private var drawableLeft: Int = 0
     private var drawableTop: Int = 0
 
-    private var externalRadius = 20f * resources.displayMetrics.density
+    private var maxRadius = 20f * resources.displayMetrics.density
     private var baseRadius: Float = 0f
     private var coreCircleRadius: Float = 0f
 
@@ -65,23 +65,16 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
 
         // draw core circle
         canvas.drawCircle(center.x, center.y, coreCircleRadius, coreCirclePaint)
-
-        personDrawable.setBounds(
-            drawableLeft,
-            drawableTop,
-            drawableLeft + (baseRadius.roundToInt() * 2),
-            drawableTop + (baseRadius.roundToInt() * 2)
-        )
         personDrawable.draw(canvas)
 
     }
 
     private fun drawCircles(canvas: Canvas) {
-        var currentRadius: Float = 0f
-        for (i in 1..4) {
+        var currentRadius = 0f
+        for (i in 1..numberOfOuterCircles) {
             currentRadius += radiusIncrement
             canvas.drawCircle(
-                center.x, center.y, max(coreCircleRadius, externalRadius * currentRadius),
+                center.x, center.y, max(coreCircleRadius, maxRadius * currentRadius),
                 circlePaint
             )
         }
@@ -92,9 +85,16 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
         center = PointF(w * 0.5f, h * 0.5f)
         baseRadius = w * 0.10f
         coreCircleRadius = baseRadius + (baseRadius * 0.2f)
-        // draw person drawable
-          drawableLeft = (center.x - baseRadius).roundToInt()
+
+        // set the bounds of the drawable
+        drawableLeft = (center.x - baseRadius).roundToInt()
         drawableTop = (center.y - baseRadius).roundToInt()
+        personDrawable.setBounds(
+            drawableLeft,
+            drawableTop,
+            drawableLeft + (baseRadius.roundToInt() * 2),
+            drawableTop + (baseRadius.roundToInt() * 2)
+        )
 
         ValueAnimator.ofFloat(coreCircleRadius, w * 0.45f).apply {
             repeatMode = ValueAnimator.REVERSE
@@ -102,8 +102,19 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
             duration = 1000
             start()
         }.addUpdateListener {
-            externalRadius = it.animatedValue as Float
+            maxRadius = it.animatedValue as Float
             invalidate()
         }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val drawableWidth = personDrawable.intrinsicWidth
+        val drawableHeight = personDrawable.intrinsicHeight
+
+        setMeasuredDimension(
+            resolveSize((drawableWidth * 10) + paddingLeft + paddingRight,
+        widthMeasureSpec), resolveSize((drawableHeight * 10) + paddingTop + paddingBottom,
+                widthMeasureSpec))
     }
 }
