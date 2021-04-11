@@ -14,15 +14,16 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp">
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp">
 
             <ImageButton
                 android:id="@+id/collapse_expanded_searching_for_peers_image_button"
                 android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_margin="1dp"
                 android:background="@android:color/transparent"
-                android:elevation="0dp"
                 style="@style/ImageButtonStyle"
                 android:src="@drawable/arrow_down" />
 
@@ -30,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_margin="1dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 android:text="Searching for peers" />
         </FrameLayout>
 

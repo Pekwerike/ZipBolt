@@ -238,7 +238,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getBottomSheetPeekHeight(): Int {
-        return (65 * resources.displayMetrics.density).roundToInt()
+        return (60 * resources.displayMetrics.density).roundToInt()
     }
 
     private fun imageSelected(image: MediaModel) {

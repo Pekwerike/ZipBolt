@@ -14,9 +14,9 @@
 
         <ImageView
             android:id="@+id/medium_searching_for_peers_animation"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_margin="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="8dp"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -26,14 +26,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="10dp"
             android:paddingHorizontal="4dp"
             android:text="Searching for peers"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/materialTextView"
             app:layout_constraintStart_toEndOf="@id/medium_searching_for_peers_animation"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/medium_searching_for_peers_animation"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -41,10 +39,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="5dp"
+            android:layout_marginVertical="2dp"
             android:paddingHorizontal="4dp"
             android:text="0 devices found"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintBottom_toBottomOf="@+id/medium_searching_for_peers_animation"
             app:layout_constraintStart_toEndOf="@+id/medium_searching_for_peers_animation"
             app:layout_constraintTop_toBottomOf="@+id/collapsed_searching_for_peers_label" />
 
@@ -52,11 +51,12 @@
             style="@style/ImageButtonStyle"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:background="@android:color/transparent"
             android:src="@drawable/close_icon"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
     </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
 </layout>

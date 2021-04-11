@@ -29,7 +29,7 @@
         android:layout_height="@dimen/home_screen_connect_button_height"
         android:layout_gravity="end|bottom"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginBottom="67dp"
+        android:layout_marginBottom="62dp"
         android:alpha="0"
         android:text="@string/send_label"
         app:cornerRadius="6dp"

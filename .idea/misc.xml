@@ -6,6 +6,7 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/android_head_icon.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/apple_icon.xml" value="0.19427083333333334" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/arrow_down.xml" value="0.144921875" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/cancel_icon.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/full_green_android_icon.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/history_icon.xml" value="0.19427083333333334" />
@@ -24,7 +25,7 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/application_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/audio_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/category_chip.xml" value="0.178125" />
-        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/collapsed_searching_for_peers_information.xml" value="0.128125" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/collapsed_searching_for_peers_information.xml" value="0.335" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/expanded_searching_for_peers_information.xml" value="0.30875" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/fragment_app.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/fragment_files.xml" value="0.17708333333333334" />
