@@ -97,7 +97,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
         )
 
         ValueAnimator.ofFloat(coreCircleRadius, w * 0.5f).apply {
-            repeatMode = ValueAnimator.REVERSE
+            repeatMode = ValueAnimator.RESTART
             repeatCount = ValueAnimator.INFINITE
             duration = 1000
             start()

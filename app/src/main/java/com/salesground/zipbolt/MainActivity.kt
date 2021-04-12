@@ -412,6 +412,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     is PeerConnectionState.CollapsedSearchingForPeer -> {
                         if(!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        connectionInfoBottomSheetBehavior.isHideable = false
                         connectionInfoBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
                         expandedSearchingForPeersInfoBinding.root.alpha = 0f
@@ -424,6 +425,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     is PeerConnectionState.ExpandedSearchingForPeer -> {
                         if(!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        connectionInfoBottomSheetBehavior.isHideable = false
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         collapsedSearchingForPeersInfoBinding.root.alpha = 0f
                         activityMainBinding.connectToPeerButton.alpha = 0f
@@ -433,6 +435,7 @@ class MainActivity : AppCompatActivity() {
 
                     PeerConnectionState.NoConnectionAction -> {
                         if(isBottomSheetLayoutConfigured) {
+                            connectionInfoBottomSheetBehavior.isHideable = true
                             connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                             activityMainBinding.sendFileButton.animate().alpha(0f).start()
                             activityMainBinding.connectToPeerButton.animate().alpha(1f).start()
