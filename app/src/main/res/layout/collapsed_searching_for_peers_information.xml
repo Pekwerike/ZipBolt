@@ -9,8 +9,8 @@
 
     <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
         android:layout_width="match_parent"
-        android:padding="0dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="0dp">
 
         <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
             android:id="@+id/medium_searching_for_peers_animation"
@@ -48,15 +48,16 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             style="@style/ImageButtonStyle"
+            android:id="@+id/collapsed_searching_for_peers_information_cancel_searching_for_peers"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:contentDescription="@string/stop_searching_for_peers_content_description"
             android:layout_margin="5dp"
-            android:background="@android:color/transparent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/stop_searching_for_peers_content_description"
             android:src="@drawable/close_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
 </layout>

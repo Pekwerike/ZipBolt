@@ -182,8 +182,14 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.from(
                activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
             )
-        collapsedSearchingForPeersInfoBinding.root.setOnClickListener {
-            connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        collapsedSearchingForPeersInfoBinding.apply{
+            collapsedSearchingForPeersInformationCancelSearchingForPeers.setOnClickListener{
+                stopDevicePeerDiscovery()
+            }
+            root.setOnClickListener {
+                connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
         }
         connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -231,9 +237,10 @@ class MainActivity : AppCompatActivity() {
                 activityMainBinding.apply {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
-                        connectToPeerButton.animate().alpha(0f).start()
+                        beginPeerDiscovery()
+                    /*    connectToPeerButton.animate().alpha(0f).start()
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()*/
                     }
                 }
             }
@@ -350,7 +357,12 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // TODO Peer discovery started alert the user
-                    displayToast("Peer discovery successfully initiated")
+                  //  displayToast("Peer discovery successfully initiated")
+                    mainActivityViewModel.updatePeerConnectionState(
+                        peerConnectionState = PeerConnectionState.ExpandedSearchingForPeer(
+                            devices = mutableListOf()
+                        )
+                    )
                 }
 
                 override fun onFailure(p0: Int) {
@@ -365,6 +377,23 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun stopDevicePeerDiscovery(){
+        if(isLocationPermissionGranted()){
+            wifiP2pManager.stopPeerDiscovery(wifiP2pChannel, object: WifiP2pManager.ActionListener{
+                override fun onSuccess() {
+                    mainActivityViewModel.updatePeerConnectionState(peerConnectionState =
+                    PeerConnectionState.NoConnectionAction)
+                }
+
+                override fun onFailure(p0: Int) {
+                    displayToast("Couldn't stop peer discovery")
+                }
+
+            })
+        }
+    }
+
+
     private fun registerIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
@@ -373,25 +402,6 @@ class MainActivity : AppCompatActivity() {
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
         }
     }
-
-    private fun initializeChannelAndBroadcastReceiver() {
-        wifiP2pChannel =
-            wifiP2pManager.initialize(this, mainLooper, object : WifiP2pManager.ChannelListener {
-                // The channel to the framework has been disconnected.
-                // Application could try re-initializing
-                override fun onChannelDisconnected() {
-                }
-            })
-        // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
-        wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
-            wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
-                mainActivity = this,
-                wifiP2pManager = wifiP2pManager,
-                wifiP2pChannel = wifiP2pChannel
-            )
-        }
-    }
-
 
     private fun observeViewModelLiveData() {
         mainActivityViewModel.peerConnectionState.observe(this) {
@@ -420,8 +430,13 @@ class MainActivity : AppCompatActivity() {
                         activityMainBinding.sendFileButton.animate().alpha(1f).start()
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
                     }
+
                     PeerConnectionState.NoConnectionAction -> {
-//                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        if(isBottomSheetLayoutConfigured) {
+                            connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                            activityMainBinding.sendFileButton.animate().alpha(0f).start()
+                            activityMainBinding.connectToPeerButton.animate().alpha(1f).start()
+                        }
                     }
                 }
             }
@@ -484,7 +499,23 @@ class MainActivity : AppCompatActivity() {
     fun wifiP2pState(isEnabled: Boolean) {
         mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
     }
-
+    private fun initializeChannelAndBroadcastReceiver() {
+        wifiP2pChannel =
+            wifiP2pManager.initialize(this, mainLooper, object : WifiP2pManager.ChannelListener {
+                // The channel to the framework has been disconnected.
+                // Application could try re-initializing
+                override fun onChannelDisconnected() {
+                }
+            })
+        // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
+        wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
+            wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
+                mainActivity = this,
+                wifiP2pManager = wifiP2pManager,
+                wifiP2pChannel = wifiP2pChannel
+            )
+        }
+    }
     // check if SpeedForce has access to device fine location
     private fun checkFineLocationPermission() {
         val isFineLocationPermissionGranted = isLocationPermissionGranted()

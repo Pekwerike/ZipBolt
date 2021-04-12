@@ -51,7 +51,9 @@ class MainActivityViewModel : ViewModel() {
                     devices = discoveredPeersListState.value
                 )
             }
-            PeerConnectionState.NoConnectionAction -> TODO()
+            PeerConnectionState.NoConnectionAction -> {
+                _peerConnectionState.value = peerConnectionState
+            }
         }
 
     }
