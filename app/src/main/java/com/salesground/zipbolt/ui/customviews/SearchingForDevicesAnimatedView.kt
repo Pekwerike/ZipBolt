@@ -47,7 +47,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
             0f, 0f, 100f, 0f, intArrayOf(
                 ContextCompat.getColor(context, R.color.blue_415),
                 ContextCompat.getColor(context, R.color.purple_200)
-            ), null, Shader.TileMode.MIRROR
+            ), null, Shader.TileMode.REPEAT
         )
         isAntiAlias = true
         alpha = 80
