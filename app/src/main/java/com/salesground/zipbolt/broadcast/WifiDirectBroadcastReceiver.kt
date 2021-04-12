@@ -71,6 +71,19 @@ class WifiDirectBroadcastReceiver(
                     WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION -> {
 
                     }
+
+                    WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION -> {
+                        val discoveryState = intent.getIntExtra(WifiP2pManager.EXTRA_DISCOVERY_STATE,
+                        -1)
+                        when(discoveryState){
+                            WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED -> {
+
+                            }
+                            WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED -> {
+                                mainActivity.wifiP2pDiscoveryStopped()
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -60,9 +60,9 @@ const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel by viewModels<MainActivityViewModel>()
-   // private val mediaViewModel by viewModels<MediaViewModel>()
-   // private val deviceMediaViewModel by viewModels<ImagesViewModel>()
-   // private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
+    // private val mediaViewModel by viewModels<MediaViewModel>()
+    // private val deviceMediaViewModel by viewModels<ImagesViewModel>()
+    // private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var ftsNotification: FileTransferServiceNotification
 
 
-  //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
+    //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
 
     private val wifiManager: WifiManager by lazy(LazyThreadSafetyMode.NONE) {
         applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    private var isBottomSheetLayoutConfigured : Boolean = false
+    private var isBottomSheetLayoutConfigured: Boolean = false
 
 
     private val expandedSearchingForPeersInfoBinding:
@@ -180,11 +180,11 @@ class MainActivity : AppCompatActivity() {
         isBottomSheetLayoutConfigured = true
         connectionInfoBottomSheetBehavior =
             BottomSheetBehavior.from(
-               activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
+                activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
             )
 
-        collapsedSearchingForPeersInfoBinding.apply{
-            collapsedSearchingForPeersInformationCancelSearchingForPeers.setOnClickListener{
+        collapsedSearchingForPeersInfoBinding.apply {
+            collapsedSearchingForPeersInformationCancelSearchingForPeers.setOnClickListener {
                 stopDevicePeerDiscovery()
             }
             root.setOnClickListener {
@@ -233,14 +233,14 @@ class MainActivity : AppCompatActivity() {
 
         modalBottomSheetLayoutBinding.apply {
             connectToAndroid.setOnClickListener {
-               if(!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
                 activityMainBinding.apply {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
                         beginPeerDiscovery()
-                    /*    connectToPeerButton.animate().alpha(0f).start()
-                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()*/
+                        /*    connectToPeerButton.animate().alpha(0f).start()
+                            connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                            connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()*/
                     }
                 }
             }
@@ -258,25 +258,25 @@ class MainActivity : AppCompatActivity() {
         return (60 * resources.displayMetrics.density).roundToInt()
     }
 
- /*   private fun imageSelected(image: MediaModel) {
-        mediaViewModel.imageSelected(image)
-        displayToast(image.mimeType)
-    }
+    /*   private fun imageSelected(image: MediaModel) {
+           mediaViewModel.imageSelected(image)
+           displayToast(image.mimeType)
+       }
 
-    private fun transferImages() {
-        val selectedImages = mediaViewModel.selectedImagesForTransfer.value
-        if (mainActivityViewModel.clientService.value != null) {
-            selectedImages?.let {
-                mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
-                displayToast("transfering")
-            }
-        } else if (mainActivityViewModel.serverService.value != null) {
-            selectedImages?.let {
-                mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
-                displayToast("transfering")
-            }
-        }
-    }*/
+       private fun transferImages() {
+           val selectedImages = mediaViewModel.selectedImagesForTransfer.value
+           if (mainActivityViewModel.clientService.value != null) {
+               selectedImages?.let {
+                   mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
+                   displayToast("transfering")
+               }
+           } else if (mainActivityViewModel.serverService.value != null) {
+               selectedImages?.let {
+                   mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
+                   displayToast("transfering")
+               }
+           }
+       }*/
 
     private fun createNotificationChannel() {
         ftsNotification.createFTSNotificationChannel()
@@ -357,7 +357,7 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // TODO Peer discovery started alert the user
-                  //  displayToast("Peer discovery successfully initiated")
+                    //  displayToast("Peer discovery successfully initiated")
                     mainActivityViewModel.updatePeerConnectionState(
                         peerConnectionState = PeerConnectionState.ExpandedSearchingForPeer(
                             devices = mutableListOf()
@@ -377,19 +377,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun stopDevicePeerDiscovery(){
-        if(isLocationPermissionGranted()){
-            wifiP2pManager.stopPeerDiscovery(wifiP2pChannel, object: WifiP2pManager.ActionListener{
-                override fun onSuccess() {
-                    mainActivityViewModel.updatePeerConnectionState(peerConnectionState =
-                    PeerConnectionState.NoConnectionAction)
-                }
+    private fun stopDevicePeerDiscovery() {
+        if (isLocationPermissionGranted()) {
+            wifiP2pManager.stopPeerDiscovery(
+                wifiP2pChannel,
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+                        /*mainActivityViewModel.updatePeerConnectionState(peerConnectionState =
+                        PeerConnectionState.NoConnectionAction)*/
+                    }
 
-                override fun onFailure(p0: Int) {
-                    displayToast("Couldn't stop peer discovery")
-                }
+                    override fun onFailure(p0: Int) {
+                        displayToast("Couldn't stop peer discovery")
+                    }
 
-            })
+                })
         }
     }
 
@@ -403,6 +405,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun wifiP2pDiscoveryStopped() {
+        mainActivityViewModel.updatePeerConnectionState(
+            peerConnectionState =
+            PeerConnectionState.NoConnectionAction
+        )
+    }
+
     private fun observeViewModelLiveData() {
         mainActivityViewModel.peerConnectionState.observe(this) {
             it?.let { peerConnectionState ->
@@ -411,7 +420,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     is PeerConnectionState.CollapsedSearchingForPeer -> {
-                        if(!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
                         connectionInfoBottomSheetBehavior.isHideable = false
                         connectionInfoBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
@@ -424,7 +433,7 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     is PeerConnectionState.ExpandedSearchingForPeer -> {
-                        if(!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
                         connectionInfoBottomSheetBehavior.isHideable = false
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                         collapsedSearchingForPeersInfoBinding.root.alpha = 0f
@@ -434,9 +443,10 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     PeerConnectionState.NoConnectionAction -> {
-                        if(isBottomSheetLayoutConfigured) {
+                        if (isBottomSheetLayoutConfigured) {
                             connectionInfoBottomSheetBehavior.isHideable = true
-                            connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                            connectionInfoBottomSheetBehavior.state =
+                                BottomSheetBehavior.STATE_HIDDEN
                             activityMainBinding.sendFileButton.animate().alpha(0f).start()
                             activityMainBinding.connectToPeerButton.animate().alpha(1f).start()
                         }
@@ -502,6 +512,7 @@ class MainActivity : AppCompatActivity() {
     fun wifiP2pState(isEnabled: Boolean) {
         mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
     }
+
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
             wifiP2pManager.initialize(this, mainLooper, object : WifiP2pManager.ChannelListener {
@@ -519,6 +530,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
     // check if SpeedForce has access to device fine location
     private fun checkFineLocationPermission() {
         val isFineLocationPermissionGranted = isLocationPermissionGranted()
