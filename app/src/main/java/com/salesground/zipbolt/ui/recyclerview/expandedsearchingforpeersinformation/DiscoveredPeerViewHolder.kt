@@ -16,6 +16,8 @@ class DiscoveredPeerViewHolder(
     fun bindDeviceData(device: WifiP2pDevice) {
         wifiP2pDeviceItemLayoutBinding.apply {
             deviceName = device.deviceName ?: "Unknow device"
+
+            // TODO add on click listener on the connect button
         }
     }
 
