@@ -17,7 +17,7 @@
             android:id="@+id/device_image_display_image_view"
             android:scaleType="centerCrop"
             android:layout_width="match_parent"
-            android:layout_height="95dp" />
+            android:layout_height="96dp" />
 
     </FrameLayout>
 </layout>

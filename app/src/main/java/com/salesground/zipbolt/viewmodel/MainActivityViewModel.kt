@@ -62,7 +62,7 @@ class MainActivityViewModel : ViewModel() {
         _serverService.value = serverService
     }
 
-    fun clientServiceRead(clientService: ClientService) {
+    fun clientServiceReady(clientService: ClientService) {
         _clientService.value = clientService
     }
 

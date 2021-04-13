@@ -49,45 +49,52 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/expanded_searching_for_peers_information_discovered_peers_label_text_view"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/expanded_searching_for_peers_information_searching_for_peers_text_view" />
+                app:layout_constraintTop_toBottomOf="@id/expanded_searching_for_peers_information_searching_for_peers_text_view"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/expanded_searching_for_peers_information_discovered_peers_label_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_margin="16dp"
-                android:text="Discovered Peers"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:padding="4dp"
-                app:layout_constraintTop_toBottomOf="@id/expanded_searching_for_peers_information_searching_for_devices_animation"
-                android:id="@+id/expanded_searching_for_peers_information_discovered_peers_label_text_view"/>
+                android:text="@string/discovered_peers_label"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                app:layout_constraintBottom_toTopOf="@+id/expanded_searching_for_peers_information_discovered_peers_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/expanded_searching_for_peers_information_searching_for_devices_animation" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/expanded_searching_for_peers_information_discovered_peers_recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginVertical="16dp"
+                android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/expanded_searching_for_peers_information_discovered_peers_label_text_view"
                 app:layout_constraintBottom_toTopOf="@id/expanded_searching_for_peers_information_stop_search_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/expanded_searching_for_peers_information_discovered_peers_label_text_view" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/expanded_searching_for_peers_information_stop_search_button"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_margin="16dp"
+                android:text="@string/stop_searching_for_peers_label"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_margin="16dp"
-                app:strokeColor="@color/blue_415"
-                android:text="@string/stop_searching_for_peers_label"/>
+                app:layout_constraintHorizontal_bias="0.5"
+                app:strokeColor="@color/blue_415" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

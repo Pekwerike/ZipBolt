@@ -15,25 +15,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewStub
 import android.widget.FrameLayout
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.app.ActivityCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.viewbinding.ViewBinding
-import androidx.viewbinding.ViewBindings
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.databinding.*
@@ -41,7 +31,6 @@ import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 
 import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
-import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.model.ui.PeerConnectionState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
@@ -117,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
 
                 val clientServiceBinder = p1 as ClientService.ClientServiceBinder
-                mainActivityViewModel.clientServiceRead(clientServiceBinder.getClientServiceBinder())
+                mainActivityViewModel.clientServiceReady(clientServiceBinder.getClientServiceBinder())
                 isClientServiceBound = true
             }
 
