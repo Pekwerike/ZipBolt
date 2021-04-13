@@ -14,8 +14,8 @@
 
         <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
             android:id="@+id/medium_searching_for_peers_animation"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_margin="2dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

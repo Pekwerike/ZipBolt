@@ -17,4 +17,5 @@
     <string name="collapse_searching_for_peers_content_description">Collapse searching for peers</string>
     <string name="searching_for_peers_label">Searching for peers</string>
     <string name="stop_searching_for_peers_content_description">Stop searching for peers</string>
+    <string name="stop_searching_for_peers_label">Stop searching for peers</string>
 </resources>

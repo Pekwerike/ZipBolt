@@ -9,6 +9,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.salesground.zipbolt.R
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 class SearchingForDevicesAnimatedView @JvmOverloads constructor(
@@ -82,8 +83,9 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        center = PointF(w * 0.5f, h * 0.5f)
-        baseRadius = w * 0.12f
+        center = PointF(measuredWidth * 0.5f, measuredHeight * 0.5f)
+
+        baseRadius = measuredWidth * 0.10f
         coreCircleRadius = baseRadius + (baseRadius * 0.2f)
 
         // set the bounds of the drawable
@@ -96,7 +98,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
             drawableTop + (baseRadius.roundToInt() * 2)
         )
 
-        ValueAnimator.ofFloat(coreCircleRadius, w * 0.5f).apply {
+        ValueAnimator.ofFloat(coreCircleRadius, center.x).apply {
             repeatMode = ValueAnimator.RESTART
             repeatCount = ValueAnimator.INFINITE
             duration = 1000
@@ -108,13 +110,13 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val drawableWidth = personDrawable.intrinsicWidth
-        val drawableHeight = personDrawable.intrinsicHeight
-
-        setMeasuredDimension(
-            resolveSize((drawableWidth * 10) + paddingLeft + paddingRight,
-        widthMeasureSpec), resolveSize((drawableHeight * 10) + paddingTop + paddingBottom,
-                widthMeasureSpec))
+       // super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val chosenDimension = max(
+            resolveSize((personDrawable.intrinsicWidth * 10) + paddingLeft + paddingRight,
+                widthMeasureSpec),
+            resolveSize((personDrawable.intrinsicHeight * 10) + paddingTop + paddingBottom,
+            heightMeasureSpec)
+        )
+        setMeasuredDimension(chosenDimension, chosenDimension)
     }
 }
