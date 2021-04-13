@@ -33,6 +33,7 @@ import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.ui.PeerConnectionState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,6 +78,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     private var isBottomSheetLayoutConfigured: Boolean = false
+    private val discoveredPeersRecyclerViewAdapter : DiscoveredPeersRecyclerViewAdapter by lazy {
+        DiscoveredPeersRecyclerViewAdapter()
+    }
 
 
     private val expandedSearchingForPeersInfoBinding:
@@ -215,7 +219,9 @@ class MainActivity : AppCompatActivity() {
             expandedSearchingForPeersInformationStopSearchButton.setOnClickListener {
                 stopDevicePeerDiscovery()
             }
-            // TODO attach an adapter to the expandedSearchingForPeersInformationRecyclerView
+            expandedSearchingForPeersInformationDiscoveredPeersRecyclerView.apply {
+                adapter = discoveredPeersRecyclerViewAdapter
+            }
         }
     }
 
@@ -434,6 +440,7 @@ class MainActivity : AppCompatActivity() {
                         activityMainBinding.connectToPeerButton.alpha = 0f
                         activityMainBinding.sendFileButton.animate().alpha(1f).start()
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
+                        discoveredPeersRecyclerViewAdapter.submitList(peerConnectionState.devices)
                     }
 
                     PeerConnectionState.NoConnectionAction -> {

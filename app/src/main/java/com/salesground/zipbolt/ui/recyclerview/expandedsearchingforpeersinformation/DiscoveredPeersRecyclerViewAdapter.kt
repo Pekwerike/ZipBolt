@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.ListAdapter
 class DiscoveredPeersRecyclerViewAdapter :
     ListAdapter<WifiP2pDevice, DiscoveredPeerViewHolder>(DiscoveredPeersRecyclerViewAdapterDiffUitl) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoveredPeerViewHolder {
         return DiscoveredPeerViewHolder.createDiscoveredPeerViewHolder(parent)
     }
