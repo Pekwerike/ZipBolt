@@ -223,6 +223,10 @@ class MainActivity : AppCompatActivity() {
             collapseExpandedSearchingForPeersImageButton.setOnClickListener {
                 connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
+            expandedSearchingForPeersInformationStopSearchButton.setOnClickListener {
+                stopDevicePeerDiscovery()
+            }
+            // TODO attach an adapter to the expandedSearchingForPeersInformationRecyclerView
         }
     }
 
@@ -605,6 +609,24 @@ class MainActivity : AppCompatActivity() {
         isClientServiceBound = false
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
+    }
+
+    override fun onBackPressed() {
+        if (connectionInfoBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            when (mainActivityViewModel.peerConnectionState.value) {
+                is PeerConnectionState.ExpandedSearchingForPeer -> {
+                    mainActivityViewModel.updatePeerConnectionState(
+                        peerConnectionState =
+                        PeerConnectionState.CollapsedSearchingForPeer(numberOfDevicesFound = 0)
+                    )
+                }
+                is PeerConnectionState.ExpandedConnectedToPeer -> {
+
+                }
+            }
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onRequestPermissionsResult(
