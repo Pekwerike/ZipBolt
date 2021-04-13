@@ -612,20 +612,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (connectionInfoBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            when (mainActivityViewModel.peerConnectionState.value) {
-                is PeerConnectionState.ExpandedSearchingForPeer -> {
-                    mainActivityViewModel.updatePeerConnectionState(
-                        peerConnectionState =
-                        PeerConnectionState.CollapsedSearchingForPeer(numberOfDevicesFound = 0)
-                    )
-                }
-                is PeerConnectionState.ExpandedConnectedToPeer -> {
 
-                }
+        when (mainActivityViewModel.peerConnectionState.value) {
+            is PeerConnectionState.ExpandedSearchingForPeer -> {
+                mainActivityViewModel.updatePeerConnectionState(
+                    peerConnectionState =
+                    PeerConnectionState.CollapsedSearchingForPeer(numberOfDevicesFound = 0)
+                )
             }
-        } else {
-            super.onBackPressed()
+            is PeerConnectionState.ExpandedConnectedToPeer -> {
+
+            }
+            else -> {
+                super.onBackPressed()
+            }
         }
     }
 
