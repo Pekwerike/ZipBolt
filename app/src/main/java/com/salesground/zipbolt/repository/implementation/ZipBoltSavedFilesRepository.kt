@@ -10,9 +10,7 @@ package com.salesground.zipbolt.repository
 * 2). getZipBoltMediaCategoryBaseDirectory() returns the mediaType directory under the main directory
 * 3). checkIfDirectory() exists confirm that a given directory exists, if not then it creates it
 * */
-import android.content.Context
 import android.os.Environment
-import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import javax.inject.Inject
 
@@ -26,20 +24,20 @@ enum class ZipBoltMediaCategory(val categoryName: String){
     FOLDERS_BASE_DIRECTORY("Folders")
 }
 
-class ZipBoltSavedFilesRepository @Inject constructor() {
-    private fun getZipBoltBaseDirectory(): File {
+class ZipBoltSavedFilesRepository @Inject constructor() : SavedFilesRepository {
+    override fun getZipBoltBaseDirectory(): File {
         val baseDirectory = File(Environment.getExternalStorageDirectory(), ZIP_BOLT_MAIN_DIRECTORY)
         checkIfDirectoryExist(baseDirectory)
         return baseDirectory
     }
 
-    fun getZipBoltMediaCategoryBaseDirectory(categoryType : ZipBoltMediaCategory) : File{
+    override fun getZipBoltMediaCategoryBaseDirectory(categoryType : ZipBoltMediaCategory) : File{
         val categoryBaseDirectory = File(getZipBoltBaseDirectory(), categoryType.categoryName)
         checkIfDirectoryExist(categoryBaseDirectory)
         return categoryBaseDirectory
     }
 
-    private fun checkIfDirectoryExist(directory: File) {
+    override fun checkIfDirectoryExist(directory: File) {
         if (!directory.exists()) directory.mkdirs()
     }
 }
