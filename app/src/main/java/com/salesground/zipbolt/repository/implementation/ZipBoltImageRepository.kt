@@ -30,10 +30,11 @@ class ZipBoltImageRepository @Inject constructor(
 
     private var imageByteReadListener: ImageByteReadListener? = null
 
-    interface ImageByteReadListener{
-        fun accumulatedByteRead()
+    interface ImageByteReadListener {
+        fun percentageOfBytesRead(bytesReadPercent: Float)
     }
-    fun setImageByteReadListener(byteReadListener: ImageByteReadListener){
+
+    fun setImageByteReadListener(byteReadListener: ImageByteReadListener) {
         imageByteReadListener = byteReadListener
     }
 
@@ -54,7 +55,7 @@ class ZipBoltImageRepository @Inject constructor(
             val contentValues = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
                 put(MediaStore.Images.Media.TITLE, imageFile.name)
-                put(MediaStore.Images.Media.SIZE, mediaSize)
+                put(MediaStore.Images.Media.SIZE, size)
                 put(MediaStore.Images.Media.MIME_TYPE, mimeType)
                 put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
                 put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
@@ -89,6 +90,9 @@ class ZipBoltImageRepository @Inject constructor(
                         if (bytesRead == -1) break
                         imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
                         mediaSize -= bytesRead
+                        imageByteReadListener?.percentageOfBytesRead(
+                            bytesReadPercent = ((size - mediaSize) / size) * 100f
+                        )
                     }
                     imageFileDataOutputStream.flush()
                     imageFileDataOutputStream.close()
