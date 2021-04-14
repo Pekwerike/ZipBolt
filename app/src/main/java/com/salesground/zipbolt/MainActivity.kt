@@ -86,7 +86,13 @@ class MainActivity : AppCompatActivity() {
             connectToDeviceClickListener = object :
                 DiscoveredPeersRecyclerViewAdapter.ConnectToDeviceClickListener {
                 override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
-
+                    connectToADevice(wifiP2pDevice)
+                    // TODO
+                    /**
+                     * 1. Collapse the searching for peers expanded bottom sheet ui
+                     * 2. Display the connected to peer collapsed bottom sheet ui
+                     * 3. Stop peer discovery
+                     * **/
                 }
             }
         )
@@ -267,26 +273,6 @@ class MainActivity : AppCompatActivity() {
         return (60 * resources.displayMetrics.density).roundToInt()
     }
 
-    /*   private fun imageSelected(image: MediaModel) {
-           mediaViewModel.imageSelected(image)
-           displayToast(image.mimeType)
-       }
-
-       private fun transferImages() {
-           val selectedImages = mediaViewModel.selectedImagesForTransfer.value
-           if (mainActivityViewModel.clientService.value != null) {
-               selectedImages?.let {
-                   mainActivityViewModel.clientService.value?.transferMediaItems(selectedImages)
-                   displayToast("transfering")
-               }
-           } else if (mainActivityViewModel.serverService.value != null) {
-               selectedImages?.let {
-                   mainActivityViewModel.serverService.value?.transferMediaItems(selectedImages)
-                   displayToast("transfering")
-               }
-           }
-       }*/
-
     private fun createNotificationChannel() {
         ftsNotification.createFTSNotificationChannel()
     }
@@ -350,9 +336,8 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onFailure(p0: Int) {
                     // connection initiation failed,
-                    // TODO Alert user of failed connection attempt
+                    displayToast("Connection attempt failed")
                 }
-
             })
     }
 

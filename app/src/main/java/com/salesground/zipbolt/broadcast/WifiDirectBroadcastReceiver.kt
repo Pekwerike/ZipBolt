@@ -21,12 +21,12 @@ class WifiDirectBroadcastReceiver(
             action.let {
                 when (it) {
                     // Broadcast when Wi-Fi P2P is enabled or disabled on the device.
-                   WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
+                    WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION -> {
                         val isWifiOn = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
-                        if(isWifiOn == WifiP2pManager.WIFI_P2P_STATE_ENABLED){
+                        if (isWifiOn == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                             // wifiP2p ie enabled
                             mainActivity.wifiP2pState(isEnabled = true)
-                        }else {
+                        } else {
                             // wifiP2p is not enabled
                             mainActivity.wifiP2pState(isEnabled = false)
                         }
@@ -48,18 +48,34 @@ class WifiDirectBroadcastReceiver(
 
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-                       /* val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO) as NetworkInfo?
 
-                        TODO NetworkInfo deprecated, go search for another alternative, until then request connection info directly
-                        if(networkInfo?.isConnected == true){ }*/
-                            // We are connected with the other device, request connection
-                            // info to find group owner IP
-                            wifiP2pManager.requestConnectionInfo(wifiP2pChannel, object: WifiP2pManager.ConnectionInfoListener{
+                       /* val wifiP2pInfo = intent.getParcelableExtra<WifiP2pInfo>(
+                            WifiP2pManager.EXTRA_WIFI_P2P_INFO)
+                        wifiP2pInfo?.let {
+                            if (wifiP2pInfo.groupFormed) {
+                                wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
+                                    mainActivity.peeredDeviceConnectionInfoReady(
+                                        deviceConnectionInfo = wifiP2pInfo
+                                    )
+                                }
+                            }
+                        }*/
+                        /* val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO) as NetworkInfo?
+
+                         TODO NetworkInfo deprecated, go search for another alternative, until then request connection info directly
+                         if(networkInfo?.isConnected == true){ }*/
+                        // We are connected with the other device, request connection
+                        // info to find group owner IP
+                        wifiP2pManager.requestConnectionInfo(
+                            wifiP2pChannel,
+                            object : WifiP2pManager.ConnectionInfoListener {
                                 override fun onConnectionInfoAvailable(p0: WifiP2pInfo?) {
                                     p0?.let {
                                         // send connected device the connection info to the mainActivityViewModel
                                         // so we can create a socket connection and begin data transfer
-                                        mainActivity.peeredDeviceConnectionInfoReady(deviceConnectionInfo = it)
+                                        mainActivity.peeredDeviceConnectionInfoReady(
+                                            deviceConnectionInfo = it
+                                        )
                                     }
                                 }
 
@@ -73,9 +89,11 @@ class WifiDirectBroadcastReceiver(
                     }
 
                     WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION -> {
-                        val discoveryState = intent.getIntExtra(WifiP2pManager.EXTRA_DISCOVERY_STATE,
-                        -1)
-                        when(discoveryState){
+                        val discoveryState = intent.getIntExtra(
+                            WifiP2pManager.EXTRA_DISCOVERY_STATE,
+                            -1
+                        )
+                        when (discoveryState) {
                             WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED -> {
 
                             }
