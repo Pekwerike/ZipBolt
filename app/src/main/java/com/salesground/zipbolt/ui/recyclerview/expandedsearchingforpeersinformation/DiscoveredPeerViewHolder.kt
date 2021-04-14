@@ -36,5 +36,4 @@ class DiscoveredPeerViewHolder(
             return DiscoveredPeerViewHolder(layoutBinding)
         }
     }
-
 }
