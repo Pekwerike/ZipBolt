@@ -22,6 +22,7 @@ class DiscoveredPeerViewHolder(
             wifiP2pDeviceItemLayoutConnectToDeviceButton.setOnClickListener {
                 connectToDeviceClickListener.onConnectToDevice(wifiP2pDevice = device)
             }
+            executePendingBindings()
         }
     }
 

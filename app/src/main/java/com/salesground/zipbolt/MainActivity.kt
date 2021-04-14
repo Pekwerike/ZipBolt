@@ -33,6 +33,7 @@ import com.salesground.zipbolt.foregroundservice.ClientService
 import com.salesground.zipbolt.foregroundservice.ServerService
 import com.salesground.zipbolt.model.ui.PeerConnectionState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersDataItem
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
@@ -447,7 +448,10 @@ class MainActivity : AppCompatActivity() {
                         activityMainBinding.connectToPeerButton.alpha = 0f
                         activityMainBinding.sendFileButton.animate().alpha(1f).start()
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-                        discoveredPeersRecyclerViewAdapter.submitList(peerConnectionState.devices)
+
+                        discoveredPeersRecyclerViewAdapter.submitList(peerConnectionState.devices.map { wifiP2pDevice ->
+                            DiscoveredPeersDataItem.DiscoveredPeer(wifiP2pDevice = wifiP2pDevice)
+                        }.toMutableList())
                     }
 
                     PeerConnectionState.NoConnectionAction -> {
