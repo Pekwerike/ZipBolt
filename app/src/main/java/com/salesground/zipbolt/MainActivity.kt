@@ -43,7 +43,7 @@ import kotlin.math.roundToInt
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
-private const val READ_WRITE_STORAGE_REQUEST_CODE = 101
+
 
 const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
+
+    private val permissionUtils = PermissionUtils(this)
 
 
     //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
@@ -559,29 +561,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // check if SpeedForce has access to read and write to the device external storage
-    private fun checkReadAndWriteExternalStoragePermission() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-            || ActivityCompat.checkSelfPermission(
-                this,
-                permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-
-            // Permission granted to SpeedForce to read and write to the device external storage
-            // TODO Go ahead an inform the viewModel to fetch, media items from the repositoris
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE),
-                READ_WRITE_STORAGE_REQUEST_CODE
-            )
-        }
-    }
-
     private fun isLocationPermissionGranted() = ActivityCompat.checkSelfPermission(
         this,
         permission.ACCESS_FINE_LOCATION
@@ -596,7 +575,8 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         observeViewModelLiveData()
         createNotificationChannel()
-        checkReadAndWriteExternalStoragePermission()
+        //checkReadAndWriteExternalStoragePermission()
+        permissionUtils.checkReadAndWriteExternalStoragePermission()
         initializeChannelAndBroadcastReceiver()
         intentFilter = registerIntentFilter()
     }
