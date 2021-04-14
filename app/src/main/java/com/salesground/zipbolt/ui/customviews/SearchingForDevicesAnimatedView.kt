@@ -85,7 +85,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         center = PointF(measuredWidth * 0.5f, measuredHeight * 0.5f)
 
-        baseRadius = measuredWidth * 0.10f
+        baseRadius = measuredWidth * 0.09f
         coreCircleRadius = baseRadius + (baseRadius * 0.2f)
 
         // set the bounds of the drawable
@@ -111,10 +111,10 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
        // super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val chosenDimension = max(
-            resolveSize((personDrawable.intrinsicWidth * 10) + paddingLeft + paddingRight,
+        val chosenDimension = min(
+            resolveSize((personDrawable.intrinsicWidth * 9) + paddingLeft + paddingRight,
                 widthMeasureSpec),
-            resolveSize((personDrawable.intrinsicHeight * 10) + paddingTop + paddingBottom,
+            resolveSize((personDrawable.intrinsicHeight * 9) + paddingTop + paddingBottom,
             heightMeasureSpec)
         )
         setMeasuredDimension(chosenDimension, chosenDimension)

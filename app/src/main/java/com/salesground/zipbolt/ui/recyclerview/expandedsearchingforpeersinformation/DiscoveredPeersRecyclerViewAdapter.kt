@@ -5,15 +5,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 
-class DiscoveredPeersRecyclerViewAdapter :
+class DiscoveredPeersRecyclerViewAdapter(
+    private val connectToDeviceClickListener : ConnectToDeviceClickListener
+) :
     ListAdapter<WifiP2pDevice, DiscoveredPeerViewHolder>(DiscoveredPeersRecyclerViewAdapterDiffUitl) {
 
+    interface ConnectToDeviceClickListener{
+        fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice)
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiscoveredPeerViewHolder {
         return DiscoveredPeerViewHolder.createDiscoveredPeerViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: DiscoveredPeerViewHolder, position: Int) {
-        holder.bindDeviceData(getItem(position))
+        holder.bindDeviceData(getItem(position), connectToDeviceClickListener)
     }
 
     object DiscoveredPeersRecyclerViewAdapterDiffUitl : DiffUtil.ItemCallback<WifiP2pDevice>() {

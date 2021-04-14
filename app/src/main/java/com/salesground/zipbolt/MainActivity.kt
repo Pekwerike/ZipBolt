@@ -78,8 +78,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
     private var isBottomSheetLayoutConfigured: Boolean = false
-    private val discoveredPeersRecyclerViewAdapter : DiscoveredPeersRecyclerViewAdapter by lazy {
-        DiscoveredPeersRecyclerViewAdapter()
+    private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
+        DiscoveredPeersRecyclerViewAdapter(
+            connectToDeviceClickListener = object :
+                DiscoveredPeersRecyclerViewAdapter.ConnectToDeviceClickListener {
+                override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
+
+                }
+            }
+        )
     }
 
 

@@ -13,11 +13,15 @@ class DiscoveredPeerViewHolder(
     WifiP2pDeviceItemLayoutBinding
 ) : RecyclerView.ViewHolder(wifiP2pDeviceItemLayoutBinding.root) {
 
-    fun bindDeviceData(device: WifiP2pDevice) {
+    fun bindDeviceData(device: WifiP2pDevice,
+    connectToDeviceClickListener: DiscoveredPeersRecyclerViewAdapter.ConnectToDeviceClickListener) {
         wifiP2pDeviceItemLayoutBinding.apply {
             deviceName = device.deviceName ?: "Unknow device"
 
             // TODO add on click listener on the connect button
+            wifiP2pDeviceItemLayoutConnectToDeviceButton.setOnClickListener {
+                connectToDeviceClickListener.onConnectToDevice(wifiP2pDevice = device)
+            }
         }
     }
 
