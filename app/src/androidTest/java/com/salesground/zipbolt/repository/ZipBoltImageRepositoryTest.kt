@@ -57,29 +57,45 @@ class ZipBoltImageRepositoryTest {
     fun test_insertImageIntoMediaStore() {
         runBlocking {
             var numberOfImagesOnDevice = zipBoltImageRepository.getImagesOnDevice().size
-            var firstImage =
-                zipBoltImageRepository.getImagesOnDevice().first() as DataToTransfer.DeviceImage
+            var firstImage = zipBoltImageRepository.getMetaDataOfImage(
+                zipBoltImageRepository.getImagesOnDevice(limit = 5)[0]
+            ) as DataToTransfer.DeviceImage
+
+            var secondImage = zipBoltImageRepository.getMetaDataOfImage(
+                zipBoltImageRepository.getImagesOnDevice(limit = 5)[1]
+            ) as DataToTransfer.DeviceImage
+
+            zipBoltImageRepository.setImageByteReadListener(
+                object : ZipBoltImageRepository.ImageByteReadListener {
+                    override fun percentageOfBytesRead(bytesReadPercent: Float) {
+                        Log.i("ImageTransferPercent", bytesReadPercent.toString())
+                    }
+                }
+            )
+
             context.contentResolver.openFileDescriptor(firstImage.imageUri, "r")
                 ?.also { parcelFileDescriptor: ParcelFileDescriptor ->
-                    val fileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    firstImage =
-                        zipBoltImageRepository.getMetaDataOfImage(firstImage) as DataToTransfer.DeviceImage
-                    zipBoltImageRepository.setImageByteReadListener(
-                        object : ZipBoltImageRepository.ImageByteReadListener {
-                            override fun percentageOfBytesRead(bytesReadPercent: Float) {
-                                assert(true)
-                            }
-
-                        }
-                    )
                     zipBoltImageRepository.insertImageIntoMediaStore(
                         displayName = "firstImage.jpg",
                         size = firstImage.imageSize,
                         mimeType = firstImage.imageMimeType,
-                        dataInputStream = DataInputStream(fileInputStream)
+                        dataInputStream = DataInputStream(FileInputStream(parcelFileDescriptor.fileDescriptor))
                     )
                 }
-            assertEquals(numberOfImagesOnDevice + 1, zipBoltImageRepository.getImagesOnDevice().size)
+
+            context.contentResolver.openFileDescriptor(secondImage.imageUri, "r")
+                ?.also { parcelFileDescriptor ->
+                    zipBoltImageRepository.insertImageIntoMediaStore(
+                        displayName = secondImage.imageDisplayName,
+                        size = secondImage.imageSize,
+                        mimeType = secondImage.imageMimeType,
+                        dataInputStream = DataInputStream(FileInputStream(parcelFileDescriptor.fileDescriptor))
+                    )
+                }
+            assertEquals(
+                numberOfImagesOnDevice + 2,
+                zipBoltImageRepository.getImagesOnDevice().size
+            )
         }
     }
 }
