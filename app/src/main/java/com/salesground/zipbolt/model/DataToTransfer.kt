@@ -2,8 +2,11 @@ package com.salesground.zipbolt.model
 
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import androidx.core.net.toUri
 
-sealed class DataToTransfer {
+sealed class DataToTransfer(val dataUri: Uri,
+val dataSize: Long, val dataType: String) {
+
     data class DeviceAudio(
         val audioUri: Uri,
         val audioTitle: String,
@@ -14,7 +17,7 @@ sealed class DataToTransfer {
         val musicArtPath: String,
         val musicArtist: String
 
-    ) : DataToTransfer()
+    ) : DataToTransfer(audioUri, audioSize, audioMimeType)
 
     data class DeviceImage(
         val imageId : Long,
@@ -24,7 +27,7 @@ sealed class DataToTransfer {
         val imageMimeType: String = "",
         val imageSize: Long = 0L,
         val imageBucketName: String
-    ) : DataToTransfer()
+    ) : DataToTransfer(imageUri, imageSize, imageMimeType)
 
     data class DeviceVideo(
         val videoId: Long,
@@ -34,13 +37,13 @@ sealed class DataToTransfer {
         val videoBucketName: String,
         val videoMimeType: String,
         val videoDateModified: String
-    ) : DataToTransfer()
+    ) : DataToTransfer(videoUri, videoSize, videoMimeType)
 
     data class DeviceApplication(
         val applicationName: String?,
         val apkPath: String,
         val appIcon: Drawable?,
         val appSize: Long
-    ) : DataToTransfer()
+    ) : DataToTransfer(apkPath.toUri(), appSize, ".apk")
 }
 
