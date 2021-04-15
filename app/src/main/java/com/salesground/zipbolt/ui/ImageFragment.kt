@@ -110,39 +110,36 @@ class ImageFragment : Fragment() {
             fragmentImageRecyclerview.apply {
                 setHasFixedSize(true)
 
-                if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    val dLayoutManager = GridLayoutManager(context, 4)
-                    dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return when (dAdapter.getItemViewType(
-                                position
-                            )) {
-                                DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
-                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 4
-                                else -> 1
-                            }
+                val spanCount : Int = when(resources.configuration.orientation){
+                    Configuration.ORIENTATION_PORTRAIT -> {
+                        if(resources.displayMetrics.density > 3.1){
+                            3
+                        }else {
+                            4
                         }
                     }
-                    // mainRecyclerView.isNestedScrollingEnabled = true
-                    this.adapter = dAdapter
-                    this.layoutManager = dLayoutManager
-                } else {
-                    val dLayoutManager = GridLayoutManager(context, 7)
-                    dLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return when (dAdapter.getItemViewType(
-                                position
-                            )) {
-                                DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
-                                DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> 7
-                                else -> 1
-                            }
+                    else -> {
+                        if(resources.displayMetrics.density > 3.1){
+                            5
+                        }else {
+                            7
                         }
                     }
-                    // mainRecyclerView.isNestedScrollingEnabled = true
-                    this.adapter = dAdapter
-                    this.layoutManager = dLayoutManager
                 }
+                val gridLayoutManager = GridLayoutManager(context, spanCount)
+                gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
+                    override fun getSpanSize(position: Int): Int {
+                        return when (dAdapter.getItemViewType(
+                            position
+                        )) {
+                            DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
+                            DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> spanCount
+                            else -> 1
+                        }
+                    }
+                }
+                adapter = dAdapter
+                layoutManager = gridLayoutManager
             }
             return rootView.root
         }

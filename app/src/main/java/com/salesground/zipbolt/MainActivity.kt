@@ -14,6 +14,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.view.ViewStub
 import android.widget.FrameLayout
@@ -183,6 +184,7 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
+
     }
 
     private fun configureConnectionInfoPersistentBottomSheet() {
