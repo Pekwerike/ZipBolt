@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.databinding.*
@@ -166,6 +167,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             mainActivityAllMediaOnDevice.apply {
+                allMediaOnDeviceTabLayout.tabMode = if (resources.displayMetrics.density > 3.0
+                    || resources.displayMetrics.scaledDensity > 3.4) {
+                    TabLayout.MODE_SCROLLABLE
+                } else TabLayout.MODE_FIXED
+
                 allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
                     supportFragmentManager,
                     lifecycle
@@ -184,6 +190,9 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
+
+        Log.i("ScreenDensities", resources.displayMetrics.scaledDensity.toString())
+        Log.i("ScreenDensities", resources.displayMetrics.density.toString())
 
     }
 
