@@ -25,7 +25,7 @@ import kotlin.math.min
 class ZipBoltImageRepository @Inject constructor(
     @ApplicationContext
     private val applicationContext: Context,
-    private val savedFilesRepositoryInterface: SavedFilesRepository
+    private val savedFilesRepository: SavedFilesRepository
 ) : ImageRepository {
 
     private var imageByteReadListener: ImageByteReadListener? = null
@@ -48,7 +48,7 @@ class ZipBoltImageRepository @Inject constructor(
             var mediaSize = size
             // check if an image with this name is already in the mediaStore
             val verifiedImageName = confirmImageName(displayName)
-            val imagesBaseDirectory = savedFilesRepositoryInterface
+            val imagesBaseDirectory = savedFilesRepository
                 .getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
             val imageFile = File(imagesBaseDirectory, verifiedImageName)
 
@@ -81,6 +81,10 @@ class ZipBoltImageRepository @Inject constructor(
                     val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
                     val bufferArray = ByteArray(10_000_000)
 
+                   // percentage of bytes read is 0% here
+                    imageByteReadListener?.percentageOfBytesRead(
+                        bytesReadPercent = ((size - mediaSize) / size) * 100f
+                    )
                     while (mediaSize > 0) {
                         val bytesRead = dataInputStream.read(
                             bufferArray,

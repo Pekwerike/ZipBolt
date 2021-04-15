@@ -1,6 +1,5 @@
 package com.salesground.zipbolt.repository
 
-import com.salesground.zipbolt.repository.ZipBoltMediaCategory
 import java.io.File
 
 interface SavedFilesRepository {
