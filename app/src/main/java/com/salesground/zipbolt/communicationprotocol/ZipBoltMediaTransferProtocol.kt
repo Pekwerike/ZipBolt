@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.communicationprotocol
 
-class ZipBoltMediaTransferProtocol : MediaTransferProtocol {
+import javax.inject.Inject
+
+class ZipBoltMediaTransferProtocol @Inject constructor(): MediaTransferProtocol {
 
 }
