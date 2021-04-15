@@ -13,7 +13,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream
     ) {
-        dataOutputStream.writeUTF()
+        dataOutputStream.writeUTF(dataToTransfer.)
     }
 
     override suspend fun receiveMedia(dataInputStream: DataInputStream) {
