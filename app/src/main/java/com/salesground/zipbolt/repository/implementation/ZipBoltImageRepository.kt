@@ -6,10 +6,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.repository.ZipBoltMediaCategory
-import com.salesground.zipbolt.repository.SavedFilesRepository
-import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
+import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.utils.customizeDate
 import com.salesground.zipbolt.utils.parseDate
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,13 +25,11 @@ class ZipBoltImageRepository @Inject constructor(
     private val savedFilesRepository: SavedFilesRepository
 ) : ImageRepository {
 
-    private var imageByteReadListener: ImageByteReadListener? = null
+    private var imageByteReadListener: ImageRepository.ImageByteReadListener? = null
 
-    interface ImageByteReadListener {
-        fun percentageOfBytesRead(bytesReadPercent: Float)
-    }
 
-    fun setImageByteReadListener(byteReadListener: ImageByteReadListener) {
+
+   override fun setImageByteReadListener(byteReadListener: ImageRepository.ImageByteReadListener) {
         imageByteReadListener = byteReadListener
     }
 

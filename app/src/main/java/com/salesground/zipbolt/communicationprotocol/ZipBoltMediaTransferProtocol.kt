@@ -3,6 +3,8 @@ package com.salesground.zipbolt.communicationprotocol
 import android.content.Context
 import android.os.ParcelFileDescriptor
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.repository.ImageByteReadListener
+import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,7 +15,7 @@ import javax.inject.Inject
 
 class ZipBoltMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val mediaTransferProtocol: MediaTransferProtocol
+   private val imageRepository: ImageRepository
 ) : MediaTransferProtocol {
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -21,6 +23,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream
     ) {
+        //TODO integrate bytes transferred listener for calling class
         withContext(Dispatchers.IO) {
             dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
             dataOutputStream.writeLong(dataToTransfer.dataSize)

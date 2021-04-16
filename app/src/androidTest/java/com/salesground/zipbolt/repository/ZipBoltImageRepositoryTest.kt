@@ -66,7 +66,7 @@ class ZipBoltImageRepositoryTest {
             ) as DataToTransfer.DeviceImage
 
             zipBoltImageRepository.setImageByteReadListener(
-                object : ZipBoltImageRepository.ImageByteReadListener {
+                object : ImageRepository.ImageByteReadListener {
                     override fun percentageOfBytesRead(bytesReadPercent: Float) {
                         Log.i("ImageTransferPercent", bytesReadPercent.toString())
                     }

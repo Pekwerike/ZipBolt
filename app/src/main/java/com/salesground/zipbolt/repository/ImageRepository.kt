@@ -2,6 +2,7 @@ package com.salesground.zipbolt.repository
 
 import android.net.Uri
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.repository.implementation.ZipBoltImageRepository
 import java.io.DataInputStream
 
 /**
@@ -17,13 +18,20 @@ import java.io.DataInputStream
  *
  */
 interface ImageRepository {
+
+    interface ImageByteReadListener {
+        fun percentageOfBytesRead(bytesReadPercent: Float)
+    }
+
     suspend fun insertImageIntoMediaStore(
         displayName: String,
         size: Long,
         mimeType: String,
         dataInputStream: DataInputStream
     )
+
     suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer
     suspend fun getImagesOnDevice(limit: Int = 0): MutableList<DataToTransfer>
 
+    fun setImageByteReadListener(byteReadListener: ImageByteReadListener)
 }
