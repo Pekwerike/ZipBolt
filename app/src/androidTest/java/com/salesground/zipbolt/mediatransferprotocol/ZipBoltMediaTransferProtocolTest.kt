@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.mediatransferprotocol
 
+import android.util.Log
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.SavedFilesRepository
@@ -10,8 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.io.DataOutputStream
-import java.io.File
+import java.io.*
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -41,11 +41,21 @@ class ZipBoltMediaTransferProtocolTest {
             val imageParentDirectory =
                 savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(categoryType = ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
             val gateWay = File(imageParentDirectory, "gateWay.txt")
-            val dataOutputStream = DataOutputStream()
+            val dataOutputStream = DataOutputStream(FileOutputStream(gateWay))
+            val dataInputStream = DataInputStream(FileInputStream(gateWay))
+
+            mediaTransferProtocol.setMediaTransferListener(object :
+            MediaTransferProtocol.MediaTransferListener{
+                override fun percentageOfBytesTransfered(bytesTransferred: Float) {
+                    Log.i("PercentageTransfered", bytesTransferred.toString())
+                }
+
+            })
+
             val imageToTransfer = imageRepository.getImagesOnDevice(limit = 2).first()
             mediaTransferProtocol.transferMedia(
                 dataToTransfer =  imageToTransfer,
-                dataOutputStream =
+                dataOutputStream = dataOutputStream
             )
         }
     }

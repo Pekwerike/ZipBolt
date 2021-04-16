@@ -6,9 +6,15 @@ import java.io.DataOutputStream
 
 interface MediaTransferProtocol {
 
-    interface MediaTransferListener{
+    interface MediaTransferListener {
         fun percentageOfBytesTransfered(bytesTransferred: Float)
     }
+
+    fun setMediaTransferListener(
+        mediaTransferListener:
+        MediaTransferListener
+    )
+
 
     suspend fun transferMedia(
         dataToTransfer: DataToTransfer,

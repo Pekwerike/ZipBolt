@@ -20,7 +20,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
 
     private var mediaTransferredListener: MediaTransferProtocol.MediaTransferListener? = null
 
-    fun setMediaTransferredListener(mediaTransferredListener: MediaTransferProtocol.MediaTransferListener) {
+    override fun setMediaTransferredListener(mediaTransferredListener: MediaTransferProtocol.MediaTransferListener) {
         this.mediaTransferredListener = mediaTransferredListener
     }
 
@@ -30,7 +30,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream
     ) {
-        
+
         withContext(Dispatchers.IO) {
             dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
             dataOutputStream.writeLong(dataToTransfer.dataSize)
