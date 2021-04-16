@@ -19,8 +19,10 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
 
     private var mediaTransferListener: MediaTransferProtocol.MediaTransferListener? = null
 
-    override fun setMediaTransferListener(mediaTransferListener:
-                                          MediaTransferProtocol.MediaTransferListener) {
+    override fun setMediaTransferListener(
+        mediaTransferListener:
+        MediaTransferProtocol.MediaTransferListener
+    ) {
         this.mediaTransferListener = mediaTransferListener
     }
 
@@ -41,21 +43,23 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
                 ?.also { parcelFileDescriptor: ParcelFileDescriptor ->
                     val dataFileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
                     val bufferArray = ByteArray(10_000_000)
-
                     var dataSize = dataToTransfer.dataSize
 
                     mediaTransferListener?.percentageOfBytesTransferred(0f)
 
-                      while(dataSize > 0){
-                          dataSize -= dataFileInputStream.read(bufferArray).also {
-                              dataOutputStream.write(bufferArray, 0, it)
-                          }
-                          mediaTransferListener?.percentageOfBytesTransferred(
-                              ((dataToTransfer.dataSize - dataSize) /
-                                      dataToTransfer.dataSize) * 100f
-                          )
-                      }
+                    while (dataSize > 0) {
+                        dataSize -= dataFileInputStream.read(bufferArray).also {
+                            dataOutputStream.write(bufferArray, 0, it)
+                        }
+                        try {
+                            mediaTransferListener?.percentageOfBytesTransferred(
+                                ((dataToTransfer.dataSize - dataSize) /
+                                        dataToTransfer.dataSize) * 100f
+                            )
+                        } catch (cannotDivideByZero: Exception) {
 
+                        }
+                    }
                     dataFileInputStream.close()
                 }
         }
