@@ -12,7 +12,7 @@ import java.io.DataOutputStream
 import java.io.FileInputStream
 import javax.inject.Inject
 
-class ZipBoltMediaTransferProtocol  @Inject constructor(
+class ZipBoltMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
     private val imageRepository: ImageRepository
 ) : MediaTransferProtocol {
@@ -41,29 +41,21 @@ class ZipBoltMediaTransferProtocol  @Inject constructor(
                 ?.also { parcelFileDescriptor: ParcelFileDescriptor ->
                     val dataFileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
                     val bufferArray = ByteArray(10_000_000)
-                    var lengthOfDataRead: Int
-                    var dataSize = dataToTransfer.dataSize
 
+                    var dataSize = dataToTransfer.dataSize
 
                     mediaTransferListener?.percentageOfBytesTransferred(0f)
 
-                    /*  while(dataSize > 0){
-                          dataSize -= dataFileInputStream.read(bufferArray).also { lengthOfDataRead = it }
-                          dataOutputStream.write(bufferArray, 0, lengthOfDataRead)
-                      }*/
+                      while(dataSize > 0){
+                          dataSize -= dataFileInputStream.read(bufferArray).also {
+                              dataOutputStream.write(bufferArray, 0, it)
+                          }
+                          mediaTransferListener?.percentageOfBytesTransferred(
+                              ((dataToTransfer.dataSize - dataSize) /
+                                      dataToTransfer.dataSize) * 100f
+                          )
+                      }
 
-                    while (dataFileInputStream.read(bufferArray)
-                            .also {
-                                lengthOfDataRead = it
-                                dataSize -= it
-                            } > 0
-                    ) {
-                        dataOutputStream.write(bufferArray, 0, lengthOfDataRead)
-                        mediaTransferListener?.percentageOfBytesTransferred(
-                            ((dataToTransfer.dataSize - dataSize) /
-                                    dataToTransfer.dataSize) * 100f
-                        )
-                    }
                     dataFileInputStream.close()
                 }
         }
