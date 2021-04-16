@@ -7,6 +7,7 @@ import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.FileInputStream
@@ -23,12 +24,13 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
         this.mediaTransferredListener = mediaTransferredListener
     }
 
+    //TODO write tests for this function
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream
     ) {
-
+        
         withContext(Dispatchers.IO) {
             dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
             dataOutputStream.writeLong(dataToTransfer.dataSize)
