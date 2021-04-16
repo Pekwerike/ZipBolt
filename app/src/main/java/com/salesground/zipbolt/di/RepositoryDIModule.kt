@@ -9,13 +9,16 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 abstract class RepositoryDIModule {
+    @Singleton
     @Binds
     abstract fun zipBoltImageRepository(zipBoltImageRepository: ZipBoltImageRepository): ImageRepository
 
+    @Singleton
     @Binds
     abstract fun zipBoltSavedFilesRepository(zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository): SavedFilesRepository
 }

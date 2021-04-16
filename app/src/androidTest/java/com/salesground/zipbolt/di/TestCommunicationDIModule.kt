@@ -1,19 +1,19 @@
 package com.salesground.zipbolt.di
 
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
-import com.salesground.zipbolt.communicationprotocol.ZipBoltMediaTransferProtocol
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ServiceComponent
+import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
-
 @Module
-@InstallIn(ServiceComponent::class)
-abstract class CommunicationDIModule {
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [CommunicationDIModule::class]
+)
+abstract class TestCommunicationDIModule {
 
-    @Singleton
     @Binds
     abstract fun getMediaTransferProtocol(
         zipBoltMediaTransferProtocol:

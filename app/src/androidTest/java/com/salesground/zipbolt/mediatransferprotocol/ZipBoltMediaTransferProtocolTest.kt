@@ -44,9 +44,8 @@ class ZipBoltMediaTransferProtocolTest {
             val dataOutputStream = DataOutputStream(FileOutputStream(gateWay))
             val dataInputStream = DataInputStream(FileInputStream(gateWay))
 
-            mediaTransferProtocol.setMediaTransferListener(object :
-            MediaTransferProtocol.MediaTransferListener{
-                override fun percentageOfBytesTransfered(bytesTransferred: Float) {
+            mediaTransferProtocol.setMediaTransferListener(object : MediaTransferProtocol.MediaTransferListener{
+                override fun percentageOfBytesTransferred(bytesTransferred: Float) {
                     Log.i("PercentageTransfered", bytesTransferred.toString())
                 }
 

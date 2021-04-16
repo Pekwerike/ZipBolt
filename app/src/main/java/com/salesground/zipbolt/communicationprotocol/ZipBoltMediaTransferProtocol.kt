@@ -7,22 +7,23 @@ import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.FileInputStream
 import javax.inject.Inject
 
-class ZipBoltMediaTransferProtocol @Inject constructor(
+class ZipBoltMediaTransferProtocol  @Inject constructor(
     @ApplicationContext private val context: Context,
     private val imageRepository: ImageRepository
 ) : MediaTransferProtocol {
 
-    private var mediaTransferredListener: MediaTransferProtocol.MediaTransferListener? = null
+    private var mediaTransferListener: MediaTransferProtocol.MediaTransferListener? = null
 
-    override fun setMediaTransferredListener(mediaTransferredListener: MediaTransferProtocol.MediaTransferListener) {
-        this.mediaTransferredListener = mediaTransferredListener
+    override fun setMediaTransferListener(mediaTransferListener:
+                                          MediaTransferProtocol.MediaTransferListener) {
+        this.mediaTransferListener = mediaTransferListener
     }
+
 
     //TODO write tests for this function
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -44,7 +45,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
                     var dataSize = dataToTransfer.dataSize
 
 
-                    mediaTransferredListener?.percentageOfBytesTransfered(0f)
+                    mediaTransferListener?.percentageOfBytesTransferred(0f)
 
                     /*  while(dataSize > 0){
                           dataSize -= dataFileInputStream.read(bufferArray).also { lengthOfDataRead = it }
@@ -58,7 +59,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
                             } > 0
                     ) {
                         dataOutputStream.write(bufferArray, 0, lengthOfDataRead)
-                        mediaTransferredListener?.percentageOfBytesTransfered(
+                        mediaTransferListener?.percentageOfBytesTransferred(
                             ((dataToTransfer.dataSize - dataSize) /
                                     dataToTransfer.dataSize) * 100f
                         )
