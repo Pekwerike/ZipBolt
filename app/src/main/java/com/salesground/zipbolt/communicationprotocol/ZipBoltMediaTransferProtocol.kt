@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.io.EOFException
 import java.io.FileInputStream
 import javax.inject.Inject
 
@@ -29,8 +30,10 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
     init {
         imageRepository.setImageByteReadListener(object : ImageRepository.ImageByteReadListener {
             override fun percentageOfBytesRead(bytesReadPercent: Pair<String, Float>) {
-                mediaTransferListener?.percentageOfBytesTransferred(bytesReadPercent,
-                transferState = MediaTransferProtocol.TransferState.RECEIVING)
+                mediaTransferListener?.percentageOfBytesTransferred(
+                    bytesReadPercent,
+                    transferState = MediaTransferProtocol.TransferState.RECEIVING
+                )
             }
         })
     }
@@ -53,7 +56,7 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
                     var dataSize = dataToTransfer.dataSize
 
                     mediaTransferListener?.percentageOfBytesTransferred(
-                       bytesTransferred = Pair(
+                        bytesTransferred = Pair(
                             dataToTransfer.dataDisplayName,
                             0f
                         ),
@@ -85,21 +88,24 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun receiveMedia(dataInputStream: DataInputStream) {
         withContext(Dispatchers.IO) {
-            val mediaName = dataInputStream.readUTF()
-            val mediaSize = dataInputStream.readLong()
-            val mediaMimeType = dataInputStream.readUTF()
+            try {
+                val mediaName = dataInputStream.readUTF()
+                val mediaSize = dataInputStream.readLong()
+                val mediaMimeType = dataInputStream.readUTF()
 
-            when {
-                mediaMimeType.contains("image", true) -> {
-                    imageRepository.insertImageIntoMediaStore(
-                        displayName = mediaName,
-                        size = mediaSize,
-                        mimeType = mediaMimeType,
-                        dataInputStream = dataInputStream
-                    )
+                when {
+                    mediaMimeType.contains("image", true) -> {
+                        imageRepository.insertImageIntoMediaStore(
+                            displayName = mediaName,
+                            size = mediaSize,
+                            mimeType = mediaMimeType,
+                            dataInputStream = dataInputStream
+                        )
+                    }
                 }
+            } catch (endOfFileException: EOFException) {
+
             }
         }
     }
-
 }
