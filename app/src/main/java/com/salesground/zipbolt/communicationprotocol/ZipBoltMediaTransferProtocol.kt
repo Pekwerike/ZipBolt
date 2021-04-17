@@ -27,13 +27,12 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
     }
 
 
-    //TODO write tests for this function
+
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream
     ) {
-
         withContext(Dispatchers.IO) {
             dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
             dataOutputStream.writeLong(dataToTransfer.dataSize)
@@ -65,8 +64,24 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun receiveMedia(dataInputStream: DataInputStream) {
+        withContext(Dispatchers.IO) {
+            val mediaName = dataInputStream.readUTF()
+            val mediaSize = dataInputStream.readLong()
+            val mediaMimeType = dataInputStream.readUTF()
 
+            when {
+                mediaMimeType.contains("image", true) -> {
+                    imageRepository.insertImageIntoMediaStore(
+                        displayName = mediaName,
+                        size = mediaSize,
+                        mimeType = mediaMimeType,
+                        dataInputStream = dataInputStream
+                    )
+                }
+            }
+        }
     }
 
 }

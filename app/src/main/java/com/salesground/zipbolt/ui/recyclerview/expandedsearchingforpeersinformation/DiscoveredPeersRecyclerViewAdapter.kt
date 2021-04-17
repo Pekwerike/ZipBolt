@@ -27,14 +27,15 @@ class DiscoveredPeersRecyclerViewAdapter(
     }
 
     override fun submitList(list: MutableList<DiscoveredPeersDataItem>?) {
-        CoroutineScope(Dispatchers.Main).launch {
-            val newList =  withContext(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val newList =
                 if (list.isNullOrEmpty()) listOf<DiscoveredPeersDataItem>(DiscoveredPeersDataItem.Header)
                 else {
                     listOf(DiscoveredPeersDataItem.Header) + list
                 }
+            withContext(Dispatchers.Main) {
+                super.submitList(newList)
             }
-            super.submitList(newList)
         }
     }
 
