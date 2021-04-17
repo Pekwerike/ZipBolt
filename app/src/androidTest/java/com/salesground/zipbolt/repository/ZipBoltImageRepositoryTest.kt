@@ -47,7 +47,7 @@ class ZipBoltImageRepositoryTest {
     fun test_getMetaDataOfImage() = runBlocking {
         var firstImage = zipBoltImageRepository.getImagesOnDevice().first()
         firstImage =
-            zipBoltImageRepository.getMetaDataOfImage(firstImage) as DataToTransfer.DeviceImage
+            zipBoltImageRepository.getMetaDataOfImage(firstImage as DataToTransfer.DeviceImage) as DataToTransfer.DeviceImage
         assert(firstImage.imageMimeType.contains("image"))
         assert(firstImage.imageSize > 10)
         assert(firstImage.imageDisplayName != "")
@@ -58,17 +58,17 @@ class ZipBoltImageRepositoryTest {
         runBlocking {
             var numberOfImagesOnDevice = zipBoltImageRepository.getImagesOnDevice().size
             var firstImage = zipBoltImageRepository.getMetaDataOfImage(
-                zipBoltImageRepository.getImagesOnDevice(limit = 5)[0]
+                zipBoltImageRepository.getImagesOnDevice(limit = 5)[0] as DataToTransfer.DeviceImage
             ) as DataToTransfer.DeviceImage
 
             var secondImage = zipBoltImageRepository.getMetaDataOfImage(
-                zipBoltImageRepository.getImagesOnDevice(limit = 5)[1]
+                zipBoltImageRepository.getImagesOnDevice(limit = 5)[1] as DataToTransfer.DeviceImage
             ) as DataToTransfer.DeviceImage
 
             zipBoltImageRepository.setImageByteReadListener(
                 object : ImageRepository.ImageByteReadListener {
-                    override fun percentageOfBytesRead(bytesReadPercent: Float) {
-                        // Log.i("ImageTransferPercent", bytesReadPercent.toString())
+                    override fun percentageOfBytesRead(bytesReadPercent: Pair<String, Float>) {
+                        Log.i("ImageTransferPercent", "${bytesReadPercent.first}: ${bytesReadPercent.second}")
                     }
                 }
             )

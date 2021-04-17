@@ -32,6 +32,7 @@ class ZipBoltImageRepository @Inject constructor(
         imageByteReadListener = byteReadListener
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun insertImageIntoMediaStore(
         displayName: String,
         size: Long,
@@ -77,8 +78,9 @@ class ZipBoltImageRepository @Inject constructor(
 
                     // percentage of bytes read is 0% here
                     imageByteReadListener?.percentageOfBytesRead(
-                        bytesReadPercent = ((size - mediaSize) / size) * 100f
-                    )
+                        bytesReadPercent = Pair(displayName,
+                            ((size - mediaSize) / size) * 100f))
+
                     while (mediaSize > 0) {
                         val bytesRead = dataInputStream.read(
                             bufferArray,
@@ -89,8 +91,9 @@ class ZipBoltImageRepository @Inject constructor(
                         imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
                         mediaSize -= bytesRead
                         imageByteReadListener?.percentageOfBytesRead(
-                            bytesReadPercent = ((size - mediaSize) / size) * 100f
-                        )
+                            bytesReadPercent = Pair(displayName,
+                                ((size - mediaSize) / size) * 100f))
+
                     }
                     imageFileDataOutputStream.flush()
                     imageFileDataOutputStream.close()
@@ -172,8 +175,8 @@ class ZipBoltImageRepository @Inject constructor(
     }
 
 
-    override suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer {
-        val imageToExtractData = image as DataToTransfer.DeviceImage
+    override suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer {
+
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
@@ -185,7 +188,7 @@ class ZipBoltImageRepository @Inject constructor(
             MediaStore.Images.Media.DISPLAY_NAME
         )
         val selection = "${MediaStore.Images.Media._ID} =? "
-        val selectionArguments = arrayOf(imageToExtractData.imageId.toString())
+        val selectionArguments = arrayOf(image.imageId.toString())
 
         applicationContext.contentResolver.query(
             collection,
@@ -201,19 +204,14 @@ class ZipBoltImageRepository @Inject constructor(
                 val imageDisplayName =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
-                return DataToTransfer.DeviceImage(
-                    imageId = imageToExtractData.imageId,
-                    imageUri = imageToExtractData.imageUri,
-                    imageDateModified = imageToExtractData.imageDateModified,
-                    imageDisplayName = imageDisplayName,
-                    imageBucketName = imageToExtractData.imageBucketName,
-                    imageMimeType = imageMimeType,
-                    imageSize = imageSize
+                return image.copy(
+                    imageMimeType =  imageMimeType,
+                    imageSize = imageSize,
+                    imageDisplayName = imageDisplayName
                 )
-
             }
         }
-        return imageToExtractData
+        return image
     }
 
     private fun confirmImageName(mediaName: String?): String {

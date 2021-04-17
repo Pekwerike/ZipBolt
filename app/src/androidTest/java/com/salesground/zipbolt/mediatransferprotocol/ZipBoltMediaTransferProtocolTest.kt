@@ -2,9 +2,11 @@ package com.salesground.zipbolt.mediatransferprotocol
 
 import android.content.Context
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZipBoltMediaCategory
@@ -12,10 +14,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.Assert
+import org.junit.*
 import java.io.*
 import javax.inject.Inject
 
@@ -28,7 +27,7 @@ class ZipBoltMediaTransferProtocolTest {
     private val applicationContext = ApplicationProvider.getApplicationContext<Context>()
 
     @Inject
-    lateinit var mediaTransferProtocol : MediaTransferProtocol
+    lateinit var mediaTransferProtocol: MediaTransferProtocol
 
     @Inject
     lateinit var imageRepository: ImageRepository
@@ -36,50 +35,75 @@ class ZipBoltMediaTransferProtocolTest {
     @Inject
     lateinit var savedFilesRepository: SavedFilesRepository
 
+    private lateinit var dataOutputStream: DataOutputStream
+    private lateinit var dataInputStream: DataInputStream
+    private lateinit var baseFolder : File
+    private lateinit var gateWay: File
 
     @Before
-    fun setUp(){
+    fun setUp() {
         hiltRule.inject()
+        baseFolder = File(applicationContext.getExternalFilesDir(null), "Testing")
+        if (!baseFolder.exists()) baseFolder.mkdirs()
+        gateWay = File(
+            baseFolder,
+            "gateWay.txt"
+        )
+
+        dataOutputStream = DataOutputStream(FileOutputStream(gateWay))
+        dataInputStream = DataInputStream(FileInputStream(gateWay))
+    }
+    
+    @After
+    fun tearDown(){
+        gateWay.delete()
+        baseFolder.delete()
     }
 
     @Test
-    fun test_transferMedia() {
+    fun test_file_transfer() {
         runBlocking {
-            val gateWay = File(savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(categoryType = ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY),
-                "gateWay.txt")
-            val dataOutputStream = DataOutputStream(FileOutputStream(gateWay))
-            val dataInputStream = DataInputStream(FileInputStream(gateWay))
+            val numberOfImagesInMediaStore = imageRepository.getImagesOnDevice().size
 
-            mediaTransferProtocol.setMediaTransferListener(object : MediaTransferProtocol.MediaTransferListener{
-                override fun percentageOfBytesTransferred(bytesTransferred: Float) {
-                    Log.i("PercentageTransferred", bytesTransferred.toString())
-                }
-            })
-
-            val imageToTransfer = imageRepository.
-            getMetaDataOfImage(imageRepository.getImagesOnDevice(limit = 20)[19])
-            mediaTransferProtocol.transferMedia(
-                dataToTransfer =  imageToTransfer,
-                dataOutputStream = dataOutputStream
-            )
-            val imageName = dataInputStream.readUTF()
-            val parentFolder  = File(applicationContext.getExternalFilesDir(null), "Test Images")
-            if(!parentFolder.exists()) parentFolder.mkdirs()
-            val receivedImage = File(parentFolder, imageName)
-            FileOutputStream(receivedImage).apply {
-                var bytesUnread = dataInputStream.readLong()
-                val mimeType = dataInputStream.readUTF()
-                val buffer = ByteArray(1024)
-                while(bytesUnread > 0){
-                   bytesUnread -= dataInputStream.read(buffer).also {
-                        write(buffer, 0, it)
+            mediaTransferProtocol.setMediaTransferListener(object :
+                MediaTransferProtocol.MediaTransferListener {
+                override fun percentageOfBytesTransferred(bytesTransferred:
+                                                          Pair<String, Float>,
+                transferState : MediaTransferProtocol.TransferState) {
+                    when(transferState){
+                        MediaTransferProtocol.TransferState.TRANSFERING -> {
+                            Log.i(
+                                "PercentTransferred",
+                                "Transferring - ${bytesTransferred.first} : ${bytesTransferred.second}"
+                            )
+                        }
+                        MediaTransferProtocol.TransferState.RECEIVING -> {
+                            Log.i(
+                                "PercentTransferred",
+                                "Receiving - ${bytesTransferred.first} : ${bytesTransferred.second}"
+                            )
+                        }
                     }
                 }
-                flush()
-                close()
+            })
+            
+            imageRepository.getImagesOnDevice().map {
+                imageRepository.getMetaDataOfImage(it as DataToTransfer.DeviceImage)
+            }.forEach { imageToTransfer ->
+                //transfer image
+                mediaTransferProtocol.transferMedia(
+                    dataToTransfer = imageToTransfer,
+                    dataOutputStream = dataOutputStream
+                )
             }
-            assertEquals(receivedImage.length(), imageToTransfer.dataSize)
-            assertEquals(receivedImage.name, imageToTransfer.dataDisplayName)
+
+            repeat(numberOfImagesInMediaStore) {
+                //receive all transferred image
+                mediaTransferProtocol.receiveMedia(
+                    dataInputStream = dataInputStream
+                )
+            }
+            assertEquals(imageRepository.getImagesOnDevice().size, numberOfImagesInMediaStore * 2)
         }
     }
 }

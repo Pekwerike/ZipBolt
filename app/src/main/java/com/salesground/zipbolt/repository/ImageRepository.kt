@@ -20,7 +20,7 @@ import java.io.DataInputStream
 interface ImageRepository {
 
     interface ImageByteReadListener {
-        fun percentageOfBytesRead(bytesReadPercent: Float)
+        fun percentageOfBytesRead(bytesReadPercent: Pair<String, Float>)
     }
 
     suspend fun insertImageIntoMediaStore(
@@ -30,7 +30,7 @@ interface ImageRepository {
         dataInputStream: DataInputStream
     )
 
-    suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer
+    suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer
     suspend fun getImagesOnDevice(limit: Int = 0): MutableList<DataToTransfer>
 
     fun setImageByteReadListener(byteReadListener: ImageByteReadListener)

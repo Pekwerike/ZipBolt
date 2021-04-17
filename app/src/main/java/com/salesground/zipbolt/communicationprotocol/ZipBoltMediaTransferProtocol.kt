@@ -26,6 +26,14 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
         this.mediaTransferListener = mediaTransferListener
     }
 
+    init {
+        imageRepository.setImageByteReadListener(object : ImageRepository.ImageByteReadListener {
+            override fun percentageOfBytesRead(bytesReadPercent: Pair<String, Float>) {
+                mediaTransferListener?.percentageOfBytesTransferred(bytesReadPercent,
+                transferState = MediaTransferProtocol.TransferState.RECEIVING)
+            }
+        })
+    }
 
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -44,7 +52,13 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
                     val bufferArray = ByteArray(10_000_000)
                     var dataSize = dataToTransfer.dataSize
 
-                    mediaTransferListener?.percentageOfBytesTransferred(0f)
+                    mediaTransferListener?.percentageOfBytesTransferred(
+                       bytesTransferred = Pair(
+                            dataToTransfer.dataDisplayName,
+                            0f
+                        ),
+                        transferState = MediaTransferProtocol.TransferState.TRANSFERING
+                    )
 
                     while (dataSize > 0) {
                         dataSize -= dataFileInputStream.read(bufferArray).also {
@@ -52,8 +66,12 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
                         }
                         try {
                             mediaTransferListener?.percentageOfBytesTransferred(
-                                ((dataToTransfer.dataSize - dataSize) /
-                                        dataToTransfer.dataSize) * 100f
+                                bytesTransferred = Pair(
+                                    dataToTransfer.dataDisplayName,
+                                    ((dataToTransfer.dataSize - dataSize) /
+                                            dataToTransfer.dataSize) * 100f
+                                ),
+                                transferState = MediaTransferProtocol.TransferState.TRANSFERING
                             )
                         } catch (cannotDivideByZero: Exception) {
 

@@ -6,8 +6,16 @@ import java.io.DataOutputStream
 
 interface MediaTransferProtocol {
 
+    enum class TransferState {
+        RECEIVING,
+        TRANSFERING
+    }
+
     interface MediaTransferListener {
-        fun percentageOfBytesTransferred(bytesTransferred: Float)
+        fun percentageOfBytesTransferred(
+            bytesTransferred: Pair<String, Float>,
+            transferState: TransferState
+        )
     }
 
     fun setMediaTransferListener(
