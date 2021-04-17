@@ -42,6 +42,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/expanded_searching_for_peers_information_stop_search_button"
+                style="@style/ImageButtonStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/collapse_searching_for_peers_content_description"
+                android:src="@drawable/arrow_down"
+                android:alpha="0.5"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
             <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
                 android:id="@+id/expanded_searching_for_peers_information_searching_for_devices_animation"
@@ -52,7 +67,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="4dp"
-                app:layout_constraintBottom_toTopOf="@id/expanded_searching_for_peers_information_stop_search_button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/expanded_searching_for_peers_information_discovered_peers_recycler_view"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -66,22 +81,13 @@
                 android:layout_margin="8dp"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="@id/expanded_searching_for_peers_information_searching_for_devices_animation"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/expanded_searching_for_peers_information_searching_for_devices_animation"
                 app:layout_constraintTop_toTopOf="@id/expanded_searching_for_peers_information_searching_for_devices_animation" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/expanded_searching_for_peers_information_stop_search_button"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_margin="16dp"
-                android:text="Stop searching for peers"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
