@@ -37,7 +37,8 @@ class ServerService : Service() {
         serverSocket.let {
             it.close()
         }
-        super.onDestroy()
+        super.onDestroy()]
+
     }
 
 
@@ -75,10 +76,10 @@ class ServerService : Service() {
                 val socketDOS = DataOutputStream(BufferedOutputStream(client!!.getOutputStream()))
                 val socketDIS = DataInputStream(BufferedInputStream(client.getInputStream()))
 
-                withContext(Dispatchers.Main) {
+                /*withContext(Dispatchers.Main) {
                     Toast.makeText(this@ServerService, "Connected to Client", Toast.LENGTH_SHORT)
                         .show()
-                }
+                }*/
 
                 launch(Dispatchers.IO) {
                     listenForNewMediaCollectionToTransfer(socketDOS)

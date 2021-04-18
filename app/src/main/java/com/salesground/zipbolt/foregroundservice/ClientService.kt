@@ -65,10 +65,10 @@ class ClientService : Service() {
                 server.connect(InetSocketAddress(serverIpAddress, SOCKET_PORT), 100000)
                 val socketDIS = DataInputStream(BufferedInputStream(server.getInputStream()))
                 val socketDOS = DataOutputStream(BufferedOutputStream(server.getOutputStream()))
-                withContext(Dispatchers.Main) {
+                /*withContext(Dispatchers.Main) {
                     Toast.makeText(this@ClientService, "Connected to server", Toast.LENGTH_SHORT)
                         .show()
-                }
+                }*/
                 launch (Dispatchers.IO){
                     listenForAvailableFilesToTransfer(socketDOS)
                 }

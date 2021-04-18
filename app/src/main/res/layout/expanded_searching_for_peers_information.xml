@@ -50,10 +50,9 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginVertical="8dp"
-                android:alpha="0.5"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/collapse_searching_for_peers_content_description"
-                android:src="@drawable/close_icon"
+                android:src="@drawable/close_icon_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

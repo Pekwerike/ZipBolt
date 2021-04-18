@@ -52,8 +52,7 @@
                 android:layout_marginVertical="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/collapse_searching_for_peers_content_description"
-                android:src="@drawable/arrow_down"
-                android:alpha="0.5"
+                android:src="@drawable/close_icon_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

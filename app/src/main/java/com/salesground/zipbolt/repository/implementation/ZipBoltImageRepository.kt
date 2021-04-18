@@ -19,7 +19,7 @@ import javax.inject.Inject
 import kotlin.math.min
 
 
-class ZipBoltImageRepository @Inject constructor(
+open class ZipBoltImageRepository @Inject constructor(
     @ApplicationContext
     private val applicationContext: Context,
     private val savedFilesRepository: SavedFilesRepository
@@ -214,7 +214,7 @@ class ZipBoltImageRepository @Inject constructor(
         return image
     }
 
-    private fun confirmImageName(mediaName: String?): String {
+   protected fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {
             if (isImageInMediaStore(mediaName)) {
                 "IMG" + Random().nextInt(100000).toString() + mediaName
@@ -224,7 +224,7 @@ class ZipBoltImageRepository @Inject constructor(
         } else "IMG" + System.currentTimeMillis() + ".jpg"
     }
 
-    private fun isImageInMediaStore(imageName: String): Boolean {
+    protected fun isImageInMediaStore(imageName: String): Boolean {
         val collection = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)

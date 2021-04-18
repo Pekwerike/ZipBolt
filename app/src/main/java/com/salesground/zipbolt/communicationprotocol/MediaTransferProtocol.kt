@@ -6,6 +6,15 @@ import java.io.DataOutputStream
 
 interface MediaTransferProtocol {
 
+    enum class TransferMetaData(val status: String) {
+
+        CANCEL_ACTIVE_RECEIVE("CancelActiveReceive"),
+        CANCEL_ACTIVE_TRANSTER("CancelActiveTransfer"),
+        KEEP_RECEIVING("KeepReceiving"),
+        KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER("KeepReceivingButCancelActiveTransfer"),
+        PAUSE_ACTIVE_TRANSFER("PauseActiveTransfer")
+    }
+
     enum class TransferState {
         RECEIVING,
         TRANSFERING
@@ -17,6 +26,11 @@ interface MediaTransferProtocol {
             transferState: TransferState
         )
     }
+
+    fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, TransferState) -> Unit)
+
+    fun cancelCurrentTransfer(transferMetaData: TransferMetaData)
+
 
     fun setMediaTransferListener(
         mediaTransferListener:

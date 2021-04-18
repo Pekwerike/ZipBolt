@@ -20,6 +20,15 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
 
     private var mediaTransferListener: MediaTransferProtocol.MediaTransferListener? = null
 
+    override fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit) {
+
+    }
+
+    override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
+
+    }
+
+
     override fun setMediaTransferListener(
         mediaTransferListener:
         MediaTransferProtocol.MediaTransferListener
