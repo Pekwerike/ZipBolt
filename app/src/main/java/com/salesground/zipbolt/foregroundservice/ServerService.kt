@@ -37,7 +37,7 @@ class ServerService : Service() {
         serverSocket.let {
             it.close()
         }
-        super.onDestroy()]
+        super.onDestroy()
 
     }
 

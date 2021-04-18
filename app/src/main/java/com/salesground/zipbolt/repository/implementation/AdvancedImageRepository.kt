@@ -29,7 +29,7 @@ class AdvancedImageRepository @Inject constructor(
 
     }
 
-    fun setTransferMetaDataUpdateListener(listener : (MediaTransferProtocol.TransferMetaData) -> Unit){
+    fun setTransferMetaDataUpdateListener(listener: (MediaTransferProtocol.TransferMetaData) -> Unit) {
         transferMetaDataUpdateListener = listener
     }
 
@@ -86,7 +86,7 @@ class AdvancedImageRepository @Inject constructor(
                 imageBytesReadListener(
                     Pair(
                         displayName,
-                       0f
+                        0f
                     )
                 )
 
@@ -96,6 +96,13 @@ class AdvancedImageRepository @Inject constructor(
                         }
                         MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status -> {
                             // delete image file
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                contentValues.clear()
+                                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                                context.contentResolver.update(imageUri, contentValues, null, null)
+                            }
+                            context.contentResolver.delete(imageUri, null, null)
+                            imageFile.delete()
                             break
                         }
                         MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.status -> {
@@ -103,16 +110,19 @@ class AdvancedImageRepository @Inject constructor(
                         }
                     }
 
-                   val bytesRead = dataInputStream.read(buffer,
+                    val bytesRead = dataInputStream.read(
+                        buffer,
                         0,
                         min(mediaSize.toInt(), buffer.size)
                     )
-                    if(bytesRead == -1) break
+                    if (bytesRead == -1) break
                     imageOutputStream.write(buffer, 0, bytesRead)
                     mediaSize -= bytesRead
                     imageBytesReadListener(
-                        Pair(displayName,
-                            ((size - mediaSize) / size) * 100f)
+                        Pair(
+                            displayName,
+                            ((size - mediaSize) / size) * 100f
+                        )
                     )
                 }
                 imageOutputStream.flush()
@@ -126,9 +136,5 @@ class AdvancedImageRepository @Inject constructor(
             }
         }
     }
-    private fun deleteImage(){
-        context.contentResolver.delete(
 
-        )
-    }
 }

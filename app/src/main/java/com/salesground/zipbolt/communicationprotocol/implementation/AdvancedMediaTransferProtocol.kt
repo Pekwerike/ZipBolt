@@ -4,6 +4,7 @@ import android.content.Context
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.repository.implementation.AdvancedImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,13 +15,30 @@ import javax.inject.Inject
 
 class AdvancedMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val imageRepository: ImageRepository
+    private val advancedImageRepository: AdvancedImageRepository
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
     private var dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit =
         { _, _ ->
 
         }
+
+    init {
+        advancedImageRepository.setImageBytesReadListener {
+           dataFlowListener(
+               it,
+               MediaTransferProtocol.TransferState.RECEIVING
+           )
+        }
+
+        advancedImageRepository.setTransferMetaDataUpdateListener {
+            when(it){
+                MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
+                    cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                }
+            }
+        }
+    }
 
     override fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit) {
         this.dataFlowListener = dataFlowListener
@@ -60,7 +78,12 @@ class AdvancedMediaTransferProtocol @Inject constructor(
 
                     while (dataSize > 0) {
                         dataOutputStream.writeUTF(mTransferMetaData.status)
-                        if (mTransferMetaData == MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE) break
+
+                        when(mTransferMetaData){
+                            MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE -> break
+                            MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
+                        }
+
                         dataSize -= fileInputStream.read(buffer).also {
                             dataOutputStream.write(buffer, 0, it)
                             dataFlowListener(
@@ -85,7 +108,12 @@ class AdvancedMediaTransferProtocol @Inject constructor(
 
             when{
                 mediaType.contains("image", true) -> {
-
+                    advancedImageRepository.insertImageIntoMediaStore(
+                        displayName = mediaName,
+                        size = mediaSize,
+                        mimeType = mediaType,
+                        dataInputStream = dataInputStream
+                    )
                 }
             }
         }
