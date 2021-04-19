@@ -71,7 +71,7 @@ class AdvanceMediaTransferProtocol @Inject constructor(
             context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r")
                 ?.also { parcelFileDescriptor ->
                     val fileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    val buffer = ByteArray(10)
+                    val buffer = ByteArray(100)
 
                     dataFlowListener(
                         Pair(
@@ -87,17 +87,19 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                             MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
                         }
 
-                        dataSize -= fileInputStream.read(buffer).also {
+                         fileInputStream.read(buffer).also {
                             dataOutputStream.write(buffer, 0, it)
-                            dataFlowListener(
+                             dataSize -= it
+                             dataFlowListener(
                                 Pair(
                                     dataToTransfer.dataDisplayName,
-                                    ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize) * 100f
+                                    ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize.toFloat()) * 100f
                                 ),
                                 MediaTransferProtocol.TransferState.TRANSFERING
                             )
                         }
                     }
+                    mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
                     ongoingTransfer.set(false)
                 }
         }

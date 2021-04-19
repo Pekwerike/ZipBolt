@@ -72,9 +72,9 @@ class AdvanceImageRepositoryTest {
             )
 
             advanceImageRepository.setImageBytesReadListener {
-                Log.i("BytesRead", "${it.first}: ${it.second}")
+              //  Log.i("BytesRead", "${it.first}: ${it.second}")
                 if (it.first == firstImage.dataDisplayName && it.second > 50) {
-                    Log.i("BytesRead", "${it.first}: Cancelled Transfer")
+                //  Log.i("BytesRead", "${it.first}: Cancelled Transfer")
                 }
             }
             // write first image and cancel transfer
