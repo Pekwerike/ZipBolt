@@ -7,9 +7,7 @@ import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.FileInputStream
+import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -26,14 +24,14 @@ class AdvanceMediaTransferProtocol @Inject constructor(
 
     init {
         advancedImageRepository.setImageBytesReadListener {
-           dataFlowListener(
-               it,
-               MediaTransferProtocol.TransferState.RECEIVING
-           )
+            dataFlowListener(
+                it,
+                MediaTransferProtocol.TransferState.RECEIVING
+            )
         }
 
         advancedImageRepository.setTransferMetaDataUpdateListener {
-            when(it){
+            when (it) {
                 MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
                     cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                 }
@@ -46,9 +44,8 @@ class AdvanceMediaTransferProtocol @Inject constructor(
     }
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
-        if(ongoingTransfer.get()) mTransferMetaData = transferMetaData
+        if (ongoingTransfer.get()) mTransferMetaData = transferMetaData
     }
-
 
 
     override fun setMediaTransferListener(mediaTransferListener: MediaTransferProtocol.MediaTransferListener) {
@@ -82,15 +79,15 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                     while (dataSize > 0) {
                         dataOutputStream.writeUTF(mTransferMetaData.status)
 
-                        when(mTransferMetaData){
+                        when (mTransferMetaData) {
                             MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE -> break
                             MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
                         }
 
-                         fileInputStream.read(buffer).also {
+                        fileInputStream.read(buffer).also {
                             dataOutputStream.write(buffer, 0, it)
-                             dataSize -= it
-                             dataFlowListener(
+                            dataSize -= it
+                            dataFlowListener(
                                 Pair(
                                     dataToTransfer.dataDisplayName,
                                     ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize.toFloat()) * 100f
@@ -107,21 +104,26 @@ class AdvanceMediaTransferProtocol @Inject constructor(
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun receiveMedia(dataInputStream: DataInputStream) {
-        withContext(Dispatchers.IO){
-            val mediaName = dataInputStream.readUTF()
-            val mediaSize = dataInputStream.readLong()
-            val mediaType = dataInputStream.readUTF()
+        withContext(Dispatchers.IO) {
+            try {
+                val mediaName = dataInputStream.readUTF()
+                val mediaSize = dataInputStream.readLong()
+                val mediaType = dataInputStream.readUTF()
 
-            when{
-                mediaType.contains("image", true) -> {
-                    advancedImageRepository.insertImageIntoMediaStore(
-                        displayName = mediaName,
-                        size = mediaSize,
-                        mimeType = mediaType,
-                        dataInputStream = dataInputStream
-                    )
+                when {
+                    mediaType.contains("image", true) -> {
+                        advancedImageRepository.insertImageIntoMediaStore(
+                            displayName = mediaName,
+                            size = mediaSize,
+                            mimeType = mediaType,
+                            dataInputStream = dataInputStream
+                        )
+                    }
                 }
+            }catch (endOfFileException: EOFException){
+                return@withContext
+            }catch (malformedInput: UTFDataFormatException){
+                return@withContext
             }
-        }
-    }
+        }}
 }

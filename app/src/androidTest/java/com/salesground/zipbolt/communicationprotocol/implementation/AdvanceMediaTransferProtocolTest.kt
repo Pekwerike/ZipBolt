@@ -10,6 +10,7 @@ import com.salesground.zipbolt.repository.SavedFilesRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 
@@ -32,7 +33,8 @@ class AdvanceMediaTransferProtocolTest {
     private lateinit var gateWayOutputStream: DataOutputStream
     private lateinit var gateWayInputStream: DataInputStream
     private var imagesToCancelTransfer: MutableList<String> = mutableListOf()
-    private val deletedImages : MutableList<String> = mutableListOf()
+    private val deletedImages: MutableList<String> = mutableListOf()
+
     @Inject
     lateinit var savedFilesRepository: SavedFilesRepository
 
@@ -78,16 +80,23 @@ class AdvanceMediaTransferProtocolTest {
             allImagesOnDevice[2].dataDisplayName
         )
         allImagesOnDevice.forEach {
-            advanceMediaTransferProtocol.transferMedia(
-                dataToTransfer = it,
-                dataOutputStream = gateWayOutputStream
-            )
-
+            launch {
+                advanceMediaTransferProtocol.transferMedia(
+                    dataToTransfer = it,
+                    dataOutputStream = gateWayOutputStream
+                )
+            }
+            delay(300)
             advanceMediaTransferProtocol.receiveMedia(
                 dataInputStream = gateWayInputStream
             )
+
         }
-        assertEquals(((allImagesOnDevice.size * 2) - deletedImages.toSet().size), imageRepository.getImagesOnDevice().size)
+
+        assertEquals(
+            ((allImagesOnDevice.size * 2) - deletedImages.toSet().size),
+            imageRepository.getImagesOnDevice().size
+        )
     }
 
     @After
