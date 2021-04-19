@@ -10,6 +10,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -30,27 +31,43 @@ class AdvanceImageRepositoryTest {
 
     private lateinit var gateWayOutputStream: DataOutputStream
     private lateinit var gateWayInputStream: DataInputStream
+    private lateinit var gateWayTwo : File
+    private lateinit var gateWay : File
+    private lateinit var baseDirectory: File
+    private lateinit var gateWayOutputStreamTwo: DataOutputStream
+    private lateinit var gateWayInputStreamTwo: DataInputStream
+
 
     @Before
     fun setUp() {
         hiltRule.inject()
-        val baseDirectory = File(
+        baseDirectory = File(
             context.getExternalFilesDir(null),
             "Testing"
         )
         if (!baseDirectory.exists()) baseDirectory.mkdirs()
-        val gateWay = File(baseDirectory, "gateWay.txt")
+        gateWay = File(baseDirectory, "gateWay.txt")
+        gateWayTwo = File(baseDirectory, "gateWayTwo.txt")
         gateWayOutputStream = DataOutputStream(FileOutputStream(gateWay))
         gateWayInputStream = DataInputStream(FileInputStream(gateWay))
+        gateWayOutputStreamTwo = DataOutputStream(FileOutputStream(gateWayTwo))
+        gateWayInputStreamTwo = DataInputStream(FileInputStream(gateWayTwo))
+    }
+
+    @After
+    fun shoutDown(){
+        gateWayTwo.delete()
+        gateWay.delete()
+        baseDirectory.delete()
     }
 
     @Test
-    fun test_insertImageIntoMediaStore() {
+    fun test_insertImageIntoMediaStoreWithOutCancelingTransfer() {
         runBlocking {
 
             val currentNumberOfImages = advanceImageRepository.getImagesOnDevice().size
             val imageToTransfer = advanceImageRepository.getMetaDataOfImage(
-                advanceImageRepository.getImagesOnDevice(limit = 2).first() as DataToTransfer.DeviceImage
+                advanceImageRepository.getImagesOnDevice(limit = 4)[3] as DataToTransfer.DeviceImage
             )
 
             advanceImageRepository.setImageBytesReadListener {
@@ -64,10 +81,10 @@ class AdvanceImageRepositoryTest {
                     var unwrittenBytes = imageToTransfer.dataSize
 
                     while (unwrittenBytes > 0) {
-                        gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
+                        gateWayOutputStreamTwo.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
                         imageInputStream.read(buffer).also {
                             unwrittenBytes -= it
-                            gateWayOutputStream.write(buffer, 0, it)
+                            gateWayOutputStreamTwo.write(buffer, 0, it)
                         }
                     }
                 }
@@ -75,9 +92,80 @@ class AdvanceImageRepositoryTest {
                 displayName = imageToTransfer.dataDisplayName,
                 size = imageToTransfer.dataSize,
                 mimeType = imageToTransfer.dataType,
-                dataInputStream = gateWayInputStream
+                dataInputStream = gateWayInputStreamTwo
             )
             assertEquals(currentNumberOfImages + 1, advanceImageRepository.getImagesOnDevice().size)
+        }
+    }
+
+    @Test
+    fun insertImageIntoMediaStoreAndCancelFirstTransfer() {
+        runBlocking {
+            var cancelFirstTransfer = false
+            val numberOfImagesOnDevice = advanceImageRepository.getImagesOnDevice().size
+            val firstImage = advanceImageRepository.getMetaDataOfImage(
+                advanceImageRepository.getImagesOnDevice(limit = 3)[1] as DataToTransfer.DeviceImage
+            )
+            val secondImage = advanceImageRepository.getMetaDataOfImage(
+                advanceImageRepository.getImagesOnDevice(limit = 3)[0] as DataToTransfer.DeviceImage
+            )
+
+            advanceImageRepository.setImageBytesReadListener {
+                Log.i("BytesRead", "${it.first}: ${it.second}")
+                if (it.first == firstImage.dataDisplayName && it.second > 50) {
+                    cancelFirstTransfer = true
+                    Log.i("BytesRead", "${it.first}: Cancelled Transfer")
+                }
+            }
+            // write first image and cancel transfer
+            context.contentResolver.openFileDescriptor(firstImage.dataUri, "r")
+                ?.let { parcelFileDescriptor ->
+                    val firstImageInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
+                    val buffer = ByteArray(10)
+                    var bytesUnwritten = firstImage.dataSize
+
+                    while (bytesUnwritten > 0) {
+                        if (bytesUnwritten < firstImage.dataSize / 2) {
+                            gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status)
+                            break
+                        } else {
+                            gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
+                        }
+                        firstImageInputStream.read(buffer).also {
+                            gateWayOutputStream.write(buffer, 0, it)
+                            bytesUnwritten -= it
+                        }
+                    }
+                }
+
+            // write second image
+            context.contentResolver.openFileDescriptor(secondImage.dataUri, "r")
+                ?.let { parcelFileDescriptor ->
+                    val secondImageInputStream =
+                        FileInputStream(parcelFileDescriptor.fileDescriptor)
+                    val buffer = ByteArray(10)
+                    var unwrittenBytes = secondImage.dataSize
+                    while (unwrittenBytes > 0) {
+                        gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
+                        secondImageInputStream.read(buffer).also {
+                            gateWayOutputStream.write(buffer, 0, it)
+                            unwrittenBytes -= it
+                        }
+                    }
+                }
+            advanceImageRepository.insertImageIntoMediaStore(
+                displayName = firstImage.dataDisplayName,
+                size = firstImage.dataSize,
+                mimeType = firstImage.dataType,
+                dataInputStream = gateWayInputStream
+            )
+            advanceImageRepository.insertImageIntoMediaStore(
+                displayName = secondImage.dataDisplayName,
+                size = secondImage.dataSize,
+                mimeType = secondImage.dataType,
+                dataInputStream = gateWayInputStream
+            )
+            assertEquals(numberOfImagesOnDevice + 1, advanceImageRepository.getImagesOnDevice().size)
         }
     }
 }

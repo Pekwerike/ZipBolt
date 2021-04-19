@@ -79,7 +79,6 @@ class AdvanceImageRepository @Inject constructor(
         )
 
         imageUri?.let {
-            try {
                 context.contentResolver.openFileDescriptor(imageUri, "w")?.let { parcelFileDescriptor ->
                     val imageOutputStream = FileOutputStream(parcelFileDescriptor.fileDescriptor)
                     val buffer = ByteArray(10)
@@ -110,7 +109,7 @@ class AdvanceImageRepository @Inject constructor(
                                 }
                                 context.contentResolver.delete(imageUri, null, null)
                                 imageFile.delete()
-                                break
+                                return
                             }
                             MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.status -> {
                                 transferMetaDataUpdateListener(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
@@ -128,7 +127,7 @@ class AdvanceImageRepository @Inject constructor(
                         imageBytesReadListener(
                             Pair(
                                 displayName,
-                                ((size - mediaSize) / size) * 100f
+                                ((size - mediaSize) / size.toFloat()) * 100f
                             )
                         )
                     }
@@ -136,9 +135,7 @@ class AdvanceImageRepository @Inject constructor(
                     imageOutputStream.close()
                     parcelFileDescriptor.close()
                 }
-            }catch (fileNotFoundException : FileNotFoundException){
-                return
-            }
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 contentValues.clear()
                 contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
