@@ -84,7 +84,7 @@ class AdvanceImageRepository @Inject constructor(
                     ?.let { parcelFileDescriptor ->
                         val imageOutputStream =
                             FileOutputStream(parcelFileDescriptor.fileDescriptor)
-                        val buffer = ByteArray(100)
+                        val buffer = ByteArray(10_000_000)
 
                         // percentage of bytes read is 0% here
                         imageBytesReadListener(

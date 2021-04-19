@@ -71,7 +71,7 @@ class AdvanceMediaTransferProtocol @Inject constructor(
             context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r")
                 ?.also { parcelFileDescriptor ->
                     val fileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    val buffer = ByteArray(100)
+                    val buffer = ByteArray(10_000_000)
 
                     dataFlowListener(
                         Pair(
