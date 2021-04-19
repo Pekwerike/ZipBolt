@@ -67,7 +67,7 @@ class AdvanceImageRepositoryTest {
 
             val currentNumberOfImages = advanceImageRepository.getImagesOnDevice().size
             val imageToTransfer = advanceImageRepository.getMetaDataOfImage(
-                advanceImageRepository.getImagesOnDevice(limit = 4)[3] as DataToTransfer.DeviceImage
+                advanceImageRepository.getImagesOnDevice(limit = 10)[8] as DataToTransfer.DeviceImage
             )
 
             advanceImageRepository.setImageBytesReadListener {
@@ -101,7 +101,6 @@ class AdvanceImageRepositoryTest {
     @Test
     fun insertImageIntoMediaStoreAndCancelFirstTransfer() {
         runBlocking {
-            var cancelFirstTransfer = false
             val numberOfImagesOnDevice = advanceImageRepository.getImagesOnDevice().size
             val firstImage = advanceImageRepository.getMetaDataOfImage(
                 advanceImageRepository.getImagesOnDevice(limit = 3)[1] as DataToTransfer.DeviceImage
@@ -113,7 +112,6 @@ class AdvanceImageRepositoryTest {
             advanceImageRepository.setImageBytesReadListener {
                 Log.i("BytesRead", "${it.first}: ${it.second}")
                 if (it.first == firstImage.dataDisplayName && it.second > 50) {
-                    cancelFirstTransfer = true
                     Log.i("BytesRead", "${it.first}: Cancelled Transfer")
                 }
             }
@@ -139,20 +137,7 @@ class AdvanceImageRepositoryTest {
                 }
 
             // write second image
-            context.contentResolver.openFileDescriptor(secondImage.dataUri, "r")
-                ?.let { parcelFileDescriptor ->
-                    val secondImageInputStream =
-                        FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    val buffer = ByteArray(10)
-                    var unwrittenBytes = secondImage.dataSize
-                    while (unwrittenBytes > 0) {
-                        gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
-                        secondImageInputStream.read(buffer).also {
-                            gateWayOutputStream.write(buffer, 0, it)
-                            unwrittenBytes -= it
-                        }
-                    }
-                }
+            transferData(secondImage)
             advanceImageRepository.insertImageIntoMediaStore(
                 displayName = firstImage.dataDisplayName,
                 size = firstImage.dataSize,
@@ -167,5 +152,23 @@ class AdvanceImageRepositoryTest {
             )
             assertEquals(numberOfImagesOnDevice + 1, advanceImageRepository.getImagesOnDevice().size)
         }
+    }
+
+    @Synchronized
+    private fun transferData(secondImage: DataToTransfer) {
+        context.contentResolver.openFileDescriptor(secondImage.dataUri, "r")
+            ?.let { parcelFileDescriptor ->
+                val secondImageInputStream =
+                    FileInputStream(parcelFileDescriptor.fileDescriptor)
+                val buffer = ByteArray(10)
+                var unwrittenBytes = secondImage.dataSize
+                while (unwrittenBytes > 0) {
+                    gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
+                    secondImageInputStream.read(buffer).also {
+                        gateWayOutputStream.write(buffer, 0, it)
+                        unwrittenBytes -= it
+                    }
+                }
+            }
     }
 }
