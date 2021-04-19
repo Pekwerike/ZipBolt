@@ -13,11 +13,12 @@ import com.salesground.zipbolt.repository.ZipBoltMediaCategory
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.math.min
 
-class AdvancedImageRepository @Inject constructor(
+class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context, savedFilesRepository) {
@@ -78,56 +79,65 @@ class AdvancedImageRepository @Inject constructor(
         )
 
         imageUri?.let {
-            context.contentResolver.openFileDescriptor(it, "r")?.let { parcelFileDescriptor ->
-                val imageOutputStream = FileOutputStream(parcelFileDescriptor.fileDescriptor)
-                val buffer = ByteArray(10_000_000)
+            try {
+                context.contentResolver.openFileDescriptor(imageUri, "w")?.let { parcelFileDescriptor ->
+                    val imageOutputStream = FileOutputStream(parcelFileDescriptor.fileDescriptor)
+                    val buffer = ByteArray(10)
 
-                // percentage of bytes read is 0% here
-                imageBytesReadListener(
-                    Pair(
-                        displayName,
-                        0f
-                    )
-                )
-
-                while (mediaSize > 0) {
-                    when (dataInputStream.readUTF()) {
-                        MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status -> {
-                        }
-                        MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status -> {
-                            // delete image file
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                contentValues.clear()
-                                contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                                context.contentResolver.update(imageUri, contentValues, null, null)
-                            }
-                            context.contentResolver.delete(imageUri, null, null)
-                            imageFile.delete()
-                            break
-                        }
-                        MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.status -> {
-                            transferMetaDataUpdateListener(MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
-                        }
-                    }
-
-                    val bytesRead = dataInputStream.read(
-                        buffer,
-                        0,
-                        min(mediaSize.toInt(), buffer.size)
-                    )
-                    if (bytesRead == -1) break
-                    imageOutputStream.write(buffer, 0, bytesRead)
-                    mediaSize -= bytesRead
+                    // percentage of bytes read is 0% here
                     imageBytesReadListener(
                         Pair(
                             displayName,
-                            ((size - mediaSize) / size) * 100f
+                                0f
                         )
                     )
+
+                    while (mediaSize > 0) {
+                        when (dataInputStream.readUTF()) {
+                            MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status -> {
+                            }
+                            MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status -> {
+                                // delete image file
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                    contentValues.clear()
+                                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                                    context.contentResolver.update(
+                                        imageUri,
+                                        contentValues,
+                                        null,
+                                        null
+                                    )
+                                }
+                                context.contentResolver.delete(imageUri, null, null)
+                                imageFile.delete()
+                                break
+                            }
+                            MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.status -> {
+                                transferMetaDataUpdateListener(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                            }
+                        }
+
+                        val bytesRead = dataInputStream.read(
+                            buffer,
+                            0,
+                            min(mediaSize.toInt(), buffer.size)
+                        )
+                        if (bytesRead == -1) break
+                        imageOutputStream.write(buffer, 0, bytesRead)
+                        mediaSize -= bytesRead
+                        imageBytesReadListener(
+                            Pair(
+                                displayName,
+                                ((size - mediaSize) / size) * 100f
+                            )
+                        )
+                    }
+                    imageOutputStream.flush()
+                    imageOutputStream.close()
+                    parcelFileDescriptor.close()
                 }
-                imageOutputStream.flush()
-                imageOutputStream.close()
-                parcelFileDescriptor.close()
+            }catch (fileNotFoundException : FileNotFoundException){
+                return
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 contentValues.clear()

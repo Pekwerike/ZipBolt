@@ -68,7 +68,7 @@ class AdvanceClientService : Service() {
                 // transferring data to peer but wants to stop receiving from peer,
                 // so send a message to the peer to stop reading for new bytes while I stop sending
                 advancedMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
-                MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
             }
             DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> TODO()
         }

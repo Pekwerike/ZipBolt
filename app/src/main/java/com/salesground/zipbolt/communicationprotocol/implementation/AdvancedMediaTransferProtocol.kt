@@ -3,8 +3,7 @@ package com.salesground.zipbolt.communicationprotocol.implementation
 import android.content.Context
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.repository.implementation.AdvancedImageRepository
+import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,7 +14,7 @@ import javax.inject.Inject
 
 class AdvancedMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val advancedImageRepository: AdvancedImageRepository
+    private val advancedImageRepository: AdvanceImageRepository
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
     private var dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit =
@@ -33,8 +32,8 @@ class AdvancedMediaTransferProtocol @Inject constructor(
 
         advancedImageRepository.setTransferMetaDataUpdateListener {
             when(it){
-                MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
-                    cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
+                    cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                 }
             }
         }
@@ -81,7 +80,7 @@ class AdvancedMediaTransferProtocol @Inject constructor(
 
                         when(mTransferMetaData){
                             MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE -> break
-                            MediaTransferProtocol.TransferMetaData.KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
+                            MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
                         }
 
                         dataSize -= fileInputStream.read(buffer).also {

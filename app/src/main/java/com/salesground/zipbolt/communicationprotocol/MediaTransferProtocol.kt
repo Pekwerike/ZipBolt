@@ -11,7 +11,7 @@ interface MediaTransferProtocol {
         CANCEL_ACTIVE_RECEIVE("CancelActiveReceive"),
         CANCEL_ACTIVE_TRANSTER("CancelActiveTransfer"),
         KEEP_RECEIVING("KeepReceiving"),
-        KEE_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER("KeepReceivingButCancelActiveTransfer"),
+        KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER("KeepReceivingButCancelActiveTransfer"),
         PAUSE_ACTIVE_TRANSFER("PauseActiveTransfer")
     }
 
