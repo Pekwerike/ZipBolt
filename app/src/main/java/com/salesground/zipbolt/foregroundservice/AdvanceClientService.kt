@@ -6,7 +6,7 @@ import android.os.Binder
 import android.os.IBinder
 import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
-import com.salesground.zipbolt.communicationprotocol.implementation.AdvancedMediaTransferProtocol
+import com.salesground.zipbolt.communicationprotocol.implementation.AdvanceMediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +38,7 @@ class AdvanceClientService : Service() {
 
     // TODO later replace this injection with the interface
     @Inject
-    lateinit var advancedMediaTransferProtocol: AdvancedMediaTransferProtocol
+    lateinit var advanceMediaTransferProtocol: AdvanceMediaTransferProtocol
 
     override fun onBind(intent: Intent): IBinder {
         return advanceClientServiceBinder
@@ -53,7 +53,7 @@ class AdvanceClientService : Service() {
     }
 
     fun cancelActiveTransfer(){
-        advancedMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
+        advanceMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
         MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE)
     }
 
@@ -67,7 +67,7 @@ class AdvanceClientService : Service() {
             DataTransferUserEvent.DATA_AVAILABLE -> {
                 // transferring data to peer but wants to stop receiving from peer,
                 // so send a message to the peer to stop reading for new bytes while I stop sending
-                advancedMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
+                advanceMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
                 MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
             }
             DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> TODO()
@@ -107,10 +107,10 @@ class AdvanceClientService : Service() {
             when (dataInputStream.readUTF()) {
                 DataTransferUserEvent.NO_DATA.state -> continue
                 DataTransferUserEvent.DATA_AVAILABLE.state -> {
-                    advancedMediaTransferProtocol.receiveMedia(dataInputStream)
+                    advanceMediaTransferProtocol.receiveMedia(dataInputStream)
                 }
                 DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER.state -> {
-                    advancedMediaTransferProtocol.cancelCurrentTransfer(
+                    advanceMediaTransferProtocol.cancelCurrentTransfer(
                         transferMetaData = MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE
                     )
                 }
@@ -128,7 +128,7 @@ class AdvanceClientService : Service() {
                 DataTransferUserEvent.DATA_AVAILABLE -> {
                     dataToTransfer.forEach {
                         dataOutputStream.writeUTF(dataTransferUserEvent.state)
-                        advancedMediaTransferProtocol.transferMedia(it, dataOutputStream)
+                        advanceMediaTransferProtocol.transferMedia(it, dataOutputStream)
                         dataToTransfer.remove(it)
                     }
                     dataTransferUserEvent = DataTransferUserEvent.NO_DATA

@@ -10,13 +10,15 @@ import kotlinx.coroutines.withContext
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.FileInputStream
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
-class AdvancedMediaTransferProtocol @Inject constructor(
+class AdvanceMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
     private val advancedImageRepository: AdvanceImageRepository
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
+    private var ongoingTransfer = AtomicBoolean(false)
     private var dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit =
         { _, _ ->
 
@@ -44,8 +46,9 @@ class AdvancedMediaTransferProtocol @Inject constructor(
     }
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
-        mTransferMetaData = transferMetaData
+        if(ongoingTransfer.get()) mTransferMetaData = transferMetaData
     }
+
 
 
     override fun setMediaTransferListener(mediaTransferListener: MediaTransferProtocol.MediaTransferListener) {
@@ -58,6 +61,7 @@ class AdvancedMediaTransferProtocol @Inject constructor(
         dataOutputStream: DataOutputStream
     ) {
         withContext(Dispatchers.IO) {
+            ongoingTransfer.set(true)
             dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
             dataOutputStream.writeLong(dataToTransfer.dataSize)
             dataOutputStream.writeUTF(dataToTransfer.dataType)
@@ -67,7 +71,7 @@ class AdvancedMediaTransferProtocol @Inject constructor(
             context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r")
                 ?.also { parcelFileDescriptor ->
                     val fileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    val buffer = ByteArray(10_000_000)
+                    val buffer = ByteArray(10)
 
                     dataFlowListener(
                         Pair(
@@ -94,6 +98,7 @@ class AdvancedMediaTransferProtocol @Inject constructor(
                             )
                         }
                     }
+                    ongoingTransfer.set(false)
                 }
         }
     }
