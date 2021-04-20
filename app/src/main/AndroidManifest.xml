@@ -28,9 +28,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeedForce">
         <service
-            android:name=".foregroundservice.AdvanceClientService"
+            android:name=".foregroundservice.AdvanceServerService"
             android:enabled="true"
             android:exported="true"></service>
+        <service
+            android:name=".foregroundservice.AdvanceClientService"
+            android:enabled="true"
+            android:exported="true" />
         <service
             android:name=".foregroundservice.ServerService"
             android:enabled="true"

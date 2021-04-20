@@ -23,13 +23,6 @@ class AdvanceMediaTransferProtocol @Inject constructor(
         }
 
     init {
-        advancedImageRepository.setImageBytesReadListener {
-            dataFlowListener(
-                it,
-                MediaTransferProtocol.TransferState.RECEIVING
-            )
-        }
-
         advancedImageRepository.setTransferMetaDataUpdateListener {
             when (it) {
                 MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
@@ -41,6 +34,12 @@ class AdvanceMediaTransferProtocol @Inject constructor(
 
     override fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit) {
         this.dataFlowListener = dataFlowListener
+        advancedImageRepository.setImageBytesReadListener {
+            dataFlowListener(
+                it,
+                MediaTransferProtocol.TransferState.RECEIVING
+            )
+        }
     }
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
@@ -121,8 +120,10 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                     }
                 }
             }catch (endOfFileException: EOFException){
+                endOfFileException.printStackTrace()
                 return@withContext
             }catch (malformedInput: UTFDataFormatException){
+                malformedInput.printStackTrace()
                 return@withContext
             }
         }}

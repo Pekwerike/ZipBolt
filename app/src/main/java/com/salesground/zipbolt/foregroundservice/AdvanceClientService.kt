@@ -32,6 +32,11 @@ class AdvanceClientService : Service() {
     // TODO, research to see how this can be replaced with flow
     private var dataToTransfer: MutableList<DataToTransfer> = mutableListOf()
 
+    private var clientServiceDataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit =
+        { _, _ ->
+
+        }
+
 
     @Inject
     lateinit var fileTransferServiceNotification: FileTransferServiceNotification
@@ -39,6 +44,7 @@ class AdvanceClientService : Service() {
     // TODO later replace this injection with the interface
     @Inject
     lateinit var advanceMediaTransferProtocol: AdvanceMediaTransferProtocol
+
 
     override fun onBind(intent: Intent): IBinder {
         return advanceClientServiceBinder
@@ -48,17 +54,31 @@ class AdvanceClientService : Service() {
         fun getClientServiceBinder() = this@AdvanceClientService
     }
 
-    fun dataToTransferAvailable(dataToTransfer: DataToTransfer){
+    fun setServiceDataFlowListener(
+        dataFlowListener: (
+            Pair<String, Float>,
+            MediaTransferProtocol.TransferState
+        ) -> Unit
+    ) {
+        clientServiceDataFlowListener = dataFlowListener
+        advanceMediaTransferProtocol.setDataFlowListener { pair, transferState ->
+            clientServiceDataFlowListener(pair, transferState)
+        }
+    }
+
+    fun dataToTransferAvailable(dataToTransfer: DataToTransfer) {
         this.dataToTransfer.add(dataToTransfer)
     }
 
-    fun cancelActiveTransfer(){
-        advanceMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
-        MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE)
+    fun cancelActiveTransfer() {
+        advanceMediaTransferProtocol.cancelCurrentTransfer(
+            transferMetaData =
+            MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE
+        )
     }
 
-    fun cancelActiveReceive(){
-        when(dataTransferUserEvent){
+    fun cancelActiveReceive() {
+        when (dataTransferUserEvent) {
             DataTransferUserEvent.NO_DATA -> {
                 // not transferring any data, but wants to stop receiving data from peer,
                 // so send a message to peer to cancel ongoing transfer
@@ -67,8 +87,10 @@ class AdvanceClientService : Service() {
             DataTransferUserEvent.DATA_AVAILABLE -> {
                 // transferring data to peer but wants to stop receiving from peer,
                 // so send a message to the peer to stop reading for new bytes while I stop sending
-                advanceMediaTransferProtocol.cancelCurrentTransfer(transferMetaData =
-                MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                advanceMediaTransferProtocol.cancelCurrentTransfer(
+                    transferMetaData =
+                    MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
+                )
             }
             DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> TODO()
         }
@@ -92,7 +114,7 @@ class AdvanceClientService : Service() {
                 launch {
                     listenForAvailableMediaToTransfer(socketDOS)
                 }
-                delay(500) // little delay to make sure the peer has already written to the socket
+                delay(300) // little delay to make sure the peer has already written to the socket
                 launch {
                     listenForAvailableMediaToReceive(socketDIS)
                 }
