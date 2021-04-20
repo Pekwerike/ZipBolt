@@ -49,6 +49,7 @@ private const val FINE_LOCATION_REQUEST_CODE = 100
 
 const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
+const val IS_SERVER_KEY="IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
