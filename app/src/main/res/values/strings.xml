@@ -19,4 +19,5 @@
     <string name="stop_searching_for_peers_content_description">Stop searching for peers</string>
     <string name="stop_searching_for_peers_label">Stop searching</string>
     <string name="discovered_peers_label">Discovered Peers</string>
+    <string name="close_connection_content_description">Close connection</string>
 </resources>
