@@ -191,10 +191,6 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
-
-        Log.i("ScreenDensities", resources.displayMetrics.scaledDensity.toString())
-        Log.i("ScreenDensities", resources.displayMetrics.density.toString())
-
     }
 
     private fun configureConnectionInfoPersistentBottomSheet() {
