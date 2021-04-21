@@ -92,7 +92,9 @@ class AdvanceClientService : Service() {
                     MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
                 )
             }
-            DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> TODO()
+            DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> {
+
+            }
         }
     }
 

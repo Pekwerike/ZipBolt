@@ -14,10 +14,12 @@ import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
 import com.salesground.zipbolt.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 const val FILE_TRANSFER_SERVICE_NOTIFICATION_ID = "FileTransferServiceNotificationID"
 const val FILE_TRANSFER_SERVICE_CHANNEL_NAME = "ZipBolt File Transfer Service Notification"
+
 
 class FileTransferServiceNotification @Inject
 constructor(
