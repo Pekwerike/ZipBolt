@@ -47,7 +47,6 @@
             app:layout_constraintTop_toBottomOf="@+id/collapsed_searching_for_peers_label" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            style="@style/ImageButtonStyle"
             android:id="@+id/collapsed_searching_for_peers_information_cancel_searching_for_peers"
             android:layout_width="48dp"
             android:layout_height="48dp"

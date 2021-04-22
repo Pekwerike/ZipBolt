@@ -3,10 +3,13 @@ package com.salesground.zipbolt.foregroundservice
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.IS_SERVER_KEY
 import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
+import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
@@ -27,7 +30,7 @@ class DataTransferService : Service() {
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
-    private var dataFlowListener:
+    private var dataTransferListener:
             ((Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit)? = null
 
 
@@ -44,17 +47,36 @@ class DataTransferService : Service() {
     }
 
     init {
+        val localBroadcastManager = LocalBroadcastManager.getInstance(this)
+        val incomingDataBroadcastIntent =
+            Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
         mediaTransferProtocol.setDataFlowListener { pair, transferState ->
-            dataFlowListener?.invoke(pair, transferState)
+            when (transferState) {
+                MediaTransferProtocol.TransferState.RECEIVING -> {
+                    incomingDataBroadcastIntent.apply {
+                        putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_NAME, pair.first)
+                        putExtra(
+                            IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
+                            pair.second
+                        )
+                        localBroadcastManager.sendBroadcast(this)
+                    }
+                }
+                MediaTransferProtocol.TransferState.TRANSFERING -> {
+                    dataTransferListener?.invoke(pair, transferState)
+                }
+            }
         }
     }
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
     private val mutex = Mutex()
 
-    fun setDataFlowListener(dataFlowListener:
-                                (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit) {
-        this.dataFlowListener = dataFlowListener
+    fun setDataTransferListener(
+        dataTransferListener:
+            (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
+    ) {
+        this.dataTransferListener = dataTransferListener
     }
 
     fun cancelScheduledTransfer() {
@@ -89,11 +111,16 @@ class DataTransferService : Service() {
     }
 
     @Synchronized
-    fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
+    fun transferData(
+        dataCollectionSelected: MutableList<DataToTransfer>,
+        dataTransferListener:
+            (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
+    ) {
         while (dataTransferUserEvent == DataTransferUserEvent.DATA_AVAILABLE) {
             // get stuck here
         }
         // when dataTransferUserEvent shows data is not available then assign the new data
+        this.dataTransferListener = dataTransferListener
         dataCollection = dataCollectionSelected
         dataTransferUserEvent = DataTransferUserEvent.DATA_AVAILABLE
     }

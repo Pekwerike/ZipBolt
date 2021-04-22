@@ -14,7 +14,6 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.view.ViewStub
 import android.widget.FrameLayout
@@ -23,10 +22,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
@@ -49,7 +50,7 @@ private const val FINE_LOCATION_REQUEST_CODE = 100
 
 const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
-const val IS_SERVER_KEY="IsDeviceServer"
+const val IS_SERVER_KEY = "IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -78,6 +79,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var intentFilter: IntentFilter
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
+    private val localBroadCastReceiver: LocalBroadcastManager by lazy {
+        LocalBroadcastManager.getInstance(this)
+    }
+    private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
+        IncomingDataBroadcastReceiver()
+    }
 
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -169,7 +176,8 @@ class MainActivity : AppCompatActivity() {
             }
             mainActivityAllMediaOnDevice.apply {
                 allMediaOnDeviceTabLayout.tabMode = if (resources.displayMetrics.density > 3.0
-                    || resources.displayMetrics.scaledDensity > 3.4) {
+                    || resources.displayMetrics.scaledDensity > 3.4
+                ) {
                     TabLayout.MODE_SCROLLABLE
                 } else TabLayout.MODE_FIXED
 
@@ -398,13 +406,19 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun registerIntentFilter(): IntentFilter {
+    private fun createSystemBroadcastIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION)
+        }
+    }
+
+    private fun createLocalBroadcastIntentFilter(): IntentFilter {
+        return IntentFilter().apply {
+            addAction(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
         }
     }
 
@@ -566,18 +580,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        // register the broadcast receiver
+        registerReceiver(wifiDirectBroadcastReceiver, intentFilter)
+        localBroadCastReceiver.registerReceiver(
+            incomingDataBroadcastReceiver,
+            createLocalBroadcastIntentFilter()
+        )
         observeViewModelLiveData()
         createNotificationChannel()
         //checkReadAndWriteExternalStoragePermission()
         permissionUtils.checkReadAndWriteExternalStoragePermission()
         initializeChannelAndBroadcastReceiver()
-        intentFilter = registerIntentFilter()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // register the broadcast receiver
-        registerReceiver(wifiDirectBroadcastReceiver, intentFilter)
+        intentFilter = createSystemBroadcastIntentFilter()
     }
 
     override fun onStop() {
