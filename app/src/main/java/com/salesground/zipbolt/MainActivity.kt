@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
 
 
         inflate(layoutInflater).apply {
-            setContentView(root)
+            setContentView(CollapsedConnectedToPeerNoTransferLayoutBinding.inflate(layoutInflater).root)
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) {
