@@ -36,7 +36,7 @@
             app:layout_constraintBottom_toTopOf="@+id/materialTextView3"
             app:layout_constraintEnd_toStartOf="@id/barrier4"
             app:layout_constraintStart_toStartOf="@id/barrier3"
-            app:layout_constraintTop_toTopOf="@+id/collapsed_connected_to_peer_no_transfer_layout_lock_image_view"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -47,7 +47,7 @@
             android:padding="2dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:addGreenHighLightToText='@{"You can transfer files now!"}'
-            app:layout_constraintBottom_toBottomOf="@+id/collapsed_connected_to_peer_no_transfer_layout_lock_image_view"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/collapsed_connected_to_peer_no_transfer_device_connected_text_view"
             app:layout_constraintEnd_toStartOf="@+id/barrier4"
             app:layout_constraintHorizontal_bias="0.5"
@@ -59,6 +59,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="8dp"
+            style="@style/ImageButtonStyle"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/close_connection_content_description"
             android:src="@drawable/close_icon"
