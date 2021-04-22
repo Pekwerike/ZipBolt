@@ -76,7 +76,6 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
-    private lateinit var intentFilter: IntentFilter
     private var isServerServiceBound: Boolean = false
     private var isClientServiceBound: Boolean = false
     private val localBroadCastReceiver: LocalBroadcastManager by lazy {
@@ -581,17 +580,17 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // register the broadcast receiver
-        registerReceiver(wifiDirectBroadcastReceiver, intentFilter)
-        localBroadCastReceiver.registerReceiver(
-            incomingDataBroadcastReceiver,
-            createLocalBroadcastIntentFilter()
-        )
+        initializeChannelAndBroadcastReceiver()
+
         observeViewModelLiveData()
         createNotificationChannel()
         //checkReadAndWriteExternalStoragePermission()
         permissionUtils.checkReadAndWriteExternalStoragePermission()
-        initializeChannelAndBroadcastReceiver()
-        intentFilter = createSystemBroadcastIntentFilter()
+        registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        localBroadCastReceiver.registerReceiver(
+            incomingDataBroadcastReceiver,
+            createLocalBroadcastIntentFilter()
+        )
     }
 
     override fun onStop() {
@@ -603,6 +602,7 @@ class MainActivity : AppCompatActivity() {
         isClientServiceBound = false
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
+        localBroadCastReceiver.unregisterReceiver(incomingDataBroadcastReceiver)
     }
 
     override fun onBackPressed() {
