@@ -13,7 +13,7 @@ import com.salesground.zipbolt.R
 fun MaterialTextView.addGreenHighLightToText(placeHolder: String?) {
     val spannableString = SpannableString(placeHolder).apply {
         setSpan(ForegroundColorSpan(ContextCompat.getColor(context,
-        R.color.blue_415)),8, 24, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE)
+        R.color.orange_300)),8, 16, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE)
     }
     text = spannableString
 }
