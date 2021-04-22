@@ -12,6 +12,9 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/full_green_android_icon.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/history_icon.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/home_icon.xml" value="0.19427083333333334" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/ic_undraw_connected_world.xml" value="0.19025641025641027" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/ic_world_connection_magician.xml" value="0.19025641025641027" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/ic_world_connection_mat.xml" value="0.19025641025641027" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/modal_bottom_sheet_background.xml" value="0.19322916666666667" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/multi_colored_apple_icon.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/drawable/pc_icon.xml" value="0.19427083333333334" />
@@ -28,7 +31,7 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/application_layout_item.xml" value="1.0" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/audio_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/category_chip.xml" value="0.178125" />
-        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/collapsed_connected_to_peer_no_transfer_layout.xml" value="0.335" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/collapsed_connected_to_peer_no_transfer_layout.xml" value="0.28254847645429365" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/collapsed_searching_for_peers_information.xml" value="0.5" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/discovered_peer_recyclerview_item_header.xml" value="1.0" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/expanded_searching_for_peers_information.xml" value="1.0" />
