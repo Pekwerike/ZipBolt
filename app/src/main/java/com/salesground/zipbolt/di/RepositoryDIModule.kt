@@ -3,6 +3,7 @@ package com.salesground.zipbolt.di
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
+import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import com.salesground.zipbolt.repository.implementation.ZipBoltImageRepository
 import dagger.Binds
 import dagger.Module
@@ -16,7 +17,7 @@ import javax.inject.Singleton
 abstract class RepositoryDIModule {
     @Singleton
     @Binds
-    abstract fun zipBoltImageRepository(zipBoltImageRepository: ZipBoltImageRepository): ImageRepository
+    abstract fun zipBoltImageRepository(advanceImageRepository: AdvanceImageRepository): ImageRepository
 
     @Singleton
     @Binds

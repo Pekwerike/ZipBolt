@@ -3,8 +3,10 @@ package com.salesground.zipbolt.repository.implementation
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.utils.customizeDate
@@ -37,7 +39,10 @@ open class ZipBoltImageRepository @Inject constructor(
         displayName: String,
         size: Long,
         mimeType: String,
-        dataInputStream: DataInputStream
+        dataInputStream: DataInputStream,
+        transferMetaDataUpdateListener : (MediaTransferProtocol.TransferMetaData) -> Unit,
+        bytesReadListener:
+            (Pair<String, Float>, Uri) -> Unit
     ) {
         withContext(Dispatchers.IO) {
             var mediaSize = size

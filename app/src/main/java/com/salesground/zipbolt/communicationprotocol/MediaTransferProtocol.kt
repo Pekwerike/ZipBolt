@@ -39,7 +39,8 @@ interface MediaTransferProtocol {
 
     suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
-        dataOutputStream: DataOutputStream
+        dataOutputStream: DataOutputStream,
+        dataTransferListener: (Pair<String, Float>, TransferState) -> Unit
     )
 
     suspend fun receiveMedia(dataInputStream: DataInputStream)

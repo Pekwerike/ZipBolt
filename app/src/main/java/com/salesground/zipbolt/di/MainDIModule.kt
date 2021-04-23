@@ -3,6 +3,7 @@ package com.salesground.zipbolt.di
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.content.getSystemService
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,11 +14,17 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-class MainDIModule{
+class MainDIModule {
 
     @Provides
     @Singleton
-    fun getNotificationManager(@ApplicationContext context: Context) : NotificationManager{
+    fun getNotificationManager(@ApplicationContext context: Context): NotificationManager {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    @Provides
+    @Singleton
+    fun getLocalBroadcastManager(@ApplicationContext context: Context): LocalBroadcastManager {
+        return LocalBroadcastManager.getInstance(context)
     }
 }

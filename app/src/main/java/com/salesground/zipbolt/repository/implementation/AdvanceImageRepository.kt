@@ -2,6 +2,7 @@ package com.salesground.zipbolt.repository.implementation
 
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
@@ -23,23 +24,6 @@ class AdvanceImageRepository @Inject constructor(
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context, savedFilesRepository) {
 
-    private var transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit =
-        { _ ->
-        }
-    private var imageBytesReadListener: (Pair<String, Float>) -> Unit = { _ ->
-
-    }
-
-    fun setTransferMetaDataUpdateListener(listener: (MediaTransferProtocol.TransferMetaData) -> Unit) {
-        transferMetaDataUpdateListener = listener
-    }
-
-    fun setImageBytesReadListener(
-        bytesReaderListener:
-            (Pair<String, Float>) -> Unit
-    ) {
-        imageBytesReadListener = bytesReaderListener
-    }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @Synchronized
@@ -47,7 +31,10 @@ class AdvanceImageRepository @Inject constructor(
         displayName: String,
         size: Long,
         mimeType: String,
-        dataInputStream: DataInputStream
+        dataInputStream: DataInputStream,
+        transferMetaDataUpdateListener : (MediaTransferProtocol.TransferMetaData) -> Unit,
+        bytesReadListener:
+            (Pair<String, Float>, Uri) -> Unit
     ) {
             var mediaSize = size
             val verifiedImageName = confirmImageName(displayName)
@@ -87,11 +74,12 @@ class AdvanceImageRepository @Inject constructor(
                         val buffer = ByteArray(10_000_000)
 
                         // percentage of bytes read is 0% here
-                        imageBytesReadListener(
+                        bytesReadListener(
                             Pair(
                                 displayName,
                                 0f
-                            )
+                            ),
+                            imageUri
                         )
 
                         while (mediaSize > 0) {
@@ -127,11 +115,12 @@ class AdvanceImageRepository @Inject constructor(
                             if (bytesRead == -1) break
                             imageOutputStream.write(buffer, 0, bytesRead)
                             mediaSize -= bytesRead
-                            imageBytesReadListener(
+                            bytesReadListener(
                                 Pair(
                                     displayName,
                                     ((size - mediaSize) / size.toFloat()) * 100f
-                                )
+                                ),
+                                imageUri
                             )
                         }
                         imageOutputStream.flush()

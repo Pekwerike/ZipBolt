@@ -1,8 +1,13 @@
 package com.salesground.zipbolt.communicationprotocol.implementation
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -13,33 +18,18 @@ import javax.inject.Inject
 
 class AdvanceMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val advancedImageRepository: AdvanceImageRepository
+    private val advancedImageRepository: ImageRepository,
+    private val localBroadcastManager: LocalBroadcastManager
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-    private var dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit =
-        { _, _ ->
 
-        }
+    private val incomingDataBroadcastIntent =
+        Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
-    init {
-        advancedImageRepository.setTransferMetaDataUpdateListener {
-            when (it) {
-                MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
-                    cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
-                }
-            }
-        }
-    }
 
     override fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit) {
-        this.dataFlowListener = dataFlowListener
-        advancedImageRepository.setImageBytesReadListener {
-            dataFlowListener(
-                it,
-                MediaTransferProtocol.TransferState.RECEIVING
-            )
-        }
+
     }
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
@@ -54,7 +44,8 @@ class AdvanceMediaTransferProtocol @Inject constructor(
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
-        dataOutputStream: DataOutputStream
+        dataOutputStream: DataOutputStream,
+        dataTransferListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
     ) {
         withContext(Dispatchers.IO) {
             ongoingTransfer.set(true)
@@ -69,7 +60,7 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                     val fileInputStream = FileInputStream(parcelFileDescriptor.fileDescriptor)
                     val buffer = ByteArray(10_000_000)
 
-                    dataFlowListener(
+                    dataTransferListener(
                         Pair(
                             dataToTransfer.dataDisplayName, 0f
                         ), MediaTransferProtocol.TransferState.TRANSFERING
@@ -86,7 +77,7 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                         fileInputStream.read(buffer).also {
                             dataOutputStream.write(buffer, 0, it)
                             dataSize -= it
-                            dataFlowListener(
+                            dataTransferListener(
                                 Pair(
                                     dataToTransfer.dataDisplayName,
                                     ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize.toFloat()) * 100f
@@ -115,16 +106,35 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                             displayName = mediaName,
                             size = mediaSize,
                             mimeType = mediaType,
-                            dataInputStream = dataInputStream
+                            dataInputStream = dataInputStream,
+                            transferMetaDataUpdateListener = {
+                                when (it) {
+                                    MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
+                                        cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                                    }
+                                }
+                            },
+                            bytesReadListener = { pair: Pair<String, Float>, uri: Uri ->
+                                incomingDataBroadcastIntent.apply {
+                                    putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_NAME, pair.first)
+                                    putExtra(
+                                        IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
+                                        pair.second
+                                    )
+                                    putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
+                                    uri)
+                                }
+                            }
                         )
                     }
                 }
-            }catch (endOfFileException: EOFException){
+            } catch (endOfFileException: EOFException) {
                 endOfFileException.printStackTrace()
                 return@withContext
-            }catch (malformedInput: UTFDataFormatException){
+            } catch (malformedInput: UTFDataFormatException) {
                 malformedInput.printStackTrace()
                 return@withContext
             }
-        }}
+        }
+    }
 }

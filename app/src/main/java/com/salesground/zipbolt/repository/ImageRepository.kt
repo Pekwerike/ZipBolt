@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.repository
 
 import android.net.Uri
+import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltImageRepository
 import java.io.DataInputStream
@@ -27,7 +28,10 @@ interface ImageRepository {
         displayName: String,
         size: Long,
         mimeType: String,
-        dataInputStream: DataInputStream
+        dataInputStream: DataInputStream,
+        transferMetaDataUpdateListener : (MediaTransferProtocol.TransferMetaData) -> Unit,
+        bytesReadListener:
+            (Pair<String, Float>, Uri) -> Unit
     )
 
     suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer

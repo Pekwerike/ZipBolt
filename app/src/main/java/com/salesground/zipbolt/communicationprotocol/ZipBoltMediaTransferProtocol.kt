@@ -51,7 +51,8 @@ class ZipBoltMediaTransferProtocol @Inject constructor(
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
-        dataOutputStream: DataOutputStream
+        dataOutputStream: DataOutputStream,
+        dataTransferListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
     ) {
         withContext(Dispatchers.IO) {
             dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)

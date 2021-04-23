@@ -72,13 +72,6 @@ class DataTransferService : Service() {
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
     private val mutex = Mutex()
 
-    fun setDataTransferListener(
-        dataTransferListener:
-            (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
-    ) {
-        this.dataTransferListener = dataTransferListener
-    }
-
     fun cancelScheduledTransfer() {
 
     }
