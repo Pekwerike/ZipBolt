@@ -100,7 +100,7 @@ class AdvanceImageRepositoryTest {
                         append("PercentageOfDataRead: $percentageOfDataRead \n")
                         append("ImageUri: $imageUri")
                     }
-                    Log.i("ImageBytesRead", logMessage.toString())
+                   // Log.i("ImageBytesRead", logMessage.toString())
                 }
             )
             advanceImageRepository.insertImageIntoMediaStore(
@@ -117,7 +117,7 @@ class AdvanceImageRepositoryTest {
                         append("PercentageOfDataRead: $percentageOfDataRead \n")
                         append("ImageUri: $imageUri")
                     }
-                    Log.i("ImageBytesRead", logMessage.toString())
+                 //   Log.i("ImageBytesRead", logMessage.toString())
                 }
             )
             assertEquals(numberOfImagesOnDevice + 1, advanceImageRepository.getImagesOnDevice().size)

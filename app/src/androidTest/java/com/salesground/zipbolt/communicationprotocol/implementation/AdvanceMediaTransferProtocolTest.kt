@@ -78,7 +78,7 @@ class AdvanceMediaTransferProtocolTest {
                             append("PercentageOfDataRead: $percentTransferred \n")
                             append("DataSize: $dataSize")
                         }
-                        Log.i("DataTransferred", logMessage.toString())
+                       // Log.i("DataTransferred", logMessage.toString())
                     }
                 )
             }
