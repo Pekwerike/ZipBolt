@@ -178,7 +178,13 @@ class DataTransferService : Service() {
                 DataTransferUserEvent.DATA_AVAILABLE -> {
                     dataCollection.forEach {
                         dataOutputStream.writeUTF(dataTransferUserEvent.state)
-                        mediaTransferProtocol.transferMedia(it, dataOutputStream)
+                        mediaTransferProtocol.transferMedia(
+                            it,
+                            dataOutputStream
+                        ) { pair: Pair<String, Float>,
+                            transferState: MediaTransferProtocol.TransferState ->
+                            dataTransferListener?.invoke(pair)
+                        }
                     }
                     dataTransferUserEvent = DataTransferUserEvent.NO_DATA
                 }

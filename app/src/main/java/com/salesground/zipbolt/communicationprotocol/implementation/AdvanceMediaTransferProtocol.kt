@@ -45,7 +45,10 @@ class AdvanceMediaTransferProtocol @Inject constructor(
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
-        dataTransferListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
+        dataTransferListener: (
+            displayName: String, dataSize: Long, percentTransferred: Float,
+            transferState: MediaTransferProtocol.TransferState
+        ) -> Unit
     ) {
         withContext(Dispatchers.IO) {
             ongoingTransfer.set(true)
@@ -116,13 +119,19 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                             },
                             bytesReadListener = { pair: Pair<String, Float>, uri: Uri ->
                                 incomingDataBroadcastIntent.apply {
-                                    putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_NAME, pair.first)
+                                    putExtra(
+                                        IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
+                                        pair.first
+                                    )
                                     putExtra(
                                         IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
                                         pair.second
                                     )
-                                    putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
-                                    uri)
+                                    putExtra(
+                                        IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
+                                        uri
+                                    )
+                                    localBroadcastManager.sendBroadcast(this)
                                 }
                             }
                         )
