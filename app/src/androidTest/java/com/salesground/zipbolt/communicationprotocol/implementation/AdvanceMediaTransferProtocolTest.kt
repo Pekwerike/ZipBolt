@@ -1,7 +1,10 @@
 package com.salesground.zipbolt.communicationprotocol.implementation
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
@@ -38,6 +41,9 @@ class AdvanceMediaTransferProtocolTest {
     private val deletedImages: MutableList<String> = mutableListOf()
 
     private val incomingDataBroadcastReceiver = IncomingDataBroadcastReceiver()
+    private val localBroadcastManager = LocalBroadcastManager.getInstance(context)
+    private val incomingDataBroadcastIntent =
+        Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
     @Inject
     lateinit var savedFilesRepository: SavedFilesRepository
@@ -61,6 +67,7 @@ class AdvanceMediaTransferProtocolTest {
 
     @Test
     fun test_transfer_and_receive() = runBlocking {
+
         val allImagesOnDevice = imageRepository.getImagesOnDevice().map {
             imageRepository.getMetaDataOfImage(it as DataToTransfer.DeviceImage)
         }
@@ -74,19 +81,39 @@ class AdvanceMediaTransferProtocolTest {
                 advanceMediaTransferProtocol.transferMedia(
                     dataToTransfer = it,
                     dataOutputStream = gateWayOutputStream,
-                    dataTransferListener = {displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
+                    dataTransferListener = { displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
                         val logMessage = StringBuilder().apply {
                             append("DisplayName: $displayName \n")
                             append("PercentageOfDataRead: $percentTransferred \n")
                             append("DataSize: $dataSize")
                         }
-                       // Log.i("DataTransferred", logMessage.toString())
+                        // Log.i("DataTransferred", logMessage.toString())
                     }
                 )
             }
             delay(300)
             advanceMediaTransferProtocol.receiveMedia(
-                dataInputStream = gateWayInputStream
+                dataInputStream = gateWayInputStream,
+                bytesReceivedListener = { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String, dataUri: Uri ->
+                    incomingDataBroadcastIntent.apply {
+                        putExtra(
+                            IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
+                            dataDisplayName
+                        )
+                        putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI, dataUri)
+                        putExtra(
+                            IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
+                            percentageOfDataRead
+                        )
+                        putExtra(
+                            IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
+                            dataType
+                        )
+                        putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE, dataSize)
+                        localBroadcastManager.sendBroadcast(this)
+                    }
+                    incomingDataBroadcastReceiver.onReceive(context, incomingDataBroadcastIntent)
+                }
             )
         }
 

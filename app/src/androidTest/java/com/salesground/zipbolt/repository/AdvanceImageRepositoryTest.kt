@@ -33,8 +33,8 @@ class AdvanceImageRepositoryTest {
 
     private lateinit var gateWayOutputStream: DataOutputStream
     private lateinit var gateWayInputStream: DataInputStream
-    private lateinit var gateWayTwo : File
-    private lateinit var gateWay : File
+    private lateinit var gateWayTwo: File
+    private lateinit var gateWay: File
     private lateinit var baseDirectory: File
     private lateinit var gateWayOutputStreamTwo: DataOutputStream
     private lateinit var gateWayInputStreamTwo: DataInputStream
@@ -57,7 +57,7 @@ class AdvanceImageRepositoryTest {
     }
 
     @After
-    fun shoutDown(){
+    fun shoutDown() {
         gateWayTwo.delete()
         gateWay.delete()
         baseDirectory.delete()
@@ -65,63 +65,63 @@ class AdvanceImageRepositoryTest {
 
     @Test
     fun insertImageIntoMediaStoreAndCancelFirstTransfer() = runBlocking {
-            val numberOfImagesOnDevice = advanceImageRepository.getImagesOnDevice().size
-            val firstImage = advanceImageRepository.getMetaDataOfImage(
-                advanceImageRepository.getImagesOnDevice(limit = 3)[1] as DataToTransfer.DeviceImage
-            )
-            val secondImage = advanceImageRepository.getMetaDataOfImage(
-                advanceImageRepository.getImagesOnDevice(limit = 3)[0] as DataToTransfer.DeviceImage
-            )
+        val numberOfImagesOnDevice = advanceImageRepository.getImagesOnDevice().size
+        val firstImage = advanceImageRepository.getMetaDataOfImage(
+            advanceImageRepository.getImagesOnDevice(limit = 3)[1] as DataToTransfer.DeviceImage
+        )
+        val secondImage = advanceImageRepository.getMetaDataOfImage(
+            advanceImageRepository.getImagesOnDevice(limit = 3)[0] as DataToTransfer.DeviceImage
+        )
 
-            // write first image and cancel transfer
-            context.contentResolver.openFileDescriptor(firstImage.dataUri, "r")
-                ?.let { parcelFileDescriptor ->
-                    val bytesUnwritten = firstImage.dataSize
+        // write first image and cancel transfer
+        context.contentResolver.openFileDescriptor(firstImage.dataUri, "r")
+            ?.let { parcelFileDescriptor ->
+                val bytesUnwritten = firstImage.dataSize
 
-                    while (bytesUnwritten > 0) {
-                        gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status)
-                        break
-                    }
+                while (bytesUnwritten > 0) {
+                    gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status)
+                    break
                 }
+            }
 
-            // write second image
-            transferData(secondImage)
-            advanceImageRepository.insertImageIntoMediaStore(
-                displayName = firstImage.dataDisplayName,
-                size = firstImage.dataSize,
-                mimeType = firstImage.dataType,
-                dataInputStream = gateWayInputStream,
-                transferMetaDataUpdateListener = {
-                    Log.i("TransferMetaData", it.status)
-                },
-                bytesReadListener = {imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri ->
-                    val logMessage = StringBuilder().apply {
-                        append("DisplayName: $imageDisplayName \n")
-                        append("PercentageOfDataRead: $percentageOfDataRead \n")
-                        append("ImageUri: $imageUri")
-                    }
-                   // Log.i("ImageBytesRead", logMessage.toString())
+        // write second image
+        transferData(secondImage)
+        advanceImageRepository.insertImageIntoMediaStore(
+            displayName = firstImage.dataDisplayName,
+            size = firstImage.dataSize,
+            mimeType = firstImage.dataType,
+            dataInputStream = gateWayInputStream,
+            transferMetaDataUpdateListener = {
+                Log.i("TransferMetaData", it.status)
+            },
+            bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri ->
+                val logMessage = StringBuilder().apply {
+                    append("DisplayName: $imageDisplayName \n")
+                    append("PercentageOfDataRead: $percentageOfDataRead \n")
+                    append("ImageUri: $imageUri")
                 }
-            )
-            advanceImageRepository.insertImageIntoMediaStore(
-                displayName = secondImage.dataDisplayName,
-                size = secondImage.dataSize,
-                mimeType = secondImage.dataType,
-                dataInputStream = gateWayInputStream,
-                transferMetaDataUpdateListener = {
-                    Log.i("TransferMetaData", it.status)
-                },
-                bytesReadListener = {imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri ->
-                    val logMessage = StringBuilder().apply {
-                        append("DisplayName: $imageDisplayName \n")
-                        append("PercentageOfDataRead: $percentageOfDataRead \n")
-                        append("ImageUri: $imageUri")
-                    }
-                 //   Log.i("ImageBytesRead", logMessage.toString())
+                // Log.i("ImageBytesRead", logMessage.toString())
+            }
+        )
+        advanceImageRepository.insertImageIntoMediaStore(
+            displayName = secondImage.dataDisplayName,
+            size = secondImage.dataSize,
+            mimeType = secondImage.dataType,
+            dataInputStream = gateWayInputStream,
+            transferMetaDataUpdateListener = {
+                Log.i("TransferMetaData", it.status)
+            },
+            bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri ->
+                val logMessage = StringBuilder().apply {
+                    append("DisplayName: $imageDisplayName \n")
+                    append("PercentageOfDataRead: $percentageOfDataRead \n")
+                    append("ImageUri: $imageUri")
                 }
-            )
-            assertEquals(numberOfImagesOnDevice + 1, advanceImageRepository.getImagesOnDevice().size)
-        }
+                //   Log.i("ImageBytesRead", logMessage.toString())
+            }
+        )
+        assertEquals(numberOfImagesOnDevice + 1, advanceImageRepository.getImagesOnDevice().size)
+    }
 
     private fun transferData(secondImage: DataToTransfer) {
         context.contentResolver.openFileDescriptor(secondImage.dataUri, "r")
