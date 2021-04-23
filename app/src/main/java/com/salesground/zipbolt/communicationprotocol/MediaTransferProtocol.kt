@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.communicationprotocol
 
+import android.net.Uri
 import com.salesground.zipbolt.model.DataToTransfer
 import java.io.DataInputStream
 import java.io.DataOutputStream
@@ -40,5 +41,11 @@ interface MediaTransferProtocol {
         ) -> Unit
     )
 
-    suspend fun receiveMedia(dataInputStream: DataInputStream)
+    suspend fun receiveMedia(
+        dataInputStream: DataInputStream,
+        bytesReceivedListener: (
+            dataDisplayName: String, dataSize: Long,  percentageOfDataRead: Float, dataType: String,
+            dataUri: Uri
+        ) -> Unit
+    )
 }

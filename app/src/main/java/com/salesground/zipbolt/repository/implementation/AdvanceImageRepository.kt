@@ -22,7 +22,7 @@ import kotlin.math.min
 class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
-) : ZipBoltImageRepository(context, savedFilesRepository) {
+) : ZipBoltImageRepository(context) {
 
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -34,7 +34,7 @@ class AdvanceImageRepository @Inject constructor(
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
         bytesReadListener:
-            (imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri) -> Unit
+            (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri) -> Unit
     ) {
         var mediaSize = size
         val verifiedImageName = confirmImageName(displayName)
@@ -76,6 +76,7 @@ class AdvanceImageRepository @Inject constructor(
                     // percentage of bytes read is 0% here
                     bytesReadListener(
                         displayName,
+                        size,
                         0f,
                         imageUri
                     )
@@ -115,6 +116,7 @@ class AdvanceImageRepository @Inject constructor(
                         mediaSize -= bytesRead
                         bytesReadListener(
                             displayName,
+                            size,
                             ((size - mediaSize) / size.toFloat()) * 100f,
                             imageUri
                         )

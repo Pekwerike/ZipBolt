@@ -24,7 +24,6 @@ import kotlin.math.min
 open class ZipBoltImageRepository @Inject constructor(
     @ApplicationContext
     private val applicationContext: Context,
-    private val savedFilesRepository: SavedFilesRepository
 ) : ImageRepository {
 
 
@@ -100,7 +99,7 @@ open class ZipBoltImageRepository @Inject constructor(
         mimeType: String,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
-        bytesReadListener: (imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri) -> Unit
+        bytesReadListener: (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri) -> Unit
     ) {
 
     }

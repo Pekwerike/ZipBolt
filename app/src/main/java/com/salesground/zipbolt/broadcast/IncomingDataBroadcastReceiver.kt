@@ -14,6 +14,8 @@ class IncomingDataBroadcastReceiver : BroadcastReceiver() {
         const val INCOMING_FILE_NAME = "IncomingFileName"
         const val PERCENTAGE_OF_DATA_RECEIVED = "PercentageOfDataReceived"
         const val INCOMING_FILE_URI = "IncomingFileURI"
+        const val INCOMING_FILE_SIZE = "IncomingFileSize"
+        const val INCOMING_FILE_MIME_TYPE = "IncomingFileMimeType"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {

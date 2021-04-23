@@ -2,6 +2,7 @@ package com.salesground.zipbolt.foregroundservice
 
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
@@ -34,6 +35,9 @@ class DataTransferService : Service() {
         displayName: String, dataSize: Long, percentTransferred: Float,
         transferState: MediaTransferProtocol.TransferState
     ) -> Unit)? = null
+    private val localBroadcastManager = LocalBroadcastManager.getInstance(this)
+    private val incomingDataBroadcastIntent =
+        Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
 
     @Inject
@@ -191,8 +195,26 @@ class DataTransferService : Service() {
             when (dataInputStream.readUTF()) {
                 DataTransferUserEvent.NO_DATA.state -> continue
                 DataTransferUserEvent.DATA_AVAILABLE.state -> {
-                    Log.i("DataAvaila", "Data available to receive")
-                    mediaTransferProtocol.receiveMedia(dataInputStream)
+                    //  Log.i("DataAvailable", "Data available to receive")
+                    mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String, dataUri: Uri ->
+                        incomingDataBroadcastIntent.apply {
+                            putExtra(
+                                IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
+                                dataDisplayName
+                            )
+                            putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI, dataUri)
+                            putExtra(
+                                IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
+                                percentageOfDataRead
+                            )
+                            putExtra(
+                                IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
+                                dataType
+                            )
+                            putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE, dataSize)
+                            localBroadcastManager.sendBroadcast(this)
+                        }
+                    }
                 }
                 DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER.state -> {
                     mediaTransferProtocol.cancelCurrentTransfer(

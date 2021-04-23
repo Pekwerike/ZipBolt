@@ -22,9 +22,4 @@ class MainDIModule {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
-    @Provides
-    @Singleton
-    fun getLocalBroadcastManager(@ApplicationContext context: Context): LocalBroadcastManager {
-        return LocalBroadcastManager.getInstance(context)
-    }
 }

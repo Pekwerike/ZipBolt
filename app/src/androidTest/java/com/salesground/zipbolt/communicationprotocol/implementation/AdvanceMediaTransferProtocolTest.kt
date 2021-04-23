@@ -3,6 +3,7 @@ package com.salesground.zipbolt.communicationprotocol.implementation
 import android.content.Context
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
+import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
@@ -36,6 +37,8 @@ class AdvanceMediaTransferProtocolTest {
     private var imagesToCancelTransfer: MutableList<String> = mutableListOf()
     private val deletedImages: MutableList<String> = mutableListOf()
 
+    private val incomingDataBroadcastReceiver = IncomingDataBroadcastReceiver()
+
     @Inject
     lateinit var savedFilesRepository: SavedFilesRepository
 
@@ -54,7 +57,6 @@ class AdvanceMediaTransferProtocolTest {
         gateWay = File(baseTestFolder, "gateway.txt")
         gateWayOutputStream = DataOutputStream(FileOutputStream(gateWay))
         gateWayInputStream = DataInputStream(FileInputStream(gateWay))
-
     }
 
     @Test
@@ -86,7 +88,6 @@ class AdvanceMediaTransferProtocolTest {
             advanceMediaTransferProtocol.receiveMedia(
                 dataInputStream = gateWayInputStream
             )
-
         }
 
         assertEquals(

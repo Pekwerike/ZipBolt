@@ -18,14 +18,10 @@ import javax.inject.Inject
 
 class AdvanceMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val advancedImageRepository: ImageRepository,
-    private val localBroadcastManager: LocalBroadcastManager
+    private val advancedImageRepository: ImageRepository
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-
-    private val incomingDataBroadcastIntent =
-        Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
@@ -88,7 +84,13 @@ class AdvanceMediaTransferProtocol @Inject constructor(
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun receiveMedia(dataInputStream: DataInputStream) {
+    override suspend fun receiveMedia(
+        dataInputStream: DataInputStream,
+        bytesReceivedListener: (
+            dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String,
+            dataUri: Uri
+        ) -> Unit
+    ) {
         withContext(Dispatchers.IO) {
             try {
                 val mediaName = dataInputStream.readUTF()
@@ -107,23 +109,14 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                                     cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                                 }
                             },
-                            bytesReadListener = { imageDisplayName: String, percentageOfDataRead: Float,
-                                                  imageUri: Uri ->
-                                incomingDataBroadcastIntent.apply {
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
-                                        imageDisplayName
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                                        percentageOfDataRead
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
-                                        imageUri
-                                    )
-                                    localBroadcastManager.sendBroadcast(this)
-                                }
+                            bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri ->
+                                bytesReceivedListener(
+                                    imageDisplayName,
+                                    imageSize,
+                                    percentageOfDataRead,
+                                    mediaType,
+                                    imageUri
+                                )
                             }
                         )
                     }
