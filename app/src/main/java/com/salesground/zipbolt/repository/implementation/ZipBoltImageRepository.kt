@@ -27,98 +27,7 @@ open class ZipBoltImageRepository @Inject constructor(
     private val savedFilesRepository: SavedFilesRepository
 ) : ImageRepository {
 
-    private var imageByteReadListener: ImageRepository.ImageByteReadListener? = null
 
-
-    override fun setImageByteReadListener(byteReadListener: ImageRepository.ImageByteReadListener) {
-        imageByteReadListener = byteReadListener
-    }
-
-    @Suppress("BlockingMethodInNonBlockingContext")
-    override suspend fun insertImageIntoMediaStore(
-        displayName: String,
-        size: Long,
-        mimeType: String,
-        dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
-        bytesReadListener:
-            (imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri) -> Unit
-    ) {
-        withContext(Dispatchers.IO) {
-            var mediaSize = size
-            // check if an image with this name is already in the mediaStore
-            val verifiedImageName = confirmImageName(displayName)
-            val imagesBaseDirectory = savedFilesRepository
-                .getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
-            val imageFile = File(imagesBaseDirectory, verifiedImageName)
-
-            val contentValues = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
-                put(MediaStore.Images.Media.TITLE, imageFile.name)
-                put(MediaStore.Images.Media.SIZE, size)
-                put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-                put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
-                put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
-                put(MediaStore.Images.Media.DATE_MODIFIED, System.currentTimeMillis())
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, applicationContext.packageName)
-                    put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
-                    put(MediaStore.Images.Media.IS_PENDING, 1)
-                    put(
-                        MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                        ZIP_BOLT_MAIN_DIRECTORY
-                    )
-                }
-            }
-
-            val imageUri = applicationContext.contentResolver.insert(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
-
-            imageUri?.let {
-                applicationContext.contentResolver.openFileDescriptor(imageUri, "w")?.let {
-                    val imageFileDataOutputStream = FileOutputStream(it.fileDescriptor)
-                    val bufferArray = ByteArray(10_000_000)
-
-                    // percentage of bytes read is 0% here
-                    imageByteReadListener?.percentageOfBytesRead(
-                        bytesReadPercent = Pair(
-                            displayName,
-                            ((size - mediaSize) / size) * 100f
-                        )
-                    )
-
-                    while (mediaSize > 0) {
-                        val bytesRead = dataInputStream.read(
-                            bufferArray,
-                            0,
-                            min(mediaSize.toInt(), bufferArray.size)
-                        )
-                        if (bytesRead == -1) break
-                        imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
-                        mediaSize -= bytesRead
-                        imageByteReadListener?.percentageOfBytesRead(
-                            bytesReadPercent = Pair(
-                                displayName,
-                                ((size - mediaSize) / size) * 100f
-                            )
-                        )
-
-                    }
-                    imageFileDataOutputStream.flush()
-                    imageFileDataOutputStream.close()
-                    it.close()
-                }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    contentValues.clear()
-                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                    applicationContext.contentResolver.update(imageUri, contentValues, null, null)
-                }
-            }
-        }
-    }
 
     override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
@@ -183,6 +92,17 @@ open class ZipBoltImageRepository @Inject constructor(
             }
         }
         return deviceImages
+    }
+
+    override suspend fun insertImageIntoMediaStore(
+        displayName: String,
+        size: Long,
+        mimeType: String,
+        dataInputStream: DataInputStream,
+        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
+        bytesReadListener: (imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri) -> Unit
+    ) {
+
     }
 
 
