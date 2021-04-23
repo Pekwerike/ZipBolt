@@ -30,8 +30,10 @@ class DataTransferService : Service() {
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
-    private var dataTransferListener:
-            ((Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit)? = null
+    private var dataTransferListener: ((
+        displayName: String, dataSize: Long, percentTransferred: Float,
+        transferState: MediaTransferProtocol.TransferState
+    ) -> Unit)? = null
 
 
     @Inject
@@ -43,29 +45,6 @@ class DataTransferService : Service() {
     inner class DataTransferServiceBinder : Binder() {
         fun getServiceInstance(): DataTransferService {
             return this@DataTransferService
-        }
-    }
-
-    init {
-        val localBroadcastManager = LocalBroadcastManager.getInstance(this)
-        val incomingDataBroadcastIntent =
-            Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
-        mediaTransferProtocol.setDataFlowListener { pair, transferState ->
-            when (transferState) {
-                MediaTransferProtocol.TransferState.RECEIVING -> {
-                    incomingDataBroadcastIntent.apply {
-                        putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_NAME, pair.first)
-                        putExtra(
-                            IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                            pair.second
-                        )
-                        localBroadcastManager.sendBroadcast(this)
-                    }
-                }
-                MediaTransferProtocol.TransferState.TRANSFERING -> {
-                    dataTransferListener?.invoke(pair, transferState)
-                }
-            }
         }
     }
 
@@ -106,8 +85,10 @@ class DataTransferService : Service() {
     @Synchronized
     fun transferData(
         dataCollectionSelected: MutableList<DataToTransfer>,
-        dataTransferListener:
-            (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit
+        dataTransferListener: (
+            displayName: String, dataSize: Long, percentTransferred: Float,
+            transferState: MediaTransferProtocol.TransferState
+        ) -> Unit
     ) {
         while (dataTransferUserEvent == DataTransferUserEvent.DATA_AVAILABLE) {
             // get stuck here
@@ -181,9 +162,13 @@ class DataTransferService : Service() {
                         mediaTransferProtocol.transferMedia(
                             it,
                             dataOutputStream
-                        ) { pair: Pair<String, Float>,
-                            transferState: MediaTransferProtocol.TransferState ->
-                            dataTransferListener?.invoke(pair)
+                        ) { displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
+                            dataTransferListener?.invoke(
+                                displayName,
+                                dataSize,
+                                percentTransferred,
+                                transferState
+                            )
                         }
                     }
                     dataTransferUserEvent = DataTransferUserEvent.NO_DATA

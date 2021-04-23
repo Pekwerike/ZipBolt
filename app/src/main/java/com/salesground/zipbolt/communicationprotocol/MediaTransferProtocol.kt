@@ -27,15 +27,9 @@ interface MediaTransferProtocol {
         )
     }
 
-    fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, TransferState) -> Unit)
 
     fun cancelCurrentTransfer(transferMetaData: TransferMetaData)
 
-
-    fun setMediaTransferListener(
-        mediaTransferListener:
-        MediaTransferListener
-    )
 
     suspend fun transferMedia(
         dataToTransfer: DataToTransfer,

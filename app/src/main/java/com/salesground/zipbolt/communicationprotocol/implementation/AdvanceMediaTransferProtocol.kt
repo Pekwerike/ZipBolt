@@ -28,18 +28,10 @@ class AdvanceMediaTransferProtocol @Inject constructor(
         Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
 
-    override fun setDataFlowListener(dataFlowListener: (Pair<String, Float>, MediaTransferProtocol.TransferState) -> Unit) {
-
-    }
-
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
         if (ongoingTransfer.get()) mTransferMetaData = transferMetaData
     }
 
-
-    override fun setMediaTransferListener(mediaTransferListener: MediaTransferProtocol.MediaTransferListener) {
-
-    }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun transferMedia(
@@ -64,9 +56,10 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                     val buffer = ByteArray(10_000_000)
 
                     dataTransferListener(
-                        Pair(
-                            dataToTransfer.dataDisplayName, 0f
-                        ), MediaTransferProtocol.TransferState.TRANSFERING
+                        dataToTransfer.dataDisplayName,
+                        dataToTransfer.dataSize,
+                        0f,
+                        MediaTransferProtocol.TransferState.TRANSFERING
                     )
 
                     while (dataSize > 0) {
@@ -81,10 +74,9 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                             dataOutputStream.write(buffer, 0, it)
                             dataSize -= it
                             dataTransferListener(
-                                Pair(
-                                    dataToTransfer.dataDisplayName,
-                                    ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize.toFloat()) * 100f
-                                ),
+                                dataToTransfer.dataDisplayName,
+                                dataToTransfer.dataSize,
+                                ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize.toFloat()) * 100f,
                                 MediaTransferProtocol.TransferState.TRANSFERING
                             )
                         }
@@ -111,10 +103,8 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                             mimeType = mediaType,
                             dataInputStream = dataInputStream,
                             transferMetaDataUpdateListener = {
-                                when (it) {
-                                    MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
-                                        cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
-                                    }
+                                if (it == MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
+                                    cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                                 }
                             },
                             bytesReadListener = { pair: Pair<String, Float>, uri: Uri ->
