@@ -19,6 +19,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.*
+import java.lang.StringBuilder
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
@@ -53,20 +54,7 @@ class AdvanceMediaTransferProtocolTest {
         gateWay = File(baseTestFolder, "gateway.txt")
         gateWayOutputStream = DataOutputStream(FileOutputStream(gateWay))
         gateWayInputStream = DataInputStream(FileInputStream(gateWay))
-        advanceMediaTransferProtocol.setDataFlowListener { dataInTransfer, transferState ->
-            Log.i(
-                "TransferTest",
-                "${transferState.name} - ${dataInTransfer.first}: ${dataInTransfer.second}"
-            )
-            if (imagesToCancelTransfer.contains(dataInTransfer.first) &&
-                dataInTransfer.second > 50f && dataInTransfer.second < 100f
-            ) {
-                advanceMediaTransferProtocol.cancelCurrentTransfer(
-                    transferMetaData = MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE
-                )
-                deletedImages.add(dataInTransfer.first)
-            }
-        }
+
     }
 
     @Test
@@ -83,7 +71,15 @@ class AdvanceMediaTransferProtocolTest {
             launch {
                 advanceMediaTransferProtocol.transferMedia(
                     dataToTransfer = it,
-                    dataOutputStream = gateWayOutputStream
+                    dataOutputStream = gateWayOutputStream,
+                    dataTransferListener = {displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
+                        val logMessage = StringBuilder().apply {
+                            append("DisplayName: $displayName \n")
+                            append("PercentageOfDataRead: $percentTransferred \n")
+                            append("DataSize: $dataSize")
+                        }
+                        Log.i("DataTransferred", logMessage.toString())
+                    }
                 )
             }
             delay(300)

@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.repository
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.*
+import java.lang.StringBuilder
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -72,7 +74,6 @@ class AdvanceImageRepositoryTest {
             )
 
             // write first image and cancel transfer
-
             context.contentResolver.openFileDescriptor(firstImage.dataUri, "r")
                 ?.let { parcelFileDescriptor ->
                     val bytesUnwritten = firstImage.dataSize
@@ -89,13 +90,35 @@ class AdvanceImageRepositoryTest {
                 displayName = firstImage.dataDisplayName,
                 size = firstImage.dataSize,
                 mimeType = firstImage.dataType,
-                dataInputStream = gateWayInputStream
+                dataInputStream = gateWayInputStream,
+                transferMetaDataUpdateListener = {
+                    Log.i("TransferMetaData", it.status)
+                },
+                bytesReadListener = {imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri ->
+                    val logMessage = StringBuilder().apply {
+                        append("DisplayName: $imageDisplayName \n")
+                        append("PercentageOfDataRead: $percentageOfDataRead \n")
+                        append("ImageUri: $imageUri")
+                    }
+                    Log.i("ImageBytesRead", logMessage.toString())
+                }
             )
             advanceImageRepository.insertImageIntoMediaStore(
                 displayName = secondImage.dataDisplayName,
                 size = secondImage.dataSize,
                 mimeType = secondImage.dataType,
-                dataInputStream = gateWayInputStream
+                dataInputStream = gateWayInputStream,
+                transferMetaDataUpdateListener = {
+                    Log.i("TransferMetaData", it.status)
+                },
+                bytesReadListener = {imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri ->
+                    val logMessage = StringBuilder().apply {
+                        append("DisplayName: $imageDisplayName \n")
+                        append("PercentageOfDataRead: $percentageOfDataRead \n")
+                        append("ImageUri: $imageUri")
+                    }
+                    Log.i("ImageBytesRead", logMessage.toString())
+                }
             )
             assertEquals(numberOfImagesOnDevice + 1, advanceImageRepository.getImagesOnDevice().size)
         }
