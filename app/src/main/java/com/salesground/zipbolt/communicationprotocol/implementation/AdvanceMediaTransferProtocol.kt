@@ -107,19 +107,20 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                                     cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                                 }
                             },
-                            bytesReadListener = { pair: Pair<String, Float>, uri: Uri ->
+                            bytesReadListener = { imageDisplayName: String, percentageOfDataRead: Float,
+                                                  imageUri: Uri ->
                                 incomingDataBroadcastIntent.apply {
                                     putExtra(
                                         IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
-                                        pair.first
+                                        imageDisplayName
                                     )
                                     putExtra(
                                         IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                                        pair.second
+                                        percentageOfDataRead
                                     )
                                     putExtra(
                                         IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
-                                        uri
+                                        imageUri
                                     )
                                     localBroadcastManager.sendBroadcast(this)
                                 }
