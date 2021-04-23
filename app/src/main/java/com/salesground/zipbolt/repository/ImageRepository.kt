@@ -29,9 +29,9 @@ interface ImageRepository {
         size: Long,
         mimeType: String,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener : (MediaTransferProtocol.TransferMetaData) -> Unit,
+        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
         bytesReadListener:
-            (Pair<String, Float>, Uri) -> Unit
+            (imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri) -> Unit
     )
 
     suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer

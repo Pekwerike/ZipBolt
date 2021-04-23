@@ -71,12 +71,6 @@ class AdvanceImageRepositoryTest {
                 advanceImageRepository.getImagesOnDevice(limit = 3)[0] as DataToTransfer.DeviceImage
             )
 
-            advanceImageRepository.setImageBytesReadListener {
-              //  Log.i("BytesRead", "${it.first}: ${it.second}")
-                if (it.first == firstImage.dataDisplayName && it.second > 50) {
-                //  Log.i("BytesRead", "${it.first}: Cancelled Transfer")
-                }
-            }
             // write first image and cancel transfer
 
             context.contentResolver.openFileDescriptor(firstImage.dataUri, "r")

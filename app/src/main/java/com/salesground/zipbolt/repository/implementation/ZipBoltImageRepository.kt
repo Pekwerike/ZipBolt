@@ -40,9 +40,9 @@ open class ZipBoltImageRepository @Inject constructor(
         size: Long,
         mimeType: String,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener : (MediaTransferProtocol.TransferMetaData) -> Unit,
+        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
         bytesReadListener:
-            (Pair<String, Float>, Uri) -> Unit
+            (imageDisplayName: String, percentageOfDataRead: Float, imageUri: Uri) -> Unit
     ) {
         withContext(Dispatchers.IO) {
             var mediaSize = size
@@ -83,8 +83,11 @@ open class ZipBoltImageRepository @Inject constructor(
 
                     // percentage of bytes read is 0% here
                     imageByteReadListener?.percentageOfBytesRead(
-                        bytesReadPercent = Pair(displayName,
-                            ((size - mediaSize) / size) * 100f))
+                        bytesReadPercent = Pair(
+                            displayName,
+                            ((size - mediaSize) / size) * 100f
+                        )
+                    )
 
                     while (mediaSize > 0) {
                         val bytesRead = dataInputStream.read(
@@ -96,8 +99,11 @@ open class ZipBoltImageRepository @Inject constructor(
                         imageFileDataOutputStream.write(bufferArray, 0, bytesRead)
                         mediaSize -= bytesRead
                         imageByteReadListener?.percentageOfBytesRead(
-                            bytesReadPercent = Pair(displayName,
-                                ((size - mediaSize) / size) * 100f))
+                            bytesReadPercent = Pair(
+                                displayName,
+                                ((size - mediaSize) / size) * 100f
+                            )
+                        )
 
                     }
                     imageFileDataOutputStream.flush()
@@ -210,7 +216,7 @@ open class ZipBoltImageRepository @Inject constructor(
                     cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
                 return image.copy(
-                    imageMimeType =  imageMimeType,
+                    imageMimeType = imageMimeType,
                     imageSize = imageSize,
                     imageDisplayName = imageDisplayName
                 )
@@ -219,7 +225,7 @@ open class ZipBoltImageRepository @Inject constructor(
         return image
     }
 
-   protected fun confirmImageName(mediaName: String?): String {
+    protected fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {
             if (isImageInMediaStore(mediaName)) {
                 "IMG" + Random().nextInt(100000).toString() + mediaName
