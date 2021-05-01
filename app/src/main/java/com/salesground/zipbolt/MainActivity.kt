@@ -61,7 +61,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
 
-    private val permissionUtils = PermissionUtils(this)
+    @Inject
+    lateinit var permissionUtils: PermissionUtils
 
 
     //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver()
     }
-    private val  wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
+    private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
 
         }
@@ -408,7 +409,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
-            wifiP2pManager.initialize(this, mainLooper
+            wifiP2pManager.initialize(
+                this, mainLooper
             )
             // The channel to the framework has been disconnected.
             // Application could try re-initializing
