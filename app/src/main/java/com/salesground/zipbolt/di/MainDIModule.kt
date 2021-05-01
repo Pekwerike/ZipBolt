@@ -17,7 +17,6 @@ import javax.inject.Singleton
 class MainDIModule {
 
     @Provides
-    @Singleton
     fun getNotificationManager(@ApplicationContext context: Context): NotificationManager {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }

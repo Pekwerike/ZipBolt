@@ -54,18 +54,16 @@ const val IS_SERVER_KEY = "IsDeviceServer"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
-        getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
-    }
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
 
-
-    //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
+    @Inject
+    lateinit var wifiP2pManager: WifiP2pManager
 
     @Inject
     lateinit var wifiManager: WifiManager
+
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private var isServerServiceBound: Boolean = false
