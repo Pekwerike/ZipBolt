@@ -31,6 +31,7 @@ import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
+import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
-
+            mainActivityViewModel.peersListAvailable(peersList)
         }
 
         override fun peeredDeviceConnectionInfoReady(wifiP2pInfo: WifiP2pInfo) {
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun wifiP2pDiscoveryStopped() {
-            mainActivityViewModel.wifiP2pDiscoveryStoped()
+            mainActivityViewModel.wifiP2pDiscoveryStopped()
         }
 
         override fun wifiP2pDiscoveryStarted() {
@@ -97,7 +98,10 @@ class MainActivity : AppCompatActivity() {
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
-    private lateinit var connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout>
+    private val connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
+        BottomSheetBehavior.from(
+            activityMainBinding.connectionInfoPersistentBottomSheetLayout.root)
+    }
     private var isBottomSheetLayoutConfigured: Boolean = false
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
@@ -178,22 +182,44 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewModelLiveData() {
+        mainActivityViewModel.peerConnectionUIState.observe(this) {
+            it?.let {
+                when (it) {
+                    is PeerConnectionUIState.CollapsedConnectedToPeer -> {
 
+                    }
+                    is PeerConnectionUIState.CollapsedSearchingForPeer -> {
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
+                        connectionInfoBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
+                    }
+                    is PeerConnectionUIState.ExpandedConnectedToPeer -> {
+
+                    }
+                    is PeerConnectionUIState.ExpandedSearchingForPeer -> {
+                        connectionInfoBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_EXPANDED
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
+                    }
+                    PeerConnectionUIState.NoConnectionUIAction -> {
+                        connectionInfoBottomSheetBehavior.isHideable = true
+                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                    }
+                }
+            }
+        }
     }
 
     private fun configureConnectionInfoPersistentBottomSheet() {
         isBottomSheetLayoutConfigured = true
-        connectionInfoBottomSheetBehavior =
-            BottomSheetBehavior.from(
-                activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
-            )
 
         collapsedSearchingForPeersInfoBinding.apply {
             collapsedSearchingForPeersInformationCancelSearchingForPeers.setOnClickListener {
                 stopDevicePeerDiscovery()
             }
             root.setOnClickListener {
-                connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                mainActivityViewModel.expandedSearchingForPeers()
+                // connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
         connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
@@ -216,7 +242,8 @@ class MainActivity : AppCompatActivity() {
         })
         expandedSearchingForPeersInfoBinding.apply {
             collapseExpandedSearchingForPeersImageButton.setOnClickListener {
-                connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                mainActivityViewModel.collapsedSearchingForPeers()
+                // connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
             expandedSearchingForPeersInformationStopSearchButton.setOnClickListener {
                 stopDevicePeerDiscovery()
@@ -226,6 +253,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun configurePlatformOptionsModalBottomSheetLayout() {
         modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)

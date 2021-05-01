@@ -11,12 +11,22 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
 
+    private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()
     private val _peerConnectionUIState =
         MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
     val peerConnectionUIState: LiveData<PeerConnectionUIState>
         get() = _peerConnectionUIState
 
+    fun collapsedSearchingForPeers(){
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedSearchingForPeer(currentPeersList.size)
+    }
+
+    fun expandedSearchingForPeers(){
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
+    }
+
     fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
+        currentPeersList = peersList
         _peerConnectionUIState.value = when (_peerConnectionUIState.value) {
             is PeerConnectionUIState.CollapsedSearchingForPeer -> {
                 PeerConnectionUIState.CollapsedSearchingForPeer(peersList.size)
@@ -28,7 +38,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun wifiP2pDiscoveryStoped() {
+    fun wifiP2pDiscoveryStopped() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
     }
 
