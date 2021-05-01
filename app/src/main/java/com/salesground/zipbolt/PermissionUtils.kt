@@ -3,10 +3,13 @@ package com.salesground.zipbolt
 import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import javax.inject.Inject
+import javax.inject.Singleton
 
 const val READ_WRITE_STORAGE_REQUEST_CODE = 101
 
-class PermissionUtils(
+@Singleton
+class PermissionUtils @Inject constructor(
     private val mainActivity: MainActivity
 ) {
 

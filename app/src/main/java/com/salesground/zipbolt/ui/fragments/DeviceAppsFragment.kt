@@ -1,17 +1,12 @@
-package com.salesground.zipbolt.ui
+package com.salesground.zipbolt.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.ui.platform.ComposeView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentAppBinding
-import com.salesground.zipbolt.ui.theme.ZipBoltTheme
 
 
 class DeviceAppsFragment : Fragment() {

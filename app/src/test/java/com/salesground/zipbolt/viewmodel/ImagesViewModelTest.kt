@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.salesground.zipbolt.TestCoroutineRule
 import com.salesground.zipbolt.fakerepository.FakeZipBoltImageRepository
 import com.salesground.zipbolt.getOrAwaitValue
-import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto.ImagesDisplayModel
+import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto.ImagesDisplayModel
+import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -78,7 +78,7 @@ class ImagesViewModel @Inject constructor(
                 _deviceImagesGroupedByDateModified.value =
                     withContext(Dispatchers.IO) {
                         allDeviceImagesToImagesDisplayModel(allImagesOnDevice = allImagesOnDeviceRaw)
-                    }
+                    }!!
             } else {
                 // filter
                 _deviceImagesGroupedByDateModified.value = withContext(Dispatchers.IO) {
@@ -86,7 +86,7 @@ class ImagesViewModel @Inject constructor(
                         allImagesOnDevice = allImagesOnDeviceRaw,
                         bucketName = bucketName
                     )
-                }
+                }!!
             }
         }
     }
