@@ -13,7 +13,6 @@ import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.view.View
 import android.view.ViewStub
 import android.widget.FrameLayout
@@ -33,11 +32,7 @@ import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectB
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 
-import com.salesground.zipbolt.foregroundservice.ClientService
-import com.salesground.zipbolt.foregroundservice.ServerService
-import com.salesground.zipbolt.model.ui.PeerConnectionState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
-import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersDataItem
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
@@ -53,7 +48,7 @@ const val IS_SERVER_KEY = "IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
+    private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -66,8 +61,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
-    private var isServerServiceBound: Boolean = false
-    private var isClientServiceBound: Boolean = false
+
     private val localBroadCastReceiver: LocalBroadcastManager by lazy {
         LocalBroadcastManager.getInstance(this)
     }
@@ -92,11 +86,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun wifiP2pDiscoveryStopped() {
-
+            mainActivityViewModel.wifiP2pDiscoveryStoped()
         }
 
         override fun wifiP2pDiscoveryStarted() {
-
+            mainActivityViewModel.wifiP2pDiscoveryStarted()
         }
     }
 
@@ -156,6 +150,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             mainActivityAllMediaOnDevice.apply {
+                // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode = if (resources.displayMetrics.density > 3.0
                     || resources.displayMetrics.scaledDensity > 3.4
                 ) {
@@ -180,6 +175,10 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
+    }
+
+    private fun observeViewModelLiveData() {
+
     }
 
     private fun configureConnectionInfoPersistentBottomSheet() {
@@ -354,7 +353,7 @@ class MainActivity : AppCompatActivity() {
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
                         /*mainActivityViewModel.updatePeerConnectionState(peerConnectionState =
-                        PeerConnectionState.NoConnectionAction)*/
+                        PeerConnectionUIState.NoConnectionUIAction)*/
                     }
 
                     override fun onFailure(p0: Int) {
@@ -379,11 +378,6 @@ class MainActivity : AppCompatActivity() {
             addAction(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
         }
     }
-
-    private fun observeViewModelLiveData() {
-
-    }
-
 
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
@@ -449,9 +443,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        // unbind the bounded services
-        isServerServiceBound = false
-        isClientServiceBound = false
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
         localBroadCastReceiver.unregisterReceiver(incomingDataBroadcastReceiver)

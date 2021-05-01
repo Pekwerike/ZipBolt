@@ -2,25 +2,24 @@ package com.salesground.zipbolt.model.ui
 
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
-import com.salesground.zipbolt.model.DataToTransfer
 
 /*
-"Created PeerConnectionState to represent the various states of the
+"Created PeerConnectionUIState to represent the various states of the
  persistent bottom sheet layout during peer discovery and connection"
 */
-sealed class PeerConnectionState {
+sealed class PeerConnectionUIState {
 
-    object NoConnectionAction : PeerConnectionState()
+    object NoConnectionUIAction : PeerConnectionUIState()
 
-    data class CollapsedSearchingForPeer(val numberOfDevicesFound: Int) : PeerConnectionState()
+    data class CollapsedSearchingForPeer(val numberOfDevicesFound: Int) : PeerConnectionUIState()
 
     data class ExpandedSearchingForPeer(val devices: MutableList<WifiP2pDevice>) :
-        PeerConnectionState()
+        PeerConnectionUIState()
 
     data class CollapsedConnectedToPeer(
         val peeredDeviceConnectionInfo: WifiP2pInfo
-    ) : PeerConnectionState()
+    ) : PeerConnectionUIState()
 
     data class ExpandedConnectedToPeer(val peeredDeviceConnectionInfo: WifiP2pInfo) :
-        PeerConnectionState()
+        PeerConnectionUIState()
 }
