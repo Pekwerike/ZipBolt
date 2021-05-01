@@ -29,6 +29,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
+import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 
@@ -46,18 +47,12 @@ import kotlin.math.roundToInt
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
-
-
 const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
 const val IS_SERVER_KEY = "IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    // private val mediaViewModel by viewModels<MediaViewModel>()
-    // private val deviceMediaViewModel by viewModels<ImagesViewModel>()
-    // private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
 
     private val wifiP2pManager: WifiP2pManager by lazy(LazyThreadSafetyMode.NONE) {
         getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
@@ -83,6 +78,31 @@ class MainActivity : AppCompatActivity() {
     }
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver()
+    }
+    private val  wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
+        override fun wifiOn() {
+
+        }
+
+        override fun wifiOff() {
+
+        }
+
+        override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
+
+        }
+
+        override fun peeredDeviceConnectionInfoReady(wifiP2pInfo: WifiP2pInfo) {
+
+        }
+
+        override fun wifiP2pDiscoveryStopped() {
+
+        }
+
+        override fun wifiP2pDiscoveryStarted() {
+
+        }
     }
 
     // ui variables
@@ -130,7 +150,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         inflate(layoutInflater).apply {
             setContentView(ExpandedConnectedToPeerNoActionBinding.inflate(layoutInflater).root)
@@ -393,11 +412,13 @@ class MainActivity : AppCompatActivity() {
             )
             // The channel to the framework has been disconnected.
             // Application could try re-initializing
-            { }
+            {
+
+            }
         // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
         wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
             wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
-                mainActivity = this,
+                wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
                 wifiP2pManager = wifiP2pManager,
                 wifiP2pChannel = wifiP2pChannel
             )
@@ -449,7 +470,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         // unbind the bounded services
-
         isServerServiceBound = false
         isClientServiceBound = false
         // unregister the broadcast receiver

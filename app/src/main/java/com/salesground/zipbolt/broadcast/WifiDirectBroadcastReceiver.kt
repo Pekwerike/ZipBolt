@@ -4,15 +4,25 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import com.salesground.zipbolt.MainActivity
 
 class WifiDirectBroadcastReceiver(
-    private val mainActivity: MainActivity,
+    private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiverCallback,
     private val wifiP2pManager: WifiP2pManager,
     private val wifiP2pChannel: WifiP2pManager.Channel
 ) : BroadcastReceiver() {
+
+    interface WifiDirectBroadcastReceiverCallback {
+        fun wifiOn()
+        fun wifiOff()
+        fun peersListAvailable(peersList: MutableList<WifiP2pDevice>)
+        fun peeredDeviceConnectionInfoReady(wifiP2pInfo: WifiP2pInfo)
+        fun wifiP2pDiscoveryStopped()
+        fun wifiP2pDiscoveryStarted()
+    }
 
     @SuppressLint("MissingPermission")
     override fun onReceive(p0: Context?, p1: Intent?) {
@@ -25,10 +35,10 @@ class WifiDirectBroadcastReceiver(
                         val isWifiOn = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1)
                         if (isWifiOn == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                             // wifiP2p ie enabled
-                            mainActivity.wifiP2pState(isEnabled = true)
+                            wifiDirectBroadcastReceiverCallback.wifiOn()
                         } else {
                             // wifiP2p is not enabled
-                            mainActivity.wifiP2pState(isEnabled = false)
+                            wifiDirectBroadcastReceiverCallback.wifiOff()
                         }
 
                     }
@@ -40,8 +50,10 @@ class WifiDirectBroadcastReceiver(
                         wifiP2pManager.requestPeers(wifiP2pChannel) { p0 ->
                             // potential peers are available
                             // Store this list in a viewModel to display it on the UI
-                            p0?.deviceList?.let {
-                                mainActivity.peersListAvailable(it.toMutableList())
+                            p0?.deviceList?.let { collectionOfWifiP2pDevice ->
+                                wifiDirectBroadcastReceiverCallback.peersListAvailable(
+                                    collectionOfWifiP2pDevice.toMutableList()
+                                )
                             }
                         }
                     }
@@ -49,17 +61,17 @@ class WifiDirectBroadcastReceiver(
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
 
-                       /* val wifiP2pInfo = intent.getParcelableExtra<WifiP2pInfo>(
-                            WifiP2pManager.EXTRA_WIFI_P2P_INFO)
-                        wifiP2pInfo?.let {
-                            if (wifiP2pInfo.groupFormed) {
-                                wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
-                                    mainActivity.peeredDeviceConnectionInfoReady(
-                                        deviceConnectionInfo = wifiP2pInfo
-                                    )
-                                }
-                            }
-                        }*/
+                        /* val wifiP2pInfo = intent.getParcelableExtra<WifiP2pInfo>(
+                             WifiP2pManager.EXTRA_WIFI_P2P_INFO)
+                         wifiP2pInfo?.let {
+                             if (wifiP2pInfo.groupFormed) {
+                                 wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
+                                     mainActivity.peeredDeviceConnectionInfoReady(
+                                         deviceConnectionInfo = wifiP2pInfo
+                                     )
+                                 }
+                             }
+                         }*/
                         /* val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO) as NetworkInfo?
 
                          TODO NetworkInfo deprecated, go search for another alternative, until then request connection info directly
@@ -67,19 +79,16 @@ class WifiDirectBroadcastReceiver(
                         // We are connected with the other device, request connection
                         // info to find group owner IP
                         wifiP2pManager.requestConnectionInfo(
-                            wifiP2pChannel,
-                            object : WifiP2pManager.ConnectionInfoListener {
-                                override fun onConnectionInfoAvailable(p0: WifiP2pInfo?) {
-                                    p0?.let {
-                                        // send connected device the connection info to the mainActivityViewModel
-                                        // so we can create a socket connection and begin data transfer
-                                        mainActivity.peeredDeviceConnectionInfoReady(
-                                            deviceConnectionInfo = it
-                                        )
-                                    }
-                                }
-
-                            })
+                            wifiP2pChannel
+                        ) { p0 ->
+                            p0?.let { wifiP2pInfo ->
+                                // send connected device the connection info to the mainActivityViewModel
+                                // so we can create a socket connection and begin data transfer
+                                wifiDirectBroadcastReceiverCallback.peeredDeviceConnectionInfoReady(
+                                    wifiP2pInfo
+                                )
+                            }
+                        }
 
                     }
 
@@ -95,10 +104,10 @@ class WifiDirectBroadcastReceiver(
                         )
                         when (discoveryState) {
                             WifiP2pManager.WIFI_P2P_DISCOVERY_STARTED -> {
-
+                                wifiDirectBroadcastReceiverCallback.wifiP2pDiscoveryStarted()
                             }
                             WifiP2pManager.WIFI_P2P_DISCOVERY_STOPPED -> {
-                                mainActivity.wifiP2pDiscoveryStopped()
+                                wifiDirectBroadcastReceiverCallback.wifiP2pDiscoveryStopped()
                             }
                         }
                     }
