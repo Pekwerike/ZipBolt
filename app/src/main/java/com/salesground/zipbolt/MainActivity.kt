@@ -61,8 +61,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
 
-    @Inject
-    lateinit var permissionUtils: PermissionUtils
 
 
     //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
@@ -461,7 +459,7 @@ class MainActivity : AppCompatActivity() {
         observeViewModelLiveData()
         createNotificationChannel()
         //checkReadAndWriteExternalStoragePermission()
-        permissionUtils.checkReadAndWriteExternalStoragePermission()
+        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadCastReceiver.registerReceiver(
             incomingDataBroadcastReceiver,

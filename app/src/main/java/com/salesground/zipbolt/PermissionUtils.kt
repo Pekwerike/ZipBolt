@@ -1,25 +1,21 @@
 package com.salesground.zipbolt
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
-import javax.inject.Inject
-import javax.inject.Singleton
 
 const val READ_WRITE_STORAGE_REQUEST_CODE = 101
 
-@Singleton
-class PermissionUtils @Inject constructor(
-    private val mainActivity: MainActivity
-) {
+object PermissionUtils{
 
-    fun checkReadAndWriteExternalStoragePermission() {
+    fun checkReadAndWriteExternalStoragePermission(activity: Activity) {
         if (ActivityCompat.checkSelfPermission(
-                mainActivity,
+                activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(
-                mainActivity,
+                activity,
                 Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -28,7 +24,7 @@ class PermissionUtils @Inject constructor(
             // TODO Go ahead an inform the viewModel to fetch, media items from the repositoris
         } else {
             ActivityCompat.requestPermissions(
-                mainActivity,
+                activity,
                 arrayOf(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE
