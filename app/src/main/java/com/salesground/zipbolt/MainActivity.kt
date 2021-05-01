@@ -64,9 +64,8 @@ class MainActivity : AppCompatActivity() {
 
     //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
 
-    private val wifiManager: WifiManager by lazy(LazyThreadSafetyMode.NONE) {
-        applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-    }
+    @Inject
+    lateinit var wifiManager: WifiManager
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private var isServerServiceBound: Boolean = false
@@ -267,10 +266,6 @@ class MainActivity : AppCompatActivity() {
         ftsNotification.createFTSNotificationChannel()
     }
 
-    fun peeredDeviceConnectionInfoReady(deviceConnectionInfo: WifiP2pInfo) {
-
-    }
-
 
     @SuppressLint("MissingPermission", "HardwareIds")
     private fun createWifiDirectGroup() {
@@ -331,9 +326,6 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
-
-    }
 
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
@@ -370,11 +362,9 @@ class MainActivity : AppCompatActivity() {
                     override fun onFailure(p0: Int) {
                         displayToast("Couldn't stop peer discovery")
                     }
-
                 })
         }
     }
-
 
     private fun createSystemBroadcastIntentFilter(): IntentFilter {
         return IntentFilter().apply {
@@ -392,17 +382,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun wifiP2pDiscoveryStopped() {
-
-    }
-
     private fun observeViewModelLiveData() {
 
     }
 
-    fun wifiP2pState(isEnabled: Boolean) {
-
-    }
 
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
