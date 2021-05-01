@@ -21,5 +21,4 @@ class MainDIModule {
     fun getNotificationManager(@ApplicationContext context: Context): NotificationManager {
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
-
 }

@@ -38,7 +38,7 @@ import com.salesground.zipbolt.model.ui.PeerConnectionState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersDataItem
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
-import com.salesground.zipbolt.ui.screen.allmediadisplay.AllMediaOnDeviceViewPager2Adapter
+import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -54,7 +54,7 @@ const val IS_SERVER_KEY = "IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val mainActivityViewModel by viewModels<MainActivityViewModel>()
+
     // private val mediaViewModel by viewModels<MediaViewModel>()
     // private val deviceMediaViewModel by viewModels<ImagesViewModel>()
     // private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
@@ -128,38 +128,6 @@ class MainActivity : AppCompatActivity() {
         DataBindingUtil.getBinding(collapsedSearchingForPeerView)!!
     }
 
-
-    private val clientServiceConnection: ServiceConnection by lazy {
-        object : ServiceConnection {
-
-            override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-
-                val clientServiceBinder = p1 as ClientService.ClientServiceBinder
-                mainActivityViewModel.clientServiceReady(clientServiceBinder.getClientServiceBinder())
-                isClientServiceBound = true
-            }
-
-            override fun onServiceDisconnected(p0: ComponentName?) {
-                isClientServiceBound = false
-            }
-        }
-    }
-
-    private val serverServiceConnection: ServiceConnection by lazy {
-        object : ServiceConnection {
-            override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-                val serverServiceBinder = p1 as ServerService.ServerServiceBinder
-                mainActivityViewModel.serverServiceReady(serverServiceBinder.getServerServiceInstance())
-                isServerServiceBound = true
-            }
-
-            override fun onServiceDisconnected(p0: ComponentName?) {
-                isServerServiceBound = false
-            }
-        }
-    }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -220,20 +188,10 @@ class MainActivity : AppCompatActivity() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        mainActivityViewModel.updatePeerConnectionState(
-                            peerConnectionState =
-                            PeerConnectionState.CollapsedSearchingForPeer(
-                                numberOfDevicesFound =
-                                0
-                            )
-                        )
+
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
-                        mainActivityViewModel.updatePeerConnectionState(
-                            peerConnectionState = PeerConnectionState.ExpandedSearchingForPeer(
-                                devices = mutableListOf()
-                            )
-                        )
+
                     }
                 }
             }
@@ -293,7 +251,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun peeredDeviceConnectionInfoReady(deviceConnectionInfo: WifiP2pInfo) {
-        mainActivityViewModel.peeredDeviceConnectionInfoUpdated(connectionInfo = deviceConnectionInfo)
+
     }
 
 
@@ -357,7 +315,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
-        mainActivityViewModel.discoveredPeersListChanged(peersList)
+
     }
 
     @SuppressLint("MissingPermission")
@@ -367,11 +325,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onSuccess() {
                     // TODO Peer discovery started alert the user
                     //  displayToast("Peer discovery successfully initiated")
-                    mainActivityViewModel.updatePeerConnectionState(
-                        peerConnectionState = PeerConnectionState.ExpandedSearchingForPeer(
-                            devices = mutableListOf()
-                        )
-                    )
+
                 }
 
                 override fun onFailure(p0: Int) {
@@ -422,125 +376,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun wifiP2pDiscoveryStopped() {
-        mainActivityViewModel.updatePeerConnectionState(
-            peerConnectionState =
-            PeerConnectionState.NoConnectionAction
-        )
+
     }
 
     private fun observeViewModelLiveData() {
-        mainActivityViewModel.peerConnectionState.observe(this) {
-            it?.let { peerConnectionState ->
-                when (peerConnectionState) {
-                    is PeerConnectionState.CollapsedConnectedToPeer -> {
 
-                    }
-                    is PeerConnectionState.CollapsedSearchingForPeer -> {
-                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
-                        connectionInfoBottomSheetBehavior.isHideable = false
-                        connectionInfoBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
-                        expandedSearchingForPeersInfoBinding.root.alpha = 0f
-                        activityMainBinding.connectToPeerButton.alpha = 0f
-                        activityMainBinding.sendFileButton.animate().alpha(1f).start()
-                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-                    }
-                    is PeerConnectionState.ExpandedConnectedToPeer -> {
-
-                    }
-                    is PeerConnectionState.ExpandedSearchingForPeer -> {
-                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
-                        connectionInfoBottomSheetBehavior.isHideable = false
-                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        collapsedSearchingForPeersInfoBinding.root.alpha = 0f
-                        activityMainBinding.connectToPeerButton.alpha = 0f
-                        activityMainBinding.sendFileButton.animate().alpha(1f).start()
-                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-
-                        discoveredPeersRecyclerViewAdapter.submitList(peerConnectionState.devices.map { wifiP2pDevice ->
-                            DiscoveredPeersDataItem.DiscoveredPeer(wifiP2pDevice = wifiP2pDevice)
-                        }.toMutableList())
-                    }
-
-                    PeerConnectionState.NoConnectionAction -> {
-                        if (isBottomSheetLayoutConfigured) {
-                            connectionInfoBottomSheetBehavior.isHideable = true
-                            connectionInfoBottomSheetBehavior.state =
-                                BottomSheetBehavior.STATE_HIDDEN
-                            activityMainBinding.sendFileButton.animate().alpha(0f).start()
-                            activityMainBinding.connectToPeerButton.animate().alpha(1f).start()
-                        }
-                    }
-                }
-            }
-        }
-        // wifiP2p state changed, either enabled or disabled
-        mainActivityViewModel.isWifiP2pEnabled.observe(this, {
-            it?.let {
-                if (it) {
-                    // begin peer discovery
-                }
-            }
-        })
-
-        // peeredDevice connection info ready, use this details to create a socket connection btw both device
-        mainActivityViewModel.peeredDeviceConnectionInfo.observe(this, {
-            it?.let { wifiP2pInfo ->
-                wifiP2pInfo.groupOwnerAddress?.let {
-                    val ipAddressForServerSocket: String = it.hostAddress
-                    if (wifiP2pInfo.groupFormed && wifiP2pInfo.isGroupOwner) {
-                        // server
-                        if (mainActivityViewModel.serverService.value == null) {
-                            Intent(this@MainActivity, ServerService::class.java).apply {
-                                bindService(this, serverServiceConnection, Context.BIND_AUTO_CREATE)
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    startService(this)
-                                    startForegroundService(this)
-                                } else {
-                                    startService(this)
-                                }
-                            }
-                        } else {
-                            Toast.makeText(this, "Connected to client already", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    } else if (wifiP2pInfo.groupFormed) {
-                        // client
-                        if (mainActivityViewModel.clientService.value == null) {
-                            Intent(this@MainActivity, ClientService::class.java).apply {
-                                putExtra(SERVER_IP_ADDRESS_KEY, ipAddressForServerSocket)
-                                bindService(this, clientServiceConnection, Context.BIND_AUTO_CREATE)
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    startService(this)
-                                    startForegroundService(this)
-                                } else {
-                                    startService(this)
-                                }
-                            }
-                        } else Toast.makeText(
-                            this,
-                            "Connected to server already",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-
-                }
-            }
-        })
     }
 
     fun wifiP2pState(isEnabled: Boolean) {
-        mainActivityViewModel.wifiP2pStateChange(newState = isEnabled)
+
     }
 
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
-            wifiP2pManager.initialize(this, mainLooper, object : WifiP2pManager.ChannelListener {
-                // The channel to the framework has been disconnected.
-                // Application could try re-initializing
-                override fun onChannelDisconnected() {
-                }
-            })
+            wifiP2pManager.initialize(this, mainLooper
+            )
+            // The channel to the framework has been disconnected.
+            // Application could try re-initializing
+            { }
         // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
         wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
             wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
@@ -596,8 +449,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         // unbind the bounded services
-        if (isClientServiceBound) unbindService(clientServiceConnection)
-        if (isServerServiceBound) unbindService(serverServiceConnection)
+
         isServerServiceBound = false
         isClientServiceBound = false
         // unregister the broadcast receiver
@@ -607,20 +459,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
 
-        when (mainActivityViewModel.peerConnectionState.value) {
-            is PeerConnectionState.ExpandedSearchingForPeer -> {
-                mainActivityViewModel.updatePeerConnectionState(
-                    peerConnectionState =
-                    PeerConnectionState.CollapsedSearchingForPeer(numberOfDevicesFound = 0)
-                )
-            }
-            is PeerConnectionState.ExpandedConnectedToPeer -> {
-
-            }
-            else -> {
-                super.onBackPressed()
-            }
-        }
     }
 
     override fun onRequestPermissionsResult(
