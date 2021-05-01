@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var ftsNotification: FileTransferServiceNotification
 
 
-
     //  private val deviceApplicationViewModel: DeviceApplicationViewModel by viewModels()
 
     private val wifiManager: WifiManager by lazy(LazyThreadSafetyMode.NONE) {
@@ -151,7 +150,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         inflate(layoutInflater).apply {
-            setContentView(ExpandedConnectedToPeerNoActionBinding.inflate(layoutInflater).root)
+            setContentView(root)
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) {
