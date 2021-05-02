@@ -1,6 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
+        activity_version = "1.2.2"
         compose_version = '1.0.0-beta02'
         hilt_version = '2.35'
         arch_components_test_version = '2.1.0'
