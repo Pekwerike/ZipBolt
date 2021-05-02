@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="numberOfDevicesFound"
             type="Integer" />
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:paddingHorizontal="4dp"
-            setNumberOfDevicesFoundText="@{numberOfDevicesFound}"
+            android:text="@string/searching_for_peers_label"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/materialTextView"
             app:layout_constraintStart_toEndOf="@id/medium_searching_for_peers_animation"
@@ -37,12 +38,12 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/materialTextView"
+            setNumberOfDevicesFoundText="@{numberOfDevicesFound}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="2dp"
             android:paddingHorizontal="4dp"
-            android:text="0 devices found"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@+id/medium_searching_for_peers_animation"
             app:layout_constraintStart_toEndOf="@+id/medium_searching_for_peers_animation"

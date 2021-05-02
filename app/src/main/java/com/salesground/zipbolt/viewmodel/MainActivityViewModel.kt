@@ -43,7 +43,9 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun wifiP2pDiscoveryStarted() {
-        _peerConnectionUIState.value =
-            PeerConnectionUIState.ExpandedSearchingForPeer(mutableListOf())
+        if(_peerConnectionUIState.value == PeerConnectionUIState.NoConnectionUIAction) {
+            _peerConnectionUIState.value =
+                PeerConnectionUIState.ExpandedSearchingForPeer(mutableListOf())
+        }
     }
 }

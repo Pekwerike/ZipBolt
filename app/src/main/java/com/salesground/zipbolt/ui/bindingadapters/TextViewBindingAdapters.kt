@@ -31,16 +31,16 @@ fun TextView.addGreenHighLightToText(placeHolder: String?) {
 
 @BindingAdapter("setNumberOfDevicesFoundText")
 fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int) {
-    text = if (numberOfDevicesFound >= 0) {
-        val spannableString = SpannableStringBuilder().apply {
-            append("$numberOfDevicesFound").setSpan(
-                ForegroundColorSpan(
-                    ContextCompat.getColor(rootView.context, R.color.orange_300)
-                ), 0, 1, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
-            )
-            append(" devices found")
+    text = if (numberOfDevicesFound > 0) {
+         SpannableStringBuilder().apply {
+            append("$numberOfDevicesFound devices found").apply {
+                setSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(rootView.context, R.color.orange_300)
+                    ), 0, 1, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
+                )
+            }
         }
-        spannableString
     } else {
         "0 devices found"
     }
