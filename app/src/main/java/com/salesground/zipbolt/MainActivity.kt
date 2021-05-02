@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
     private val connectionInfoBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
-            activityMainBinding.connectionInfoPersistentBottomSheetLayout.root)
+            activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
+        )
     }
     private var isBottomSheetLayoutConfigured: Boolean = false
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
@@ -120,25 +121,24 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
-        val expandedSearchingForPeersInfoView =
-            findViewById<ViewStub>(R.id.expanded_searching_for_peers_info_view_stub).inflate()
-        DataBindingUtil.bind<ExpandedSearchingForPeersInformationBinding>(
-            expandedSearchingForPeersInfoView
-        )
-        DataBindingUtil.getBinding(expandedSearchingForPeersInfoView)!!
+        DataBindingUtils.getExpandedSearchingForPeersBinding(this)
     }
 
     private val collapsedSearchingForPeersInfoBinding:
             CollapsedSearchingForPeersInformationBinding by lazy {
-        val collapsedSearchingForPeerView =
-            findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub).inflate()
-        DataBindingUtil.bind<CollapsedSearchingForPeersInformationBinding>(
-            collapsedSearchingForPeerView
-        )
-        DataBindingUtil.getBinding(collapsedSearchingForPeerView)!!
+        DataBindingUtils.getCollapsedSearchingForPeersBinding(this)
+    }
+
+    private val expandedConnectedToPeerNoActionBinding:
+            ExpandedConnectedToPeerNoActionBinding by lazy {
+        DataBindingUtils.getExpandedConnectedToPeerNoActionBinding(this)
+    }
+
+    private val collapsedConnectedToPeerNoActionBinding:
+            CollapsedConnectedToPeerNoActionBinding by lazy {
+        DataBindingUtils.getCollapsedConnectedToPeerNoActionBinding(this)!!
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
