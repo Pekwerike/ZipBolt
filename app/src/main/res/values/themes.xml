@@ -17,6 +17,7 @@
 
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialogTheme</item>
+        <item name="fontFamily">@font/work_sans_font_family</item>
     </style>
 
 

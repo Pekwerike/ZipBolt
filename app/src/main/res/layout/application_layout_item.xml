@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginBottom="8dp"
-            android:fontFamily="@font/work_sans_extralight"
+            android:fontFamily="@font/work_sans_extra_light"
             android:lines="1"
             android:text="@{applicationLabel}"
             android:textAlignment="center"
