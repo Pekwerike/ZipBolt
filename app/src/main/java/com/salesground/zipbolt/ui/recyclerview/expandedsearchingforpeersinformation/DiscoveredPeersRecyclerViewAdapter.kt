@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,8 +87,3 @@ class DiscoveredPeersRecyclerViewAdapter(
     }
 }
 
-sealed class DiscoveredPeersDataItem(val id: String) {
-    object Header : DiscoveredPeersDataItem(id = "discoveredPeersDataItemHeader")
-    class DiscoveredPeer(val wifiP2pDevice: WifiP2pDevice) :
-        DiscoveredPeersDataItem(id = wifiP2pDevice.deviceName)
-}

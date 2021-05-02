@@ -13,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewStub
 import android.widget.FrameLayout
@@ -31,6 +32,7 @@ import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
+import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
@@ -138,7 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     private val collapsedConnectedToPeerNoActionBinding:
             CollapsedConnectedToPeerNoActionBinding by lazy {
-        DataBindingUtils.getCollapsedConnectedToPeerNoActionBinding(this)!!
+        DataBindingUtils.getCollapsedConnectedToPeerNoActionBinding(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -155,9 +157,7 @@ class MainActivity : AppCompatActivity() {
             }
             mainActivityAllMediaOnDevice.apply {
                 // change the tab mode based on the current screen density
-                allMediaOnDeviceTabLayout.tabMode = if (resources.displayMetrics.density > 3.0
-                    || resources.displayMetrics.scaledDensity > 3.4
-                ) {
+                allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
                     TabLayout.MODE_SCROLLABLE
                 } else TabLayout.MODE_FIXED
 
@@ -179,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
+
     }
 
     private fun observeViewModelLiveData() {
@@ -189,6 +190,10 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     is PeerConnectionUIState.CollapsedSearchingForPeer -> {
+                        // update the UI to display the number of devices found
+                        collapsedSearchingForPeersInfoBinding.numberOfDevicesFound =
+                            it.numberOfDevicesFound
+
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
                         connectionInfoBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
@@ -197,6 +202,9 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     is PeerConnectionUIState.ExpandedSearchingForPeer -> {
+                        discoveredPeersRecyclerViewAdapter.submitList(it.devices.map { wifiP2pDevice ->
+                            DiscoveredPeersDataItem.DiscoveredPeer(wifiP2pDevice)
+                        }.toMutableList())
                         connectionInfoBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_EXPANDED
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
@@ -205,11 +213,68 @@ class MainActivity : AppCompatActivity() {
                         connectionInfoBottomSheetBehavior.isHideable = true
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
+                    is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
+                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
+                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                    }
+                    is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
+                        
+                    }
                 }
             }
         }
     }
 
+    private fun configurePersistentInfoBottomSheetCallback(){
+        connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        when(mainActivityViewModel.peerConnectionUIState.value){
+                            is PeerConnectionUIState.ExpandedConnectedToPeer -> {
+
+                            }
+                            is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
+
+                            }
+                            is PeerConnectionUIState.ExpandedSearchingForPeer -> {
+                                mainActivityViewModel.collapsedSearchingForPeers()
+                            }
+                            PeerConnectionUIState.NoConnectionUIAction -> {
+
+                            }
+                            null -> {}
+                        }
+                    }
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                when(mainActivityViewModel.peerConnectionUIState.value){
+                    is PeerConnectionUIState.CollapsedConnectedToPeer -> {
+
+                    }
+                    is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> { }
+                    is PeerConnectionUIState.CollapsedSearchingForPeer -> {
+                        collapsedSearchingForPeersInfoBinding.root.alpha = 1 - slideOffset * 3.5f
+                        expandedSearchingForPeersInfoBinding.root.alpha = slideOffset
+                    }
+                    is PeerConnectionUIState.ExpandedConnectedToPeer -> {}
+                    is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {}
+                    is PeerConnectionUIState.ExpandedSearchingForPeer -> {
+                        collapsedSearchingForPeersInfoBinding.root.alpha = 1 - slideOffset * 3.5f
+                        expandedSearchingForPeersInfoBinding.root.alpha = slideOffset
+                    }
+                    PeerConnectionUIState.NoConnectionUIAction -> {}
+                    null -> {}
+                }
+            }
+        })
+    }
     private fun configureConnectionInfoPersistentBottomSheet() {
         isBottomSheetLayoutConfigured = true
 
@@ -222,24 +287,7 @@ class MainActivity : AppCompatActivity() {
                 // connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
-        connectionInfoBottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
 
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                collapsedSearchingForPeersInfoBinding.root.alpha = 1 - slideOffset * 3.5f
-                expandedSearchingForPeersInfoBinding.root.alpha = slideOffset
-            }
-        })
         expandedSearchingForPeersInfoBinding.apply {
             collapseExpandedSearchingForPeersImageButton.setOnClickListener {
                 mainActivityViewModel.collapsedSearchingForPeers()
@@ -252,6 +300,7 @@ class MainActivity : AppCompatActivity() {
                 adapter = discoveredPeersRecyclerViewAdapter
             }
         }
+        configurePersistentInfoBottomSheetCallback()
     }
 
 

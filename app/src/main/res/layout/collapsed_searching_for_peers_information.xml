@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="numberOfDevicesFound"
+            type="Integer" />
     </data>
 
     <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
@@ -26,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:paddingHorizontal="4dp"
-            android:text="Searching for peers"
+            setNumberOfDevicesFoundText="@{numberOfDevicesFound}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/materialTextView"
             app:layout_constraintStart_toEndOf="@id/medium_searching_for_peers_animation"

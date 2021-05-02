@@ -103,14 +103,14 @@ class ImageFragment : Fragment() {
 
                 val spanCount : Int = when(resources.configuration.orientation){
                     Configuration.ORIENTATION_PORTRAIT -> {
-                        if(resources.displayMetrics.density > 3.1){
+                        if(resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245){
                             3
                         }else {
                             4
                         }
                     }
                     else -> {
-                        if(resources.displayMetrics.density > 3.1){
+                        if(resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245){
                             5
                         }else {
                             7
