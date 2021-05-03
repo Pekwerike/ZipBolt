@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         DataBindingUtils.getCollapsedConnectedToPeerNoActionBinding(this)
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
