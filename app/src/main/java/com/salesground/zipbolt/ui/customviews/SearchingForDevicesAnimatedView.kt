@@ -19,6 +19,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
     private var numberOfOuterCircles = 4
     private val radiusIncrement: Float = 1 / numberOfOuterCircles.toFloat()
     private var center = PointF(0f, 0f)
+    private var keepAnimating = true
 
     private val personDrawable: Drawable = ContextCompat
         .getDrawable(context, R.drawable.person_icon)!!.apply {
@@ -105,7 +106,7 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
             start()
         }.addUpdateListener {
             maxRadius = it.animatedValue as Float
-            invalidate()
+            if(keepAnimating) invalidate()
         }
     }
 
@@ -118,5 +119,9 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
             heightMeasureSpec)
         )
         setMeasuredDimension(chosenDimension, chosenDimension)
+    }
+
+    fun setKeepAnimating(continueAnimating : Boolean){
+        keepAnimating = continueAnimating
     }
 }

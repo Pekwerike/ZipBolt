@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:padding="2dp"
-            android:text="Connected to Infinix Hot"
+            android:text="@{deviceConnectedTo}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/materialTextView3"
             app:layout_constraintEnd_toStartOf="@id/barrier4"
