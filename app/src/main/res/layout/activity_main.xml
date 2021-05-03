@@ -40,7 +40,9 @@
         android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_view_stub"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
         />
+
     <include
         android:id="@+id/connection_info_persistent_bottom_sheet_layout"
         layout="@layout/persistent_bottom_sheet_layout" />

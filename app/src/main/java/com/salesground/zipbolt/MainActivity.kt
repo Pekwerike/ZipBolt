@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity() {
     }
     private val connectedToPeerNoActionBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
-            connectedToPeerNoActionBottomSheetLayoutBinding.connectedToPeerNoActionPersistentBottomSheetLayoutRootView
+            connectedToPeerNoActionBottomSheetLayoutBinding.root
         )
     }
 
@@ -158,6 +158,10 @@ class MainActivity : AppCompatActivity() {
                     configurePlatformOptionsModalBottomSheetLayout()
                     modalBottomSheetDialog.show()
                 }
+            }
+            connectToPeerButton.setOnLongClickListener {
+                mainActivityViewModel.connectedToPeer(WifiP2pInfo())
+                true
             }
             mainActivityAllMediaOnDevice.apply {
                 // change the tab mode based on the current screen density
