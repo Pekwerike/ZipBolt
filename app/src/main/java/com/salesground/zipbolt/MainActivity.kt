@@ -5,6 +5,7 @@ import android.Manifest.*
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
@@ -62,6 +63,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var wifiManager: WifiManager
 
+    @Inject
+    lateinit var connectivityManager: ConnectivityManager
+
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
 
@@ -85,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun peeredDeviceConnectionInfoReady(wifiP2pInfo: WifiP2pInfo) {
-
+            mainActivityViewModel.connectedToPeer(wifiP2pInfo)
         }
 
         override fun wifiP2pDiscoveryStopped() {
@@ -188,27 +192,25 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     is PeerConnectionUIState.CollapsedConnectedToPeer -> {
-                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        if (!isBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
+
                     }
                     is PeerConnectionUIState.CollapsedSearchingForPeer -> {
                         // update the UI to display the number of devices found
                         if (!isBottomSheetLayoutConfigured) {
-                            configureConnectionInfoPersistentBottomSheet()
+                            configureSearchingForPeersPersistentBottomSheetInfo()
                             expandedSearchingForPeersInfoBinding.root.alpha = 0f
                         }
                         collapsedSearchingForPeersInfoBinding.numberOfDevicesFound =
                             it.numberOfDevicesFound
-
-                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-                        connectionInfoBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
+                        collapseBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeer -> {
-                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        if (!isBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
                     }
                     is PeerConnectionUIState.ExpandedSearchingForPeer -> {
                         if (!isBottomSheetLayoutConfigured) {
-                            configureConnectionInfoPersistentBottomSheet()
+                            configureSearchingForPeersPersistentBottomSheetInfo()
                             collapsedSearchingForPeersInfoBinding.root.alpha = 0f
                         }
                         discoveredPeersRecyclerViewAdapter.submitList(it.devices.map { wifiP2pDevice ->
@@ -223,13 +225,11 @@ class MainActivity : AppCompatActivity() {
                         connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
-                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
-                        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-                        connectionInfoBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
+                        if (!isBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
+                        collapseBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
-                        if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                        if (!isBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
                     }
                 }
             }
@@ -260,7 +260,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
-                        when(mainActivityViewModel.peerConnectionUIState.value){
+                        when (mainActivityViewModel.peerConnectionUIState.value) {
                             is PeerConnectionUIState.CollapsedConnectedToPeer -> {
                             }
                             is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
@@ -306,7 +306,12 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun configureConnectionInfoPersistentBottomSheet() {
+    private fun configureConnectedToPeerNoActionPersistentBottomSheetInfo(){
+        collapsedConnectedToPeerNoActionBinding.apply{
+
+        }
+    }
+    private fun configureSearchingForPeersPersistentBottomSheetInfo() {
         isBottomSheetLayoutConfigured = true
 
         collapsedSearchingForPeersInfoBinding.apply {
@@ -334,6 +339,12 @@ class MainActivity : AppCompatActivity() {
         configurePersistentInfoBottomSheetCallback()
     }
 
+    private fun collapseBottomSheet() {
+        connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
+        connectionInfoBottomSheetBehavior.state =
+            BottomSheetBehavior.STATE_COLLAPSED
+    }
+
 
     private fun configurePlatformOptionsModalBottomSheetLayout() {
         modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
@@ -342,7 +353,7 @@ class MainActivity : AppCompatActivity() {
 
         modalBottomSheetLayoutBinding.apply {
             connectToAndroid.setOnClickListener {
-                if (!isBottomSheetLayoutConfigured) configureConnectionInfoPersistentBottomSheet()
+                if (!isBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
                 activityMainBinding.apply {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
@@ -422,6 +433,7 @@ class MainActivity : AppCompatActivity() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
+                    displayToast("Connection attempt successful")
                 }
 
                 override fun onFailure(p0: Int) {
@@ -501,6 +513,7 @@ class MainActivity : AppCompatActivity() {
         wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
             wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
                 wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
+                connectivityManager = connectivityManager,
                 wifiP2pManager = wifiP2pManager,
                 wifiP2pChannel = wifiP2pChannel
             )

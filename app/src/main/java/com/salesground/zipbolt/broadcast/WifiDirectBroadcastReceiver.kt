@@ -4,16 +4,21 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Build
 import com.salesground.zipbolt.MainActivity
 
 class WifiDirectBroadcastReceiver(
     private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiverCallback,
+    private val connectivityManager: ConnectivityManager,
     private val wifiP2pManager: WifiP2pManager,
     private val wifiP2pChannel: WifiP2pManager.Channel
 ) : BroadcastReceiver() {
+
 
     interface WifiDirectBroadcastReceiverCallback {
         fun wifiOn()
@@ -61,21 +66,6 @@ class WifiDirectBroadcastReceiver(
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
 
-                        /* val wifiP2pInfo = intent.getParcelableExtra<WifiP2pInfo>(
-                             WifiP2pManager.EXTRA_WIFI_P2P_INFO)
-                         wifiP2pInfo?.let {
-                             if (wifiP2pInfo.groupFormed) {
-                                 wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
-                                     mainActivity.peeredDeviceConnectionInfoReady(
-                                         deviceConnectionInfo = wifiP2pInfo
-                                     )
-                                 }
-                             }
-                         }*/
-                        /* val networkInfo: NetworkInfo? = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO) as NetworkInfo?
-
-                         TODO NetworkInfo deprecated, go search for another alternative, until then request connection info directly
-                         if(networkInfo?.isConnected == true){ }*/
                         // We are connected with the other device, request connection
                         // info to find group owner IP
                         wifiP2pManager.requestConnectionInfo(
@@ -114,5 +104,21 @@ class WifiDirectBroadcastReceiver(
                 }
             }
         }
+    }
+
+    fun isDeviceConnected(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val activeNetwork = connectivityManager.activeNetwork ?: return false
+            val networkCapabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            return when {
+                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_WIFI_P2P) -> true
+                else -> false
+            }
+        } else {
+            return connectivityManager.activeNetworkInfo?.isConnected ?: false
+        }
+
     }
 }

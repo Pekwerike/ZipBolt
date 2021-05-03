@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.net.wifi.p2p.WifiP2pManager
 import dagger.Module
@@ -24,5 +25,11 @@ class WifiP2pDIModule {
     @Singleton
     fun getWifiManager(@ApplicationContext context: Context): WifiManager {
         return context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    }
+
+    @Provides
+    @Singleton
+    fun getConnectivityManager(@ApplicationContext context: Context) : ConnectivityManager{
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 }

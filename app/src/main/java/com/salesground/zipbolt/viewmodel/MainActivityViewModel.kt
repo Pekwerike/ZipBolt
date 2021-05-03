@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.viewmodel
 
 import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pInfo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,10 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun expandedSearchingForPeers(){
         _peerConnectionUIState.value = PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
+    }
+
+    fun connectedToPeer(wifiP2pInfo: WifiP2pInfo){
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo)
     }
 
     fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
