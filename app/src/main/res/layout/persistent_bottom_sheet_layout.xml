@@ -23,17 +23,4 @@
         android:inflatedId="@+id/expanded_searching_for_peers_info"
         android:layout="@layout/expanded_searching_for_peers_information" />
 
-    <ViewStub
-        android:id="@+id/collapsed_connected_to_peer_no_action_view_stub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inflatedId="@+id/collapsed_connected_to_peer_no_action"
-        android:layout="@layout/collapsed_connected_to_peer_no_action" />
-
-    <ViewStub
-        android:id="@+id/expanded_connected_to_peer_no_action_view_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inflatedId="@+id/expanded_connected_to_peer_no_action"
-        android:layout="@layout/expanded_connected_to_peer_no_action" />
 </FrameLayout>

@@ -11,22 +11,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
-    private var deviceToConnect : WifiP2pDevice? = null
+    private var deviceToConnect: WifiP2pDevice = WifiP2pDevice()
+    private var peeredDeviceInfo: WifiP2pInfo = WifiP2pInfo()
     private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()
     private val _peerConnectionUIState =
         MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
     val peerConnectionUIState: LiveData<PeerConnectionUIState>
         get() = _peerConnectionUIState
 
-    fun collapsedSearchingForPeers(){
-        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedSearchingForPeer(currentPeersList.size)
+    fun collapsedConnectedToPeerNoAction() {
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(peeredDeviceInfo, deviceToConnect)
     }
 
-    fun expandedSearchingForPeers(){
-        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
+    fun expandedConnectedToPeerNoAction() {
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerNoAction(peeredDeviceInfo, deviceToConnect)
+    }
+
+    fun collapsedSearchingForPeers() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.CollapsedSearchingForPeer(currentPeersList.size)
+    }
+
+    fun expandedSearchingForPeers() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
     }
 
     fun connectedToPeer(wifiP2pInfo: WifiP2pInfo) {
+        peeredDeviceInfo = wifiP2pInfo
         deviceToConnect?.let {
             _peerConnectionUIState.value =
                 PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, it)
@@ -46,15 +58,16 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateDeviceToConnect(wifiP2pDevice: WifiP2pDevice){
+    fun updateDeviceToConnect(wifiP2pDevice: WifiP2pDevice) {
         deviceToConnect = wifiP2pDevice
     }
+
     fun wifiP2pDiscoveryStopped() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
     }
 
     fun wifiP2pDiscoveryStarted() {
-        if(_peerConnectionUIState.value == PeerConnectionUIState.NoConnectionUIAction) {
+        if (_peerConnectionUIState.value == PeerConnectionUIState.NoConnectionUIAction) {
             _peerConnectionUIState.value =
                 PeerConnectionUIState.ExpandedSearchingForPeer(mutableListOf())
         }

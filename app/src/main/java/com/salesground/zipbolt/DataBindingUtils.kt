@@ -4,10 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.ViewStub
 import androidx.databinding.DataBindingUtil
-import com.salesground.zipbolt.databinding.CollapsedConnectedToPeerNoActionBinding
-import com.salesground.zipbolt.databinding.CollapsedSearchingForPeersInformationBinding
-import com.salesground.zipbolt.databinding.ExpandedConnectedToPeerNoActionBinding
-import com.salesground.zipbolt.databinding.ExpandedSearchingForPeersInformationBinding
+import com.salesground.zipbolt.databinding.*
 
 
 object DataBindingUtils {
@@ -52,6 +49,17 @@ object DataBindingUtils {
             collapsedConnectedToPeerNoActionView
         )
         return DataBindingUtil.getBinding(collapsedConnectedToPeerNoActionView)!!
+    }
+
+    fun getConnectedToPeerNoActionPersistentBottomSheetBinding(activity: Activity):
+            ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding {
+        val view =
+            activity.findViewById<ViewStub>(R.id.connected_to_peer_no_action_persistent_bottom_sheet_view_stub)
+                .inflate()
+        DataBindingUtil.bind<ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding>(
+            view
+        )
+        return DataBindingUtil.getBinding(view)!!
     }
 
 }
