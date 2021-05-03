@@ -137,15 +137,6 @@ class MainActivity : AppCompatActivity() {
         DataBindingUtils.getCollapsedSearchingForPeersBinding(this)
     }
 
-    private val expandedConnectedToPeerNoActionBinding:
-            ExpandedConnectedToPeerNoActionBinding by lazy {
-        DataBindingUtils.getExpandedConnectedToPeerNoActionBinding(this)
-    }
-
-    private val collapsedConnectedToPeerNoActionBinding:
-            CollapsedConnectedToPeerNoActionBinding by lazy {
-        DataBindingUtils.getCollapsedConnectedToPeerNoActionBinding(this)
-    }
     private val connectedToPeerNoActionBottomSheetLayoutBinding:
             ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding by lazy {
         DataBindingUtils.getConnectedToPeerNoActionPersistentBottomSheetBinding(this)
@@ -230,15 +221,33 @@ class MainActivity : AppCompatActivity() {
                         connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
                     }
                     PeerConnectionUIState.NoConnectionUIAction -> {
-                        connectionInfoBottomSheetBehavior.isHideable = true
-                        connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
+                            connectedToPeerNoActionBottomSheetBehavior.isHideable = true
+                            connectedToPeerNoActionBottomSheetBehavior.state =
+                                BottomSheetBehavior.STATE_HIDDEN
+                            isConnectedToPeerNoActionBottomSheetLayoutConfigured = false
+                        }
+                        if (isSearchingForPeersBottomSheetLayoutConfigured) {
+                            connectionInfoBottomSheetBehavior.isHideable = true
+                            connectionInfoBottomSheetBehavior.state =
+                                BottomSheetBehavior.STATE_HIDDEN
+                        }
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
-
-                        collapseBottomSheet()
+                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
+                            it.connectedDevice
+                        )
+                        connectedToPeerNoActionBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
+                        connectedToPeerNoActionBottomSheetBehavior.peekHeight =
+                            getBottomSheetPeekHeight()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
-
+                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
+                            it.connectedDevice
+                        )
+                        connectedToPeerNoActionBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_EXPANDED
                     }
                 }
             }
@@ -246,6 +255,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(connectedDevice: WifiP2pDevice) {
+        isConnectedToPeerNoActionBottomSheetLayoutConfigured = true
         connectedToPeerNoActionBottomSheetLayoutBinding.apply {
             collapsedConnectedToPeerNoActionLayout.apply {
                 deviceConnectedTo = "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
@@ -260,9 +270,13 @@ class MainActivity : AppCompatActivity() {
         connectedToPeerNoActionBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState){
-                    BottomSheetBehavior.STATE_EXPANDED -> {}
-                    BottomSheetBehavior.STATE_COLLAPSED -> { }
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        mainActivityViewModel.expandedConnectedToPeerNoAction()
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        mainActivityViewModel.collapsedConnectedToPeerNoAction()
+                    }
                 }
             }
 

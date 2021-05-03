@@ -30,27 +30,6 @@ object DataBindingUtils {
         return DataBindingUtil.getBinding(collapsedSearchingForPeersInfoView)!!
     }
 
-    fun getExpandedConnectedToPeerNoActionBinding(activity: Activity)
-            : ExpandedConnectedToPeerNoActionBinding {
-        val expandedConnectedToPeerNoActionView =
-            activity.findViewById<ViewStub>(R.id.expanded_connected_to_peer_no_action_view_stub)
-                .inflate()
-        DataBindingUtil.bind<ExpandedConnectedToPeerNoActionBinding>(
-            expandedConnectedToPeerNoActionView
-        )
-        return DataBindingUtil.getBinding(expandedConnectedToPeerNoActionView)!!
-    }
-
-    fun getCollapsedConnectedToPeerNoActionBinding(activity: Activity): CollapsedConnectedToPeerNoActionBinding {
-        val collapsedConnectedToPeerNoActionView =
-            activity.findViewById<ViewStub>(R.id.collapsed_connected_to_peer_no_action_view_stub)
-                .inflate()
-        DataBindingUtil.bind<CollapsedConnectedToPeerNoActionBinding>(
-            collapsedConnectedToPeerNoActionView
-        )
-        return DataBindingUtil.getBinding(collapsedConnectedToPeerNoActionView)!!
-    }
-
     fun getConnectedToPeerNoActionPersistentBottomSheetBinding(activity: Activity):
             ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding {
         val view =

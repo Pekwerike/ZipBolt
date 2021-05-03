@@ -8,6 +8,7 @@
 
     <FrameLayout
         android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_layout_root_view"
+        style="@style/ConnectionInfoSurface"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="30dp"
