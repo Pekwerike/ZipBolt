@@ -38,8 +38,9 @@
 
     <ViewStub
         android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_view_stub"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        app:layout_behavior="@string/bottom_sheet_behavior"
         android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
         />
 

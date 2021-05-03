@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.ViewStub
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
+import androidx.viewbinding.ViewBinding
 import androidx.viewbinding.ViewBindings
 import com.salesground.zipbolt.databinding.*
 
@@ -37,8 +38,7 @@ object DataBindingUtils {
         val view =
             activity.findViewById<ViewStub>(R.id.connected_to_peer_no_action_persistent_bottom_sheet_view_stub)
                 .inflate()
-        ViewBindings.findChildViewById<FrameLayout>(view, R.id.connected_to_peer_no_action_persistent_bottom_sheet_layout_root_view)
-
+        return ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding.bind(view)
     }
 
 }
