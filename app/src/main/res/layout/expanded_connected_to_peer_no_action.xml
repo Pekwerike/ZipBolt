@@ -33,7 +33,7 @@
             android:layout_marginVertical="8dp"
             android:gravity="center"
             android:lines="1"
-            android:text="Connected"
+            android:text="@string/connected_label"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             app:layout_constraintEnd_toStartOf="@+id/expanded_connected_to_peer_no_action_close_connection_image_button"
             app:layout_constraintHorizontal_bias="0.5"

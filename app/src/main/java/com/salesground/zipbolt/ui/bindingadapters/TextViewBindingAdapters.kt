@@ -32,7 +32,7 @@ fun TextView.addGreenHighLightToText(placeHolder: String?) {
 @BindingAdapter("setNumberOfDevicesFoundText")
 fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int) {
     text = if (numberOfDevicesFound > 0) {
-         SpannableStringBuilder().apply {
+        SpannableStringBuilder().apply {
             append("$numberOfDevicesFound devices found").apply {
                 setSpan(
                     ForegroundColorSpan(
@@ -44,4 +44,22 @@ fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int) {
     } else {
         "0 devices found"
     }
+}
+
+@BindingAdapter("setConnectedDeviceName", "setConnectedDeviceApiAddress", requireAll = true)
+fun TextView.setConnectedDeviceDetails(deviceName: String, deviceAddress: String) {
+    var offset = 0
+    val spannableStringBuilder = SpannableStringBuilder().apply {
+        append("Name: $deviceName \n")
+        offset += "Name: $deviceName \n".length
+        append("Ip Address: $deviceAddress \n")
+        offset += "Ip Address: $deviceAddress \n".length
+        append("Status: Connected")
+        offset += "Status: ".length
+        setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(rootView.context, R.color.green_500)),
+            offset, "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
+        )
+    }
+    text = spannableStringBuilder
 }

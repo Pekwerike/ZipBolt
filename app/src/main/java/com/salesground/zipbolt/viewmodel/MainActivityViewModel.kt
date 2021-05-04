@@ -11,7 +11,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
-    private var deviceToConnect: WifiP2pDevice = WifiP2pDevice()
+    private var deviceToConnect: WifiP2pDevice = WifiP2pDevice().apply {
+        deviceName = "Samsung Galaxy X2"
+    }
     private var peeredDeviceInfo: WifiP2pInfo = WifiP2pInfo()
     private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()
     private val _peerConnectionUIState =
@@ -67,9 +69,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         deviceToConnect = wifiP2pDevice
     }
 
-    fun wifiP2pDiscoveryStopped() {
-       // _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
-    }
 
     fun wifiP2pDiscoveryStarted() {
         if (_peerConnectionUIState.value == PeerConnectionUIState.NoConnectionUIAction) {

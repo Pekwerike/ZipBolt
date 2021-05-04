@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             // in order to avoid disrupting the ui state due to multiple broadcast events
             // make sure you end the peer discovery only when the user specifies so
             if (shouldStopPeerDiscovery) {
-                mainActivityViewModel.wifiP2pDiscoveryStopped()
+                mainActivityViewModel.peerConnectionNoAction()
             }
         }
 
@@ -152,6 +152,7 @@ class MainActivity : AppCompatActivity() {
             ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding by lazy {
         DataBindingUtils.getConnectedToPeerNoActionPersistentBottomSheetBinding(this)
     }
+
     private val connectedToPeerNoActionBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
             connectedToPeerNoActionBottomSheetLayoutBinding.root
@@ -288,7 +289,9 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
-
+                    cancelDeviceConnection()
+                    // TODO, remove later
+                    mainActivityViewModel.peerConnectionNoAction()
                 }
 
                 root.setOnClickListener {
@@ -300,7 +303,9 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.collapsedConnectedToPeerNoAction()
                 }
                 expandedConnectedToPeerNoActionCloseConnectionImageButton.setOnClickListener {
-
+                    cancelDeviceConnection()
+                    // TODO, remove later
+                    mainActivityViewModel.peerConnectionNoAction()
                 }
             }
         }
@@ -499,6 +504,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun cancelDeviceConnection() {
+        shouldEndDeviceConnection = true
         wifiP2pManager.cancelConnect(wifiP2pChannel,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
@@ -508,7 +514,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(reason: Int) {
                     displayToast("Cannot disconnect from device")
                 }
-
             })
     }
 
