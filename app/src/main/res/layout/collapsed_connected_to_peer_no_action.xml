@@ -11,7 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:paddingBottom="4dp"
+        android:paddingBottom="2dp"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -21,7 +21,6 @@
             android:layout_margin="8dp"
             android:padding="4dp"
             app:srcCompat="@drawable/ic_undraw_well_done"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/barrier3"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,8 +29,8 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/collapsed_connected_to_peer_no_transfer_device_connected_text_view"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
+            android:layout_height="0dp"
+            android:layout_margin="1dp"
             android:padding="2dp"
             android:lines="1"
             android:text="@{deviceConnectedTo}"
@@ -39,18 +38,18 @@
             app:layout_constraintBottom_toTopOf="@+id/materialTextView3"
             app:layout_constraintEnd_toStartOf="@id/barrier4"
             app:layout_constraintStart_toStartOf="@id/barrier3"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/collapsed_connected_to_peer_no_transfer_layout_lock_image_view"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/materialTextView3"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/collapsed_connected_to_peer_no_transfer_layout_lock_image_view"
+            android:layout_height="0dp"
+            android:layout_margin="1dp"
             android:padding="2dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:addGreenHighLightToText='@{"You can transfer files now!"}'
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/collapsed_connected_to_peer_no_transfer_device_connected_text_view"
             app:layout_constraintEnd_toStartOf="@+id/barrier4"
             app:layout_constraintHorizontal_bias="0.5"
@@ -65,7 +64,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/close_connection_content_description"
             android:src="@drawable/close_icon"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/barrier4"
             app:layout_constraintTop_toTopOf="parent" />
