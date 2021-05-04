@@ -13,6 +13,7 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor() : ViewModel() {
     private var deviceToConnect: WifiP2pDevice = WifiP2pDevice().apply {
         deviceName = "Samsung Galaxy X2"
+        deviceAddress = "192.021.294.24"
     }
     private var peeredDeviceInfo: WifiP2pInfo = WifiP2pInfo()
     private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()

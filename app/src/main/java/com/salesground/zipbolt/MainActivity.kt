@@ -299,6 +299,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             expandedConnectedToPeerNoActionLayout.apply {
+                deviceAddress = connectedDevice.deviceAddress
+                deviceName = connectedDevice.deviceName
                 collapseExpandedConnectedToPeerNoActionImageButton.setOnClickListener {
                     mainActivityViewModel.collapsedConnectedToPeerNoAction()
                 }

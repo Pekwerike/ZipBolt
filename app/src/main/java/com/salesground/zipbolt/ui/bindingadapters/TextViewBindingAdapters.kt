@@ -46,7 +46,7 @@ fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int) {
     }
 }
 
-@BindingAdapter("setConnectedDeviceName", "setConnectedDeviceApiAddress", requireAll = true)
+@BindingAdapter("setConnectedDeviceName", "setConnectedDeviceIpAddress", requireAll = true)
 fun TextView.setConnectedDeviceDetails(deviceName: String, deviceAddress: String) {
     var offset = 0
     val spannableStringBuilder = SpannableStringBuilder().apply {

@@ -3,7 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="deviceName"
+            type="String" />
+        <variable
+            name="deviceAddress"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -81,7 +86,8 @@
             android:layout_marginVertical="4dp"
             android:lineSpacingExtra="4dp"
             android:padding="@dimen/standard_text_view_padding"
-            android:text="Name: Infinix Zero X\nIp Address: 192.10.182.3\nStatus: Connected"
+            setConnectedDeviceName="@{deviceName}"
+            setConnectedDeviceIpAddress="@{deviceAddress}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/appCompatImageView"
             app:layout_constraintEnd_toEndOf="parent"
