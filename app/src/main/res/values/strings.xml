@@ -21,4 +21,6 @@
     <string name="discovered_peers_label">Discovered Peers</string>
     <string name="close_connection_content_description">Close connection</string>
     <string name="connected_label">Connected</string>
+    <string name="you_can_transfer_and_receive_files_now">You can transfer and receive files now!</string>
+    <string name="device_connection_details">Device Details</string>
 </resources>
