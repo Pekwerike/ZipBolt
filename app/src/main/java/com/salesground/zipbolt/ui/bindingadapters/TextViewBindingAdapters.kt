@@ -58,7 +58,7 @@ fun TextView.setConnectedDeviceDetails(deviceName: String, deviceAddress: String
         offset += "Status: ".length
         setSpan(
             ForegroundColorSpan(ContextCompat.getColor(rootView.context, R.color.green_500)),
-            offset, "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
+            offset, offset + "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
         )
     }
     text = spannableStringBuilder
