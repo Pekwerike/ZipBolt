@@ -97,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/standard_margin"
-            android:layout_marginBottom="64dp"
+            android:layout_marginBottom="60dp"
             android:layout_marginHorizontal="@dimen/standard_margin"
             android:padding="@dimen/standard_text_view_padding"
             android:text="@string/you_can_transfer_and_receive_files_now"
