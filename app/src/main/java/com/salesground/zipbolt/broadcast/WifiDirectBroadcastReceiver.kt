@@ -27,6 +27,7 @@ class WifiDirectBroadcastReceiver(
         fun peeredDeviceConnectionInfoReady(wifiP2pInfo: WifiP2pInfo)
         fun wifiP2pDiscoveryStopped()
         fun wifiP2pDiscoveryStarted()
+        fun disconnectedFromPeer()
     }
 
     @SuppressLint("MissingPermission")
@@ -65,21 +66,23 @@ class WifiDirectBroadcastReceiver(
 
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-
-                        // We are connected with the other device, request connection
-                        // info to find group owner IP
-                        wifiP2pManager.requestConnectionInfo(
-                            wifiP2pChannel
-                        ) { p0 ->
-                            p0?.let { wifiP2pInfo ->
-                                // send connected device the connection info to the mainActivityViewModel
-                                // so we can create a socket connection and begin data transfer
-                                wifiDirectBroadcastReceiverCallback.peeredDeviceConnectionInfoReady(
-                                    wifiP2pInfo
-                                )
+                        if(isDeviceConnected()) {
+                            // We are connected with the other device, request connection
+                            // info to find group owner IP
+                            wifiP2pManager.requestConnectionInfo(
+                                wifiP2pChannel
+                            ) { p0 ->
+                                p0?.let { wifiP2pInfo ->
+                                    // send connected device the connection info to the mainActivityViewModel
+                                    // so we can create a socket connection and begin data transfer
+                                    wifiDirectBroadcastReceiverCallback.peeredDeviceConnectionInfoReady(
+                                        wifiP2pInfo
+                                    )
+                                }
                             }
+                        }else {
+                            wifiDirectBroadcastReceiverCallback.disconnectedFromPeer()
                         }
-
                     }
 
                     // Broadcast when a device's details have changed, such as the device's name.
@@ -106,7 +109,7 @@ class WifiDirectBroadcastReceiver(
         }
     }
 
-    fun isDeviceConnected(): Boolean {
+  private fun isDeviceConnected(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val activeNetwork = connectivityManager.activeNetwork ?: return false
             val networkCapabilities =

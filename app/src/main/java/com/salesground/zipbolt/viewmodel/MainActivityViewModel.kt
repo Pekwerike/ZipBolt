@@ -19,6 +19,11 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     val peerConnectionUIState: LiveData<PeerConnectionUIState>
         get() = _peerConnectionUIState
 
+
+    fun peerConnectionNoAction(){
+        _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
+    }
+
     fun collapsedConnectedToPeerNoAction() {
         _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(peeredDeviceInfo, deviceToConnect)
     }

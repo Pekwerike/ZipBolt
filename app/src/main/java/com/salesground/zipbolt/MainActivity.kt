@@ -91,11 +91,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun wifiP2pDiscoveryStopped() {
-            mainActivityViewModel.wifiP2pDiscoveryStopped()
+            // in order to avoid disrupting the ui state due to multiple broadcast events
+            // make sure you end the peer discovery only when the user specifies so
+            if (shouldStopPeerDiscovery) {
+                mainActivityViewModel.wifiP2pDiscoveryStopped()
+            }
         }
 
         override fun wifiP2pDiscoveryStarted() {
             mainActivityViewModel.wifiP2pDiscoveryStarted()
+        }
+
+        override fun disconnectedFromPeer() {
+            mainActivityViewModel.peerConnectionNoAction()
         }
     }
 
@@ -110,6 +118,9 @@ class MainActivity : AppCompatActivity() {
 
     private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
+    private var shouldStopPeerDiscovery: Boolean = false
+    private var shouldEndDeviceConnection: Boolean = false
+
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
             connectToDeviceClickListener = object :
@@ -187,8 +198,6 @@ class MainActivity : AppCompatActivity() {
                 }.attach()
             }
         }
-        isSearchingForPeersBottomSheetLayoutConfigured = false
-        isConnectedToPeerNoActionBottomSheetLayoutConfigured = false
     }
 
     private fun observeViewModelLiveData() {
@@ -235,6 +244,7 @@ class MainActivity : AppCompatActivity() {
                             connectionInfoBottomSheetBehavior.isHideable = true
                             connectionInfoBottomSheetBehavior.state =
                                 BottomSheetBehavior.STATE_HIDDEN
+                            isSearchingForPeersBottomSheetLayoutConfigured = false
                         }
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
@@ -257,6 +267,10 @@ class MainActivity : AppCompatActivity() {
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                             it.connectedDevice
                         )
+                        connectedToPeerNoActionBottomSheetLayoutBinding
+                            .collapsedConnectedToPeerNoActionLayout
+                            .root
+                            .alpha = 0f
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_EXPANDED
                     }
@@ -273,9 +287,21 @@ class MainActivity : AppCompatActivity() {
                 collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
 
                 }
+                collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
+
+                }
+
+                root.setOnClickListener {
+                    mainActivityViewModel.expandedConnectedToPeerNoAction()
+                }
             }
             expandedConnectedToPeerNoActionLayout.apply {
+                collapseExpandedConnectedToPeerNoActionImageButton.setOnClickListener {
+                    mainActivityViewModel.collapsedConnectedToPeerNoAction()
+                }
+                expandedConnectedToPeerNoActionCloseConnectionImageButton.setOnClickListener {
 
+                }
             }
         }
         connectedToPeerNoActionBottomSheetBehavior.addBottomSheetCallback(object :
@@ -310,14 +336,12 @@ class MainActivity : AppCompatActivity() {
             }
             root.setOnClickListener {
                 mainActivityViewModel.expandedSearchingForPeers()
-                // connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
 
         expandedSearchingForPeersInfoBinding.apply {
             collapseExpandedSearchingForPeersImageButton.setOnClickListener {
                 mainActivityViewModel.collapsedSearchingForPeers()
-                // connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
             expandedSearchingForPeersInformationStopSearchButton.setOnClickListener {
                 stopDevicePeerDiscovery()
@@ -474,14 +498,27 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun cancelDeviceConnection() {
+        wifiP2pManager.cancelConnect(wifiP2pChannel,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    shouldEndDeviceConnection = true
+                }
+
+                override fun onFailure(reason: Int) {
+                    displayToast("Cannot disconnect from device")
+                }
+
+            })
+    }
+
     private fun stopDevicePeerDiscovery() {
         if (isLocationPermissionGranted()) {
             wifiP2pManager.stopPeerDiscovery(
                 wifiP2pChannel,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        /*mainActivityViewModel.updatePeerConnectionState(peerConnectionState =
-                        PeerConnectionUIState.NoConnectionUIAction)*/
+                        shouldStopPeerDiscovery = true
                     }
 
                     override fun onFailure(p0: Int) {
