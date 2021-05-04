@@ -63,7 +63,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun wifiP2pDiscoveryStopped() {
-        _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
+       // _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
     }
 
     fun wifiP2pDiscoveryStarted() {

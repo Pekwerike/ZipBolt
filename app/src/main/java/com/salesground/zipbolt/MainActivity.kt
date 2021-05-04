@@ -238,13 +238,20 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
-                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
-                            it.connectedDevice
-                        )
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
+                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
+                            configureConnectedToPeerNoActionBottomSheetLayoutInfo(
+                                it.connectedDevice
+                            )
+                        }
+                        connectedToPeerNoActionBottomSheetLayoutBinding
+                            .expandedConnectedToPeerNoActionLayout
+                            .root
+                            .alpha = 0f
+
                         connectedToPeerNoActionBottomSheetBehavior.peekHeight =
                             getBottomSheetPeekHeight()
+                        connectedToPeerNoActionBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
