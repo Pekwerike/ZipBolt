@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.imagesfragment
+package com.salesground.zipbolt.ui.recyclerview.imagefragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

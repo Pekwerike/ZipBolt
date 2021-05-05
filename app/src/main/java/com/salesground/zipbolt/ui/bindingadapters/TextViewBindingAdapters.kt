@@ -70,13 +70,13 @@ fun TextView.setConnectedDeviceDetails(deviceName: String, deviceAddress: String
             styleOffset + deviceName.length,
             SpannableString.SPAN_INCLUSIVE_INCLUSIVE
         )
-        styleOffset += "$deviceName \nIp Address: ".length
+        /*styleOffset += "$deviceName \nIp Address: ".length
         setSpan(
             StyleSpan(ITALIC),
             styleOffset,
             styleOffset + deviceAddress.length,
             SpannableString.SPAN_INCLUSIVE_INCLUSIVE
-        )
+        )*/
         setSpan(
             ForegroundColorSpan(ContextCompat.getColor(rootView.context, R.color.green_500)),
             offset, offset + "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE

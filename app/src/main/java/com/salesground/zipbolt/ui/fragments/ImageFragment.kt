@@ -12,8 +12,8 @@ import com.google.android.material.chip.Chip
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.ui.customviews.ChipsLayout
-import com.salesground.zipbolt.ui.recyclerview.imagesfragment.DeviceImagesDisplayRecyclerViewAdapter
-import com.salesground.zipbolt.ui.recyclerview.imagesfragment.DeviceImagesDisplayViewHolderType
+import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 
 class ImageFragment : Fragment() {

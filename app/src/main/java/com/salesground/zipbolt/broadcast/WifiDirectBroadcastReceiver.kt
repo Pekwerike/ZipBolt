@@ -10,7 +10,6 @@ import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
-import com.salesground.zipbolt.MainActivity
 
 class WifiDirectBroadcastReceiver(
     private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiverCallback,
@@ -24,7 +23,7 @@ class WifiDirectBroadcastReceiver(
         fun wifiOn()
         fun wifiOff()
         fun peersListAvailable(peersList: MutableList<WifiP2pDevice>)
-        fun peeredDeviceConnectionInfoReady(wifiP2pInfo: WifiP2pInfo)
+        fun connectedToPeer(peeredDeviceWifiP2pInfo: WifiP2pInfo)
         fun wifiP2pDiscoveryStopped()
         fun wifiP2pDiscoveryStarted()
         fun disconnectedFromPeer()
@@ -75,7 +74,7 @@ class WifiDirectBroadcastReceiver(
                                 p0?.let { wifiP2pInfo ->
                                     // send connected device the connection info to the mainActivityViewModel
                                     // so we can create a socket connection and begin data transfer
-                                    wifiDirectBroadcastReceiverCallback.peeredDeviceConnectionInfoReady(
+                                    wifiDirectBroadcastReceiverCallback.connectedToPeer(
                                         wifiP2pInfo
                                     )
                                 }
