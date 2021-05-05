@@ -41,7 +41,7 @@ fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int) {
             append("$numberOfDevicesFound devices found").apply {
                 setSpan(
                     ForegroundColorSpan(
-                        ContextCompat.getColor(rootView.context, R.color.orange_300)
+                        ContextCompat.getColor(rootView.context, R.color.green_500)
                     ), 0, 1, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
                 )
             }

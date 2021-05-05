@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun connectedToPeer(peeredDeviceWifiP2pInfo: WifiP2pInfo) {
+            startPeerDiscovery = false
             mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo)
         }
 
@@ -95,11 +96,21 @@ class MainActivity : AppCompatActivity() {
             // make sure you end the peer discovery only when the user specifies so
             if (shouldStopPeerDiscovery) {
                 mainActivityViewModel.peerConnectionNoAction()
+            } else {
+                if(startPeerDiscovery) {
+                    beginPeerDiscovery()
+                }
             }
         }
 
         override fun wifiP2pDiscoveryStarted() {
-            mainActivityViewModel.wifiP2pDiscoveryStarted()
+            // only inform the view model that the device has began searching
+            // for peers when there is no ui action
+            if (mainActivityViewModel.peerConnectionUIState.value ==
+                PeerConnectionUIState.NoConnectionUIAction
+            ) {
+                mainActivityViewModel.expandedSearchingForPeers()
+            }
         }
 
         override fun disconnectedFromPeer() {
@@ -119,6 +130,7 @@ class MainActivity : AppCompatActivity() {
     private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
+    private var startPeerDiscovery: Boolean = false
     private var shouldEndDeviceConnection: Boolean = false
 
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
@@ -127,7 +139,8 @@ class MainActivity : AppCompatActivity() {
                 DiscoveredPeersRecyclerViewAdapter.ConnectToDeviceClickListener {
                 override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
                     connectToADevice(wifiP2pDevice)
-                    // TODO
+                    startPeerDiscovery = false
+                 //   stopDevicePeerDiscovery()
                     /**
                      * 1. Collapse the searching for peers expanded bottom sheet ui
                      * 2. Display the connected to peer collapsed bottom sheet ui
@@ -206,7 +219,7 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     is PeerConnectionUIState.CollapsedConnectedToPeer -> {
-                        if (!isSearchingForPeersBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
+
 
                     }
                     is PeerConnectionUIState.CollapsedSearchingForPeer -> {
@@ -256,7 +269,8 @@ class MainActivity : AppCompatActivity() {
                         }
                         // hide the searching for peers bottom
                         searchingForPeersBottomSheetBehavior.isHideable = true
-                        searchingForPeersBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        searchingForPeersBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_HIDDEN
 
                         connectedToPeerNoActionBottomSheetLayoutBinding
                             .expandedConnectedToPeerNoActionLayout
@@ -268,13 +282,15 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
                     }
+
                     is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                             it.connectedDevice
                         )
                         // hide the searching for peers bottom
                         searchingForPeersBottomSheetBehavior.isHideable = true
-                        searchingForPeersBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        searchingForPeersBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_HIDDEN
 
                         connectedToPeerNoActionBottomSheetLayoutBinding
                             .collapsedConnectedToPeerNoActionLayout
@@ -496,6 +512,7 @@ class MainActivity : AppCompatActivity() {
         if (isLocationPermissionGranted()) {
             wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
+                    startPeerDiscovery = true
                     // TODO Peer discovery started alert the user
                     //  displayToast("Peer discovery successfully initiated")
 

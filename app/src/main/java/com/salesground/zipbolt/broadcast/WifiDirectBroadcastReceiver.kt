@@ -65,23 +65,19 @@ class WifiDirectBroadcastReceiver(
 
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-                        if(isDeviceConnected()) {
-                            // We are connected with the other device, request connection
-                            // info to find group owner IP
                             wifiP2pManager.requestConnectionInfo(
                                 wifiP2pChannel
                             ) { p0 ->
                                 p0?.let { wifiP2pInfo ->
                                     // send connected device the connection info to the mainActivityViewModel
                                     // so we can create a socket connection and begin data transfer
-                                    wifiDirectBroadcastReceiverCallback.connectedToPeer(
-                                        wifiP2pInfo
-                                    )
+                                    if(wifiP2pInfo.groupFormed) {
+                                        wifiDirectBroadcastReceiverCallback.connectedToPeer(
+                                            wifiP2pInfo
+                                        )
+                                    }
                                 }
                             }
-                        }else {
-                            wifiDirectBroadcastReceiverCallback.disconnectedFromPeer()
-                        }
                     }
 
                     // Broadcast when a device's details have changed, such as the device's name.
