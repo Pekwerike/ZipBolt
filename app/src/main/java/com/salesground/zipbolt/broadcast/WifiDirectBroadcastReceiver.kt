@@ -90,6 +90,9 @@ class WifiDirectBroadcastReceiver(
                                         wifiP2pInfo,
                                         connectedDevice
                                     )
+                                }else{
+                                    // send no action
+                                    wifiDirectBroadcastReceiverCallback.disconnectedFromPeer()
                                 }
                             }
                         }
@@ -132,6 +135,5 @@ class WifiDirectBroadcastReceiver(
         } else {
             return connectivityManager.activeNetworkInfo?.isConnected ?: false
         }
-
     }
 }

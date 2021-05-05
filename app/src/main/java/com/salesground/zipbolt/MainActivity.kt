@@ -538,11 +538,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun cancelDeviceConnection() {
-        shouldEndDeviceConnection = true
+
         wifiP2pManager.removeGroup(wifiP2pChannel,
         object: WifiP2pManager.ActionListener{
             override fun onSuccess() {
-                shouldEndDeviceConnection = true
+                displayToast("P2p connection canceled")
             }
 
             override fun onFailure(reason: Int) {

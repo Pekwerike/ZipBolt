@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
-    private var deviceToConnect: WifiP2pDevice = WifiP2pDevice().apply {
+    private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
         deviceName = "Samsung Galaxy X2"
         deviceAddress = "192.021.294.24"
     }
@@ -28,11 +28,11 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun collapsedConnectedToPeerNoAction() {
-        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(peeredDeviceInfo, deviceToConnect)
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(peeredDeviceInfo, peeredDevice)
     }
 
     fun expandedConnectedToPeerNoAction() {
-        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerNoAction(peeredDeviceInfo, deviceToConnect)
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerNoAction(peeredDeviceInfo, peeredDevice)
     }
 
     fun collapsedSearchingForPeers() {
@@ -47,6 +47,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
         peeredDeviceInfo = wifiP2pInfo // remove this line, later after extensive tests
+        this.peeredDevice = peeredDevice
         _peerConnectionUIState.value =
             PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, peeredDevice)
     }
