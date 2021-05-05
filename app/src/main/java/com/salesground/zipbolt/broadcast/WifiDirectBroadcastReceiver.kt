@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.p2p.WifiP2pDevice
+import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
@@ -23,7 +24,11 @@ class WifiDirectBroadcastReceiver(
         fun wifiOn()
         fun wifiOff()
         fun peersListAvailable(peersList: MutableList<WifiP2pDevice>)
-        fun connectedToPeer(peeredDeviceWifiP2pInfo: WifiP2pInfo)
+        fun connectedToPeer(
+            peeredDeviceWifiP2pInfo: WifiP2pInfo,
+            peeredDevice: WifiP2pDevice
+        )
+
         fun wifiP2pDiscoveryStopped()
         fun wifiP2pDiscoveryStarted()
         fun disconnectedFromPeer()
@@ -65,19 +70,29 @@ class WifiDirectBroadcastReceiver(
 
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-                            wifiP2pManager.requestConnectionInfo(
-                                wifiP2pChannel
-                            ) { p0 ->
-                                p0?.let { wifiP2pInfo ->
-                                    // send connected device the connection info to the mainActivityViewModel
-                                    // so we can create a socket connection and begin data transfer
-                                    if(wifiP2pInfo.groupFormed) {
-                                        wifiDirectBroadcastReceiverCallback.connectedToPeer(
-                                            wifiP2pInfo
-                                        )
-                                    }
+                        wifiP2pManager.requestConnectionInfo(
+                            wifiP2pChannel
+                        ) { p0 ->
+                            p0?.let { wifiP2pInfo ->
+                                // send connected device the connection info to the mainActivityViewModel
+                                // so we can create a socket connection and begin data transfer
+                                if (wifiP2pInfo.groupFormed) {
+                                    val wifiP2pGroup =
+                                        intent.getParcelableExtra<WifiP2pGroup>(WifiP2pManager.EXTRA_WIFI_P2P_GROUP)!!
+                                    val connectedDevice: WifiP2pDevice =
+                                        if (wifiP2pInfo.isGroupOwner) {
+                                            wifiP2pGroup.clientList.first()
+                                        } else {
+                                            wifiP2pGroup.owner
+                                        }
+
+                                    wifiDirectBroadcastReceiverCallback.connectedToPeer(
+                                        wifiP2pInfo,
+                                        connectedDevice
+                                    )
                                 }
                             }
+                        }
                     }
 
                     // Broadcast when a device's details have changed, such as the device's name.
@@ -104,7 +119,7 @@ class WifiDirectBroadcastReceiver(
         }
     }
 
-  private fun isDeviceConnected(): Boolean {
+    private fun isDeviceConnected(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val activeNetwork = connectivityManager.activeNetwork ?: return false
             val networkCapabilities =

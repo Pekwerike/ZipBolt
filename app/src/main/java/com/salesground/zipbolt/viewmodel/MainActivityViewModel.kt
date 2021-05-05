@@ -45,10 +45,10 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
     }
 
-    fun connectedToPeer(wifiP2pInfo: WifiP2pInfo) {
-        peeredDeviceInfo = wifiP2pInfo
+    fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
+        peeredDeviceInfo = wifiP2pInfo // remove this line, later after extensive tests
         _peerConnectionUIState.value =
-            PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, deviceToConnect)
+            PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, peeredDevice)
     }
 
     fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
@@ -64,7 +64,4 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateDeviceToConnect(wifiP2pDevice: WifiP2pDevice) {
-        deviceToConnect = wifiP2pDevice
-    }
 }

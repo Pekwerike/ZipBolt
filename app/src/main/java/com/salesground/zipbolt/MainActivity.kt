@@ -86,9 +86,12 @@ class MainActivity : AppCompatActivity() {
             mainActivityViewModel.peersListAvailable(peersList)
         }
 
-        override fun connectedToPeer(peeredDeviceWifiP2pInfo: WifiP2pInfo) {
+        override fun connectedToPeer(
+            peeredDeviceWifiP2pInfo: WifiP2pInfo,
+            peeredDevice: WifiP2pDevice
+        ) {
             startPeerDiscovery = false
-            mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo)
+            mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo, peeredDevice)
         }
 
         override fun wifiP2pDiscoveryStopped() {
@@ -97,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             if (shouldStopPeerDiscovery) {
                 mainActivityViewModel.peerConnectionNoAction()
             } else {
-                if(startPeerDiscovery) {
+                if (startPeerDiscovery) {
                     beginPeerDiscovery()
                 }
             }
@@ -140,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
                     connectToADevice(wifiP2pDevice)
                     startPeerDiscovery = false
-                 //   stopDevicePeerDiscovery()
+                    //   stopDevicePeerDiscovery()
                     /**
                      * 1. Collapse the searching for peers expanded bottom sheet ui
                      * 2. Display the connected to peer collapsed bottom sheet ui
@@ -185,7 +188,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             connectToPeerButton.setOnLongClickListener {
-                mainActivityViewModel.connectedToPeer(WifiP2pInfo())
+                mainActivityViewModel.connectedToPeer(WifiP2pInfo(), WifiP2pDevice().apply {
+                    deviceName = "Google Pixel 5"
+                    deviceAddress = "123:324:342:3"
+                })
                 true
             }
             mainActivityAllMediaOnDevice.apply {
@@ -345,6 +351,7 @@ class MainActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         mainActivityViewModel.collapsedConnectedToPeerNoAction()
                     }
+                    else -> {}
                 }
             }
 
@@ -391,6 +398,7 @@ class MainActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         mainActivityViewModel.expandedSearchingForPeers()
                     }
+                    else -> {}
                 }
             }
 
@@ -486,7 +494,6 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     private fun connectToADevice(device: WifiP2pDevice) {
-        mainActivityViewModel.updateDeviceToConnect(device)
         val wifiP2pConfiguration = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
             wps.setup = WpsInfo.PBC
@@ -532,16 +539,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun cancelDeviceConnection() {
         shouldEndDeviceConnection = true
-        wifiP2pManager.cancelConnect(wifiP2pChannel,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    shouldEndDeviceConnection = true
-                }
+        wifiP2pManager.removeGroup(wifiP2pChannel,
+        object: WifiP2pManager.ActionListener{
+            override fun onSuccess() {
+                shouldEndDeviceConnection = true
+            }
 
-                override fun onFailure(reason: Int) {
-                    displayToast("Cannot disconnect from device")
-                }
-            })
+            override fun onFailure(reason: Int) {
+                displayToast("Cannot disconnect from device")
+            }
+        })
     }
 
     private fun stopDevicePeerDiscovery() {
