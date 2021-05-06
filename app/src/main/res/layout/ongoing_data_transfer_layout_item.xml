@@ -31,6 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:lines="1"
             android:layout_marginBottom="4dp"
             android:text="Captain America.mp4"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
