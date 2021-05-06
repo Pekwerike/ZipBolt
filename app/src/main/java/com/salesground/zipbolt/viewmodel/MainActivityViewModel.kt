@@ -5,12 +5,14 @@ import android.net.wifi.p2p.WifiP2pInfo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
+    val collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
     private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
         deviceName = "Samsung Galaxy X2"
         deviceAddress = "192.021.294.24"
@@ -64,5 +66,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             else -> PeerConnectionUIState.NoConnectionUIAction
         }
     }
+
 
 }

@@ -135,8 +135,7 @@ class MainActivity : AppCompatActivity() {
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
-    private var shouldEndDeviceConnection: Boolean = false
-    private val collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf() // put this inside the main activity view model
+
 
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
@@ -447,12 +446,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addToDataToTransferList(dataToTransfer: DataToTransfer){
-        collectionOfDataToTransfer.add(dataToTransfer)
-        displayToast(dataToTransfer.dataUri.toString())
+        mainActivityViewModel.collectionOfDataToTransfer.add(dataToTransfer)
+        displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
     fun removeFromDataToTransferList(dataToTransfer: DataToTransfer){
-        collectionOfDataToTransfer.remove(dataToTransfer)
+       mainActivityViewModel.collectionOfDataToTransfer.remove(dataToTransfer)
+        displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
 
