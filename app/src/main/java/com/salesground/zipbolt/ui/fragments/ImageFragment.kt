@@ -1,16 +1,21 @@
 package com.salesground.zipbolt.ui.fragments
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
+import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentImageBinding
+import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import com.salesground.zipbolt.ui.customviews.ChipsLayout
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
@@ -29,8 +34,60 @@ class ImageFragment : Fragment() {
             onImageClicked = {
                 imagesViewModel.onImageClicked(it)
             },
-            imagesClicked = imagesViewModel.collectionOfClickedImages
+            imagesClicked = imagesViewModel.collectionOfClickedImages.value!!
         )
+        observeViewModelLiveData()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val rootView = FragmentImageBinding.inflate(
+            inflater, container,
+            false
+        )
+        rootView.apply {
+            chipsLayout = imagesCategoryChipsLayout
+            fragmentImageRecyclerview.apply {
+                setHasFixedSize(true)
+
+                val spanCount: Int = when (resources.configuration.orientation) {
+                    Configuration.ORIENTATION_PORTRAIT -> {
+                        if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
+                            3
+                        } else {
+                            4
+                        }
+                    }
+                    else -> {
+                        if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
+                            5
+                        } else {
+                            7
+                        }
+                    }
+                }
+                val gridLayoutManager = GridLayoutManager(context, spanCount)
+                gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when (dAdapter.getItemViewType(
+                            position
+                        )) {
+                            DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
+                            DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> spanCount
+                            else -> 1
+                        }
+                    }
+                }
+                adapter = dAdapter
+                layoutManager = gridLayoutManager
+            }
+            return rootView.root
+        }
+    }
+
+    private fun observeViewModelLiveData() {
         imagesViewModel.deviceImagesGroupedByDateModified.observe(this) {
             dAdapter.submitList(it)
         }
@@ -70,7 +127,8 @@ class ImageFragment : Fragment() {
                         if (bucketName != imagesViewModel.chosenBucket.value) {
                             imagesViewModel.filterDeviceImages(bucketName = bucketName)
                             try {
-                                val indexOfLastSelectedBucket  = bucketNames.indexOf(selectedCategory)
+                                val indexOfLastSelectedBucket =
+                                    bucketNames.indexOf(selectedCategory)
                                 chipsLayout.refresh(indexOfLastSelectedBucket)
                             } catch (noSuchElementException: Exception) {
 
@@ -86,53 +144,14 @@ class ImageFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val rootView = FragmentImageBinding.inflate(
-            inflater, container,
-            false
-        )
-        rootView.apply {
-            chipsLayout = imagesCategoryChipsLayout
-            fragmentImageRecyclerview.apply {
-                setHasFixedSize(true)
-
-                val spanCount : Int = when(resources.configuration.orientation){
-                    Configuration.ORIENTATION_PORTRAIT -> {
-                        if(resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245){
-                            3
-                        }else {
-                            4
-                        }
-                    }
-                    else -> {
-                        if(resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245){
-                            5
-                        }else {
-                            7
-                        }
+        imagesViewModel.collectionOfClickedImages.observe(this) {
+            it?.let {
+                it.forEach { (imageDisplayModel, clicked) ->
+                    if (imageDisplayModel is ImagesDisplayModel.DeviceImageDisplay) {
+                        (activity as MainActivity).dataToTransfer(imageDisplayModel.deviceImage)
                     }
                 }
-                val gridLayoutManager = GridLayoutManager(context, spanCount)
-                gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup(){
-                    override fun getSpanSize(position: Int): Int {
-                        return when (dAdapter.getItemViewType(
-                            position
-                        )) {
-                            DeviceImagesDisplayViewHolderType.IMAGE.type -> 1
-                            DeviceImagesDisplayViewHolderType.GROUP_HEADER.type -> spanCount
-                            else -> 1
-                        }
-                    }
-                }
-                adapter = dAdapter
-                layoutManager = gridLayoutManager
             }
-            return rootView.root
         }
     }
 }

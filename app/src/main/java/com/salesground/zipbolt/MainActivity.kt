@@ -31,6 +31,7 @@ import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 
@@ -135,6 +136,7 @@ class MainActivity : AppCompatActivity() {
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
     private var shouldEndDeviceConnection: Boolean = false
+    private val collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf() // put this inside the main activity view model
 
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
@@ -442,6 +444,11 @@ class MainActivity : AppCompatActivity() {
             }
             modalBottomSheetDialog.setContentView(root)
         }
+    }
+
+    fun dataToTransfer(dataToTransfer: DataToTransfer){
+        collectionOfDataToTransfer.add(dataToTransfer)
+        displayToast("Selected ${dataToTransfer.dataUri}")
     }
 
     private fun getBottomSheetPeekHeight(): Int {

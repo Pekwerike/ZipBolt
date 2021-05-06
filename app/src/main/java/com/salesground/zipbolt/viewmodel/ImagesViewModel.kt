@@ -19,8 +19,12 @@ class ImagesViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
-    val collectionOfClickedImages: ArrayMap<ImagesDisplayModel, Boolean> = ArrayMap()
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
+
+    private val _collectionOfClickedImages =
+        MutableLiveData<ArrayMap<ImagesDisplayModel, Boolean>>(ArrayMap())
+    val collectionOfClickedImages: LiveData<ArrayMap<ImagesDisplayModel, Boolean>> =
+        _collectionOfClickedImages
 
     private var _deviceImagesBucketNames = MutableLiveData<MutableList<BucketNameAndSize>>()
     val deviceImagesBucketName: LiveData<MutableList<BucketNameAndSize>> = _deviceImagesBucketNames
@@ -31,7 +35,7 @@ class ImagesViewModel @Inject constructor(
         _deviceImagesGroupedByDateModified
 
     private var _chosenBucket = MutableLiveData<String>()
-    val chosenBucket : LiveData<String> = _chosenBucket
+    val chosenBucket: LiveData<String> = _chosenBucket
 
 
     init {
@@ -49,13 +53,14 @@ class ImagesViewModel @Inject constructor(
     }
 
     private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>)
-    : MutableList<BucketNameAndSize>{
-        val listOfArrangedBuckets : MutableList<BucketNameAndSize> = mutableListOf()
+            : MutableList<BucketNameAndSize> {
+        val listOfArrangedBuckets: MutableList<BucketNameAndSize> = mutableListOf()
         val deviceImagesBucketNames: HashMap<String, Int> = hashMapOf()
 
         deviceImagesBucketNames["All"] = allImagesOnDevice.size
         allImagesOnDevice.forEach {
-            deviceImagesBucketNames[it.imageBucketName] = deviceImagesBucketNames.getOrPut(it.imageBucketName, {0}) + 1
+            deviceImagesBucketNames[it.imageBucketName] =
+                deviceImagesBucketNames.getOrPut(it.imageBucketName, { 0 }) + 1
         }
 
         deviceImagesBucketNames.forEach { (s, i) ->
@@ -69,7 +74,7 @@ class ImagesViewModel @Inject constructor(
 
 
     fun filterDeviceImages(bucketName: String = "All") {
-        if(bucketName != "All" && bucketName == _chosenBucket.value) return
+        if (bucketName != "All" && bucketName == _chosenBucket.value) return
         _chosenBucket.value = bucketName
 
         viewModelScope.launch {
@@ -133,15 +138,15 @@ class ImagesViewModel @Inject constructor(
     }
 
 
-    fun onImageClicked(imageClicked : ImagesDisplayModel){
-        if(collectionOfClickedImages.containsKey(imageClicked)){
+    fun onImageClicked(imageClicked: ImagesDisplayModel) {
+        if (_collectionOfClickedImages.value!!.containsKey(imageClicked)) {
             // un clicked
-            collectionOfClickedImages.remove(imageClicked)
-        }else{
+            _collectionOfClickedImages.value!!.remove(imageClicked)
+        } else {
             // clicked
-            collectionOfClickedImages[imageClicked] = true
+            _collectionOfClickedImages.value!![imageClicked] = true
         }
     }
 }
 
-data class BucketNameAndSize(val bucketName: String, val bucketSize : Int)
+data class BucketNameAndSize(val bucketName: String, val bucketSize: Int)
