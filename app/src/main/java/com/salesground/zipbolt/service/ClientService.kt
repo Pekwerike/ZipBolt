@@ -1,35 +1,23 @@
-package com.salesground.zipbolt.foregroundservice
+package com.salesground.zipbolt.service
 
-import android.app.Notification
-import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
-import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import com.salesground.zipbolt.MainActivity
-import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
-import com.salesground.zipbolt.R
 import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
 import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
-import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketException
 import javax.inject.Inject
 
 @AndroidEntryPoint

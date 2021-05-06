@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.foregroundservice
+package com.salesground.zipbolt.service
 
 const val NO_DATA_AVAILABLE = "NoDataAvailable"
 const val DATA_AVAILABLE = "DataAvailable"

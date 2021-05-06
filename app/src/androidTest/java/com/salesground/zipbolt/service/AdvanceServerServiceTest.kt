@@ -1,31 +1,6 @@
-package com.salesground.zipbolt.foregroundservice
+package com.salesground.zipbolt.service
 
-import android.content.Context
-import android.content.Intent
-import android.os.IBinder
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.rule.ServiceTestRule
-import com.salesground.zipbolt.IS_SERVER_KEY
-import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
-import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
-import com.salesground.zipbolt.communicationprotocol.implementation.AdvanceMediaTransferProtocol
-import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.repository.SavedFilesRepository
-import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
-import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
-import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import java.io.*
-import javax.inject.Inject
 
 @HiltAndroidTest
 class AdvanceServerServiceTest {
