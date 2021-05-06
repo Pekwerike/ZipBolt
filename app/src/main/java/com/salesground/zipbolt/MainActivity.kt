@@ -446,12 +446,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addDataToTransfer(dataToTransfer: DataToTransfer)
-
-    fun dataToTransfer(dataToTransfer: DataToTransfer){
+    fun addToDataToTransferList(dataToTransfer: DataToTransfer){
         collectionOfDataToTransfer.add(dataToTransfer)
-        displayToast("Selected ${dataToTransfer.dataUri}")
+        displayToast(dataToTransfer.dataUri.toString())
     }
+
+    fun removeFromDataToTransferList(dataToTransfer: DataToTransfer){
+        collectionOfDataToTransfer.remove(dataToTransfer)
+    }
+
 
     private fun getBottomSheetPeekHeight(): Int {
         return (60 * resources.displayMetrics.density).roundToInt()

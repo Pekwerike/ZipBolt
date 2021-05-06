@@ -21,10 +21,7 @@ class ImagesViewModel @Inject constructor(
 
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
 
-    private val _collectionOfClickedImages =
-        MutableLiveData<ArrayMap<ImagesDisplayModel, Boolean>>(ArrayMap())
-    val collectionOfClickedImages: LiveData<ArrayMap<ImagesDisplayModel, Boolean>> =
-        _collectionOfClickedImages
+    val collectionOfClickedImages : ArrayMap<ImagesDisplayModel, Boolean>  = ArrayMap()
 
     private var _deviceImagesBucketNames = MutableLiveData<MutableList<BucketNameAndSize>>()
     val deviceImagesBucketName: LiveData<MutableList<BucketNameAndSize>> = _deviceImagesBucketNames
@@ -139,12 +136,12 @@ class ImagesViewModel @Inject constructor(
 
 
     fun onImageClicked(imageClicked: ImagesDisplayModel) {
-        if (_collectionOfClickedImages.value!!.containsKey(imageClicked)) {
+        if (collectionOfClickedImages.containsKey(imageClicked)) {
             // un clicked
-            _collectionOfClickedImages.value!!.remove(imageClicked)
+            collectionOfClickedImages.remove(imageClicked)
         } else {
             // clicked
-            _collectionOfClickedImages.value!![imageClicked] = true
+            collectionOfClickedImages[imageClicked] = true
         }
     }
 }

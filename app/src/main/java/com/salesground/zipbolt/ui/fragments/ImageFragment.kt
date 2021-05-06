@@ -27,14 +27,27 @@ class ImageFragment : Fragment() {
     private lateinit var chipsLayout: ChipsLayout
     private var selectedCategory: String = "All"
     private val bucketNames = mutableListOf<String>()
+    private var mainActivity: MainActivity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.let {
+            mainActivity = it as MainActivity
+        }
         dAdapter = DeviceImagesDisplayRecyclerViewAdapter(
             onImageClicked = {
                 imagesViewModel.onImageClicked(it)
+                if (imagesViewModel.collectionOfClickedImages.contains(it)
+                    && it is ImagesDisplayModel.DeviceImageDisplay
+                ) {
+                    // remove image
+                    mainActivity?.removeFromDataToTransferList(it.deviceImage)
+                } else if (it is ImagesDisplayModel.DeviceImageDisplay) {
+                    // add image
+                    mainActivity?.addToDataToTransferList(it.deviceImage)
+                }
             },
-            imagesClicked = imagesViewModel.collectionOfClickedImages.value!!
+            imagesClicked = imagesViewModel.collectionOfClickedImages
         )
         observeViewModelLiveData()
     }
@@ -141,15 +154,6 @@ class ImageFragment : Fragment() {
                         chip.isChecked = true
                     }
                     chipsLayout.addView(chip)
-                }
-            }
-        }
-        imagesViewModel.collectionOfClickedImages.observe(this) {
-            it?.let {
-                it.forEach { (imageDisplayModel, clicked) ->
-                    if (imageDisplayModel is ImagesDisplayModel.DeviceImageDisplay) {
-                        (activity as MainActivity).dataToTransfer(imageDisplayModel.deviceImage)
-                    }
                 }
             }
         }
