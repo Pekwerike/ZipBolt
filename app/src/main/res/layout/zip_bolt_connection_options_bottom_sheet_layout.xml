@@ -15,7 +15,7 @@
         android:drawableTop="@drawable/slide_down_indicator"
         android:drawablePadding="10dp"
         android:padding="4dp"
-        android:text="Connect to"
+        android:text="@string/connect_to"
         android:textAlignment="center"
         android:textSize="18sp" />
 

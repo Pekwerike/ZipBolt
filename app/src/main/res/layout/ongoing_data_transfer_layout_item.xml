@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ongoing_data_transfer_data_category_image_view"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_undraw_well_done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ongoing_data_transfer_layout_data_display_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginBottom="4dp"
+        android:text="Captain America.mp4"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
+        app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
+        app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_data_category_image_view"
+        app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_data_category_image_view" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="4dp"
+        android:progress="50"
+        app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_item_transfer_status_text_view"
+        app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_item_transfer_percentage_text_view"
+        app:layout_constraintStart_toStartOf="@+id/ongoing_data_transfer_layout_data_display_name"
+        app:trackThickness="6dp" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ongoing_data_transfer_layout_item_transfer_percentage_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:text="50%"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintBottom_toBottomOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
+        app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
+        app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
+        app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ongoing_data_transfer_layout_cancel_transfer_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/close_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ongoing_data_transfer_data_category_image_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ongoing_data_transfer_layout_item_transfer_status_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="4dp"
+        android:text="Receiving"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/green_500"
+        app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
+        app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
