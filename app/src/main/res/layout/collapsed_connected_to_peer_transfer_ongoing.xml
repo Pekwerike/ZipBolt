@@ -5,70 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/collapsed_connected_to_peer_transfer_ongoing_data_category_image_view"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:src="@drawable/ic_undraw_well_done"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/collapsed_connected_to_peer_transfer_ongoing_data_display_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="4dp"
-        android:text="Captain America.mp4"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        app:layout_constraintBottom_toTopOf="@+id/collapsed_connected_to_peer_transfer_ongoing_linear_progress_indicator"
-        app:layout_constraintEnd_toStartOf="@id/collapsed_connected_to_peer_transfer_ongoing_cancel_transfer_image_view"
-        app:layout_constraintStart_toEndOf="@id/collapsed_connected_to_peer_transfer_ongoing_data_category_image_view"
-        app:layout_constraintTop_toTopOf="@id/collapsed_connected_to_peer_transfer_ongoing_data_category_image_view" />
-
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/collapsed_connected_to_peer_transfer_ongoing_linear_progress_indicator"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        android:progress="50"
-        app:layout_constraintEnd_toStartOf="@id/collapsed_connected_to_peer_transfer_ongoing_transfer_percentage_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/collapsed_connected_to_peer_transfer_ongoing_transfer_status_text_view"
-        app:layout_constraintStart_toStartOf="@+id/collapsed_connected_to_peer_transfer_ongoing_data_display_name"
-        app:trackThickness="6dp" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/collapsed_connected_to_peer_transfer_ongoing_transfer_percentage_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="50%"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        android:layout_marginHorizontal="4dp"
-        app:layout_constraintEnd_toStartOf="@id/collapsed_connected_to_peer_transfer_ongoing_cancel_transfer_image_view"
-        app:layout_constraintStart_toEndOf="@id/collapsed_connected_to_peer_transfer_ongoing_linear_progress_indicator"
-        app:layout_constraintTop_toTopOf="@id/collapsed_connected_to_peer_transfer_ongoing_linear_progress_indicator"
-        app:layout_constraintBottom_toBottomOf="@id/collapsed_connected_to_peer_transfer_ongoing_linear_progress_indicator"/>
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/collapsed_connected_to_peer_transfer_ongoing_cancel_transfer_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/close_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/collapsed_connected_to_peer_transfer_ongoing_data_category_image_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toTopOf="@+id/collapsed_connected_to_peer_transfer_ongoing_data_category_image_view" />
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/collapsed_connected_to_peer_transfer_ongoing_transfer_status_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="4dp"
-        android:text="Receiving"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        android:textColor="@color/green_500"
-        app:layout_constraintBottom_toBottomOf="@+id/collapsed_connected_to_peer_transfer_ongoing_data_category_image_view"
-        app:layout_constraintStart_toStartOf="@id/collapsed_connected_to_peer_transfer_ongoing_linear_progress_indicator" />
+    <include
+        android:id="@+id/collapsed_connected_to_peer_no_action_layout"
+        layout="@layout/ongoing_data_transfer_layout_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
