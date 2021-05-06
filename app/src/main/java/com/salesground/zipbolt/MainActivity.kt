@@ -446,6 +446,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun addDataToTransfer(dataToTransfer: DataToTransfer)
+
     fun dataToTransfer(dataToTransfer: DataToTransfer){
         collectionOfDataToTransfer.add(dataToTransfer)
         displayToast("Selected ${dataToTransfer.dataUri}")

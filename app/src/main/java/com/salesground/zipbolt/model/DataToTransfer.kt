@@ -10,6 +10,27 @@ sealed class DataToTransfer(
     val dataSize: Long,
     val dataType: String
 ) {
+    override fun equals(other: Any?): Boolean {
+        return when (other) {
+            this -> true
+            !is DataToTransfer -> false
+            else -> {
+                (other.dataUri == this.dataUri && other.dataDisplayName == this.dataDisplayName
+                        && other.dataSize == this.dataSize && other.dataType == this.dataType)
+            }
+        }
+    }
+
+    override fun hashCode(): Int {
+        val prime = 7
+        var result = 5
+        result = prime * result + dataUri.hashCode()
+        result = prime * result + (dataSize xor (dataSize ushr 32)).toInt()
+        result = prime * result + dataDisplayName.hashCode()
+        result = prime * result + dataType.hashCode()
+
+        return result
+    }
 
     data class DeviceAudio(
         val audioUri: Uri,
