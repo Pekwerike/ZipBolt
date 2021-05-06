@@ -36,7 +36,6 @@ class ImageFragment : Fragment() {
         }
         dAdapter = DeviceImagesDisplayRecyclerViewAdapter(
             onImageClicked = {
-                imagesViewModel.onImageClicked(it)
                 if (imagesViewModel.collectionOfClickedImages.contains(it)
                     && it is ImagesDisplayModel.DeviceImageDisplay
                 ) {
@@ -46,6 +45,7 @@ class ImageFragment : Fragment() {
                     // add image
                     mainActivity?.addToDataToTransferList(it.deviceImage)
                 }
+                imagesViewModel.onImageClicked(it)
             },
             imagesClicked = imagesViewModel.collectionOfClickedImages
         )
