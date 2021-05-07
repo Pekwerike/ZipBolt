@@ -8,6 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
 import com.salesground.zipbolt.R
@@ -24,8 +27,10 @@ class FileTransferServiceNotification @Inject
 constructor(
     private val notificationManager: NotificationManager,
     @ApplicationContext private val context: Context
-) {
+) : LifecycleObserver {
 
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun createFTSNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val ftsChannel = NotificationChannel(

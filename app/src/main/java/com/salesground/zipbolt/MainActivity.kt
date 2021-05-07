@@ -180,7 +180,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         inflate(layoutInflater).apply {
-            setContentView(root)
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) {
@@ -218,7 +217,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }.attach()
             }
+            setContentView(root)
         }
+        lifecycle.apply {
+            addObserver(ftsNotification)
+            addObserver(PermissionUtils)
+        }
+        observeViewModelLiveData()
     }
 
     private fun observeViewModelLiveData() {
@@ -460,10 +465,6 @@ class MainActivity : AppCompatActivity() {
         return (60 * resources.displayMetrics.density).roundToInt()
     }
 
-    private fun createNotificationChannel() {
-        ftsNotification.createFTSNotificationChannel()
-    }
-
 
     @SuppressLint("MissingPermission", "HardwareIds")
     private fun createWifiDirectGroup() {
@@ -646,11 +647,6 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         // register the broadcast receiver
         initializeChannelAndBroadcastReceiver()
-
-        observeViewModelLiveData()
-        createNotificationChannel()
-        //checkReadAndWriteExternalStoragePermission()
-        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadCastReceiver.registerReceiver(
             incomingDataBroadcastReceiver,

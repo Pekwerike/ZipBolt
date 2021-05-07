@@ -4,11 +4,15 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 
 const val READ_WRITE_STORAGE_REQUEST_CODE = 101
 
-object PermissionUtils{
+object PermissionUtils : LifecycleObserver{
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun checkReadAndWriteExternalStoragePermission(activity: Activity) {
         if (ActivityCompat.checkSelfPermission(
                 activity,
