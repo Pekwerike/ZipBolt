@@ -24,6 +24,11 @@ import java.net.Socket
 import javax.inject.Inject
 
 class DataTransferService : Service() {
+    companion object {
+        const val IS_SERVER: String = "IsDeviceTheServer"
+        const val SERVER_IP_ADDRESS = "ServerIpAddress"
+    }
+
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
     private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
     private lateinit var socket: Socket
@@ -112,8 +117,8 @@ class DataTransferService : Service() {
             fileTransferServiceNotification.configureFileTransferNotification()
         )
         intent?.let {
-            when (intent.getBooleanExtra(IS_SERVER_KEY, false)) {
-                false -> configureClientSocket(intent.getStringExtra(SERVER_IP_ADDRESS_KEY)!!)
+            when (intent.getBooleanExtra(IS_SERVER, false)) {
+                false -> configureClientSocket(intent.getStringExtra(SERVER_IP_ADDRESS)!!)
                 true -> configureServerSocket()
             }
         }

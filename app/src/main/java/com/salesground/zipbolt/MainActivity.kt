@@ -14,6 +14,7 @@ import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import android.view.View.*
 import android.widget.FrameLayout
@@ -36,6 +37,7 @@ import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
@@ -74,53 +76,6 @@ class MainActivity : AppCompatActivity() {
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver()
     }
-    private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
-        override fun wifiOn() {
-
-        }
-
-        override fun wifiOff() {
-
-        }
-
-        override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
-            mainActivityViewModel.peersListAvailable(peersList)
-        }
-
-        override fun connectedToPeer(
-            peeredDeviceWifiP2pInfo: WifiP2pInfo,
-            peeredDevice: WifiP2pDevice
-        ) {
-            startPeerDiscovery = false
-            mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo, peeredDevice)
-        }
-
-        override fun wifiP2pDiscoveryStopped() {
-            // in order to avoid disrupting the ui state due to multiple broadcast events
-            // make sure you end the peer discovery only when the user specifies so
-            if (shouldStopPeerDiscovery) {
-                mainActivityViewModel.peerConnectionNoAction()
-            } else {
-                if (startPeerDiscovery) {
-                    beginPeerDiscovery()
-                }
-            }
-        }
-
-        override fun wifiP2pDiscoveryStarted() {
-            // only inform the view model that the device has began searching
-            // for peers when there is no ui action
-            if (mainActivityViewModel.peerConnectionUIState.value ==
-                PeerConnectionUIState.NoConnectionUIAction
-            ) {
-                mainActivityViewModel.expandedSearchingForPeers()
-            }
-        }
-
-        override fun disconnectedFromPeer() {
-            mainActivityViewModel.peerConnectionNoAction()
-        }
-    }
 
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
@@ -135,7 +90,6 @@ class MainActivity : AppCompatActivity() {
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
-
 
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
@@ -174,6 +128,86 @@ class MainActivity : AppCompatActivity() {
         BottomSheetBehavior.from(
             connectedToPeerNoActionBottomSheetLayoutBinding.root
         )
+    }
+
+    // service variables
+    private var dataTransferService: DataTransferService? = null
+    private val dataTransferServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            service as DataTransferService.DataTransferServiceBinder
+            dataTransferService = service.getServiceInstance()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            dataTransferService = null
+        }
+    }
+
+    private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
+        override fun wifiOn() {
+
+        }
+
+        override fun wifiOff() {
+
+        }
+
+        override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
+            mainActivityViewModel.peersListAvailable(peersList)
+        }
+
+        override fun connectedToPeer(
+            peeredDeviceWifiP2pInfo: WifiP2pInfo,
+            peeredDevice: WifiP2pDevice
+        ) {
+            startPeerDiscovery = false
+            mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo, peeredDevice)
+
+            // TODO, Re-check this stuff
+            // start data transfer service
+            when (peeredDeviceWifiP2pInfo.isGroupOwner) {
+                true -> {
+                    // since the peered device is the group owner, you are the client
+                    Intent(
+                        this@MainActivity,
+                        DataTransferService::class.java
+                    ).also { serviceIntent ->
+                        serviceIntent.apply {
+                            putExtra(DataTransferService.IS_SERVER, false)
+                        }
+                        startService(serviceIntent)
+                    }
+                }
+                false -> {
+                }
+            }
+        }
+
+        override fun wifiP2pDiscoveryStopped() {
+            // in order to avoid disrupting the ui state due to multiple broadcast events
+            // make sure you end the peer discovery only when the user specifies so
+            if (shouldStopPeerDiscovery) {
+                mainActivityViewModel.peerConnectionNoAction()
+            } else {
+                if (startPeerDiscovery) {
+                    beginPeerDiscovery()
+                }
+            }
+        }
+
+        override fun wifiP2pDiscoveryStarted() {
+            // only inform the view model that the device has began searching
+            // for peers when there is no ui action
+            if (mainActivityViewModel.peerConnectionUIState.value ==
+                PeerConnectionUIState.NoConnectionUIAction
+            ) {
+                mainActivityViewModel.expandedSearchingForPeers()
+            }
+        }
+
+        override fun disconnectedFromPeer() {
+            mainActivityViewModel.peerConnectionNoAction()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -357,7 +391,8 @@ class MainActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         mainActivityViewModel.collapsedConnectedToPeerNoAction()
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
 
@@ -404,7 +439,8 @@ class MainActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         mainActivityViewModel.expandedSearchingForPeers()
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
 
@@ -450,13 +486,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addToDataToTransferList(dataToTransfer: DataToTransfer){
+    fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
         mainActivityViewModel.collectionOfDataToTransfer.add(dataToTransfer)
         displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
-    fun removeFromDataToTransferList(dataToTransfer: DataToTransfer){
-       mainActivityViewModel.collectionOfDataToTransfer.remove(dataToTransfer)
+    fun removeFromDataToTransferList(dataToTransfer: DataToTransfer) {
+        mainActivityViewModel.collectionOfDataToTransfer.remove(dataToTransfer)
         displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
@@ -553,15 +589,15 @@ class MainActivity : AppCompatActivity() {
     private fun cancelDeviceConnection() {
 
         wifiP2pManager.removeGroup(wifiP2pChannel,
-        object: WifiP2pManager.ActionListener{
-            override fun onSuccess() {
-                displayToast("P2p connection canceled")
-            }
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    displayToast("P2p connection canceled")
+                }
 
-            override fun onFailure(reason: Int) {
-                displayToast("Cannot disconnect from device")
-            }
-        })
+                override fun onFailure(reason: Int) {
+                    displayToast("Cannot disconnect from device")
+                }
+            })
     }
 
     private fun stopDevicePeerDiscovery() {
