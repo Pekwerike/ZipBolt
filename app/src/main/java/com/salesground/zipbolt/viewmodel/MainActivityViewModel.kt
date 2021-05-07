@@ -2,55 +2,70 @@ package com.salesground.zipbolt.viewmodel
 
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.salesground.zipbolt.foregroundservice.ClientService
-import com.salesground.zipbolt.foregroundservice.ServerService
+import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.ui.PeerConnectionUIState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainActivityViewModel : ViewModel() {
-    private var _isWifiP2pEnabled = MutableLiveData(false)
-    val isWifiP2pEnabled: LiveData<Boolean> = _isWifiP2pEnabled
+@HiltViewModel
+class MainActivityViewModel @Inject constructor() : ViewModel() {
+    val collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
+    private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
+        deviceName = "Samsung Galaxy X2"
+        deviceAddress = "192.021.294.24"
+    }
+    private var peeredDeviceInfo: WifiP2pInfo = WifiP2pInfo()
+    private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()
+    private val _peerConnectionUIState =
+        MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
+    val peerConnectionUIState: LiveData<PeerConnectionUIState>
+        get() = _peerConnectionUIState
 
 
-    private var _peeredDeviceConnectionInfo = MutableLiveData<WifiP2pInfo?>(null)
-    val peeredDeviceConnectionInfo: LiveData<WifiP2pInfo?> = _peeredDeviceConnectionInfo
-
-    var discoveredPeersListState = mutableStateOf(mutableListOf<WifiP2pDevice>())
-        private set
-    var isWifiP2pEnabledState = mutableStateOf(false)
-        private set
-
-    var peeredDeviceConnectionInfoState = mutableStateOf<WifiP2pInfo>(WifiP2pInfo())
-        private set
-
-    private var _clientService = MutableLiveData<ClientService>(null)
-    val clientService : LiveData<ClientService> = _clientService
-
-    private var _serverService = MutableLiveData<ServerService>(null)
-    val serverService : LiveData<ServerService> = _serverService
-
-    fun serverServiceReady(serverService: ServerService) {
-        _serverService.value = serverService
+    fun peerConnectionNoAction(){
+        _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
     }
 
-    fun clientServiceRead(clientService: ClientService) {
-        _clientService.value = clientService
+    fun collapsedConnectedToPeerNoAction() {
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(peeredDeviceInfo, peeredDevice)
     }
 
-    fun wifiP2pStateChange(newState: Boolean) {
-        _isWifiP2pEnabled.value = newState
-        isWifiP2pEnabledState.value = newState
+    fun expandedConnectedToPeerNoAction() {
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerNoAction(peeredDeviceInfo, peeredDevice)
     }
 
-    fun discoveredPeersListChanged(newDiscoveredPeersList: MutableList<WifiP2pDevice>) {
-        discoveredPeersListState.value = newDiscoveredPeersList
+    fun collapsedSearchingForPeers() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.CollapsedSearchingForPeer(currentPeersList.size)
     }
 
-    fun peeredDeviceConnectionInfoUpdated(connectionInfo: WifiP2pInfo) {
-        _peeredDeviceConnectionInfo.value = connectionInfo
-        peeredDeviceConnectionInfoState.value = connectionInfo
+    fun expandedSearchingForPeers() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
     }
+
+    fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
+        peeredDeviceInfo = wifiP2pInfo // remove this line, later after extensive tests
+        this.peeredDevice = peeredDevice
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, peeredDevice)
+    }
+
+    fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
+        currentPeersList = peersList
+        _peerConnectionUIState.value = when (_peerConnectionUIState.value) {
+            is PeerConnectionUIState.CollapsedSearchingForPeer -> {
+                PeerConnectionUIState.CollapsedSearchingForPeer(peersList.size)
+            }
+            is PeerConnectionUIState.ExpandedSearchingForPeer -> {
+                PeerConnectionUIState.ExpandedSearchingForPeer(peersList)
+            }
+            else -> PeerConnectionUIState.NoConnectionUIAction
+        }
+    }
+
 
 }

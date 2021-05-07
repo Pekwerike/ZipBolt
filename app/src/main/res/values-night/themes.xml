@@ -14,14 +14,24 @@
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialogTheme</item>
     </style>
+
+    <style name="ConnectionInfoSurface" parent="">
+        <item name="android:background">@color/material_color_surface_dark</item>
+        <item name="fontFamily">@font/work_sans_font_family</item>
+    </style>
+
+    <style name="ImageButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="tint">@color/white</item>
+    </style>
+
     <style name="ModalBottomSheetTextViewAppearance" parent="Theme.SpeedForce">
         <item name="android:textColor">@color/white</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:drawablePadding">8dp</item>
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">6dp</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:textSize">16sp</item>

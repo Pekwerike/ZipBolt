@@ -9,4 +9,19 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="connect">Connect</string>
+    <string name="send_label">Send</string>
+    <string name="desktop_label">Desktop</string>
+    <string name="or_label">Or</string>
+    <string name="share_zipbolt_label">Share ZipBolt</string>
+    <string name="iphone_label">iPhone</string>
+    <string name="collapse_searching_for_peers_content_description">Collapse searching for peers</string>
+    <string name="searching_for_peers_label">Searching for peers</string>
+    <string name="stop_searching_for_peers_content_description">Stop searching for peers</string>
+    <string name="stop_searching_for_peers_label">Stop searching</string>
+    <string name="discovered_peers_label">Discovered Peers</string>
+    <string name="close_connection_content_description">Close connection</string>
+    <string name="connected_label">Connected</string>
+    <string name="you_can_transfer_and_receive_files_now">You can transfer and receive files now!</string>
+    <string name="device_connection_details">Device Details</string>
+    <string name="connect_to">Connect to</string>
 </resources>

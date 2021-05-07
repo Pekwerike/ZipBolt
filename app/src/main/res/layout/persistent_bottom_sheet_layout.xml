@@ -1,60 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:layout_behavior="@string/bottom_sheet_behavior"
+    style="@style/ConnectionInfoSurface"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="30dp"
     app:behavior_hideable="false"
     app:behavior_peekHeight="0dp"
-    android:layout_height="match_parent">
+    app:layout_behavior="@string/bottom_sheet_behavior">
 
-    <LinearLayout
-        android:id="@+id/collaped_searching_for_peers_view_group"
+    <ViewStub
+        android:id="@+id/collapsed_searching_for_peers_info_view_stub"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:inflatedId="@+id/collapsed_searching_for_peers_information"
+        android:layout="@layout/collapsed_searching_for_peers_information" />
 
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/ic_launcher_background" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="Searching for peers" />
-    </LinearLayout>
-
-    <LinearLayout
+    <ViewStub
+        android:id="@+id/expanded_searching_for_peers_info_view_stub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_margin="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/arrow_down" />
-
-            <TextView
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:text="Searching for peers" />
-        </FrameLayout>
-
-        <ImageView
-            android:layout_gravity="center_horizontal"
-            android:layout_width="400dp"
-            android:layout_margin="16dp"
-            android:layout_height="400dp"
-            android:src="@drawable/ic_launcher_background"/>
-    </LinearLayout>
+        android:inflatedId="@+id/expanded_searching_for_peers_info"
+        android:layout="@layout/expanded_searching_for_peers_information" />
 
 </FrameLayout>

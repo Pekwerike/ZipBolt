@@ -11,7 +11,6 @@
         android:id="@+id/main_activity_all_media_on_device"
         layout="@layout/all_media_on_device" />
 
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/connect_to_peer_button"
         android:layout_width="wrap_content"
@@ -23,10 +22,31 @@
         app:elevation="6dp"
         app:icon="@drawable/person_icon" />
 
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/send_file_button"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/home_screen_connect_button_height"
+        android:layout_gravity="end|bottom"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="62dp"
+        android:alpha="0"
+        android:text="@string/send_label"
+        app:cornerRadius="6dp"
+        app:elevation="6dp"
+        app:icon="@drawable/send_icon" />
+
+    <ViewStub
+        android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_view_stub"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
+        />
+
     <include
         android:id="@+id/connection_info_persistent_bottom_sheet_layout"
-        layout="@layout/persistent_bottom_sheet_layout"
-        />
+        layout="@layout/persistent_bottom_sheet_layout" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

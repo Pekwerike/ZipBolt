@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.ui.screen.allmediadisplay.categorycontentsdisplay.images.dto.ImagesDisplayModel
+import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -19,8 +19,9 @@ class ImagesViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
-    val collectionOfClickedImages: ArrayMap<ImagesDisplayModel, Boolean> = ArrayMap()
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
+
+    val collectionOfClickedImages : ArrayMap<ImagesDisplayModel, Boolean>  = ArrayMap()
 
     private var _deviceImagesBucketNames = MutableLiveData<MutableList<BucketNameAndSize>>()
     val deviceImagesBucketName: LiveData<MutableList<BucketNameAndSize>> = _deviceImagesBucketNames
@@ -31,7 +32,7 @@ class ImagesViewModel @Inject constructor(
         _deviceImagesGroupedByDateModified
 
     private var _chosenBucket = MutableLiveData<String>()
-    val chosenBucket : LiveData<String> = _chosenBucket
+    val chosenBucket: LiveData<String> = _chosenBucket
 
 
     init {
@@ -49,13 +50,14 @@ class ImagesViewModel @Inject constructor(
     }
 
     private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>)
-    : MutableList<BucketNameAndSize>{
-        val listOfArrangedBuckets : MutableList<BucketNameAndSize> = mutableListOf()
+            : MutableList<BucketNameAndSize> {
+        val listOfArrangedBuckets: MutableList<BucketNameAndSize> = mutableListOf()
         val deviceImagesBucketNames: HashMap<String, Int> = hashMapOf()
 
         deviceImagesBucketNames["All"] = allImagesOnDevice.size
         allImagesOnDevice.forEach {
-            deviceImagesBucketNames[it.imageBucketName] = deviceImagesBucketNames.getOrPut(it.imageBucketName, {0}) + 1
+            deviceImagesBucketNames[it.imageBucketName] =
+                deviceImagesBucketNames.getOrPut(it.imageBucketName, { 0 }) + 1
         }
 
         deviceImagesBucketNames.forEach { (s, i) ->
@@ -69,7 +71,7 @@ class ImagesViewModel @Inject constructor(
 
 
     fun filterDeviceImages(bucketName: String = "All") {
-        if(bucketName != "All" && bucketName == _chosenBucket.value) return
+        if (bucketName != "All" && bucketName == _chosenBucket.value) return
         _chosenBucket.value = bucketName
 
         viewModelScope.launch {
@@ -78,7 +80,7 @@ class ImagesViewModel @Inject constructor(
                 _deviceImagesGroupedByDateModified.value =
                     withContext(Dispatchers.IO) {
                         allDeviceImagesToImagesDisplayModel(allImagesOnDevice = allImagesOnDeviceRaw)
-                    }
+                    }!!
             } else {
                 // filter
                 _deviceImagesGroupedByDateModified.value = withContext(Dispatchers.IO) {
@@ -86,7 +88,7 @@ class ImagesViewModel @Inject constructor(
                         allImagesOnDevice = allImagesOnDeviceRaw,
                         bucketName = bucketName
                     )
-                }
+                }!!
             }
         }
     }
@@ -133,15 +135,15 @@ class ImagesViewModel @Inject constructor(
     }
 
 
-    fun onImageClicked(imageClicked : ImagesDisplayModel){
-        if(collectionOfClickedImages.containsKey(imageClicked)){
+    fun onImageClicked(imageClicked: ImagesDisplayModel) {
+        if (collectionOfClickedImages.containsKey(imageClicked)) {
             // un clicked
             collectionOfClickedImages.remove(imageClicked)
-        }else{
+        } else {
             // clicked
             collectionOfClickedImages[imageClicked] = true
         }
     }
 }
 
-data class BucketNameAndSize(val bucketName: String, val bucketSize : Int)
+data class BucketNameAndSize(val bucketName: String, val bucketSize: Int)

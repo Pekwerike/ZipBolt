@@ -1,34 +1,32 @@
 package com.salesground.zipbolt.repository.implementation
 
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.core.net.toUri
+import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.utils.customizeDate
 import com.salesground.zipbolt.utils.parseDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import java.io.DataInputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.util.*
 import javax.inject.Inject
+import kotlin.math.min
 
 
-class ZipBoltImageRepository @Inject constructor(
+open class ZipBoltImageRepository @Inject constructor(
     @ApplicationContext
-    private val applicationContext: Context
+    private val applicationContext: Context,
 ) : ImageRepository {
-    override suspend fun insertImageIntoMediaStore(
-        displayName: String,
-        size: Long,
-        mimeType: String,
-        dataInputStream: DataInputStream
-    ) {
 
-    }
+
 
     override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
@@ -95,9 +93,20 @@ class ZipBoltImageRepository @Inject constructor(
         return deviceImages
     }
 
+    override suspend fun insertImageIntoMediaStore(
+        displayName: String,
+        size: Long,
+        mimeType: String,
+        dataInputStream: DataInputStream,
+        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
+        bytesReadListener: (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri) -> Unit
+    ) {
 
-    override suspend fun getMetaDataOfImage(image: DataToTransfer): DataToTransfer {
-        val imageToExtractData = image as DataToTransfer.DeviceImage
+    }
+
+
+    override suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer {
+
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
@@ -109,7 +118,7 @@ class ZipBoltImageRepository @Inject constructor(
             MediaStore.Images.Media.DISPLAY_NAME
         )
         val selection = "${MediaStore.Images.Media._ID} =? "
-        val selectionArguments = arrayOf(imageToExtractData.imageId.toString())
+        val selectionArguments = arrayOf(image.imageId.toString())
 
         applicationContext.contentResolver.query(
             collection,
@@ -125,18 +134,52 @@ class ZipBoltImageRepository @Inject constructor(
                 val imageDisplayName =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
-                return DataToTransfer.DeviceImage(
-                    imageId = imageToExtractData.imageId,
-                    imageUri = imageToExtractData.imageUri,
-                    imageDateModified = imageToExtractData.imageDateModified,
-                    imageDisplayName = imageDisplayName,
-                    imageBucketName = imageToExtractData.imageBucketName,
+                return image.copy(
                     imageMimeType = imageMimeType,
-                    imageSize = imageSize
+                    imageSize = imageSize,
+                    imageDisplayName = imageDisplayName
                 )
-
             }
         }
-        return imageToExtractData
+        return image
     }
+
+    protected fun confirmImageName(mediaName: String?): String {
+        return if (mediaName != null) {
+            if (isImageInMediaStore(mediaName)) {
+                "IMG" + Random().nextInt(100000).toString() + mediaName
+            } else {
+                mediaName
+            }
+        } else "IMG" + System.currentTimeMillis() + ".jpg"
+    }
+
+    protected fun isImageInMediaStore(imageName: String): Boolean {
+        val collection = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+            }
+            else -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+        val projection = arrayOf(MediaStore.Images.Media.DISPLAY_NAME)
+        val selection = "${MediaStore.Images.Media.DISPLAY_NAME} == ?"
+        val selectionArgs = arrayOf(imageName)
+        val selectionOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC LIMIT 1"
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArgs,
+            selectionOrder
+        )?.let { cursor ->
+            val imageDisplayNameColumnIndex =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            if (cursor.moveToFirst()) {
+                val retrievedImageDisplayName = cursor.getString(imageDisplayNameColumnIndex)
+                if (retrievedImageDisplayName == imageName) return true
+            }
+        }
+        return false
+    }
+
 }

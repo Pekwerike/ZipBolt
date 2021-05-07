@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <font
+        app:font="@font/work_sans"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+
+    <font
+        app:font="@font/work_sans"
+        app:fontStyle="italic"
+        app:fontWeight="400" />
+
+    <font
+        app:font="@font/work_sans_thin"
+        app:fontStyle="normal"
+        app:fontWeight="100" />
+    <font
+        app:font="@font/work_sans_thin"
+        app:fontStyle="italic"
+        app:fontWeight="100" />
+
+    <font
+        app:font="@font/work_sans_extra_light"
+        app:fontStyle="normal"
+        app:fontWeight="200" />
+    <font
+        app:font="@font/work_sans_extra_light"
+        app:fontStyle="italic"
+        app:fontWeight="200" />
+    <font
+        app:font="@font/work_sans_light"
+        app:fontStyle="normal"
+        app:fontWeight="300" />
+    <font
+        app:font="@font/work_sans_light"
+        app:fontStyle="italic"
+        app:fontWeight="300" />
+    <font
+        app:font="@font/work_sans_medium"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+    <font
+        app:font="@font/work_sans_medium"
+        app:fontStyle="italic"
+        app:fontWeight="500" />
+    <font
+        app:font="@font/work_sans_semi_bold"
+        app:fontStyle="normal"
+        app:fontWeight="600" />
+    <font
+        app:font="@font/work_sans_semi_bold"
+        app:fontStyle="italic"
+        app:fontWeight="600" />
+    <font
+        app:font="@font/work_sans_bold"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+    <font
+        app:font="@font/work_sans_bold"
+        app:fontStyle="italic"
+        app:fontWeight="700" />
+    <font
+        app:font="@font/work_sans_extra_bold"
+        app:fontStyle="normal"
+        app:fontWeight="800" />
+    <font
+        app:font="@font/work_sans_extra_bold"
+        app:fontStyle="italic"
+        app:fontWeight="800" />
+    <font
+        app:font="@font/work_sans_black"
+        app:fontStyle="normal"
+        app:fontWeight="900" />
+    <font
+        app:font="@font/work_sans_black"
+        app:fontStyle="italic"
+        app:fontWeight="900" />
+</font-family>

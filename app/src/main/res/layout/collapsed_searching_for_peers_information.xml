@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="numberOfDevicesFound"
+            type="Integer" />
+    </data>
+
+    <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="0dp">
+
+        <com.salesground.zipbolt.ui.customviews.SearchingForDevicesAnimatedView
+            android:id="@+id/medium_searching_for_peers_animation"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_margin="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collapsed_searching_for_peers_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:paddingHorizontal="4dp"
+            android:text="@string/searching_for_peers_label"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintBottom_toTopOf="@+id/materialTextView"
+            app:layout_constraintStart_toEndOf="@id/medium_searching_for_peers_animation"
+            app:layout_constraintTop_toTopOf="@+id/medium_searching_for_peers_animation"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/materialTextView"
+            setNumberOfDevicesFoundText="@{numberOfDevicesFound}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="2dp"
+            android:paddingHorizontal="4dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintBottom_toBottomOf="@+id/medium_searching_for_peers_animation"
+            app:layout_constraintStart_toEndOf="@+id/medium_searching_for_peers_animation"
+            app:layout_constraintTop_toBottomOf="@+id/collapsed_searching_for_peers_label" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/collapsed_searching_for_peers_information_cancel_searching_for_peers"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/stop_searching_for_peers_content_description"
+            android:src="@drawable/close_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
+</layout>

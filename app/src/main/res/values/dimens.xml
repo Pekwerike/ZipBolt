@@ -2,4 +2,6 @@
 <resources>
     <dimen name="home_screen_connect_button_height">53dp</dimen>
     <dimen name="modal_bottom_sheet_dialog_corner_radius_value">12dp</dimen>
+    <dimen name="standard_margin">16dp</dimen>
+    <dimen name="standard_text_view_padding">4dp</dimen>
 </resources>

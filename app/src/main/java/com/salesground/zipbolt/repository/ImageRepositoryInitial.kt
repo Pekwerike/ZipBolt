@@ -253,7 +253,7 @@ class ImageRepositoryInitial @Inject constructor
         } else "IMG" + System.currentTimeMillis() + ".jpg"
     }
 
-    fun searchForImageByNameInMediaStore(imageName: String): Boolean {
+    private fun searchForImageByNameInMediaStore(imageName: String): Boolean {
         val collection = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
