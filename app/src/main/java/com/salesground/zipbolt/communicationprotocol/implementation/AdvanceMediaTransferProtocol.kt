@@ -16,7 +16,7 @@ import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
-class AdvanceMediaTransferProtocol @Inject constructor(
+open class AdvanceMediaTransferProtocol @Inject constructor(
     @ApplicationContext private val context: Context,
     private val advancedImageRepository: ImageRepository
 ) : MediaTransferProtocol {
@@ -40,9 +40,7 @@ class AdvanceMediaTransferProtocol @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             ongoingTransfer.set(true)
-            dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
-            dataOutputStream.writeLong(dataToTransfer.dataSize)
-            dataOutputStream.writeUTF(dataToTransfer.dataType)
+            writeFileMetaData(dataOutputStream, dataToTransfer)
 
             var dataSize = dataToTransfer.dataSize
 
@@ -93,9 +91,7 @@ class AdvanceMediaTransferProtocol @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             try {
-                val mediaName = dataInputStream.readUTF()
-                val mediaSize = dataInputStream.readLong()
-                val mediaType = dataInputStream.readUTF()
+                val (mediaName, mediaSize, mediaType) = readFileMetaData(dataInputStream)
 
                 when {
                     mediaType.contains("image", true) -> {
@@ -129,5 +125,21 @@ class AdvanceMediaTransferProtocol @Inject constructor(
                 return@withContext
             }
         }
+    }
+
+    override fun writeFileMetaData(
+        dataOutputStream: DataOutputStream,
+        dataToTransfer: DataToTransfer
+    ) {
+        dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
+        dataOutputStream.writeLong(dataToTransfer.dataSize)
+        dataOutputStream.writeUTF(dataToTransfer.dataType)
+    }
+
+    override fun readFileMetaData(dataInputStream: DataInputStream): Triple<String, Long, String> {
+        val mediaName = dataInputStream.readUTF()
+        val mediaSize = dataInputStream.readLong()
+        val mediaType = dataInputStream.readUTF()
+        return Triple(mediaName, mediaSize, mediaType)
     }
 }

@@ -48,4 +48,11 @@ interface MediaTransferProtocol {
             dataUri: Uri
         ) -> Unit
     )
+
+    fun writeFileMetaData(
+        dataOutputStream: DataOutputStream,
+        dataToTransfer: DataToTransfer
+    )
+
+    fun readFileMetaData(dataInputStream: DataInputStream): Triple<String, Long, String>
 }

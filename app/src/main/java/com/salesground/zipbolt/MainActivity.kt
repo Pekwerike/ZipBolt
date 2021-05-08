@@ -42,6 +42,9 @@ import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformat
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -163,7 +166,6 @@ class MainActivity : AppCompatActivity() {
             startPeerDiscovery = false
             mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo, peeredDevice)
 
-            // TODO, Re-check this stuff
             // start data transfer service
             when (peeredDeviceWifiP2pInfo.isGroupOwner) {
                 true -> {
@@ -172,13 +174,30 @@ class MainActivity : AppCompatActivity() {
                         this@MainActivity,
                         DataTransferService::class.java
                     ).also { serviceIntent ->
-                        serviceIntent.apply {
-                            putExtra(DataTransferService.IS_SERVER, false)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val serverIpAddress =
+                                peeredDeviceWifiP2pInfo.groupOwnerAddress.hostAddress
+                            serviceIntent.apply {
+                                putExtra(DataTransferService.IS_SERVER, false)
+                                putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
+                            }
+                            startService(serviceIntent)
                         }
-                        startService(serviceIntent)
                     }
                 }
                 false -> {
+                    // since the peered device is the client, you are the server
+                    Intent(
+                        this@MainActivity,
+                        DataTransferService::class.java
+                    ).also { serviceIntent ->
+                        CoroutineScope(Dispatchers.IO).launch {
+                            serviceIntent.apply {
+                                putExtra(DataTransferService.IS_SERVER, true)
+                            }
+                            startService(serviceIntent)
+                        }
+                    }
                 }
             }
         }
@@ -258,6 +277,10 @@ class MainActivity : AppCompatActivity() {
             addObserver(PermissionUtils)
         }
         observeViewModelLiveData()
+        // bind to the data transfer service
+        Intent(this, DataTransferService::class.java).also {
+            bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
+        }
     }
 
     private fun observeViewModelLiveData() {
