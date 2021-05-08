@@ -30,6 +30,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
+import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
@@ -240,10 +241,30 @@ class MainActivity : AppCompatActivity() {
                     modalBottomSheetDialog.show()
                 }
             }
+            sendFileButton.setOnClickListener {
+                // transfer data using the DataTransferService
+                dataTransferService?.transferData(
+                    mainActivityViewModel.collectionOfDataToTransfer,
+                ) { displayName: String, dataSize: Long, percentTransferred: Float,
+                    transferState: MediaTransferProtocol.TransferState ->
+
+                }
+            }
             connectToPeerButton.setOnLongClickListener {
                 mainActivityViewModel.connectedToPeer(WifiP2pInfo(), WifiP2pDevice().apply {
                     deviceName = "Google Pixel 5"
                     deviceAddress = "123:324:342:3"
+                })
+
+                /*// for client
+                Intent(this@MainActivity, DataTransferService::class.java).apply {
+                    putExtra(DataTransferService.IS_SERVER, false)
+                    putExtra(DataTransferService.SERVER_IP_ADDRESS, "10.0.2.2")
+                }*/
+
+                // for server
+                startService(Intent(this@MainActivity, DataTransferService::class.java).apply{
+                    putExtra(DataTransferService.IS_SERVER, true)
                 })
                 true
             }
@@ -274,7 +295,6 @@ class MainActivity : AppCompatActivity() {
         }
         lifecycle.apply {
             addObserver(ftsNotification)
-            addObserver(PermissionUtils)
         }
         observeViewModelLiveData()
         // bind to the data transfer service
@@ -331,6 +351,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
+                        // incase of a configuration or theme change, inflate and configure the bottom sheet
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
                             configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                                 it.connectedDevice
@@ -340,6 +361,9 @@ class MainActivity : AppCompatActivity() {
                         searchingForPeersBottomSheetBehavior.isHideable = true
                         searchingForPeersBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_HIDDEN
+
+                        // show the send button
+                        activityMainBinding.sendFileButton.animate().alpha(1f)
 
                         connectedToPeerNoActionBottomSheetLayoutBinding
                             .expandedConnectedToPeerNoActionLayout
@@ -704,6 +728,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
         // register the broadcast receiver
         initializeChannelAndBroadcastReceiver()
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
@@ -737,7 +762,9 @@ class MainActivity : AppCompatActivity() {
                     //TODO more resource @ https://developer.android.com/training/location
                 }
             }
-        } else if (requestCode == READ_WRITE_STORAGE_REQUEST_CODE && permissions.contains(permission.READ_EXTERNAL_STORAGE) &&
+        } else if (requestCode == PermissionUtils.READ_WRITE_STORAGE_REQUEST_CODE && permissions.contains(
+                permission.READ_EXTERNAL_STORAGE
+            ) &&
             permissions.contains(permission.WRITE_EXTERNAL_STORAGE)
         ) {
             if (grantResults.isNotEmpty()) {

@@ -54,5 +54,7 @@ interface MediaTransferProtocol {
         dataToTransfer: DataToTransfer
     )
 
-    fun readFileMetaData(dataInputStream: DataInputStream): Triple<String, Long, String>
+    fun readFileName(dataInputStream: DataInputStream): String
+    fun readFileSize(dataInputStream: DataInputStream): Long
+    fun readFileType(dataInputStream: DataInputStream): String
 }

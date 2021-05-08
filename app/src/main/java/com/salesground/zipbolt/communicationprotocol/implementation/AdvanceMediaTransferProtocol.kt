@@ -91,7 +91,9 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
     ) {
         withContext(Dispatchers.IO) {
             try {
-                val (mediaName, mediaSize, mediaType) = readFileMetaData(dataInputStream)
+                val mediaName = readFileName(dataInputStream)
+                val mediaSize = readFileSize(dataInputStream)
+                val mediaType = readFileType(dataInputStream)
 
                 when {
                     mediaType.contains("image", true) -> {
@@ -136,10 +138,16 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
         dataOutputStream.writeUTF(dataToTransfer.dataType)
     }
 
-    override fun readFileMetaData(dataInputStream: DataInputStream): Triple<String, Long, String> {
-        val mediaName = dataInputStream.readUTF()
-        val mediaSize = dataInputStream.readLong()
-        val mediaType = dataInputStream.readUTF()
-        return Triple(mediaName, mediaSize, mediaType)
+
+    override fun readFileName(dataInputStream: DataInputStream): String {
+       return dataInputStream.readUTF()
+    }
+
+    override fun readFileSize(dataInputStream: DataInputStream): Long {
+        return  dataInputStream.readLong()
+    }
+
+    override fun readFileType(dataInputStream: DataInputStream): String {
+        return dataInputStream.readUTF()
     }
 }

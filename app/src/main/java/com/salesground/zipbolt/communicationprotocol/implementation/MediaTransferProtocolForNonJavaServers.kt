@@ -12,6 +12,9 @@ class MediaTransferProtocolForNonJavaServers(
     advancedImageRepository: ImageRepository
 ) : AdvanceMediaTransferProtocol(context, advancedImageRepository) {
 
+    private val fileName = StringBuilder()
+    private val fileType = StringBuilder()
+
     override fun writeFileMetaData(
         dataOutputStream: DataOutputStream,
         dataToTransfer: DataToTransfer
@@ -27,23 +30,26 @@ class MediaTransferProtocolForNonJavaServers(
         // write the file type
         dataOutputStream.writeChars(dataToTransfer.dataType)
     }
-
-    override fun readFileMetaData(dataInputStream: DataInputStream): Triple<String, Long, String> {
+    override fun readFileName(dataInputStream: DataInputStream): String {
+        fileName.setLength(0)
         // read the file name length
         val nameLength = dataInputStream.readInt()
         // read the file name
-        val fileName = StringBuilder()
+
         for (i in 0 until nameLength) {
             fileName.append(dataInputStream.readChar())
         }
-        // read the file size
-        val fileSize = dataInputStream.readLong()
+        return fileName.toString()
+    }
+
+
+    override fun readFileType(dataInputStream: DataInputStream): String {
+        fileType.setLength(0)
         // read the file type length
         val typeLength = dataInputStream.readInt()
-        val fileMimeType = StringBuilder()
         for (i in 0 until typeLength) {
-            fileMimeType.append(dataInputStream.readChar())
+            fileType.append(dataInputStream.readChar())
         }
-        return Triple(fileName.toString(), fileSize, fileMimeType.toString())
+        return fileType.toString()
     }
 }

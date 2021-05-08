@@ -129,7 +129,7 @@ class DataTransferService : Service() {
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun configureServerSocket() {
         CoroutineScope(Dispatchers.IO).launch {
-            val serverSocket = ServerSocket(SOCKET_PORT)
+            val serverSocket = ServerSocket(8000)
             socket = serverSocket.accept()
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
@@ -147,7 +147,7 @@ class DataTransferService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
             socket.bind(null)
-            socket.connect(InetSocketAddress(serverIpAddress, SOCKET_PORT), 1000)
+            socket.connect(InetSocketAddress(serverIpAddress, 9090), 1000)
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
             launch {
@@ -162,7 +162,10 @@ class DataTransferService : Service() {
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
         while (true) {
             when (dataTransferUserEvent) {
-                DataTransferUserEvent.NO_DATA -> dataOutputStream.writeUTF(dataTransferUserEvent.state)
+                DataTransferUserEvent.NO_DATA -> {
+                    dataOutputStream.writeInt(dataTransferUserEvent.state.length)
+                    dataOutputStream.writeChars(dataTransferUserEvent.state)
+                }
                 DataTransferUserEvent.DATA_AVAILABLE -> {
                     dataCollection.forEach {
                         dataOutputStream.writeUTF(dataTransferUserEvent.state)
@@ -194,7 +197,14 @@ class DataTransferService : Service() {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
+        var messageLength = 0
+        val messageReceived = StringBuilder()
         while (true) {
+            messageLength = dataInputStream.readInt()
+            for(i in 0 until messageLength){
+                messageReceived.append()
+            }
+            messageReceived.setLength(0)
             when (dataInputStream.readUTF()) {
                 DataTransferUserEvent.NO_DATA.state -> continue
                 DataTransferUserEvent.DATA_AVAILABLE.state -> {
