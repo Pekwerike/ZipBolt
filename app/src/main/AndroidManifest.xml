@@ -31,10 +31,7 @@
             android:name=".service.DataTransferService"
             android:enabled="true"
             android:exported="true"/>
-        <service
-            android:name=".service.AdvanceClientService"
-            android:enabled="true"
-            android:exported="true" />
+
         <service
             android:name=".service.ServerService"
             android:enabled="true"

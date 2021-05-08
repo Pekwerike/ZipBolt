@@ -12,6 +12,7 @@ import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import java.io.BufferedInputStream
@@ -23,6 +24,7 @@ import java.net.ServerSocket
 import java.net.Socket
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DataTransferService : Service() {
     companion object {
         const val IS_SERVER: String = "IsDeviceTheServer"
@@ -38,10 +40,12 @@ class DataTransferService : Service() {
         displayName: String, dataSize: Long, percentTransferred: Float,
         transferState: MediaTransferProtocol.TransferState
     ) -> Unit)? = null
-    private val localBroadcastManager = LocalBroadcastManager.getInstance(this)
     private val incomingDataBroadcastIntent =
         Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
+
+    @Inject
+    lateinit var localBroadcastManager: LocalBroadcastManager
 
     @Inject
     lateinit var mediaTransferProtocol: MediaTransferProtocol
