@@ -200,12 +200,12 @@ class DataTransferService : Service() {
         var messageLength = 0
         val messageReceived = StringBuilder()
         while (true) {
-            messageLength = dataInputStream.readInt()
-            for(i in 0 until messageLength){
-                messageReceived.append()
-            }
             messageReceived.setLength(0)
-            when (dataInputStream.readUTF()) {
+            messageLength = dataInputStream.readInt()
+            for (i in 0 until messageLength) {
+                messageReceived.append(dataInputStream.readChar())
+            }
+            when (messageReceived.toString()) {
                 DataTransferUserEvent.NO_DATA.state -> continue
                 DataTransferUserEvent.DATA_AVAILABLE.state -> {
                     //  Log.i("DataAvailable", "Data available to receive")
