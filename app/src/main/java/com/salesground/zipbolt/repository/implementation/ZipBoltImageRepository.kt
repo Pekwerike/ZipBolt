@@ -24,7 +24,6 @@ open class ZipBoltImageRepository @Inject constructor(
 ) : ImageRepository {
 
 
-
     override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
         withContext(Dispatchers.IO) {
@@ -131,11 +130,10 @@ open class ZipBoltImageRepository @Inject constructor(
                 val imageDisplayName =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
-                return image.copy(
-                    imageMimeType = imageMimeType,
-                    imageSize = imageSize,
-                    imageDisplayName = imageDisplayName
-                )
+                image.imageMimeType = imageMimeType
+                image.imageSize = imageSize
+                image.imageDisplayName = imageDisplayName
+                return image
             }
         }
         return image
@@ -151,7 +149,7 @@ open class ZipBoltImageRepository @Inject constructor(
         } else "IMG" + System.currentTimeMillis() + ".jpg"
     }
 
-    protected fun isImageInMediaStore(imageName: String): Boolean {
+    private fun isImageInMediaStore(imageName: String): Boolean {
         val collection = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
                 MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)

@@ -11,6 +11,8 @@ import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.collections.HashMap
 
@@ -19,6 +21,7 @@ class ImagesViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
+    private val mutex = Mutex(true)
     private var allImagesOnDeviceRaw: MutableList<DataToTransfer.DeviceImage> = mutableListOf()
 
     val collectionOfClickedImages : ArrayMap<ImagesDisplayModel, Boolean>  = ArrayMap()
@@ -136,12 +139,18 @@ class ImagesViewModel @Inject constructor(
 
 
     fun onImageClicked(imageClicked: ImagesDisplayModel) {
-        if (collectionOfClickedImages.containsKey(imageClicked)) {
-            // un clicked
-            collectionOfClickedImages.remove(imageClicked)
-        } else {
-            // clicked
-            collectionOfClickedImages[imageClicked] = true
+        CoroutineScope(Dispatchers.IO).launch {
+            mutex.withLock {
+                imageClicked as ImagesDisplayModel.DeviceImageDisplay
+                if (collectionOfClickedImages.containsKey(imageClicked)) {
+                    // un clicked
+                    collectionOfClickedImages.remove(imageClicked)
+                } else {
+                    imageRepository.getMetaDataOfImage(imageClicked.deviceImage)
+                    // clicked
+                    collectionOfClickedImages[imageClicked] = true
+                }
+            }
         }
     }
 }

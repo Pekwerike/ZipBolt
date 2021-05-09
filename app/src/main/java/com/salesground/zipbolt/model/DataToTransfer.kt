@@ -53,9 +53,9 @@ sealed class DataToTransfer(
         val imageId: Long,
         val imageUri: Uri,
         val imageDateModified: String,
-        val imageDisplayName: String = "",
-        val imageMimeType: String = "",
-        val imageSize: Long = 0L,
+        var imageDisplayName: String = "",
+        var imageMimeType: String = "",
+        var imageSize: Long = 0L,
         val imageBucketName: String
     ) : DataToTransfer(
         dataDisplayName = imageDisplayName,
