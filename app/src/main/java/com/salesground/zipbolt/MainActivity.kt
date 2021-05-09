@@ -256,16 +256,16 @@ class MainActivity : AppCompatActivity() {
                     deviceAddress = "123:324:342:3"
                 })
 
-                /*// for client
+                // for client
                 startService(Intent(this@MainActivity, DataTransferService::class.java).apply {
                     putExtra(DataTransferService.IS_SERVER, false)
                     putExtra(DataTransferService.SERVER_IP_ADDRESS, "10.0.2.2")
-                })*/
+                })
 
                 // for server
-                startService(Intent(this@MainActivity, DataTransferService::class.java).apply{
+                /*startService(Intent(this@MainActivity, DataTransferService::class.java).apply{
                     putExtra(DataTransferService.IS_SERVER, true)
-                })
+                })*/
                 true
             }
             mainActivityAllMediaOnDevice.apply {

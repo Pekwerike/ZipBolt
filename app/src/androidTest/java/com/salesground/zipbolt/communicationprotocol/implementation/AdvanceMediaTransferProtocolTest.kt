@@ -117,6 +117,8 @@ class AdvanceMediaTransferProtocolTest {
             )
         }
 
+        delay(6000)
+
         assertEquals(
             ((allImagesOnDevice.size * 2) - deletedImages.toSet().size),
             imageRepository.getImagesOnDevice().size

@@ -5,6 +5,8 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
+import com.salesground.zipbolt.DataTransferUtils
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
@@ -23,7 +25,6 @@ class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context) {
-
 
     @Suppress("BlockingMethodInNonBlockingContext")
     @Synchronized
@@ -82,7 +83,7 @@ class AdvanceImageRepository @Inject constructor(
                     )
 
                     while (mediaSize > 0) {
-                        when (dataInputStream.readUTF()) {
+                        when (DataTransferUtils.readSocketString(dataInputStream)) {
                             MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status -> {
                             }
                             MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status -> {
@@ -111,6 +112,7 @@ class AdvanceImageRepository @Inject constructor(
                             0,
                             min(mediaSize.toInt(), buffer.size)
                         )
+                        Log.i("TransferMessage", "Read out some bytes")
                         if (bytesRead == -1) break
                         imageOutputStream.write(buffer, 0, bytesRead)
                         mediaSize -= bytesRead
@@ -133,4 +135,5 @@ class AdvanceImageRepository @Inject constructor(
             }
         }
     }
+
 }

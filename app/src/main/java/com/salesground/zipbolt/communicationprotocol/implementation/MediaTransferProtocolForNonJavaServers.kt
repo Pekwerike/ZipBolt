@@ -3,32 +3,36 @@ package com.salesground.zipbolt.communicationprotocol.implementation
 import android.content.Context
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.lang.StringBuilder
+import javax.inject.Inject
 
-class MediaTransferProtocolForNonJavaServers(
-    context: Context,
-    advancedImageRepository: ImageRepository
+class MediaTransferProtocolForNonJavaServers @Inject constructor(
+    @ApplicationContext context : Context,
+    private val advancedImageRepository: ImageRepository
 ) : AdvanceMediaTransferProtocol(context, advancedImageRepository) {
 
     private val fileName = StringBuilder()
     private val fileType = StringBuilder()
 
-    override fun writeFileMetaData(
+    override suspend fun writeFileMetaData(
         dataOutputStream: DataOutputStream,
         dataToTransfer: DataToTransfer
     ) {
+        val mdataToTransfer = advancedImageRepository.getMetaDataOfImage(dataToTransfer as DataToTransfer.DeviceImage)
         // write the file name length
-        dataOutputStream.writeInt(dataToTransfer.dataDisplayName.length)
+        dataOutputStream.writeInt(mdataToTransfer.dataDisplayName.length)
         // write the file name
-        dataOutputStream.writeChars(dataToTransfer.dataDisplayName)
+        dataOutputStream.writeChars(mdataToTransfer.dataDisplayName)
         // write the file size
-        dataOutputStream.writeLong(dataToTransfer.dataSize)
+        dataOutputStream.writeLong(mdataToTransfer.dataSize)
         // write the file mime type length
-        dataOutputStream.writeInt(dataToTransfer.dataType.length)
+        dataOutputStream.writeInt(mdataToTransfer.dataType.length)
         // write the file type
-        dataOutputStream.writeChars(dataToTransfer.dataType)
+        dataOutputStream.writeChars(mdataToTransfer.dataType)
     }
     override fun readFileName(dataInputStream: DataInputStream): String {
         fileName.setLength(0)

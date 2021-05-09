@@ -79,7 +79,9 @@ class AdvanceImageRepositoryTest {
                 val bytesUnwritten = firstImage.dataSize
 
                 while (bytesUnwritten > 0) {
-                    gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status)
+                    gateWayOutputStream.writeInt(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status.length)
+                    gateWayOutputStream.writeChars(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status)
+                  //  gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status)
                     break
                 }
             }
@@ -131,7 +133,8 @@ class AdvanceImageRepositoryTest {
                 val buffer = ByteArray(10_000_000)
                 var unwrittenBytes = secondImage.dataSize
                 while (unwrittenBytes > 0) {
-                    gateWayOutputStream.writeUTF(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
+                    gateWayOutputStream.writeInt(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status.length)
+                    gateWayOutputStream.writeChars(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
                     secondImageInputStream.read(buffer).also {
                         gateWayOutputStream.write(buffer, 0, it)
                         unwrittenBytes -= it

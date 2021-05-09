@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.salesground.zipbolt.DataTransferUtils
 import com.salesground.zipbolt.IS_SERVER_KEY
 import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
@@ -151,7 +153,7 @@ class DataTransferService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
             socket.bind(null)
-            socket.connect(InetSocketAddress(serverIpAddress, 9090), 1000)
+            socket.connect(InetSocketAddress(serverIpAddress, 9090), 10000)
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
             launch {
@@ -167,12 +169,13 @@ class DataTransferService : Service() {
         while (true) {
             when (dataTransferUserEvent) {
                 DataTransferUserEvent.NO_DATA -> {
-                    dataOutputStream.writeInt(dataTransferUserEvent.state.length)
-                    dataOutputStream.writeChars(dataTransferUserEvent.state)
+                    DataTransferUtils.writeSocketString(dataTransferUserEvent.state,
+                    dataOutputStream)
                 }
                 DataTransferUserEvent.DATA_AVAILABLE -> {
                     dataCollection.forEach {
-                        dataOutputStream.writeUTF(dataTransferUserEvent.state)
+                        dataOutputStream.writeInt(dataTransferUserEvent.state.length)
+                        dataOutputStream.writeChars(dataTransferUserEvent.state)
                         mediaTransferProtocol.transferMedia(
                             it,
                             dataOutputStream
@@ -201,15 +204,10 @@ class DataTransferService : Service() {
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-        var messageLength = 0
-        val messageReceived = StringBuilder()
+
         while (true) {
-            messageReceived.setLength(0)
-            messageLength = dataInputStream.readInt()
-            for (i in 0 until messageLength) {
-                messageReceived.append(dataInputStream.readChar())
-            }
-            when (messageReceived.toString()) {
+
+            when (DataTransferUtils.readSocketString(dataInputStream)) {
                 DataTransferUserEvent.NO_DATA.state -> continue
                 DataTransferUserEvent.DATA_AVAILABLE.state -> {
                     //  Log.i("DataAvailable", "Data available to receive")

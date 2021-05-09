@@ -36,7 +36,7 @@ class ZipBoltSavedFilesRepositoryTest {
         val imageCategory = ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY
         val imageCategoryBaseDirectory =
             zipBoltSavedFilesRepository.getZipBoltMediaCategoryBaseDirectory(imageCategory)
-        assertEquals(imageCategoryBaseDirectory.name, "Images")
+        assertEquals(imageCategoryBaseDirectory.name, ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY.categoryName)
     }
 
 }

@@ -3,6 +3,7 @@ package com.salesground.zipbolt.communicationprotocol.implementation
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
@@ -38,7 +39,6 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
             transferState: MediaTransferProtocol.TransferState
         ) -> Unit
     ) {
-        withContext(Dispatchers.IO) {
             ongoingTransfer.set(true)
             writeFileMetaData(dataOutputStream, dataToTransfer)
 
@@ -57,7 +57,8 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
                     )
 
                     while (dataSize > 0) {
-                        dataOutputStream.writeUTF(mTransferMetaData.status)
+                        writeStringMessage(dataOutputStream, mTransferMetaData.status)
+                      //  dataOutputStream.writeUTF(mTransferMetaData.status)
 
                         when (mTransferMetaData) {
                             MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE -> break
@@ -78,7 +79,6 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
                     mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
                     ongoingTransfer.set(false)
                 }
-        }
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -89,11 +89,12 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
             dataUri: Uri
         ) -> Unit
     ) {
-        withContext(Dispatchers.IO) {
             try {
                 val mediaName = readFileName(dataInputStream)
                 val mediaSize = readFileSize(dataInputStream)
                 val mediaType = readFileType(dataInputStream)
+                
+                Log.i("TransferMessage", "$mediaName , $mediaSize, $mediaType")
 
                 when {
                     mediaType.contains("image", true) -> {
@@ -121,15 +122,19 @@ open class AdvanceMediaTransferProtocol @Inject constructor(
                 }
             } catch (endOfFileException: EOFException) {
                 endOfFileException.printStackTrace()
-                return@withContext
+                return
             } catch (malformedInput: UTFDataFormatException) {
                 malformedInput.printStackTrace()
-                return@withContext
+                return
             }
-        }
     }
 
-    override fun writeFileMetaData(
+    override fun writeStringMessage(dataOutputStream: DataOutputStream, message: String) {
+        dataOutputStream.writeInt(message.length)
+        dataOutputStream.writeChars(message)
+    }
+
+    override suspend fun writeFileMetaData(
         dataOutputStream: DataOutputStream,
         dataToTransfer: DataToTransfer
     ) {

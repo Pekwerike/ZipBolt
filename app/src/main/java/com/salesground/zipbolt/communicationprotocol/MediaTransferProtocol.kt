@@ -49,10 +49,11 @@ interface MediaTransferProtocol {
         ) -> Unit
     )
 
-    fun writeFileMetaData(
+    suspend fun writeFileMetaData(
         dataOutputStream: DataOutputStream,
         dataToTransfer: DataToTransfer
     )
+    fun writeStringMessage(dataOutputStream: DataOutputStream, message: String)
 
     fun readFileName(dataInputStream: DataInputStream): String
     fun readFileSize(dataInputStream: DataInputStream): Long
