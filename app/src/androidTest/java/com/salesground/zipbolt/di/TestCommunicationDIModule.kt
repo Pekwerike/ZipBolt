@@ -1,7 +1,7 @@
 package com.salesground.zipbolt.di
 
 import com.salesground.zipbolt.communication.MediaTransferProtocol
-import com.salesground.zipbolt.communication.implementation.MediaTransferProtocolForNonJavaServers
+import com.salesground.zipbolt.communication.implementation.MediaTransferProtocolImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.components.SingletonComponent
@@ -16,6 +16,6 @@ abstract class TestCommunicationDIModule {
 
     @Binds
     abstract fun getMediaTransferProtocol(
-        advanceMediaTransferProtocol: MediaTransferProtocolForNonJavaServers
+        mediaTransferProtocolImpl: MediaTransferProtocolImpl
     ): MediaTransferProtocol
 }

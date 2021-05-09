@@ -2,7 +2,6 @@ package com.salesground.zipbolt.di
 
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.implementation.MediaTransferProtocolImpl
-import com.salesground.zipbolt.communication.implementation.MediaTransferProtocolForNonJavaServers
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
