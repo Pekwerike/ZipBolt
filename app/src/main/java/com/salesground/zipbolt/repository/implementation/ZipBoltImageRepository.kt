@@ -1,7 +1,6 @@
 package com.salesground.zipbolt.repository.implementation
 
 import android.content.ContentUris
-import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.os.Build
@@ -15,10 +14,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import java.io.DataInputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.min
 
 
 open class ZipBoltImageRepository @Inject constructor(

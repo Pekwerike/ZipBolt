@@ -3,7 +3,6 @@ package com.salesground.zipbolt.communication.implementation
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
@@ -24,11 +23,10 @@ import org.junit.Rule
 import org.junit.Test
 import java.io.*
 import java.lang.StringBuilder
-import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @HiltAndroidTest
-class AdvanceMediaTransferProtocolTest {
+class MediaTransferProtocolImplTest {
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
@@ -52,7 +50,7 @@ class AdvanceMediaTransferProtocolTest {
     lateinit var imageRepository: ImageRepository
 
     @Inject
-    lateinit var advanceMediaTransferProtocol: AdvanceMediaTransferProtocol
+    lateinit var mediaTransferProtocolImpl: MediaTransferProtocolImpl
 
 
     @Before
@@ -78,7 +76,7 @@ class AdvanceMediaTransferProtocolTest {
         )
         allImagesOnDevice.forEach {
             launch {
-                advanceMediaTransferProtocol.transferMedia(
+                mediaTransferProtocolImpl.transferMedia(
                     dataToTransfer = it,
                     dataOutputStream = gateWayOutputStream,
                     dataTransferListener = { displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
@@ -92,7 +90,7 @@ class AdvanceMediaTransferProtocolTest {
                 )
             }
             delay(300)
-            advanceMediaTransferProtocol.receiveMedia(
+            mediaTransferProtocolImpl.receiveMedia(
                 dataInputStream = gateWayInputStream,
                 bytesReceivedListener = { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String, dataUri: Uri ->
                     incomingDataBroadcastIntent.apply {

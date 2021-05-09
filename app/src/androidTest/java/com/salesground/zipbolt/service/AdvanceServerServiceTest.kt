@@ -23,11 +23,11 @@ class AdvanceServerServiceTest {
     @Inject
     lateinit var imageRepository: ImageRepository
 
-    private val clientMediaTransferProtocol = AdvanceMediaTransferProtocol(context,
+    private val clientMediaTransferProtocol = MediaTransferProtocolImpl(context,
     AdvanceImageRepository(context, ZipBoltSavedFilesRepository())
     )
 
-    private val serverMediaTransferProtocol = AdvanceMediaTransferProtocol(context,
+    private val serverMediaTransferProtocol = MediaTransferProtocolImpl(context,
         AdvanceImageRepository(context, ZipBoltSavedFilesRepository())
     )
 
