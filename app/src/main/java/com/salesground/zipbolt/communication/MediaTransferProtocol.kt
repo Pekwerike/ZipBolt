@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.communicationprotocol
+package com.salesground.zipbolt.communication
 
 import android.net.Uri
 import com.salesground.zipbolt.model.DataToTransfer

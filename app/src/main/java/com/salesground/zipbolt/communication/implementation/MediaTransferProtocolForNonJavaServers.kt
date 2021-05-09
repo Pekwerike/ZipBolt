@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.communicationprotocol.implementation
+package com.salesground.zipbolt.communication.implementation
 
 import android.content.Context
 import com.salesground.zipbolt.model.DataToTransfer

@@ -1,7 +1,7 @@
 package com.salesground.zipbolt.repository
 
 import android.net.Uri
-import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltImageRepository
 import java.io.DataInputStream

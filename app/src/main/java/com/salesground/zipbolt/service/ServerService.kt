@@ -4,7 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.salesground.zipbolt.communicationprotocol.ZipBoltMTP
+import com.salesground.zipbolt.communication.ZipBoltMTP
 import com.salesground.zipbolt.model.MediaModel
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint

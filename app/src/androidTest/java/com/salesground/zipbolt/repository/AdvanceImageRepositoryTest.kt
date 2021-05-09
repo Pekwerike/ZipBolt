@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
-import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import dagger.hilt.android.testing.HiltAndroidRule

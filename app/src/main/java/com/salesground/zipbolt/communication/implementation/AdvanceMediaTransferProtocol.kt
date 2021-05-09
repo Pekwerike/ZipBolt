@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.communicationprotocol.implementation
+package com.salesground.zipbolt.communication.implementation
 
 import android.content.Context
 import android.content.Intent
@@ -6,7 +6,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
-import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository

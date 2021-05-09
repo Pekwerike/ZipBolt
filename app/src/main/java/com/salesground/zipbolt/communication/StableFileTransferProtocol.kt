@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.communicationprotocol
+package com.salesground.zipbolt.communication
 
 import java.io.*
 import java.net.Socket

@@ -30,7 +30,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
-import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer

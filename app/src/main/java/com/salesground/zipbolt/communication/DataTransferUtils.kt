@@ -1,4 +1,4 @@
-package com.salesground.zipbolt
+package com.salesground.zipbolt.communication
 
 import java.io.DataInputStream
 import java.io.DataOutputStream

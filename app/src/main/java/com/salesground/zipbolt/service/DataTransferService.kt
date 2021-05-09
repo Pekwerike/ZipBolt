@@ -5,13 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.salesground.zipbolt.DataTransferUtils
-import com.salesground.zipbolt.IS_SERVER_KEY
-import com.salesground.zipbolt.SERVER_IP_ADDRESS_KEY
+import com.salesground.zipbolt.communication.DataTransferUtils
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
-import com.salesground.zipbolt.communicationprotocol.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint
@@ -174,8 +171,8 @@ class DataTransferService : Service() {
                 }
                 DataTransferUserEvent.DATA_AVAILABLE -> {
                     dataCollection.forEach {
-                        dataOutputStream.writeInt(dataTransferUserEvent.state.length)
-                        dataOutputStream.writeChars(dataTransferUserEvent.state)
+                       DataTransferUtils.writeSocketString(dataTransferUserEvent.state,
+                       dataOutputStream)
                         mediaTransferProtocol.transferMedia(
                             it,
                             dataOutputStream
