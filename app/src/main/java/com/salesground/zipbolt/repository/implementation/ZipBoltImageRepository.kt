@@ -102,7 +102,6 @@ open class ZipBoltImageRepository @Inject constructor(
 
 
     override suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer {
-
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
@@ -130,10 +129,14 @@ open class ZipBoltImageRepository @Inject constructor(
                 val imageDisplayName =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
-                image.imageMimeType = imageMimeType
-                image.imageSize = imageSize
-                image.imageDisplayName = imageDisplayName
-                return image
+               return image.apply {
+                   this.dataDisplayName = imageDisplayName
+                   this.dataType = imageMimeType
+                   this.dataSize = imageSize
+                   this.imageMimeType = imageMimeType
+                   this.imageSize = imageSize
+                   this.imageDisplayName = imageDisplayName
+               }
             }
         }
         return image

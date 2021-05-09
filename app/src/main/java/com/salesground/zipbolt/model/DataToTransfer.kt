@@ -5,10 +5,10 @@ import android.net.Uri
 import androidx.core.net.toUri
 
 sealed class DataToTransfer(
-    val dataDisplayName: String,
+    var dataDisplayName: String,
     val dataUri: Uri,
-    val dataSize: Long,
-    val dataType: String
+    var dataSize: Long,
+    var dataType: String
 ) {
     override fun equals(other: Any?): Boolean {
         return when (other) {
