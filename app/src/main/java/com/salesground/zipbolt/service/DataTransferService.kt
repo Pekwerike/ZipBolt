@@ -132,8 +132,15 @@ class DataTransferService : Service() {
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun configureServerSocket() {
         CoroutineScope(Dispatchers.IO).launch {
-            val serverSocket = ServerSocket(8000)
-            socket = serverSocket.accept()
+            val serverSocket = ServerSocket(SOCKET_PORT)
+            while (true) {
+                try {
+                    socket = serverSocket.accept()
+                    break
+                } catch (exception: Exception) {
+
+                }
+            }
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
 
@@ -150,7 +157,8 @@ class DataTransferService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
             socket.bind(null)
-            socket.connect(InetSocketAddress(serverIpAddress, 9090), 10000)
+
+            socket.connect(InetSocketAddress(serverIpAddress, SOCKET_PORT), 100000)
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
             launch {
@@ -166,13 +174,17 @@ class DataTransferService : Service() {
         while (true) {
             when (dataTransferUserEvent) {
                 DataTransferUserEvent.NO_DATA -> {
-                    DataTransferUtils.writeSocketString(dataTransferUserEvent.state,
-                    dataOutputStream)
+                    DataTransferUtils.writeSocketString(
+                        dataTransferUserEvent.state,
+                        dataOutputStream
+                    )
                 }
                 DataTransferUserEvent.DATA_AVAILABLE -> {
                     dataCollection.forEach {
-                       DataTransferUtils.writeSocketString(dataTransferUserEvent.state,
-                       dataOutputStream)
+                        DataTransferUtils.writeSocketString(
+                            dataTransferUserEvent.state,
+                            dataOutputStream
+                        )
                         mediaTransferProtocol.transferMedia(
                             it,
                             dataOutputStream

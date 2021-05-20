@@ -25,7 +25,7 @@ class WifiDirectBroadcastReceiver(
         fun wifiOff()
         fun peersListAvailable(peersList: MutableList<WifiP2pDevice>)
         fun connectedToPeer(
-            peeredDeviceWifiP2pInfo: WifiP2pInfo,
+            wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
         )
 

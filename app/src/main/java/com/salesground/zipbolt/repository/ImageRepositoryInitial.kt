@@ -226,7 +226,6 @@ class ImageRepositoryInitial @Inject constructor
             val imageFile = File(imageFolder, it.mediaDisplayName)
             val imageFileOutputStream = FileOutputStream(imageFile)
 
-
             applicationContext.contentResolver.openFileDescriptor(it.mediaUri, "r")?.apply {
                 val fileInputStream = FileInputStream(this.fileDescriptor)
                 val buffer = ByteArray(1_000_000)

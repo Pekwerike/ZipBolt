@@ -43,9 +43,6 @@ import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformat
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -161,43 +158,39 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun connectedToPeer(
-            peeredDeviceWifiP2pInfo: WifiP2pInfo,
+            wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
         ) {
             startPeerDiscovery = false
-            mainActivityViewModel.connectedToPeer(peeredDeviceWifiP2pInfo, peeredDevice)
+            mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
 
             // start data transfer service
-            when (peeredDeviceWifiP2pInfo.isGroupOwner) {
+            when (wifiP2pInfo.isGroupOwner) {
                 true -> {
-                    // since the peered device is the group owner, you are the client
+                    // you are the server
                     Intent(
                         this@MainActivity,
                         DataTransferService::class.java
                     ).also { serviceIntent ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val serverIpAddress =
-                                peeredDeviceWifiP2pInfo.groupOwnerAddress.hostAddress
-                            serviceIntent.apply {
-                                putExtra(DataTransferService.IS_SERVER, false)
-                                putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
-                            }
-                            startService(serviceIntent)
+                        serviceIntent.apply {
+                            putExtra(DataTransferService.IS_SERVER, true)
                         }
+                        startService(serviceIntent)
                     }
                 }
                 false -> {
-                    // since the peered device is the client, you are the server
+                    // you are the client
                     Intent(
                         this@MainActivity,
                         DataTransferService::class.java
                     ).also { serviceIntent ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            serviceIntent.apply {
-                                putExtra(DataTransferService.IS_SERVER, true)
-                            }
-                            startService(serviceIntent)
+                        val serverIpAddress =
+                            wifiP2pInfo.groupOwnerAddress.hostAddress
+                        serviceIntent.apply {
+                            putExtra(DataTransferService.IS_SERVER, false)
+                            putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
                         }
+                        startService(serviceIntent)
                     }
                 }
             }
