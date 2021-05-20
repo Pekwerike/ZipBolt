@@ -133,14 +133,7 @@ class DataTransferService : Service() {
     private fun configureServerSocket() {
         CoroutineScope(Dispatchers.IO).launch {
             val serverSocket = ServerSocket(SOCKET_PORT)
-            while (true) {
-                try {
-                    socket = serverSocket.accept()
-                    break
-                } catch (exception: Exception) {
-
-                }
-            }
+            socket = serverSocket.accept()
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
 

@@ -68,12 +68,12 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var connectivityManager: ConnectivityManager
 
+    @Inject
+    lateinit var localBroadcastManager: LocalBroadcastManager
+
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
 
-    private val localBroadCastReceiver: LocalBroadcastManager by lazy {
-        LocalBroadcastManager.getInstance(this)
-    }
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver()
     }
@@ -725,7 +725,7 @@ class MainActivity : AppCompatActivity() {
         // register the broadcast receiver
         initializeChannelAndBroadcastReceiver()
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
-        localBroadCastReceiver.registerReceiver(
+        localBroadcastManager.registerReceiver(
             incomingDataBroadcastReceiver,
             createLocalBroadcastIntentFilter()
         )
@@ -735,7 +735,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
-        localBroadCastReceiver.unregisterReceiver(incomingDataBroadcastReceiver)
+        localBroadcastManager.unregisterReceiver(incomingDataBroadcastReceiver)
     }
 
     override fun onBackPressed() {
