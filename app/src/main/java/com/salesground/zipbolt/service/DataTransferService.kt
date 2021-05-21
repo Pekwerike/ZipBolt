@@ -1,15 +1,24 @@
 package com.salesground.zipbolt.service
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.salesground.zipbolt.MainActivity
+import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.communication.DataTransferUtils
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -21,23 +30,30 @@ import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.SocketAddress
+import java.util.Queue
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DataTransferService : Service() {
+    var isActive = false
+
     companion object {
         const val IS_SERVER: String = "IsDeviceTheServer"
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
     }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
-    private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
+
+    // private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
+    private var mediaTransferProtocolMetaData =
+        MediaTransferProtocolMetaData.NO_DATA
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
     private var dataTransferListener: ((
         displayName: String, dataSize: Long, percentTransferred: Float,
-        transferState: MediaTransferProtocol.TransferState
+        transferState: TransferState
     ) -> Unit)? = null
     private val incomingDataBroadcastIntent =
         Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
@@ -59,36 +75,70 @@ class DataTransferService : Service() {
     }
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
-    private val mutex = Mutex()
+
 
     fun cancelScheduledTransfer() {
 
     }
 
     fun cancelActiveReceive() {
-        when (dataTransferUserEvent) {
-            DataTransferUserEvent.NO_DATA -> {
+        when (mediaTransferProtocolMetaData) {
+            MediaTransferProtocolMetaData.NO_DATA -> {
                 // not transferring any data, but wants to stop receiving data from peer,
                 // so send a message to peer to cancel ongoing transfer
-                dataTransferUserEvent = DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER
+                mediaTransferProtocolMetaData =
+                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER
             }
-            DataTransferUserEvent.DATA_AVAILABLE -> {
+            MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
                 // transferring data to peer but wants to stop receiving from peer,
                 // so send a message to the peer to stop reading for new bytes while I stop sending
                 mediaTransferProtocol.cancelCurrentTransfer(
                     transferMetaData =
-                    MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
+                    MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
                 )
             }
-            DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> {
+            MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
+
+            }
+            MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE -> {
+
+            }
+            MediaTransferProtocolMetaData.CANCEL_ACTIVE_TRANSTER -> {
+
+            }
+            MediaTransferProtocolMetaData.KEEP_RECEIVING -> {
+
+            }
+            MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
+
+            }
+            MediaTransferProtocolMetaData.PAUSE_ACTIVE_TRANSFER -> {
 
             }
         }
+        /*  when (dataTransferUserEvent) {
+              DataTransferUserEvent.NO_DATA -> {
+                  // not transferring any data, but wants to stop receiving data from peer,
+                  // so send a message to peer to cancel ongoing transfer
+                  dataTransferUserEvent = DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER
+              }
+              DataTransferUserEvent.DATA_AVAILABLE -> {
+                  // transferring data to peer but wants to stop receiving from peer,
+                  // so send a message to the peer to stop reading for new bytes while I stop sending
+                  mediaTransferProtocol.cancelCurrentTransfer(
+                      transferMetaData =
+                      TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
+                  )
+              }
+              DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> {
+
+              }
+          }*/
     }
 
     fun cancelActiveTransfer() {
         mediaTransferProtocol.cancelCurrentTransfer(
-            transferMetaData = MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE
+            transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
         )
     }
 
@@ -97,16 +147,16 @@ class DataTransferService : Service() {
         dataCollectionSelected: MutableList<DataToTransfer>,
         dataTransferListener: (
             displayName: String, dataSize: Long, percentTransferred: Float,
-            transferState: MediaTransferProtocol.TransferState
+            transferState: TransferState
         ) -> Unit
     ) {
-        while (dataTransferUserEvent == DataTransferUserEvent.DATA_AVAILABLE) {
+        while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
             // get stuck here
         }
         // when dataTransferUserEvent shows data is not available then assign the new data
         this.dataTransferListener = dataTransferListener
         dataCollection = dataCollectionSelected
-        dataTransferUserEvent = DataTransferUserEvent.DATA_AVAILABLE
+        mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
     }
 
 
@@ -115,6 +165,7 @@ class DataTransferService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        isActive = true
         startForeground(
             FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID,
             fileTransferServiceNotification.configureFileTransferNotification()
@@ -132,12 +183,14 @@ class DataTransferService : Service() {
     @Suppress("BlockingMethodInNonBlockingContext")
     private fun configureServerSocket() {
         CoroutineScope(Dispatchers.IO).launch {
-            val serverSocket = ServerSocket(SOCKET_PORT)
+            val serverSocket = ServerSocket()
+            serverSocket.reuseAddress = true
+            serverSocket.bind(InetSocketAddress(SOCKET_PORT))
             socket = serverSocket.accept()
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
 
-            launch {
+            launch(Dispatchers.IO) {
                 listenForMediaToTransfer(socketDOS)
             }
             delay(300)
@@ -150,11 +203,10 @@ class DataTransferService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
             socket.bind(null)
-
             socket.connect(InetSocketAddress(serverIpAddress, SOCKET_PORT), 100000)
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS = DataInputStream(BufferedInputStream(socket.getInputStream()))
-            launch {
+            launch(Dispatchers.IO) {
                 listenForMediaToTransfer(socketDOS)
             }
             delay(300)
@@ -165,23 +217,17 @@ class DataTransferService : Service() {
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
         while (true) {
-            when (dataTransferUserEvent) {
-                DataTransferUserEvent.NO_DATA -> {
-                    DataTransferUtils.writeSocketString(
-                        dataTransferUserEvent.state,
-                        dataOutputStream
-                    )
+            when (mediaTransferProtocolMetaData) {
+                MediaTransferProtocolMetaData.NO_DATA -> {
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                 }
-                DataTransferUserEvent.DATA_AVAILABLE -> {
-                    dataCollection.forEach {
-                        DataTransferUtils.writeSocketString(
-                            dataTransferUserEvent.state,
-                            dataOutputStream
-                        )
+                MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
+                    for (dataToTransfer in dataCollection) {
+                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                         mediaTransferProtocol.transferMedia(
-                            it,
+                            dataToTransfer,
                             dataOutputStream
-                        ) { displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
+                        ) { displayName: String, dataSize: Long, percentTransferred: Float, transferState: TransferState ->
                             dataTransferListener?.invoke(
                                 displayName,
                                 dataSize,
@@ -189,30 +235,30 @@ class DataTransferService : Service() {
                                 transferState
                             )
                         }
+                        delay(100)
                     }
-                    dataTransferUserEvent = DataTransferUserEvent.NO_DATA
+                    mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
+                    //   dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                 }
-
-                DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> {
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
                     mediaTransferProtocol.cancelCurrentTransfer(
                         transferMetaData =
-                        MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE
+                        MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
                     )
                 }
-            }
+                else -> {
 
+                }
+            }
         }
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-
         while (true) {
-
-            when (DataTransferUtils.readSocketString(dataInputStream)) {
-                DataTransferUserEvent.NO_DATA.state -> continue
-                DataTransferUserEvent.DATA_AVAILABLE.state -> {
-                    //  Log.i("DataAvailable", "Data available to receive")
+            when (dataInputStream.readInt()) {
+                MediaTransferProtocolMetaData.NO_DATA.value -> continue
+                MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
                     mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String, dataUri: Uri ->
                         incomingDataBroadcastIntent.apply {
                             putExtra(
@@ -232,10 +278,11 @@ class DataTransferService : Service() {
                             localBroadcastManager.sendBroadcast(this)
                         }
                     }
+                    delay(100)
                 }
-                DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER.state -> {
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
                     mediaTransferProtocol.cancelCurrentTransfer(
-                        transferMetaData = MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE
+                        transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
                     )
                 }
             }
@@ -245,4 +292,5 @@ class DataTransferService : Service() {
     override fun onDestroy() {
         super.onDestroy()
     }
+
 }

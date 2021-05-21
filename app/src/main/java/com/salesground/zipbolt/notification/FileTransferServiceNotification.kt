@@ -53,7 +53,7 @@ constructor(
                     context,
                     OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE,
                     it,
-                    0
+                    PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
 
@@ -63,7 +63,7 @@ constructor(
                 setContentText(context.getString(R.string.fileTransferServiceNotificationContentText))
                 setContentIntent(openMainActivityPendingIntent)
                 setSmallIcon(R.drawable.zipbolt_service_notification_icon)
-                priority = NotificationCompat.PRIORITY_DEFAULT
+                priority = NotificationCompat.PRIORITY_MAX
             }.build()
     }
 }

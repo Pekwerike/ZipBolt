@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import com.salesground.zipbolt.communication.DataTransferUtils
 import com.salesground.zipbolt.communication.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,11 +17,11 @@ open class MediaTransferProtocolImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val advancedImageRepository: ImageRepository
 ) : MediaTransferProtocol {
-    private var mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
+    private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
 
 
-    override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.TransferMetaData) {
+    override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData) {
         if (ongoingTransfer.get()) mTransferMetaData = transferMetaData
     }
 
@@ -31,14 +32,16 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream: DataOutputStream,
         dataTransferListener: (
             displayName: String, dataSize: Long, percentTransferred: Float,
-            transferState: MediaTransferProtocol.TransferState
+            transferState: TransferState
         ) -> Unit
     ) {
         ongoingTransfer.set(true)
 
-        DataTransferUtils.writeSocketString(dataToTransfer.dataDisplayName, dataOutputStream)
+        //DataTransferUtils.writeSocketString(dataToTransfer.dataDisplayName, dataOutputStream)
+        dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
-        DataTransferUtils.writeSocketString(dataToTransfer.dataType, dataOutputStream)
+        dataOutputStream.writeUTF(dataToTransfer.dataType)
+        //DataTransferUtils.writeSocketString(dataToTransfer.dataType, dataOutputStream)
 
         var dataSize = dataToTransfer.dataSize
 
@@ -51,17 +54,15 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataToTransfer.dataDisplayName,
                     dataToTransfer.dataSize,
                     0f,
-                    MediaTransferProtocol.TransferState.TRANSFERING
+                    TransferState.TRANSFERING
                 )
 
                 while (dataSize > 0) {
-                    DataTransferUtils.writeSocketString(mTransferMetaData.status,
-                    dataOutputStream)
-                    //  dataOutputStream.writeUTF(mTransferMetaData.status)
+                    dataOutputStream.writeInt(mTransferMetaData.value)
 
                     when (mTransferMetaData) {
-                        MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE -> break
-                        MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
+                        MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE -> break
+                        MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
                     }
 
                     fileInputStream.read(buffer).also {
@@ -71,11 +72,11 @@ open class MediaTransferProtocolImpl @Inject constructor(
                             dataToTransfer.dataDisplayName,
                             dataToTransfer.dataSize,
                             ((dataToTransfer.dataSize - dataSize) / dataToTransfer.dataSize.toFloat()) * 100f,
-                            MediaTransferProtocol.TransferState.TRANSFERING
+                            TransferState.TRANSFERING
                         )
                     }
                 }
-                mTransferMetaData = MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING
+                mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
                 ongoingTransfer.set(false)
             }
     }
@@ -89,9 +90,11 @@ open class MediaTransferProtocolImpl @Inject constructor(
         ) -> Unit
     ) {
         try {
-            val mediaName = DataTransferUtils.readSocketString(dataInputStream)
+            // val mediaName = DataTransferUtils.readSocketString(dataInputStream)
+            val mediaName = dataInputStream.readUTF()
             val mediaSize = dataInputStream.readLong()
-            val mediaType = DataTransferUtils.readSocketString(dataInputStream)
+            val mediaType = dataInputStream.readUTF()
+            //  val mediaType = DataTransferUtils.readSocketString(dataInputStream)
 
 
             when {
@@ -102,8 +105,8 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         mimeType = mediaType,
                         dataInputStream = dataInputStream,
                         transferMetaDataUpdateListener = {
-                            if (it == MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
-                                cancelCurrentTransfer(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                            if (it == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
+                                cancelCurrentTransfer(MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                             }
                         },
                         bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri ->

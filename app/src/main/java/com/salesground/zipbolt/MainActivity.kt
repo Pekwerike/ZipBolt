@@ -15,6 +15,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.FrameLayout
@@ -161,36 +162,48 @@ class MainActivity : AppCompatActivity() {
             wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
         ) {
+
             startPeerDiscovery = false
             mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
+            if (dataTransferService?.isActive == true) {
 
-            // start data transfer service
-            when (wifiP2pInfo.isGroupOwner) {
-                true -> {
-                    // you are the server
-                    Intent(
-                        this@MainActivity,
-                        DataTransferService::class.java
-                    ).also { serviceIntent ->
-                        serviceIntent.apply {
-                            putExtra(DataTransferService.IS_SERVER, true)
+            } else {
+                // start data transfer service
+                when (wifiP2pInfo.isGroupOwner) {
+                    true -> {
+                        // you are the server
+                        Intent(
+                            this@MainActivity,
+                            DataTransferService::class.java
+                        ).also { serviceIntent ->
+                            serviceIntent.apply {
+                                putExtra(DataTransferService.IS_SERVER, true)
+                            }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(serviceIntent)
+                            } else {
+                                startService(serviceIntent)
+                            }
                         }
-                        startService(serviceIntent)
                     }
-                }
-                false -> {
-                    // you are the client
-                    Intent(
-                        this@MainActivity,
-                        DataTransferService::class.java
-                    ).also { serviceIntent ->
-                        val serverIpAddress =
-                            wifiP2pInfo.groupOwnerAddress.hostAddress
-                        serviceIntent.apply {
-                            putExtra(DataTransferService.IS_SERVER, false)
-                            putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
+                    false -> {
+                        // you are the client
+                        Intent(
+                            this@MainActivity,
+                            DataTransferService::class.java
+                        ).also { serviceIntent ->
+                            val serverIpAddress =
+                                wifiP2pInfo.groupOwnerAddress.hostAddress
+                            serviceIntent.apply {
+                                putExtra(DataTransferService.IS_SERVER, false)
+                                putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
+                            }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                startForegroundService(serviceIntent)
+                            } else {
+                                startService(serviceIntent)
+                            }
                         }
-                        startService(serviceIntent)
                     }
                 }
             }
@@ -234,33 +247,17 @@ class MainActivity : AppCompatActivity() {
                     modalBottomSheetDialog.show()
                 }
             }
+
             sendFileButton.setOnClickListener {
                 // transfer data using the DataTransferService
                 dataTransferService?.transferData(
                     mainActivityViewModel.collectionOfDataToTransfer,
                 ) { displayName: String, dataSize: Long, percentTransferred: Float,
                     transferState: MediaTransferProtocol.TransferState ->
-
+                    Log.i("Transfers", "Sending $displayName with $percentTransferred %")
                 }
             }
-            connectToPeerButton.setOnLongClickListener {
-                mainActivityViewModel.connectedToPeer(WifiP2pInfo(), WifiP2pDevice().apply {
-                    deviceName = "Google Pixel 5"
-                    deviceAddress = "123:324:342:3"
-                })
 
-                // for client
-                startService(Intent(this@MainActivity, DataTransferService::class.java).apply {
-                    putExtra(DataTransferService.IS_SERVER, false)
-                    putExtra(DataTransferService.SERVER_IP_ADDRESS, "10.0.2.2")
-                })
-
-                // for server
-                /*startService(Intent(this@MainActivity, DataTransferService::class.java).apply{
-                    putExtra(DataTransferService.IS_SERVER, true)
-                })*/
-                true
-            }
             mainActivityAllMediaOnDevice.apply {
                 // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
@@ -291,9 +288,9 @@ class MainActivity : AppCompatActivity() {
         }
         observeViewModelLiveData()
         // bind to the data transfer service
-        Intent(this, DataTransferService::class.java).also {
+        /*Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
-        }
+        }*/
     }
 
     private fun observeViewModelLiveData() {
@@ -344,7 +341,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
-                        // incase of a configuration or theme change, inflate and configure the bottom sheet
+                        // in case of a configuration or theme change, inflate and configure the bottom sheet
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
                             configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                                 it.connectedDevice
@@ -729,10 +726,14 @@ class MainActivity : AppCompatActivity() {
             incomingDataBroadcastReceiver,
             createLocalBroadcastIntentFilter()
         )
+        Intent(this, DataTransferService::class.java).also {
+            bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
+        }
     }
 
     override fun onStop() {
         super.onStop()
+        unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
         localBroadcastManager.unregisterReceiver(incomingDataBroadcastReceiver)

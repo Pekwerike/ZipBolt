@@ -2,6 +2,7 @@ package com.salesground.zipbolt.repository
 
 import android.net.Uri
 import com.salesground.zipbolt.communication.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
 import java.io.DataInputStream
 
@@ -24,7 +25,7 @@ interface ImageRepository {
         size: Long,
         mimeType: String,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
+        transferMetaDataUpdateListener: (MediaTransferProtocolMetaData) -> Unit,
         bytesReadListener:
             (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri) -> Unit
     )

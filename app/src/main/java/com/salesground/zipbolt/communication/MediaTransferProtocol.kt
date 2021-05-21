@@ -7,13 +7,17 @@ import java.io.DataOutputStream
 
 interface MediaTransferProtocol {
 
-    enum class TransferMetaData(val status: String) {
+    enum class MediaTransferProtocolMetaData(val value : Int){
+        NO_DATA(200),
+        DATA_AVAILABLE(201),
+        CANCEL_ON_GOING_TRANSFER(203),
 
-        CANCEL_ACTIVE_RECEIVE("CancelActiveReceive"),
-        CANCEL_ACTIVE_TRANSTER("CancelActiveTransfer"),
-        KEEP_RECEIVING("KeepReceiving"),
-        KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER("KeepReceivingButCancelActiveTransfer"),
-        PAUSE_ACTIVE_TRANSFER("PauseActiveTransfer")
+        CANCEL_ACTIVE_RECEIVE(204),
+        CANCEL_ACTIVE_TRANSTER(205),
+        KEEP_RECEIVING(206),
+        KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER(207),
+        PAUSE_ACTIVE_TRANSFER(208)
+
     }
 
     enum class TransferState {
@@ -29,7 +33,7 @@ interface MediaTransferProtocol {
     }
 
 
-    fun cancelCurrentTransfer(transferMetaData: TransferMetaData)
+    fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData)
 
 
     suspend fun transferMedia(

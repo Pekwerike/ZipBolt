@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.util.Log
 import com.salesground.zipbolt.communication.DataTransferUtils
 import com.salesground.zipbolt.communication.MediaTransferProtocol
+import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
 import com.salesground.zipbolt.repository.ZipBoltMediaCategory
@@ -30,7 +31,7 @@ class AdvanceImageRepository @Inject constructor(
         size: Long,
         mimeType: String,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: (MediaTransferProtocol.TransferMetaData) -> Unit,
+        transferMetaDataUpdateListener: (MediaTransferProtocolMetaData) -> Unit,
         bytesReadListener:
             (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri) -> Unit
     ) {
@@ -46,11 +47,11 @@ class AdvanceImageRepository @Inject constructor(
             put(MediaStore.Images.Media.SIZE, size)
             put(MediaStore.Images.Media.MIME_TYPE, mimeType)
             put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
-            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
-            put(MediaStore.Images.Media.DATE_MODIFIED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
+            put(MediaStore.Images.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, context.packageName)
-                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis() / 1000)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
@@ -80,10 +81,10 @@ class AdvanceImageRepository @Inject constructor(
                     )
 
                     while (mediaSize > 0) {
-                        when (DataTransferUtils.readSocketString(dataInputStream)) {
-                            MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status -> {
+                        when (dataInputStream.readInt()) {
+                            MediaTransferProtocolMetaData.KEEP_RECEIVING.value -> {
                             }
-                            MediaTransferProtocol.TransferMetaData.CANCEL_ACTIVE_RECEIVE.status -> {
+                            MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value -> {
                                 // delete image file
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                     contentValues.clear()
@@ -99,8 +100,8 @@ class AdvanceImageRepository @Inject constructor(
                                 imageFile.delete()
                                 return
                             }
-                            MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.status -> {
-                                transferMetaDataUpdateListener(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                            MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.value -> {
+                                transferMetaDataUpdateListener(MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                             }
                         }
 
@@ -109,7 +110,7 @@ class AdvanceImageRepository @Inject constructor(
                             0,
                             min(mediaSize.toInt(), buffer.size)
                         )
-                        Log.i("TransferMessage", "Read out some bytes")
+                      //  Log.i("TransferMessage", "Read out some bytes")
                         if (bytesRead == -1) break
                         imageOutputStream.write(buffer, 0, bytesRead)
                         mediaSize -= bytesRead
