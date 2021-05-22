@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import com.salesground.zipbolt.model.DataToTransfer
 
 
 class IncomingDataBroadcastReceiver : BroadcastReceiver() {
@@ -27,7 +28,10 @@ class IncomingDataBroadcastReceiver : BroadcastReceiver() {
                     val bytesReceived = intent.getFloatExtra(PERCENTAGE_OF_DATA_RECEIVED, 0f)
                     val fileUri = intent.getParcelableExtra<Uri>(INCOMING_FILE_URI)
                     val fileSize = intent.getLongExtra(INCOMING_FILE_SIZE, 0)
-                    val fileType = intent.getStringExtra(INCOMING_FILE_MIME_TYPE)
+                    val fileType = intent.getIntExtra(
+                        INCOMING_FILE_MIME_TYPE,
+                        DataToTransfer.MediaType.IMAGE.value
+                    )
 
                 }
             }

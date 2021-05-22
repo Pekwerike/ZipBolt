@@ -254,7 +254,7 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.collectionOfDataToTransfer,
                 ) { displayName: String, dataSize: Long, percentTransferred: Float,
                     transferState: MediaTransferProtocol.TransferState ->
-                    Log.i("Transfers", "Sending $displayName with $percentTransferred %")
+                 //   Log.i("Transfers", "Sending $displayName with $percentTransferred %")
                 }
             }
 
@@ -354,6 +354,14 @@ class MainActivity : AppCompatActivity() {
 
                         // show the send button
                         activityMainBinding.sendFileButton.animate().alpha(1f)
+
+                        // stop searching for peers animation
+                        expandedSearchingForPeersInfoBinding
+                            .expandedSearchingForPeersInformationSearchingForDevicesAnimation
+                            .setKeepAnimating(false)
+                        collapsedSearchingForPeersInfoBinding
+                            .mediumSearchingForPeersAnimation
+                            .setKeepAnimating(false)
 
                         connectedToPeerNoActionBottomSheetLayoutBinding
                             .expandedConnectedToPeerNoActionLayout

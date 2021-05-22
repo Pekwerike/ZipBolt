@@ -7,6 +7,7 @@ import java.io.DataOutputStream
 
 interface MediaTransferProtocol {
 
+
     enum class MediaTransferProtocolMetaData(val value : Int){
         NO_DATA(200),
         DATA_AVAILABLE(201),
@@ -17,7 +18,6 @@ interface MediaTransferProtocol {
         KEEP_RECEIVING(206),
         KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER(207),
         PAUSE_ACTIVE_TRANSFER(208)
-
     }
 
     enum class TransferState {
@@ -35,7 +35,6 @@ interface MediaTransferProtocol {
 
     fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData)
 
-
     suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
@@ -48,7 +47,7 @@ interface MediaTransferProtocol {
     suspend fun receiveMedia(
         dataInputStream: DataInputStream,
         bytesReceivedListener: (
-            dataDisplayName: String, dataSize: Long,  percentageOfDataRead: Float, dataType: String,
+            dataDisplayName: String, dataSize: Long,  percentageOfDataRead: Float, dataType: Int,
             dataUri: Uri
         ) -> Unit
     )

@@ -90,7 +90,6 @@ open class ZipBoltImageRepository @Inject constructor(
     override suspend fun insertImageIntoMediaStore(
         displayName: String,
         size: Long,
-        mimeType: String,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocol.MediaTransferProtocolMetaData) -> Unit,
         bytesReadListener: (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri) -> Unit
@@ -121,15 +120,15 @@ open class ZipBoltImageRepository @Inject constructor(
             null
         )?.let { cursor ->
             if (cursor.moveToFirst()) {
-                val imageMimeType =
-                    cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
+                //val imageMimeType =
+                  //  cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
                 val imageSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.SIZE))
                 val imageDisplayName =
                     cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
 
                return image.apply {
                    this.dataDisplayName = imageDisplayName
-                   this.dataType = imageMimeType
+                 //  this.dataType = imageMimeType
                    this.dataSize = imageSize
                    this.imageMimeType = imageMimeType
                    this.imageSize = imageSize

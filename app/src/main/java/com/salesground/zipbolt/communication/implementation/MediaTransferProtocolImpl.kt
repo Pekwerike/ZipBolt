@@ -10,6 +10,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
+import java.lang.StringBuilder
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -37,11 +38,12 @@ open class MediaTransferProtocolImpl @Inject constructor(
     ) {
         ongoingTransfer.set(true)
 
-        //DataTransferUtils.writeSocketString(dataToTransfer.dataDisplayName, dataOutputStream)
-        dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
-        dataOutputStream.writeUTF(dataToTransfer.dataType)
-        //DataTransferUtils.writeSocketString(dataToTransfer.dataType, dataOutputStream)
+        // write name length
+        dataOutputStream.writeInt(dataToTransfer.dataDisplayName.length)
+        dataOutputStream.writeChars(dataToTransfer.dataDisplayName)
+
+        dataOutputStream.writeInt(dataToTransfer.dataType)
 
         var dataSize = dataToTransfer.dataSize
 
@@ -59,7 +61,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
                 while (dataSize > 0) {
                     dataOutputStream.writeInt(mTransferMetaData.value)
-
                     when (mTransferMetaData) {
                         MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE -> break
                         MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
@@ -76,6 +77,8 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         )
                     }
                 }
+                parcelFileDescriptor.close()
+                fileInputStream.close()
                 mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
                 ongoingTransfer.set(false)
             }
@@ -85,24 +88,19 @@ open class MediaTransferProtocolImpl @Inject constructor(
     override suspend fun receiveMedia(
         dataInputStream: DataInputStream,
         bytesReceivedListener: (
-            dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String,
+            dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int,
             dataUri: Uri
         ) -> Unit
     ) {
         try {
-            // val mediaName = DataTransferUtils.readSocketString(dataInputStream)
-            val mediaName = dataInputStream.readUTF()
             val mediaSize = dataInputStream.readLong()
-            val mediaType = dataInputStream.readUTF()
-            //  val mediaType = DataTransferUtils.readSocketString(dataInputStream)
+            val mediaName = dataInputStream.readChars()
 
-
-            when {
-                mediaType.contains("image", true) -> {
+            when (val mediaType = dataInputStream.readInt()) {
+                DataToTransfer.MediaType.IMAGE.value -> {
                     advancedImageRepository.insertImageIntoMediaStore(
                         displayName = mediaName,
                         size = mediaSize,
-                        mimeType = mediaType,
                         dataInputStream = dataInputStream,
                         transferMetaDataUpdateListener = {
                             if (it == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
@@ -124,10 +122,15 @@ open class MediaTransferProtocolImpl @Inject constructor(
         } catch (endOfFileException: EOFException) {
             endOfFileException.printStackTrace()
             return
-        } catch (malformedInput: UTFDataFormatException) {
-            malformedInput.printStackTrace()
-            return
         }
     }
 
+    private fun DataInputStream.readChars(): String {
+        val charLength = readInt()
+        val chars = CharArray(charLength)
+        for(i in 0 until charLength){
+            chars[i] = readChar()
+        }
+        return String(chars)
+    }
 }

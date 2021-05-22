@@ -23,7 +23,6 @@ interface ImageRepository {
     suspend fun insertImageIntoMediaStore(
         displayName: String,
         size: Long,
-        mimeType: String,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocolMetaData) -> Unit,
         bytesReadListener:

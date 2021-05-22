@@ -8,8 +8,16 @@ sealed class DataToTransfer(
     var dataDisplayName: String,
     val dataUri: Uri,
     var dataSize: Long,
-    var dataType: String
+    var dataType: Int
 ) {
+    enum class MediaType(val value: Int) {
+        IMAGE(209),
+        VIDEO(210),
+        AUDIO(211),
+        APP(212),
+        FILE(213)
+    }
+
     override fun equals(other: Any?): Boolean {
         return when (other) {
             this -> true
@@ -28,7 +36,6 @@ sealed class DataToTransfer(
         result = prime * result + (dataSize xor (dataSize ushr 32)).toInt()
         result = prime * result + dataDisplayName.hashCode()
         result = prime * result + dataType.hashCode()
-
         return result
     }
 
@@ -46,7 +53,7 @@ sealed class DataToTransfer(
         dataDisplayName = audioDisplayName,
         dataUri = audioUri,
         dataSize = audioSize,
-        dataType = audioMimeType
+        dataType = MediaType.AUDIO.value
     )
 
     data class DeviceImage(
@@ -61,7 +68,7 @@ sealed class DataToTransfer(
         dataDisplayName = imageDisplayName,
         dataUri = imageUri,
         dataSize = imageSize,
-        dataType = imageMimeType
+        dataType = MediaType.IMAGE.value
     )
 
     data class DeviceVideo(
@@ -77,7 +84,7 @@ sealed class DataToTransfer(
         dataDisplayName = videoDisplayName,
         dataUri = videoUri,
         dataSize = videoSize,
-        dataType = videoMimeType
+        dataType = MediaType.VIDEO.value
     )
 
     data class DeviceApplication(
@@ -89,7 +96,7 @@ sealed class DataToTransfer(
         dataDisplayName = applicationName ?: "Unknow App",
         dataUri = apkPath.toUri(),
         dataSize = appSize,
-        dataType = ".apk"
+        dataType = MediaType.APP.value
     )
 }
 

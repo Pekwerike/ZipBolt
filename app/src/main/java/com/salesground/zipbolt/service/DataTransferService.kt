@@ -10,10 +10,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.salesground.zipbolt.MainActivity
-import com.salesground.zipbolt.OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE
-import com.salesground.zipbolt.R
-import com.salesground.zipbolt.communication.DataTransferUtils
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
@@ -42,7 +38,6 @@ class DataTransferService : Service() {
         const val IS_SERVER: String = "IsDeviceTheServer"
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
     }
-
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
 
     // private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
@@ -222,8 +217,10 @@ class DataTransferService : Service() {
                     dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                 }
                 MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
+                    // write the collection size to the peer
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                    dataOutputStream.writeInt(dataCollection.size)
                     for (dataToTransfer in dataCollection) {
-                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                         mediaTransferProtocol.transferMedia(
                             dataToTransfer,
                             dataOutputStream
@@ -238,7 +235,6 @@ class DataTransferService : Service() {
                         delay(100)
                     }
                     mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
-                    //   dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                 }
                 MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
                     mediaTransferProtocol.cancelCurrentTransfer(
@@ -250,6 +246,7 @@ class DataTransferService : Service() {
 
                 }
             }
+            delay(50)
         }
     }
 
@@ -259,26 +256,30 @@ class DataTransferService : Service() {
             when (dataInputStream.readInt()) {
                 MediaTransferProtocolMetaData.NO_DATA.value -> continue
                 MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
-                    mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String, dataUri: Uri ->
-                        incomingDataBroadcastIntent.apply {
-                            putExtra(
-                                IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
-                                dataDisplayName
-                            )
-                            putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI, dataUri)
-                            putExtra(
-                                IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                                percentageOfDataRead
-                            )
-                            putExtra(
-                                IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
-                                dataType
-                            )
-                            putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE, dataSize)
-                            localBroadcastManager.sendBroadcast(this)
+                    // read the number of files sent from the peer
+                    val filesCount = dataInputStream.readInt()
+                    for (i in 0 until filesCount) {
+                        mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri ->
+                            incomingDataBroadcastIntent.apply {
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
+                                    dataDisplayName
+                                )
+                                putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI, dataUri)
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
+                                    percentageOfDataRead
+                                )
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
+                                    dataType
+                                )
+                                putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE, dataSize)
+                                localBroadcastManager.sendBroadcast(this)
+                            }
                         }
+                        delay(100)
                     }
-                    delay(100)
                 }
                 MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
                     mediaTransferProtocol.cancelCurrentTransfer(
@@ -286,11 +287,11 @@ class DataTransferService : Service() {
                     )
                 }
             }
+            delay(50)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
     }
-
 }
