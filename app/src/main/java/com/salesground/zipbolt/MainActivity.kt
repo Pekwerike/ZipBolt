@@ -533,12 +533,12 @@ class MainActivity : AppCompatActivity() {
 
     fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
         mainActivityViewModel.addDataToTransfer(dataToTransfer)
-        displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
+      //  displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
     fun removeFromDataToTransferList(dataToTransfer: DataToTransfer) {
         mainActivityViewModel.removeDataFromDataToTransfer(dataToTransfer)
-        displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
+        //displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
 

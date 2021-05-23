@@ -32,6 +32,12 @@ class IncomingDataBroadcastReceiver : BroadcastReceiver() {
                         INCOMING_FILE_MIME_TYPE,
                         DataToTransfer.MediaType.IMAGE.value
                     )
+                   /* Log.i(
+                        "TransferMessage", "Receiving " +
+                                "$fileName at $bytesReceived"
+                    )*/
+                }
+                else -> {
 
                 }
             }
