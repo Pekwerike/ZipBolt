@@ -6,16 +6,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.OngoingDataTransferLayoutItemBinding
+import com.salesground.zipbolt.model.DataToTransfer
+import kotlin.math.roundToInt
 
 class OngoingDataTransferViewHolder(private val ongoingDataTransferLayoutItemBinding: OngoingDataTransferLayoutItemBinding) :
     RecyclerView.ViewHolder(ongoingDataTransferLayoutItemBinding.root) {
 
-    fun bindData(){
+    fun bindData(dataToTransfer: DataToTransfer) {
         ongoingDataTransferLayoutItemBinding.apply {
-            dataDisplayName = "Replace oo"
-            dataPercentState = 908
+            dataDisplayName = dataToTransfer.dataDisplayName
+            dataTransferPercent = dataToTransfer.percentTransfered.roundToInt()
+            dataTransferPercentAsString = "${dataTransferPercent}%"
         }
     }
+
     companion object {
         fun createViewHolder(parent: ViewGroup): OngoingDataTransferViewHolder {
             val layoutItemBinding = DataBindingUtil.inflate<OngoingDataTransferLayoutItemBinding>(

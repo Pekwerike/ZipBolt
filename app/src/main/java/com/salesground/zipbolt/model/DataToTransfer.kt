@@ -8,7 +8,8 @@ sealed class DataToTransfer(
     var dataDisplayName: String,
     val dataUri: Uri,
     var dataSize: Long,
-    var dataType: Int
+    var dataType: Int,
+    var percentTransfered: Float = 0f
 ) {
     enum class MediaType(val value: Int) {
         IMAGE(209),

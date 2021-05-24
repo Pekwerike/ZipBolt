@@ -42,6 +42,7 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
+import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -105,6 +106,8 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
+
+    private val expandedConnectedToPeerTransferOngoingRecyclerviewAdapter = ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter()
 
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
@@ -425,9 +428,32 @@ class MainActivity : AppCompatActivity() {
 
             }
             expandedConnectedToPeerTransferOngoingLayout.apply {
-
+                expandedConnectedToPeerTransferOngoingRecyclerView.adapter =
+                    expandedConnectedToPeerTransferOngoingRecyclerviewAdapter
             }
         }
+        connectedToPeerTransferOngoingBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when(newState){
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        mainActivityViewModel.collapsedConnectedToPeerTransferOngoing()
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                    .collapsedConnectedToPeerOngoingDataTransferLayout
+                    .root.alpha = 1 - slideOffset * 3.5f
+                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                    .expandedConnectedToPeerTransferOngoingLayout
+                    .root.alpha = slideOffset
+            }
+        })
     }
 
     private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(connectedDevice: WifiP2pDevice) {
