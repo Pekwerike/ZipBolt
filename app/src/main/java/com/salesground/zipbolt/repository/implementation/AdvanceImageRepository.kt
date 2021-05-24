@@ -25,6 +25,7 @@ class AdvanceImageRepository @Inject constructor(
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context) {
     private val buffer = ByteArray(1024 * 8)
+    private val contentValues = ContentValues()
 
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -42,7 +43,8 @@ class AdvanceImageRepository @Inject constructor(
             savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
         val imageFile = File(imagesBaseDirectory, verifiedImageName)
 
-        val contentValues = ContentValues().apply {
+        contentValues.clear()
+        contentValues.apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
             put(MediaStore.Images.Media.TITLE, imageFile.name)
             put(MediaStore.Images.Media.SIZE, size)
@@ -65,12 +67,12 @@ class AdvanceImageRepository @Inject constructor(
 
 
         // percentage of bytes read is 0% here
-       /* bytesReadListener(
-            displayName,
-            size,
-            0f,
-            imageUri!!
-        )*/
+        /* bytesReadListener(
+             displayName,
+             size,
+             0f,
+             imageUri!!
+         )*/
 
 
         while (mediaSize > 0) {
@@ -80,17 +82,17 @@ class AdvanceImageRepository @Inject constructor(
                 }
                 MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value -> {
                     // delete image file
-                   /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        contentValues.clear()
-                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                        context.contentResolver.update(
-                            imageUri,
-                            contentValues,
-                            null,
-                            null
-                        )
-                    }*/
-                 //   context.contentResolver.delete(imageUri, null, null)
+                    /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                         contentValues.clear()
+                         contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                         context.contentResolver.update(
+                             imageUri,
+                             contentValues,
+                             null,
+                             null
+                         )
+                     }*/
+                    //   context.contentResolver.delete(imageUri, null, null)
                     imageFile.delete()
                     return
                 }
