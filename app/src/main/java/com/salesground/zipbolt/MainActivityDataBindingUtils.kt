@@ -10,7 +10,7 @@ import androidx.viewbinding.ViewBindings
 import com.salesground.zipbolt.databinding.*
 
 
-object DataBindingUtils {
+object MainActivityDataBindingUtils {
 
     fun getExpandedSearchingForPeersBinding(activity: Activity)
             : ExpandedSearchingForPeersInformationBinding {
@@ -39,6 +39,14 @@ object DataBindingUtils {
             activity.findViewById<ViewStub>(R.id.connected_to_peer_no_action_persistent_bottom_sheet_view_stub)
                 .inflate()
         return ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding.bind(view)
+    }
+
+    fun getConnectedToPeerTransferOngoingPersistentBottomSheetBinding(activity: Activity):
+            ConnectedToPeerTransferOngoingPersistentBottomSheetBinding {
+        val view =
+            activity.findViewById<ViewStub>(R.id.connected_to_peer_transfer_ongoing_persistent_bottom_sheet_view_stub)
+                .inflate()
+        return ConnectedToPeerTransferOngoingPersistentBottomSheetBinding.bind(view)
     }
 
 }

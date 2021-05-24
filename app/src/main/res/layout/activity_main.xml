@@ -44,6 +44,14 @@
         android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
         />
 
+    <ViewStub
+        android:id="@+id/connected_to_peer_transfer_ongoing_persistent_bottom_sheet_view_stub"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout="@layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet"
+        />
+
     <include
         android:id="@+id/connection_info_persistent_bottom_sheet_layout"
         layout="@layout/persistent_bottom_sheet_layout" />

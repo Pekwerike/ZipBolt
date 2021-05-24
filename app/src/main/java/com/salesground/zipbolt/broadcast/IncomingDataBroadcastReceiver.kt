@@ -26,7 +26,7 @@ class IncomingDataBroadcastReceiver : BroadcastReceiver() {
                 INCOMING_DATA_BYTES_RECEIVED_ACTION -> {
                     val fileName = intent.getStringExtra(INCOMING_FILE_NAME)
                     val bytesReceived = intent.getFloatExtra(PERCENTAGE_OF_DATA_RECEIVED, 0f)
-                    val fileUri = intent.getParcelableExtra<Uri>(INCOMING_FILE_URI)
+                    val fileUri = intent.getParcelableExtra<Uri?>(INCOMING_FILE_URI)
                     val fileSize = intent.getLongExtra(INCOMING_FILE_SIZE, 0)
                     val fileType = intent.getIntExtra(
                         INCOMING_FILE_MIME_TYPE,

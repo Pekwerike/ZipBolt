@@ -48,7 +48,7 @@ interface MediaTransferProtocol {
         dataInputStream: DataInputStream,
         bytesReceivedListener: (
             dataDisplayName: String, dataSize: Long,  percentageOfDataRead: Float, dataType: Int,
-            dataUri: Uri
+         dataUri: Uri?
         ) -> Unit
     )
 }

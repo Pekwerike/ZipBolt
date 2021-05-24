@@ -1,21 +1,17 @@
 package com.salesground.zipbolt.service
 
-import android.app.Notification
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.notification.FILE_TRANSFER_SERVICE_NOTIFICATION_ID
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
+import com.salesground.zipbolt.notification.FileTransferServiceNotification.Companion.FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -37,6 +33,7 @@ class DataTransferService : Service() {
     companion object {
         const val IS_SERVER: String = "IsDeviceTheServer"
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
+        const val SOCKET_PORT = 7091
     }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
@@ -222,7 +219,6 @@ class DataTransferService : Service() {
 
 
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
-        withContext(Dispatchers.IO) {
             while (true) {
                 when (mediaTransferProtocolMetaData) {
                     MediaTransferProtocolMetaData.NO_DATA -> {
@@ -258,12 +254,9 @@ class DataTransferService : Service() {
                     }
                 }
             }
-        }
     }
 
-
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-        withContext(Dispatchers.IO) {
             while (true) {
                 when (dataInputStream.readInt()) {
                     MediaTransferProtocolMetaData.NO_DATA.value -> continue
@@ -272,7 +265,7 @@ class DataTransferService : Service() {
                         // read the number of files sent from the peer
                         val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
                         for (i in 0 until filesCount) {
-                            mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri ->
+                            mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri? ->
                                 incomingDataBroadcastIntent.apply {
                                     putExtra(
                                         IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
@@ -307,7 +300,6 @@ class DataTransferService : Service() {
                     }
                 }
             }
-        }
     }
 
     override fun onDestroy() {

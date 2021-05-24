@@ -19,16 +19,17 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-const val FILE_TRANSFER_SERVICE_NOTIFICATION_ID = "FileTransferServiceNotificationID"
-const val FILE_TRANSFER_SERVICE_CHANNEL_NAME = "ZipBolt File Transfer Service Notification"
-
-
 class FileTransferServiceNotification @Inject
 constructor(
     private val notificationManager: NotificationManager,
     @ApplicationContext private val context: Context
 ) : LifecycleObserver {
 
+    companion object {
+        const val FILE_TRANSFER_SERVICE_NOTIFICATION_ID = "FileTransferServiceNotificationID"
+        const val FILE_TRANSFER_SERVICE_CHANNEL_NAME = "ZipBolt File Transfer Service Notification"
+        const val FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID = 2
+    }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun createFTSNotificationChannel() {

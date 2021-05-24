@@ -5,20 +5,14 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
-import com.salesground.zipbolt.communication.DataTransferUtils
-import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
 import com.salesground.zipbolt.repository.ZipBoltMediaCategory
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import java.io.*
 import javax.inject.Inject
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,

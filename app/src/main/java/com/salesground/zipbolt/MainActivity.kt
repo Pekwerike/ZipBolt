@@ -15,7 +15,6 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.FrameLayout
@@ -113,17 +112,24 @@ class MainActivity : AppCompatActivity() {
 
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
-        DataBindingUtils.getExpandedSearchingForPeersBinding(this)
+        MainActivityDataBindingUtils.getExpandedSearchingForPeersBinding(this)
     }
 
     private val collapsedSearchingForPeersInfoBinding:
             CollapsedSearchingForPeersInformationBinding by lazy {
-        DataBindingUtils.getCollapsedSearchingForPeersBinding(this)
+        MainActivityDataBindingUtils.getCollapsedSearchingForPeersBinding(this)
     }
 
     private val connectedToPeerNoActionBottomSheetLayoutBinding:
             ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding by lazy {
-        DataBindingUtils.getConnectedToPeerNoActionPersistentBottomSheetBinding(this)
+        MainActivityDataBindingUtils.getConnectedToPeerNoActionPersistentBottomSheetBinding(this)
+    }
+
+    private val connectedToPeerTransferOngoingBottomSheetLayoutBinding:
+            ConnectedToPeerTransferOngoingPersistentBottomSheetBinding by lazy {
+        MainActivityDataBindingUtils.getConnectedToPeerTransferOngoingPersistentBottomSheetBinding(
+            this
+        )
     }
 
     private val connectedToPeerNoActionBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
@@ -131,6 +137,13 @@ class MainActivity : AppCompatActivity() {
             connectedToPeerNoActionBottomSheetLayoutBinding.root
         )
     }
+
+    private val connectedToPeerTransferOngoingBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
+        BottomSheetBehavior.from(
+            connectedToPeerTransferOngoingBottomSheetLayoutBinding.root
+        )
+    }
+
 
     // service variables
     private var dataTransferService: DataTransferService? = null
@@ -162,8 +175,8 @@ class MainActivity : AppCompatActivity() {
             wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
         ) {
-
             startPeerDiscovery = false
+            // update the ui to show that this device is connected to peer
             mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
             if (dataTransferService?.isActive == true) {
 
@@ -254,7 +267,7 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.collectionOfDataToTransfer,
                 ) { displayName: String, dataSize: Long, percentTransferred: Float,
                     transferState: MediaTransferProtocol.TransferState ->
-                 //   Log.i("Transfers", "Sending $displayName with $percentTransferred %")
+                    //   Log.i("Transfers", "Sending $displayName with $percentTransferred %")
                 }
             }
 
@@ -533,7 +546,7 @@ class MainActivity : AppCompatActivity() {
 
     fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
         mainActivityViewModel.addDataToTransfer(dataToTransfer)
-      //  displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
+        //  displayToast("Clicked ${mainActivityViewModel.collectionOfDataToTransfer.size}")
     }
 
     fun removeFromDataToTransferList(dataToTransfer: DataToTransfer) {
