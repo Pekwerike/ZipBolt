@@ -81,14 +81,9 @@ class MainActivity : AppCompatActivity() {
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var modalBottomSheetDialog: BottomSheetDialog
-    private val searchingForPeersBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
-        BottomSheetBehavior.from(
-            activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
-        )
-    }
-
     private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
+    private var isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
 
@@ -129,6 +124,13 @@ class MainActivity : AppCompatActivity() {
             ConnectedToPeerTransferOngoingPersistentBottomSheetBinding by lazy {
         MainActivityDataBindingUtils.getConnectedToPeerTransferOngoingPersistentBottomSheetBinding(
             this
+        )
+    }
+
+    // persistent bottom sheet behavior variables
+    private val searchingForPeersBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
+        BottomSheetBehavior.from(
+            activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
         )
     }
 
@@ -262,6 +264,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             sendFileButton.setOnClickListener {
+                /* TODO 1. Change the activity UI to show the list of elements in transfer
+                2. As the progress of each elements happen, update the activity UI to reflect it
+                * */
+                mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+
                 // transfer data using the DataTransferService
                 dataTransferService?.transferData(
                     mainActivityViewModel.collectionOfDataToTransfer,
@@ -310,7 +317,7 @@ class MainActivity : AppCompatActivity() {
         mainActivityViewModel.peerConnectionUIState.observe(this) {
             it?.let {
                 when (it) {
-                    is PeerConnectionUIState.CollapsedConnectedToPeer -> {
+                    is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
 
 
                     }
@@ -324,7 +331,7 @@ class MainActivity : AppCompatActivity() {
                             it.numberOfDevicesFound
                         collapseBottomSheet()
                     }
-                    is PeerConnectionUIState.ExpandedConnectedToPeer -> {
+                    is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
                         if (!isSearchingForPeersBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
                     }
                     is PeerConnectionUIState.ExpandedSearchingForPeer -> {

@@ -2,6 +2,7 @@ package com.salesground.zipbolt.model.ui
 
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
+import com.salesground.zipbolt.model.DataToTransfer
 
 /*
 "Created PeerConnectionUIState to represent the various states of the
@@ -16,18 +17,23 @@ sealed class PeerConnectionUIState {
     data class ExpandedSearchingForPeer(val devices: MutableList<WifiP2pDevice>) :
         PeerConnectionUIState()
 
-    data class CollapsedConnectedToPeer(
-        val peeredDeviceConnectionInfo: WifiP2pInfo
+    data class CollapsedConnectedToPeerTransferOngoing(
+        val peeredDeviceConnectionInfo: WifiP2pInfo,
+        val currentDataInTransfer: DataToTransfer
     ) : PeerConnectionUIState()
 
-    data class ExpandedConnectedToPeer(val peeredDeviceConnectionInfo: WifiP2pInfo) :
-        PeerConnectionUIState()
+    data class ExpandedConnectedToPeerTransferOngoing(
+        val peeredDeviceConnectionInfo: WifiP2pInfo,
+        val collectionOfDataToTransfer: MutableList<DataToTransfer>
+    ) : PeerConnectionUIState()
 
-    data class ExpandedConnectedToPeerNoAction(val peeredDeviceConnectionInfo: WifiP2pInfo,
-    val connectedDevice : WifiP2pDevice) :
-        PeerConnectionUIState()
+    data class ExpandedConnectedToPeerNoAction(
+        val peeredDeviceConnectionInfo: WifiP2pInfo,
+        val connectedDevice: WifiP2pDevice
+    ) : PeerConnectionUIState()
 
-    data class CollapsedConnectedToPeerNoAction(val peeredDeviceConnectionInfo: WifiP2pInfo,
-    val connectedDevice : WifiP2pDevice) :
-        PeerConnectionUIState()
+    data class CollapsedConnectedToPeerNoAction(
+        val peeredDeviceConnectionInfo: WifiP2pInfo,
+        val connectedDevice: WifiP2pDevice
+    ) : PeerConnectionUIState()
 }

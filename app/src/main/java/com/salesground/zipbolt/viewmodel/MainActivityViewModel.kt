@@ -17,7 +17,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         deviceName = "Samsung Galaxy X2"
         deviceAddress = "192.021.294.24"
     }
-    private var peeredDeviceInfo: WifiP2pInfo = WifiP2pInfo()
+    private var wifiP2pCurrentConnectionInfo: WifiP2pInfo = WifiP2pInfo()
     private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()
     private val _peerConnectionUIState =
         MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
@@ -25,16 +25,37 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         get() = _peerConnectionUIState
 
 
-    fun peerConnectionNoAction(){
+    fun peerConnectionNoAction() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
     }
 
     fun collapsedConnectedToPeerNoAction() {
-        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(peeredDeviceInfo, peeredDevice)
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedConnectedToPeerNoAction(
+            wifiP2pCurrentConnectionInfo,
+            peeredDevice
+        )
     }
 
     fun expandedConnectedToPeerNoAction() {
-        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerNoAction(peeredDeviceInfo, peeredDevice)
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerNoAction(
+            wifiP2pCurrentConnectionInfo,
+            peeredDevice
+        )
+    }
+
+    fun collapsedConnectedToPeerTransferOngoing() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing(
+                wifiP2pCurrentConnectionInfo,
+                collectionOfDataToTransfer[0]
+            )
+    }
+
+    fun expandedConnectedToPeerTransferOngoing() {
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
+            wifiP2pCurrentConnectionInfo,
+            collectionOfDataToTransfer
+        )
     }
 
     fun collapsedSearchingForPeers() {
@@ -48,7 +69,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
-        peeredDeviceInfo = wifiP2pInfo // remove this line, later after extensive tests
+        wifiP2pCurrentConnectionInfo = wifiP2pInfo // remove this line, later after extensive tests
         this.peeredDevice = peeredDevice
         _peerConnectionUIState.value =
             PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, peeredDevice)
@@ -67,11 +88,11 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun addDataToTransfer(dataToTransfer: DataToTransfer){
+    fun addDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.add(dataToTransfer)
     }
 
-    fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer){
+    fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.remove(dataToTransfer)
     }
 }
