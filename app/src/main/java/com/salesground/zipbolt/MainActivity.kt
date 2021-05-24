@@ -23,6 +23,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
@@ -383,11 +384,13 @@ class MainActivity : AppCompatActivity() {
                             .mediumSearchingForPeersAnimation
                             .setKeepAnimating(false)
 
+                        // hide the expanded connected to pair no action layout
                         connectedToPeerNoActionBottomSheetLayoutBinding
                             .expandedConnectedToPeerNoActionLayout
                             .root
                             .alpha = 0f
 
+                        // set bottom sheet peek height
                         connectedToPeerNoActionBottomSheetBehavior.peekHeight =
                             getBottomSheetPeekHeight()
                         connectedToPeerNoActionBottomSheetBehavior.state =
@@ -411,6 +414,18 @@ class MainActivity : AppCompatActivity() {
                             BottomSheetBehavior.STATE_EXPANDED
                     }
                 }
+            }
+        }
+    }
+
+    private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
+        isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true
+        connectedToPeerTransferOngoingBottomSheetLayoutBinding.apply {
+            collapsedConnectedToPeerOngoingDataTransferLayout.apply {
+
+            }
+            expandedConnectedToPeerTransferOngoingLayout.apply {
+
             }
         }
     }
@@ -652,7 +667,6 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun cancelDeviceConnection() {
-
         wifiP2pManager.removeGroup(wifiP2pChannel,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
