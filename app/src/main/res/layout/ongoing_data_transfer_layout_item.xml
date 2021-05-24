@@ -15,6 +15,10 @@
         <variable
             name="dataTransferPercentAsString"
             type="String" />
+
+        <variable
+            name="dataTransferState"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,6 +30,7 @@
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_margin="4dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_undraw_well_done"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -38,7 +43,7 @@
             android:layout_margin="8dp"
             android:layout_marginBottom="4dp"
             android:lines="1"
-            android:text="Captain America.mp4"
+            android:text="@{dataDisplayName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
@@ -50,7 +55,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="4dp"
-            android:progress="50"
+            android:progress="0"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_item_transfer_status_text_view"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_item_transfer_percentage_text_view"
             app:layout_constraintStart_toStartOf="@+id/ongoing_data_transfer_layout_data_display_name"
@@ -61,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
-            android:text="50%"
+            android:text="@{dataTransferPercentAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
@@ -83,7 +88,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginVertical="4dp"
-            android:text="Receiving"
+            android:text="@{dataTransferState}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             android:textColor="@color/green_500"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.OngoingDataTransferLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
@@ -15,8 +16,12 @@ class OngoingDataTransferViewHolder(private val ongoingDataTransferLayoutItemBin
     fun bindData(dataToTransfer: DataToTransfer) {
         ongoingDataTransferLayoutItemBinding.apply {
             dataDisplayName = dataToTransfer.dataDisplayName
-            dataTransferPercent = dataToTransfer.percentTransfered.roundToInt()
+            dataTransferPercent = dataToTransfer.percentTransferred.roundToInt()
             dataTransferPercentAsString = "${dataTransferPercent}%"
+
+            Glide.with(root.context)
+                .load(dataToTransfer.dataUri)
+                .into(ongoingDataTransferDataCategoryImageView)
         }
     }
 

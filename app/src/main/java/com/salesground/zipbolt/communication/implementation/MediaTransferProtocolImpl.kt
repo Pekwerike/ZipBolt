@@ -31,10 +31,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
-        dataTransferListener: (
-            displayName: String, dataSize: Long, percentTransferred: Float,
-            transferState: TransferState
-        ) -> Unit
+        dataTransferListener: (DataToTransfer) -> Unit
     ) {
         ongoingTransfer.set(true)
 
@@ -54,10 +51,10 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
                 dataTransferListener(
-                    dataToTransfer.dataDisplayName,
-                    dataToTransfer.dataSize,
-                    0f,
-                    TransferState.TRANSFERING
+                    dataToTransfer.apply {
+                        percentTransferred = 0f
+                        transferState = TransferState.TRANSFERING.name
+                    }
                 )
 
                 var lengthRead: Int
@@ -87,11 +84,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
                     }
                     dataOutputStream.write(buffer, 0, lengthRead)
+
                     dataTransferListener(
-                        dataToTransfer.dataDisplayName,
-                        dataToTransfer.dataSize,
-                        ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
-                        TransferState.TRANSFERING
+                        dataToTransfer.apply {
+                            percentTransferred =
+                                ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f
+                            transferState = TransferState.TRANSFERING.name
+                        }
                     )
                 }
 

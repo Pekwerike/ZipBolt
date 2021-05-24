@@ -44,10 +44,7 @@ class DataTransferService : Service() {
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
-    private var dataTransferListener: ((
-        displayName: String, dataSize: Long, percentTransferred: Float,
-        transferState: TransferState
-    ) -> Unit)? = null
+    private var dataTransferListener: ((DataToTransfer) -> Unit)? = null
     private val incomingDataBroadcastIntent =
         Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
@@ -137,10 +134,7 @@ class DataTransferService : Service() {
 
     fun transferData(
         dataCollectionSelected: MutableList<DataToTransfer>,
-        dataTransferListener: (
-            displayName: String, dataSize: Long, percentTransferred: Float,
-            transferState: TransferState
-        ) -> Unit
+        dataTransferListener: (DataToTransfer) -> Unit
     ) {
         while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
             // get stuck here
@@ -219,87 +213,82 @@ class DataTransferService : Service() {
 
 
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
-            while (true) {
-                when (mediaTransferProtocolMetaData) {
-                    MediaTransferProtocolMetaData.NO_DATA -> {
-                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
-                    }
-                    MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
-                        // write the collection size to the peer
-                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
-                        dataOutputStream.writeInt(dataCollection.size)
-                        for (dataToTransfer in dataCollection) {
-                            mediaTransferProtocol.transferMedia(
-                                dataToTransfer,
-                                dataOutputStream
-                            ) { displayName: String, dataSize: Long, percentTransferred: Float, transferState: TransferState ->
-                                dataTransferListener?.invoke(
-                                    displayName,
-                                    dataSize,
-                                    percentTransferred,
-                                    transferState
-                                )
-                            }
+        while (true) {
+            when (mediaTransferProtocolMetaData) {
+                MediaTransferProtocolMetaData.NO_DATA -> {
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                }
+                MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
+                    // write the collection size to the peer
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                    dataOutputStream.writeInt(dataCollection.size)
+                    for (dataToTransfer in dataCollection) {
+                        mediaTransferProtocol.transferMedia(
+                            dataToTransfer,
+                            dataOutputStream
+                        ) {
+                            dataTransferListener?.invoke(it)
                         }
-                        mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
                     }
-                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
-                        mediaTransferProtocol.cancelCurrentTransfer(
-                            transferMetaData =
-                            MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
-                        )
-                    }
-                    else -> {
+                    mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
+                }
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
+                    mediaTransferProtocol.cancelCurrentTransfer(
+                        transferMetaData =
+                        MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+                    )
+                }
+                else -> {
 
-                    }
                 }
             }
+        }
     }
 
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-            while (true) {
-                when (dataInputStream.readInt()) {
-                    MediaTransferProtocolMetaData.NO_DATA.value -> continue
-                    MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
-                        delay(300)
-                        // read the number of files sent from the peer
-                        val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
-                        for (i in 0 until filesCount) {
-                            mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri? ->
-                                incomingDataBroadcastIntent.apply {
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
-                                        dataDisplayName
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
-                                        dataUri
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                                        percentageOfDataRead
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
-                                        dataType
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE,
-                                        dataSize
-                                    )
-                                    localBroadcastManager.sendBroadcast(this)
-                                }
+        while (true) {
+            when (dataInputStream.readInt()) {
+                MediaTransferProtocolMetaData.NO_DATA.value -> continue
+                MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
+                    delay(300)
+                    // read the number of files sent from the peer
+                    val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
+                    for (i in 0 until filesCount) {
+                        mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri? ->
+                            incomingDataBroadcastIntent.apply {
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
+                                    dataDisplayName
+                                )
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
+                                    dataUri
+                                )
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
+                                    percentageOfDataRead
+                                )
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
+                                    dataType
+                                )
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE,
+                                    dataSize
+                                )
+                                localBroadcastManager.sendBroadcast(this)
                             }
-                            delay(300)
                         }
-                    }
-                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
-                        mediaTransferProtocol.cancelCurrentTransfer(
-                            transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
-                        )
+                        delay(300)
                     }
                 }
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
+                    mediaTransferProtocol.cancelCurrentTransfer(
+                        transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+                    )
+                }
             }
+        }
     }
 
     override fun onDestroy() {

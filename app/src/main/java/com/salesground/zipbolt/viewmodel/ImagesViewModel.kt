@@ -138,7 +138,7 @@ class ImagesViewModel @Inject constructor(
 
 
     fun onImageClicked(imageClicked: ImagesDisplayModel) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch (Dispatchers.IO){
             imageClicked as ImagesDisplayModel.DeviceImageDisplay
             if (collectionOfClickedImages.containsKey(imageClicked)) {
                 // un clicked

@@ -107,7 +107,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private val expandedConnectedToPeerTransferOngoingRecyclerviewAdapter = ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter()
+    private val expandedConnectedToPeerTransferOngoingRecyclerviewAdapter =
+        ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter()
 
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
@@ -278,7 +279,7 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.collectionOfDataToTransfer,
                 ) { displayName: String, dataSize: Long, percentTransferred: Float,
                     transferState: MediaTransferProtocol.TransferState ->
-                    //   Log.i("Transfers", "Sending $displayName with $percentTransferred %")
+
                 }
             }
 
@@ -312,9 +313,9 @@ class MainActivity : AppCompatActivity() {
         }
         observeViewModelLiveData()
         // bind to the data transfer service
-        /*Intent(this, DataTransferService::class.java).also {
+        Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
-        }*/
+        }
     }
 
     private fun observeViewModelLiveData() {
@@ -322,8 +323,21 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
+                        if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
+                            configureConnectedToPeerTransferOngoingBottomSheetLayout()
+                        }
+                        connectedToPeerTransferOngoingBottomSheetBehavior.apply {
+                            state = BottomSheetBehavior.STATE_COLLAPSED
+                            peekHeight = getBottomSheetPeekHeight()
+                        }
 
-
+                        // hide the connected to pair no action bottom sheet
+                        connectedToPeerNoActionBottomSheetBehavior.apply {
+                            isHideable = true
+                            state = BottomSheetBehavior.STATE_HIDDEN
+                        }
+                        connectedToPeerNoActionBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_HIDDEN
                     }
                     is PeerConnectionUIState.CollapsedSearchingForPeer -> {
                         // update the UI to display the number of devices found
@@ -336,7 +350,23 @@ class MainActivity : AppCompatActivity() {
                         collapseBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
-                        if (!isSearchingForPeersBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
+                        if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
+                            configureConnectedToPeerTransferOngoingBottomSheetLayout()
+                        }
+                        expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.submitList(
+                            it.collectionOfDataToTransfer
+                        )
+                        connectedToPeerTransferOngoingBottomSheetBehavior.apply {
+                            state =
+                                BottomSheetBehavior.STATE_EXPANDED
+                            peekHeight =
+                                getBottomSheetPeekHeight()
+                        }
+                        // hide the connected to pair no action bottom sheet
+                        connectedToPeerNoActionBottomSheetBehavior.apply {
+                            isHideable = true
+                            state = BottomSheetBehavior.STATE_HIDDEN
+                        }
                     }
                     is PeerConnectionUIState.ExpandedSearchingForPeer -> {
                         if (!isSearchingForPeersBottomSheetLayoutConfigured) {
@@ -435,7 +465,7 @@ class MainActivity : AppCompatActivity() {
         connectedToPeerTransferOngoingBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when(newState){
+                when (newState) {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                     }

@@ -9,7 +9,8 @@ sealed class DataToTransfer(
     val dataUri: Uri,
     var dataSize: Long,
     var dataType: Int,
-    var percentTransfered: Float = 0f
+    var percentTransferred: Float = 0f,
+    var transferState: String = "Transferring"
 ) {
     enum class MediaType(val value: Int) {
         IMAGE(209),
