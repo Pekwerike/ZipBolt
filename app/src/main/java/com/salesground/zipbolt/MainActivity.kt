@@ -15,6 +15,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.FrameLayout
@@ -22,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -45,6 +47,8 @@ import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -277,9 +281,20 @@ class MainActivity : AppCompatActivity() {
                 // transfer data using the DataTransferService
                 dataTransferService?.transferData(
                     mainActivityViewModel.collectionOfDataToTransfer,
-                ) { displayName: String, dataSize: Long, percentTransferred: Float,
-                    transferState: MediaTransferProtocol.TransferState ->
-
+                ) { displayName, dataSize, percentTransferred, dataUri ->
+                    mainActivityViewModel.collectionOfDataToTransfer.find {
+                        it.dataUri == dataUri
+                    }?.let {
+                        val updatedIndex =
+                            mainActivityViewModel.collectionOfDataToTransfer.indexOf(it)
+                        it.percentTransferred = percentTransferred
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.submitList(
+                                mainActivityViewModel.collectionOfDataToTransfer
+                            )
+                            expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.notifyItemChanged(updatedIndex)
+                        }
+                    }
                 }
             }
 
@@ -458,8 +473,10 @@ class MainActivity : AppCompatActivity() {
 
             }
             expandedConnectedToPeerTransferOngoingLayout.apply {
-                expandedConnectedToPeerTransferOngoingRecyclerView.adapter =
-                    expandedConnectedToPeerTransferOngoingRecyclerviewAdapter
+                expandedConnectedToPeerTransferOngoingRecyclerView.apply {
+                    adapter = expandedConnectedToPeerTransferOngoingRecyclerviewAdapter
+                    setHasFixedSize(true)
+                }
             }
         }
         connectedToPeerTransferOngoingBottomSheetBehavior.addBottomSheetCallback(object :

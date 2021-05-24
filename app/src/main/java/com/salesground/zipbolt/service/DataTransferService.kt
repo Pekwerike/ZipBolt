@@ -1,10 +1,14 @@
 package com.salesground.zipbolt.service
 
+import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
@@ -44,7 +48,10 @@ class DataTransferService : Service() {
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
-    private var dataTransferListener: ((DataToTransfer) -> Unit)? = null
+    private var dataTransferListener: ((
+        displayName: String, dataSize: Long, percentTransferred: Float,
+        dataUri: Uri
+    ) -> Unit)? = null
     private val incomingDataBroadcastIntent =
         Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
 
@@ -134,7 +141,10 @@ class DataTransferService : Service() {
 
     fun transferData(
         dataCollectionSelected: MutableList<DataToTransfer>,
-        dataTransferListener: (DataToTransfer) -> Unit
+        dataTransferListener: (
+            displayName: String, dataSize: Long, percentTransferred: Float,
+            dataUri: Uri
+        ) -> Unit
     ) {
         while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
             // get stuck here
@@ -226,8 +236,13 @@ class DataTransferService : Service() {
                         mediaTransferProtocol.transferMedia(
                             dataToTransfer,
                             dataOutputStream
-                        ) {
-                            dataTransferListener?.invoke(it)
+                        ) { displayName: String, dataSize: Long, percentTransferred: Float, dataUri: Uri ->
+                            dataTransferListener?.invoke(
+                                displayName,
+                                dataSize,
+                                percentTransferred,
+                                dataUri
+                            )
                         }
                     }
                     mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA

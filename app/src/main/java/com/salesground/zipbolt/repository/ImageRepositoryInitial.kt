@@ -25,8 +25,6 @@ class ImageRepositoryInitial @Inject constructor
     private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository
 ) : ImageRepositoryInterface {
 
-
-
     fun fetchAllImagesOnDevicePreviewList(): MutableList<MediaModel> {
         val allImagesOnDevicePreviewList: MutableList<MediaModel> = mutableListOf()
 

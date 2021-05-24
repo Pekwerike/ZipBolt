@@ -15,6 +15,7 @@ class OngoingDataTransferViewHolder(private val ongoingDataTransferLayoutItemBin
 
     fun bindData(dataToTransfer: DataToTransfer) {
         ongoingDataTransferLayoutItemBinding.apply {
+            dataTransferState = dataToTransfer.transferState
             dataDisplayName = dataToTransfer.dataDisplayName
             dataTransferPercent = dataToTransfer.percentTransferred.roundToInt()
             dataTransferPercentAsString = "${dataTransferPercent}%"
@@ -22,6 +23,8 @@ class OngoingDataTransferViewHolder(private val ongoingDataTransferLayoutItemBin
             Glide.with(root.context)
                 .load(dataToTransfer.dataUri)
                 .into(ongoingDataTransferDataCategoryImageView)
+
+            executePendingBindings()
         }
     }
 

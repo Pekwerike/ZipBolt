@@ -31,7 +31,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
-        dataTransferListener: (DataToTransfer) -> Unit
+        dataTransferListener: (displayName: String, dataSize: Long, percentTransferred: Float, dataUri: Uri) -> Unit
     ) {
         ongoingTransfer.set(true)
 
@@ -51,10 +51,10 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
                 dataTransferListener(
-                    dataToTransfer.apply {
-                        percentTransferred = 0f
-                        transferState = TransferState.TRANSFERING.name
-                    }
+                    dataToTransfer.dataDisplayName,
+                    dataToTransfer.dataSize,
+                    0f,
+                    dataToTransfer.dataUri
                 )
 
                 var lengthRead: Int
@@ -86,13 +86,19 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataOutputStream.write(buffer, 0, lengthRead)
 
                     dataTransferListener(
-                        dataToTransfer.apply {
-                            percentTransferred =
-                                ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f
-                            transferState = TransferState.TRANSFERING.name
-                        }
+                        dataToTransfer.dataDisplayName,
+                        dataToTransfer.dataSize,
+                        ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
+                        dataToTransfer.dataUri
                     )
                 }
+
+                dataTransferListener(
+                    dataToTransfer.dataDisplayName,
+                    dataToTransfer.dataSize,
+                     100f,
+                    dataToTransfer.dataUri
+                )
 
                 parcelFileDescriptor.close()
                 fileInputStream.close()
