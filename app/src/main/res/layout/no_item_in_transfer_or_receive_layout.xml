@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/medium_margin"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="@dimen/standard_text_view_padding"
+    android:text="@string/no_item_label"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />

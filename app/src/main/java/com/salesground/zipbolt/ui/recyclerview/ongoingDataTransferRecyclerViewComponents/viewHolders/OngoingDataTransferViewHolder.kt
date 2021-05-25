@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing
+package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

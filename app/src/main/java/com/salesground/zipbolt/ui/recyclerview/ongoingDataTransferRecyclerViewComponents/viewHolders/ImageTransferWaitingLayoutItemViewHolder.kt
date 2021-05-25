@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders
+package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -19,6 +19,7 @@ class ImageTransferWaitingLayoutItemViewHolder(
             Glide.with(imageWaitingForTransferLayoutItemImageView)
                 .load(imageData.dataUri)
                 .into(imageWaitingForTransferLayoutItemImageView)
+            executePendingBindings()
         }
     }
 

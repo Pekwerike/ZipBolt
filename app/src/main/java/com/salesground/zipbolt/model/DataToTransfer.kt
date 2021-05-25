@@ -10,7 +10,7 @@ sealed class DataToTransfer(
     var dataSize: Long,
     var dataType: Int,
     var percentTransferred: Float = 0f,
-    var transferStatus: TransferStatus = TransferStatus.NO_ACTION
+    var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING
 ) {
     enum class TransferStatus(val value: Int){
         NO_ACTION(9),

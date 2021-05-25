@@ -49,8 +49,9 @@ class DataTransferService : Service() {
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
     private var dataTransferListener: ((
-        displayName: String, dataSize: Long, percentTransferred: Float,
-        dataUri: Uri
+        dataToTransfer: DataToTransfer,
+        percentTransferred: Float,
+        transferStatus: DataToTransfer.TransferStatus
     ) -> Unit)? = null
     private val incomingDataBroadcastIntent =
         Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
@@ -142,8 +143,9 @@ class DataTransferService : Service() {
     fun transferData(
         dataCollectionSelected: MutableList<DataToTransfer>,
         dataTransferListener: (
-            displayName: String, dataSize: Long, percentTransferred: Float,
-            dataUri: Uri
+            dataToTransfer: DataToTransfer,
+            percentTransferred: Float,
+            transferStatus: DataToTransfer.TransferStatus
         ) -> Unit
     ) {
         while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
@@ -236,12 +238,13 @@ class DataTransferService : Service() {
                         mediaTransferProtocol.transferMedia(
                             dataToTransfer,
                             dataOutputStream
-                        ) { displayName: String, dataSize: Long, percentTransferred: Float, dataUri: Uri ->
+                        ) { dataToTransfer: DataToTransfer,
+                            percentTransferred: Float,
+                            transferStatus: DataToTransfer.TransferStatus ->
                             dataTransferListener?.invoke(
-                                displayName,
-                                dataSize,
+                                dataToTransfer,
                                 percentTransferred,
-                                dataUri
+                                transferStatus
                             )
                         }
                     }

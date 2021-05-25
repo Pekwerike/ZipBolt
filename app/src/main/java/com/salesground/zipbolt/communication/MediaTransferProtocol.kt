@@ -39,7 +39,9 @@ interface MediaTransferProtocol {
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
         dataTransferListener: (
-            displayName: String, dataSize: Long, percentTransferred: Float, dataUri: Uri
+            dataToTransfer: DataToTransfer,
+            percentTransferred: Float,
+            transferStatus: DataToTransfer.TransferStatus
         ) -> Unit
     )
 

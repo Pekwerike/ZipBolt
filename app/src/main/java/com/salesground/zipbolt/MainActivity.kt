@@ -38,6 +38,7 @@ import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
+import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
@@ -45,10 +46,12 @@ import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -111,8 +114,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private val expandedConnectedToPeerTransferOngoingRecyclerviewAdapter =
-        ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter()
+    private val ongoingDataTransferRecyclerViewAdapter = OngoingDataTransferRecyclerViewAdapter()
 
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
@@ -288,12 +290,14 @@ class MainActivity : AppCompatActivity() {
                         val updatedIndex =
                             mainActivityViewModel.collectionOfDataToTransfer.indexOf(it)
                         it.percentTransferred = percentTransferred
-                        lifecycleScope.launch(Dispatchers.Main) {
+                        /*lifecycleScope.launch(Dispatchers.Main) {
                             expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.submitList(
                                 mainActivityViewModel.collectionOfDataToTransfer
                             )
-                            expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.notifyItemChanged(updatedIndex)
-                        }
+                            expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.notifyItemChanged(
+                                updatedIndex
+                            )
+                        }*/
                     }
                 }
             }
@@ -368,9 +372,38 @@ class MainActivity : AppCompatActivity() {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
-                        expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.submitList(
-                            it.collectionOfDataToTransfer
-                        )
+                        lifecycleScope.launch {
+                            val ongoingDataTransferUIStateList =
+                                mutableListOf<OngoingDataTransferUIState>()
+                            ongoingDataTransferUIStateList.add(
+                                0,
+                                OngoingDataTransferUIState.Header("Sending")
+                            )
+                            ongoingDataTransferUIStateList.add(
+                                1,
+                                OngoingDataTransferUIState.NoItemInTransfer
+                            )
+                            ongoingDataTransferUIStateList.add(
+                                2,
+                                OngoingDataTransferUIState.Header("Receiving")
+                            )
+                            ongoingDataTransferUIStateList.add(
+                                3,
+                                OngoingDataTransferUIState.NoItemInReceive
+                            )
+                            ongoingDataTransferUIStateList.add(
+                                4,
+                                OngoingDataTransferUIState.Header("Queue")
+                            )
+                            ongoingDataTransferUIStateList.addAll(it.collectionOfDataToTransfer.map {
+                                OngoingDataTransferUIState.DataItem(it)
+                            })
+                            withContext(Dispatchers.Main) {
+                                ongoingDataTransferRecyclerViewAdapter.submitList(
+                                    ongoingDataTransferUIStateList
+                                )
+                            }
+                        }
                         connectedToPeerTransferOngoingBottomSheetBehavior.apply {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED
@@ -474,7 +507,7 @@ class MainActivity : AppCompatActivity() {
             }
             expandedConnectedToPeerTransferOngoingLayout.apply {
                 expandedConnectedToPeerTransferOngoingRecyclerView.apply {
-                    adapter = expandedConnectedToPeerTransferOngoingRecyclerviewAdapter
+                    adapter = ongoingDataTransferRecyclerViewAdapter
                     setHasFixedSize(true)
                 }
             }

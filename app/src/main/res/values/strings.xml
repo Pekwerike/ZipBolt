@@ -24,4 +24,5 @@
     <string name="you_can_transfer_and_receive_files_now">You can transfer and receive files now!</string>
     <string name="device_connection_details">Device Details</string>
     <string name="connect_to">Connect to</string>
+    <string name="no_item_label">No item</string>
 </resources>

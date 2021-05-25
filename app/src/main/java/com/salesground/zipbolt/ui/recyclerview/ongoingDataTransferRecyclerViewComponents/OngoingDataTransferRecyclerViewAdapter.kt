@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents
+package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
-import com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders.ImageTransferOrReceiveCompleteLayoutViewHolder
-import com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders.ImageTransferWaitingLayoutItemViewHolder
-import com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders.OngoingTransferCategoryHeaderViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.ImageTransferOrReceiveCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.ImageTransferWaitingLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.NoItemInTransferOrReceiveViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
+import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.OngoingDataTransferViewHolder
 import java.lang.Exception
 
 class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUIState,
@@ -56,9 +58,9 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
             4 -> OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value
             else -> {
                 val dataItem = (getItem(position) as OngoingDataTransferUIState.DataItem)
-                when(dataItem.dataToTransfer.transferStatus){
+                when (dataItem.dataToTransfer.transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
-                        when(dataItem.dataToTransfer){
+                        when (dataItem.dataToTransfer) {
                             is DataToTransfer.DeviceImage -> {
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value
                             }
@@ -73,8 +75,8 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                             }
                         }
                     }
-                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE ->{
-                        when(dataItem.dataToTransfer){
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
+                        when (dataItem.dataToTransfer) {
                             is DataToTransfer.DeviceImage -> {
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
@@ -89,8 +91,8 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                             }
                         }
                     }
-                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE ->{
-                        when(dataItem.dataToTransfer){
+                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
+                        when (dataItem.dataToTransfer) {
                             is DataToTransfer.DeviceImage -> {
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
@@ -106,7 +108,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                         }
                     }
                     DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-                        when(dataItem.dataToTransfer){
+                        when (dataItem.dataToTransfer) {
                             is DataToTransfer.DeviceImage -> {
                                 OngoingDataTransferAdapterViewTypes.ACTIVE_DATA_TRANSFER.value
                             }
@@ -121,8 +123,8 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                             }
                         }
                     }
-                    DataToTransfer.TransferStatus.NO_ACTION ->{
-                        when(dataItem.dataToTransfer){
+                    DataToTransfer.TransferStatus.NO_ACTION -> {
+                        when (dataItem.dataToTransfer) {
                             is DataToTransfer.DeviceImage -> {
                                 300
                             }
@@ -144,7 +146,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(viewType){
+        return when (viewType) {
             OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> {
                 ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
@@ -154,6 +156,15 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
             OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> {
                 OngoingTransferCategoryHeaderViewHolder.createViewHolder(parent)
             }
+            OngoingDataTransferAdapterViewTypes.ACTIVE_DATA_TRANSFER.value -> {
+                OngoingDataTransferViewHolder.createViewHolder(parent)
+            }
+            OngoingDataTransferAdapterViewTypes.NO_ITEM_IN_TRANSFER.value -> {
+                NoItemInTransferOrReceiveViewHolder.createViewHolder(parent)
+            }
+            OngoingDataTransferAdapterViewTypes.NO_ITEM_IN_RECEIVE.value -> {
+                NoItemInTransferOrReceiveViewHolder.createViewHolder(parent)
+            }
             else -> {
                 throw Exception()
             }
@@ -161,15 +172,18 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder){
+        when (holder) {
             is ImageTransferOrReceiveCompleteLayoutViewHolder -> {
                 holder.bindImageData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is ImageTransferWaitingLayoutItemViewHolder -> {
                 holder.bindImageData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
-            is  OngoingTransferCategoryHeaderViewHolder -> {
+            is OngoingTransferCategoryHeaderViewHolder -> {
                 holder.bindCategoryHeaderTitle((currentList[position] as OngoingDataTransferUIState.Header).title)
+            }
+            is OngoingDataTransferViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
         }
     }

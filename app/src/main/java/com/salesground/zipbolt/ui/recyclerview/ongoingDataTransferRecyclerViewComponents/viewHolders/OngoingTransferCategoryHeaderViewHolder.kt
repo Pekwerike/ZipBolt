@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders
+package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,7 +12,10 @@ class OngoingTransferCategoryHeaderViewHolder(
 ) : RecyclerView.ViewHolder(ongoingTransferCategoryHeaderBinding.root) {
 
     fun bindCategoryHeaderTitle(headerTitle: String) {
-        ongoingTransferCategoryHeaderBinding.headerTitle = headerTitle
+        ongoingTransferCategoryHeaderBinding.apply {
+            this.headerTitle = headerTitle
+            executePendingBindings()
+        }
     }
 
     companion object {

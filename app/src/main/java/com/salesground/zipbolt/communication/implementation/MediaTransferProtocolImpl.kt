@@ -31,15 +31,18 @@ open class MediaTransferProtocolImpl @Inject constructor(
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
-        dataTransferListener: (displayName: String, dataSize: Long, percentTransferred: Float, dataUri: Uri) -> Unit
+        dataTransferListener: (
+            dataToTransfer: DataToTransfer,
+            percentTransferred: Float,
+            transferStatus: DataToTransfer.TransferStatus
+        ) -> Unit
     ) {
         ongoingTransfer.set(true)
 
-        withContext(Dispatchers.IO) {
-            dataOutputStream.writeInt(dataToTransfer.dataType)
-            dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
-            dataOutputStream.writeLong(dataToTransfer.dataSize)
-        }
+        dataOutputStream.writeInt(dataToTransfer.dataType)
+        dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
+        dataOutputStream.writeLong(dataToTransfer.dataSize)
+
 
         context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r")
             ?.also { parcelFileDescriptor ->
@@ -51,10 +54,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
                 dataTransferListener(
-                    dataToTransfer.dataDisplayName,
-                    dataToTransfer.dataSize,
+                    dataToTransfer,
                     0f,
-                    dataToTransfer.dataUri
+                    DataToTransfer.TransferStatus.TRANSFER_ONGOING
                 )
 
                 var lengthRead: Int
@@ -86,18 +88,16 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataOutputStream.write(buffer, 0, lengthRead)
 
                     dataTransferListener(
-                        dataToTransfer.dataDisplayName,
-                        dataToTransfer.dataSize,
+                        dataToTransfer,
                         ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
-                        dataToTransfer.dataUri
+                        DataToTransfer.TransferStatus.TRANSFER_ONGOING
                     )
                 }
 
                 dataTransferListener(
-                    dataToTransfer.dataDisplayName,
-                    dataToTransfer.dataSize,
-                     100f,
-                    dataToTransfer.dataUri
+                    dataToTransfer,
+                    100f,
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE
                 )
 
                 parcelFileDescriptor.close()
