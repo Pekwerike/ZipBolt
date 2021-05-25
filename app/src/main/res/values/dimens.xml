@@ -4,4 +4,5 @@
     <dimen name="modal_bottom_sheet_dialog_corner_radius_value">12dp</dimen>
     <dimen name="standard_margin">16dp</dimen>
     <dimen name="standard_text_view_padding">4dp</dimen>
+    <dimen name="medium_margin">8dp</dimen>
 </resources>

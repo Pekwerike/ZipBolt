@@ -15,7 +15,7 @@ class OngoingDataTransferViewHolder(private val ongoingDataTransferLayoutItemBin
 
     fun bindData(dataToTransfer: DataToTransfer) {
         ongoingDataTransferLayoutItemBinding.apply {
-            dataTransferState = dataToTransfer.transferState
+            dataTransferState = dataToTransfer.transferStatus
             dataDisplayName = dataToTransfer.dataDisplayName
             dataTransferPercent = dataToTransfer.percentTransferred.roundToInt()
             dataTransferPercentAsString = "${dataTransferPercent}%"

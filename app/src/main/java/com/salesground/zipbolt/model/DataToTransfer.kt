@@ -10,8 +10,16 @@ sealed class DataToTransfer(
     var dataSize: Long,
     var dataType: Int,
     var percentTransferred: Float = 0f,
-    var transferState: String = "Transferring"
+    var transferStatus: TransferStatus = TransferStatus.NO_ACTION
 ) {
+    enum class TransferStatus(val value: Int){
+        NO_ACTION(9),
+        TRANSFER_WAITING(10),
+        TRANSFER_COMPLETE(11),
+        TRANSFER_ONGOING(13),
+        RECEIVE_COMPLETE(14),
+        RECEIVE_ONGOING(15)
+    }
     enum class MediaType(val value: Int) {
         IMAGE(209),
         VIDEO(210),
