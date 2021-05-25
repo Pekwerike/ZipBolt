@@ -2,32 +2,27 @@ package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewC
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.salesground.zipbolt.R
-import com.salesground.zipbolt.databinding.ImageTransferWaitingLayoutItemBinding
+import com.salesground.zipbolt.databinding.ImageTransferLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
 class ImageTransferWaitingLayoutItemViewHolder(
-    private val imageTransferWaitingLayoutItemBinding: ImageTransferWaitingLayoutItemBinding
-) : RecyclerView.ViewHolder(imageTransferWaitingLayoutItemBinding.root) {
+    private val imageTransferLayoutItemBinding: ImageTransferLayoutItemBinding
+) : RecyclerView.ViewHolder(imageTransferLayoutItemBinding.root) {
 
     fun bindImageData(imageData: DataToTransfer) {
-        imageTransferWaitingLayoutItemBinding.apply {
-            dataSize = "${imageData.dataSize}mb" + "mb"
+        imageTransferLayoutItemBinding.apply {
             Glide.with(imageWaitingForTransferLayoutItemImageView)
                 .load(imageData.dataUri)
                 .into(imageWaitingForTransferLayoutItemImageView)
-            executePendingBindings()
         }
     }
 
     companion object {
         fun createViewHolder(parent: ViewGroup): ImageTransferWaitingLayoutItemViewHolder {
-            val layoutBinding = DataBindingUtil.inflate<ImageTransferWaitingLayoutItemBinding>(
+            val layoutBinding = ImageTransferLayoutItemBinding.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.image_transfer_waiting_layout_item,
                 parent,
                 false
             )

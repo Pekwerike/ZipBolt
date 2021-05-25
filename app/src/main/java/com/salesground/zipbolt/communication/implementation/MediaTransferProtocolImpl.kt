@@ -21,6 +21,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
     private val buffer = ByteArray(1024 * 8)
+    private var dataToTransfer: DataToTransfer? = null
 
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData) {
@@ -38,7 +39,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
         ) -> Unit
     ) {
         ongoingTransfer.set(true)
-
+        this.dataToTransfer = dataToTransfer
         dataOutputStream.writeInt(dataToTransfer.dataType)
         dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
@@ -54,7 +55,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
                 dataTransferListener(
-                    dataToTransfer,
+                   this.dataToTransfer!!,
                     0f,
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING
                 )
@@ -88,14 +89,14 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataOutputStream.write(buffer, 0, lengthRead)
 
                     dataTransferListener(
-                        dataToTransfer,
+                        this.dataToTransfer!!,
                         ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
                     )
                 }
 
                 dataTransferListener(
-                    dataToTransfer,
+                    this.dataToTransfer!!,
                     100f,
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE
                 )

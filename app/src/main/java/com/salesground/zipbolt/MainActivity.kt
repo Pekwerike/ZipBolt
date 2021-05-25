@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -46,7 +47,9 @@ import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter
+import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -283,22 +286,64 @@ class MainActivity : AppCompatActivity() {
                 // transfer data using the DataTransferService
                 dataTransferService?.transferData(
                     mainActivityViewModel.collectionOfDataToTransfer,
-                ) { displayName, dataSize, percentTransferred, dataUri ->
-                    mainActivityViewModel.collectionOfDataToTransfer.find {
-                        it.dataUri == dataUri
-                    }?.let {
-                        val updatedIndex =
-                            mainActivityViewModel.collectionOfDataToTransfer.indexOf(it)
-                        it.percentTransferred = percentTransferred
-                        /*lifecycleScope.launch(Dispatchers.Main) {
+                ) { dataToTransfer: DataToTransfer,
+                    percentTransferred: Float,
+                    transferStatus: DataToTransfer.TransferStatus ->
+                    when (transferStatus) {
+                        DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
+                            lifecycleScope.launch {
+                                mainActivityViewModel.ongoingDataTransferUIStateList.find {
+                                    it.id == dataToTransfer.dataUri.toString()
+                                }.also {
+                                    it?.let { ongoingDataTransferUIState ->
+                                        val index =
+                                            mainActivityViewModel.ongoingDataTransferUIStateList.indexOf(
+                                                ongoingDataTransferUIState
+                                            )
+                                        ongoingDataTransferUIState as OngoingDataTransferUIState.DataItem
+                                        ongoingDataTransferUIState.dataToTransfer.transferStatus =
+                                            transferStatus
+                                        withContext(Dispatchers.Main) {
+                                            ongoingDataTransferRecyclerViewAdapter.submitList(
+                                                mainActivityViewModel.ongoingDataTransferUIStateList
+                                            )
+                                            ongoingDataTransferRecyclerViewAdapter.notifyItemChanged(
+                                                index
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                        DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
+
+                        }
+                    }
+
+                    mainActivityViewModel.ongoingDataTransferUIStateList.find {
+                        it.id == dataToTransfer.dataUri.toString()
+                    }.also {
+                        it?.let { ongoingDataTransferUIState ->
+
+                        }
+                    }
+                    /*  mainActivityViewModel.collectionOfDataToTransfer.find {
+                          it.dataUri == dataUri
+                      }?.let {
+                          val updatedIndex =
+                              mainActivityViewModel.collectionOfDataToTransfer.indexOf(it)
+                          it.percentTransferred = percentTransferred
+                          *//*lifecycleScope.launch(Dispatchers.Main) {
                             expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.submitList(
                                 mainActivityViewModel.collectionOfDataToTransfer
                             )
                             expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.notifyItemChanged(
                                 updatedIndex
                             )
-                        }*/
+                        }*//*
                     }
+                */
                 }
             }
 
@@ -398,6 +443,7 @@ class MainActivity : AppCompatActivity() {
                             ongoingDataTransferUIStateList.addAll(it.collectionOfDataToTransfer.map {
                                 OngoingDataTransferUIState.DataItem(it)
                             })
+                            mainActivityViewModel.addOngoingDataTransferUIStateList(ongoingDataTransferUIStateList)
                             withContext(Dispatchers.Main) {
                                 ongoingDataTransferRecyclerViewAdapter.submitList(
                                     ongoingDataTransferUIStateList
@@ -508,6 +554,23 @@ class MainActivity : AppCompatActivity() {
             expandedConnectedToPeerTransferOngoingLayout.apply {
                 expandedConnectedToPeerTransferOngoingRecyclerView.apply {
                     adapter = ongoingDataTransferRecyclerViewAdapter
+                    val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
+                    gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
+                                position
+                            )) {
+                                OngoingDataTransferAdapterViewTypes.ACTIVE_DATA_TRANSFER.value -> 3
+                                OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
+                                OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
+                                OngoingDataTransferAdapterViewTypes.NO_ITEM_IN_RECEIVE.value -> 3
+                                OngoingDataTransferAdapterViewTypes.NO_ITEM_IN_TRANSFER.value -> 3
+                                OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
+                                else -> 3
+                            }
+                        }
+                    }
+                    layoutManager = gridLayoutManager
                     setHasFixedSize(true)
                 }
             }

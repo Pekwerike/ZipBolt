@@ -6,29 +6,28 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.databinding.ImageTransferLayoutItemBinding
 import com.salesground.zipbolt.databinding.ImageTransferOrReceiveCompleteLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
 class ImageTransferOrReceiveCompleteLayoutViewHolder(
-    private val imageTransferOrReceiveCompleteLayoutItemBinding: ImageTransferOrReceiveCompleteLayoutItemBinding
-) : RecyclerView.ViewHolder(imageTransferOrReceiveCompleteLayoutItemBinding.root) {
+    private val imageTransferLayoutItemBinding: ImageTransferLayoutItemBinding
+) : RecyclerView.ViewHolder(imageTransferLayoutItemBinding.root) {
 
     fun bindImageData(dataToTransfer: DataToTransfer) {
-        imageTransferOrReceiveCompleteLayoutItemBinding.apply {
-            imageSize = "${dataToTransfer.dataSize}mb"
-            Glide.with(imageTransferOrReceiveCompleteLayoutItemImageView)
+        imageTransferLayoutItemBinding.apply {
+            imageWaitingForTransferLayoutItemImageView.alpha = 1f
+            Glide.with(imageWaitingForTransferLayoutItemImageView)
                 .load(dataToTransfer.dataUri)
-                .into(imageTransferOrReceiveCompleteLayoutItemImageView)
-            executePendingBindings()
+                .into(imageWaitingForTransferLayoutItemImageView)
         }
     }
 
     companion object {
         fun createViewHolder(parent: ViewGroup): ImageTransferOrReceiveCompleteLayoutViewHolder {
             val layoutBinding =
-                DataBindingUtil.inflate<ImageTransferOrReceiveCompleteLayoutItemBinding>(
+                ImageTransferLayoutItemBinding.inflate(
                     LayoutInflater.from(parent.context),
-                    R.layout.image_transfer_or_receive_complete_layout_item,
                     parent,
                     false
                 )

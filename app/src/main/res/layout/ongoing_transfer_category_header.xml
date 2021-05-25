@@ -17,12 +17,12 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_transfer_category_header_text_view"
             style="@style/DataCategoryTextViewTheme"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:padding="4dp"
-            android:text="@{headerTitle}"
-            android:textSize="15sp" />
+            android:text="@{headerTitle}" />
 
     </LinearLayout>
 </layout>

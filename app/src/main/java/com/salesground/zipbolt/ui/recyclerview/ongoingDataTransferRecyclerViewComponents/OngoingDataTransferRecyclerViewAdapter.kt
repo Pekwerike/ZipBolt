@@ -16,22 +16,21 @@ import java.lang.Exception
 class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUIState,
         RecyclerView.ViewHolder>(OngoingDataTransferRecyclerViewAdapterDiffUtil) {
 
-    companion object {
-        enum class OngoingDataTransferAdapterViewTypes(val value: Int) {
-            CATEGORY_HEADER(11),
-            ACTIVE_DATA_TRANSFER(12),
-            IMAGE_TRANSFER_WAITING(1),
-            IMAGE_TRANSFER_OR_RECEIVE_COMPLETE(2),
-            VIDEO_TRANSFER_WAITING(3),
-            VIDEO_TRANSFER_COMPLETE(4),
-            VIDEO_RECEIVE_COMPLETE(5),
-            APP_TRANSFER_WAITING(6),
-            APP_TRANSFER_COMPLETE(7),
-            APP_RECEIVE_COMPLETE(9),
-            NO_ITEM_IN_TRANSFER(13),
-            NO_ITEM_IN_RECEIVE(14)
-        }
+    enum class OngoingDataTransferAdapterViewTypes(val value: Int) {
+        CATEGORY_HEADER(11),
+        ACTIVE_DATA_TRANSFER(12),
+        IMAGE_TRANSFER_WAITING(1),
+        IMAGE_TRANSFER_OR_RECEIVE_COMPLETE(2),
+        VIDEO_TRANSFER_WAITING(3),
+        VIDEO_TRANSFER_COMPLETE(4),
+        VIDEO_RECEIVE_COMPLETE(5),
+        APP_TRANSFER_WAITING(6),
+        APP_TRANSFER_COMPLETE(7),
+        APP_RECEIVE_COMPLETE(9),
+        NO_ITEM_IN_TRANSFER(13),
+        NO_ITEM_IN_RECEIVE(14)
     }
+
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
