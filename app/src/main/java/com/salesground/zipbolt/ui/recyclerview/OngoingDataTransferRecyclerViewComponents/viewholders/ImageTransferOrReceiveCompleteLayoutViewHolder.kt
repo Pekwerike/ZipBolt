@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents
+package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -15,7 +15,7 @@ class ImageTransferOrReceiveCompleteLayoutViewHolder(
 
     fun bindImageData(dataToTransfer: DataToTransfer) {
         imageTransferOrReceiveCompleteLayoutItemBinding.apply {
-            imageSize = dataToTransfer.dataSize
+            imageSize = "${dataToTransfer.dataSize}mb"
             Glide.with(imageTransferOrReceiveCompleteLayoutItemImageView)
                 .load(dataToTransfer.dataUri)
                 .into(imageTransferOrReceiveCompleteLayoutItemImageView)

@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents
+package com.salesground.zipbolt.ui.recyclerview.OngoingDataTransferRecyclerViewComponents.viewholders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
