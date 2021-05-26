@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
@@ -317,33 +318,9 @@ class MainActivity : AppCompatActivity() {
 
                         }
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
-
+                            // updat the transfer section of the UI
                         }
                     }
-
-                    mainActivityViewModel.ongoingDataTransferUIStateList.find {
-                        it.id == dataToTransfer.dataUri.toString()
-                    }.also {
-                        it?.let { ongoingDataTransferUIState ->
-
-                        }
-                    }
-                    /*  mainActivityViewModel.collectionOfDataToTransfer.find {
-                          it.dataUri == dataUri
-                      }?.let {
-                          val updatedIndex =
-                              mainActivityViewModel.collectionOfDataToTransfer.indexOf(it)
-                          it.percentTransferred = percentTransferred
-                          *//*lifecycleScope.launch(Dispatchers.Main) {
-                            expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.submitList(
-                                mainActivityViewModel.collectionOfDataToTransfer
-                            )
-                            expandedConnectedToPeerTransferOngoingRecyclerviewAdapter.notifyItemChanged(
-                                updatedIndex
-                            )
-                        }*//*
-                    }
-                */
                 }
             }
 
@@ -422,28 +399,15 @@ class MainActivity : AppCompatActivity() {
                                 mutableListOf<OngoingDataTransferUIState>()
                             ongoingDataTransferUIStateList.add(
                                 0,
-                                OngoingDataTransferUIState.Header("Sending")
+                                OngoingDataTransferUIState.Header
                             )
-                            ongoingDataTransferUIStateList.add(
-                                1,
-                                OngoingDataTransferUIState.NoItemInTransfer
-                            )
-                            ongoingDataTransferUIStateList.add(
-                                2,
-                                OngoingDataTransferUIState.Header("Receiving")
-                            )
-                            ongoingDataTransferUIStateList.add(
-                                3,
-                                OngoingDataTransferUIState.NoItemInReceive
-                            )
-                            ongoingDataTransferUIStateList.add(
-                                4,
-                                OngoingDataTransferUIState.Header("Queue")
-                            )
+
                             ongoingDataTransferUIStateList.addAll(it.collectionOfDataToTransfer.map {
                                 OngoingDataTransferUIState.DataItem(it)
                             })
-                            mainActivityViewModel.addOngoingDataTransferUIStateList(ongoingDataTransferUIStateList)
+                            mainActivityViewModel.addOngoingDataTransferUIStateList(
+                                ongoingDataTransferUIStateList
+                            )
                             withContext(Dispatchers.Main) {
                                 ongoingDataTransferRecyclerViewAdapter.submitList(
                                     ongoingDataTransferUIStateList
@@ -560,11 +524,8 @@ class MainActivity : AppCompatActivity() {
                             return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
                                 position
                             )) {
-                                OngoingDataTransferAdapterViewTypes.ACTIVE_DATA_TRANSFER.value -> 3
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
-                                OngoingDataTransferAdapterViewTypes.NO_ITEM_IN_RECEIVE.value -> 3
-                                OngoingDataTransferAdapterViewTypes.NO_ITEM_IN_TRANSFER.value -> 3
                                 OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
                                 else -> 3
                             }

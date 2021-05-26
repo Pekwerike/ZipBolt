@@ -1,28 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-        <variable
-            name="headerTitle"
-            type="String" />
-    </data>
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ongoing_transfer_category_header_text_view"
+    style="@style/DataCategoryTextViewTheme"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:padding="4dp"
+    android:text="@string/queue"
+    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical">
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/ongoing_transfer_category_header_text_view"
-            style="@style/DataCategoryTextViewTheme"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:padding="4dp"
-            android:text="@{headerTitle}" />
-
-    </LinearLayout>
-</layout>

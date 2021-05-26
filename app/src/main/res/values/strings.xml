@@ -25,4 +25,5 @@
     <string name="device_connection_details">Device Details</string>
     <string name="connect_to">Connect to</string>
     <string name="no_item_label">No item</string>
+    <string name="queue">Queue</string>
 </resources>

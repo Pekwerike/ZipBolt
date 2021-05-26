@@ -8,21 +8,14 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.OngoingTransferCategoryHeaderBinding
 
 class OngoingTransferCategoryHeaderViewHolder(
-    private val ongoingTransferCategoryHeaderBinding: OngoingTransferCategoryHeaderBinding
+    ongoingTransferCategoryHeaderBinding: OngoingTransferCategoryHeaderBinding
 ) : RecyclerView.ViewHolder(ongoingTransferCategoryHeaderBinding.root) {
 
-    fun bindCategoryHeaderTitle(headerTitle: String) {
-        ongoingTransferCategoryHeaderBinding.apply {
-            this.headerTitle = headerTitle
-            executePendingBindings()
-        }
-    }
 
     companion object {
         fun createViewHolder(parent: ViewGroup): OngoingTransferCategoryHeaderViewHolder {
-            val layoutBinding = DataBindingUtil.inflate<OngoingTransferCategoryHeaderBinding>(
+            val layoutBinding = OngoingTransferCategoryHeaderBinding.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.ongoing_transfer_category_header,
                 parent,
                 false
             )
