@@ -2,11 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_margin="@dimen/medium_margin"
     android:layout_height="wrap_content">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/ongoing_transfer_receive_header_layout_sending_text_view"
         android:layout_width="match_parent"
+        style="@style/DataCategoryTextViewTheme"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/medium_margin"
         android:padding="4dp"
@@ -44,6 +46,7 @@
         android:layout_margin="@dimen/medium_margin"
         android:padding="4dp"
         android:text="@string/receiving"
+        style="@style/DataCategoryTextViewTheme"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

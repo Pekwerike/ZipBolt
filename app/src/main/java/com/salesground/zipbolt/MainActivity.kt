@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
@@ -283,6 +284,15 @@ class MainActivity : AppCompatActivity() {
                 2. As the progress of each elements happen, update the activity UI to reflect it
                 * */
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                    .expandedConnectedToPeerTransferOngoingLayout
+                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                    .apply {
+                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                            .alpha(0f)
+                        ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(1f)
+                    }
+
 
                 // transfer data using the DataTransferService
                 dataTransferService?.transferData(
@@ -319,6 +329,26 @@ class MainActivity : AppCompatActivity() {
                         }
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
                             // update the transfer section of the UI
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                    .expandedConnectedToPeerTransferOngoingLayout
+                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    .apply {
+                                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                                            .alpha(0f)
+                                        ongoingTransferReceiveHeaderLayoutDataTransferView.apply {
+                                            dataDisplayName = dataToTransfer.dataDisplayName
+                                            dataTransferPercentAsString =
+                                                "${percentTransferred.roundToInt()}%"
+                                            dataSize = "${dataToTransfer.dataSize}mb"
+                                            dataTransferPercent = percentTransferred.roundToInt()
+
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(dataToTransfer.dataUri)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                    }
+                            }
                         }
                     }
                 }
@@ -515,6 +545,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     layoutManager = gridLayoutManager
                     setHasFixedSize(true)
+                }
+                expandedConnectedToPeerTransferOngoingLayoutHeader.apply {
+                    ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(0f)
+                    ongoingTransferReceiveHeaderLayoutDataReceiveView.root.animate().alpha(0f)
                 }
             }
         }
