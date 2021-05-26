@@ -5,16 +5,20 @@ import android.net.wifi.p2p.WifiP2pInfo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
     val collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
-    var ongoingDataTransferUIStateList: MutableList<OngoingDataTransferUIState> = mutableListOf()
+    val ongoingDataTransferUIStateList: MutableList<OngoingDataTransferUIState> = mutableListOf()
 
     private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
         deviceName = "Samsung Galaxy X2"
@@ -27,9 +31,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     val peerConnectionUIState: LiveData<PeerConnectionUIState>
         get() = _peerConnectionUIState
 
-    fun addOngoingDataTransferUIStateList(ongoingDataTransferUIStateList: MutableList<OngoingDataTransferUIState>) {
-        this.ongoingDataTransferUIStateList = ongoingDataTransferUIStateList
-    }
 
     fun peerConnectionNoAction() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
@@ -58,10 +59,24 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun expandedConnectedToPeerTransferOngoing() {
-        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
-            wifiP2pCurrentConnectionInfo,
-            collectionOfDataToTransfer
-        )
+        viewModelScope.launch {
+            if (ongoingDataTransferUIStateList.isEmpty()) {
+                ongoingDataTransferUIStateList.add(
+                    0,
+                    OngoingDataTransferUIState.Header
+                )
+                ongoingDataTransferUIStateList.addAll(collectionOfDataToTransfer.map {
+                    OngoingDataTransferUIState.DataItem(it)
+                })
+            }
+            withContext(Dispatchers.Main) {
+                _peerConnectionUIState.value =
+                    PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
+                        wifiP2pCurrentConnectionInfo,
+                        ongoingDataTransferUIStateList
+                    )
+            }
+        }
     }
 
     fun collapsedSearchingForPeers() {

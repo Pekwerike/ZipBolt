@@ -318,7 +318,7 @@ class MainActivity : AppCompatActivity() {
 
                         }
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
-                            // updat the transfer section of the UI
+                            // update the transfer section of the UI
                         }
                     }
                 }
@@ -394,26 +394,8 @@ class MainActivity : AppCompatActivity() {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
-                        lifecycleScope.launch {
-                            val ongoingDataTransferUIStateList =
-                                mutableListOf<OngoingDataTransferUIState>()
-                            ongoingDataTransferUIStateList.add(
-                                0,
-                                OngoingDataTransferUIState.Header
-                            )
-
-                            ongoingDataTransferUIStateList.addAll(it.collectionOfDataToTransfer.map {
-                                OngoingDataTransferUIState.DataItem(it)
-                            })
-                            mainActivityViewModel.addOngoingDataTransferUIStateList(
-                                ongoingDataTransferUIStateList
-                            )
-                            withContext(Dispatchers.Main) {
-                                ongoingDataTransferRecyclerViewAdapter.submitList(
-                                    ongoingDataTransferUIStateList
-                                )
-                            }
-                        }
+                        // submit the list of items in transfer queue to the adapter
+                        ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
                         connectedToPeerTransferOngoingBottomSheetBehavior.apply {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED

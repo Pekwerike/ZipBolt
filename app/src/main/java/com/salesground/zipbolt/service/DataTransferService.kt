@@ -202,7 +202,7 @@ class DataTransferService : Service() {
     private fun configureClientSocket(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
-           // delay(3000)
+
             withContext(Dispatchers.IO) { socket.bind(null) }
             withContext(Dispatchers.IO) {
                 socket.connect(
