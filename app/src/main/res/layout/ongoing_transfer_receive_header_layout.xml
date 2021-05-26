@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ongoing_transfer_receive_header_layout_sending_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:padding="4dp"
+        android:text="@string/sending"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/ongoing_transfer_receive_header_layout_data_transfer_view"
+        layout="@layout/ongoing_data_transfer_layout_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ongoing_transfer_receive_header_layout_sending_text_view" />
+
+    <include
+        android:id="@+id/ongoing_transfer_receive_header_layout_no_items_in_transfer_text_view"
+        layout="@layout/no_item_in_transfer_or_receive_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        app:layout_constraintBottom_toBottomOf="@id/ongoing_transfer_receive_header_layout_data_transfer_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ongoing_transfer_receive_header_layout_data_transfer_view" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/ongoing_transfer_receive_header_layout_receiving_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:padding="4dp"
+        android:text="@string/receiving"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ongoing_transfer_receive_header_layout_data_transfer_view" />
+
+    <include
+        android:id="@+id/ongoing_transfer_receive_header_layout_data_receive_view"
+        layout="@layout/ongoing_data_transfer_layout_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ongoing_transfer_receive_header_layout_receiving_text_view" />
+
+    <include
+        android:id="@+id/ongoing_transfer_receive_header_layout_no_items_in_receive_text_view"
+        layout="@layout/no_item_in_transfer_or_receive_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        app:layout_constraintBottom_toBottomOf="@id/ongoing_transfer_receive_header_layout_data_receive_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ongoing_transfer_receive_header_layout_data_receive_view" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -26,4 +26,6 @@
     <string name="connect_to">Connect to</string>
     <string name="no_item_label">No item</string>
     <string name="queue">Queue</string>
+    <string name="sending">Sending</string>
+    <string name="receiving">Receiving</string>
 </resources>

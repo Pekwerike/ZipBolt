@@ -21,11 +21,6 @@
             type="String" />
     </data>
 
-    <FrameLayout
-        android:animateLayoutChanges="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ongoing_data_transfer_layout_item_constraint_layout"
             android:layout_width="match_parent"
@@ -100,17 +95,4 @@
                 app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            android:gravity="center"
-            android:alpha="0"
-            android:id="@+id/ongoing_data_transfer_layout_item_no_item_text_view"
-            android:orientation="vertical"
-            android:padding="@dimen/standard_text_view_padding"
-            android:text="@string/no_item_label"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
-    </FrameLayout>
 </layout>
