@@ -35,53 +35,57 @@ fun TextView.addGreenHighLightToText(placeHolder: String?) {
 }
 
 @BindingAdapter("setNumberOfDevicesFoundText")
-fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int) {
-    text = if (numberOfDevicesFound > 0) {
-        SpannableStringBuilder().apply {
-            append("$numberOfDevicesFound devices found").apply {
-                setSpan(
-                    ForegroundColorSpan(
-                        ContextCompat.getColor(rootView.context, R.color.green_500)
-                    ), 0, 1, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
-                )
+fun TextView.setNumberOfDevicesFoundText(numberOfDevicesFound: Int?) {
+    numberOfDevicesFound?.let {
+        text = if (numberOfDevicesFound > 0) {
+            SpannableStringBuilder().apply {
+                append("$numberOfDevicesFound devices found").apply {
+                    setSpan(
+                        ForegroundColorSpan(
+                            ContextCompat.getColor(rootView.context, R.color.green_500)
+                        ), 0, 1, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
+                    )
+                }
             }
+        } else {
+            "0 devices found"
         }
-    } else {
-        "0 devices found"
     }
 }
 
 @BindingAdapter("setConnectedDeviceName", "setConnectedDeviceIpAddress", requireAll = true)
-fun TextView.setConnectedDeviceDetails(deviceName: String, deviceAddress: String) {
-    var offset = 0
-    var styleOffset = 0
-    val spannableStringBuilder = SpannableStringBuilder().apply {
-        append("Name: $deviceName \n")
-        offset += "Name: $deviceName \n".length
-        append("Ip Address: $deviceAddress \n")
-        offset += "Ip Address: $deviceAddress \n".length
-        append("Status: Connected")
-        offset += "Status: ".length
+fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: String?) {
+    deviceName?.let {
+        var offset = 0
+        var styleOffset = 0
+        val spannableStringBuilder = SpannableStringBuilder().apply {
+            append("Name: $deviceName \n")
+            offset += "Name: $deviceName \n".length
+            append("Ip Address: $deviceAddress \n")
+            offset += "Ip Address: $deviceAddress \n".length
+            append("Status: Connected")
+            offset += "Status: ".length
 
-        styleOffset += "Name: ".length
-        setSpan(
-            StyleSpan(BOLD),
-            styleOffset,
-            styleOffset + deviceName.length,
-            SpannableString.SPAN_INCLUSIVE_INCLUSIVE
-        )
-        /*styleOffset += "$deviceName \nIp Address: ".length
+            styleOffset += "Name: ".length
+            setSpan(
+                StyleSpan(BOLD),
+                styleOffset,
+                styleOffset + deviceName.length,
+                SpannableString.SPAN_INCLUSIVE_INCLUSIVE
+            )
+            /*styleOffset += "$deviceName \nIp Address: ".length
         setSpan(
             StyleSpan(ITALIC),
             styleOffset,
             styleOffset + deviceAddress.length,
             SpannableString.SPAN_INCLUSIVE_INCLUSIVE
         )*/
-        setSpan(
-            ForegroundColorSpan(ContextCompat.getColor(rootView.context, R.color.green_500)),
-            offset, offset + "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
-        )
+            setSpan(
+                ForegroundColorSpan(ContextCompat.getColor(rootView.context, R.color.green_500)),
+                offset, offset + "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
+            )
 
+        }
+        text = spannableStringBuilder
     }
-    text = spannableStringBuilder
 }

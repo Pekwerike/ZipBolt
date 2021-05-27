@@ -12,7 +12,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 abstract class RepositoryDIModule {
     @Singleton

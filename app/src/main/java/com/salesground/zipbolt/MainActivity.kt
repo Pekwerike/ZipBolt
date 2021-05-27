@@ -52,6 +52,7 @@ import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferon
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
+import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -340,7 +341,7 @@ class MainActivity : AppCompatActivity() {
                                             dataDisplayName = dataToTransfer.dataDisplayName
                                             dataTransferPercentAsString =
                                                 "${percentTransferred.roundToInt()}%"
-                                            dataSize = "${dataToTransfer.dataSize}mb"
+                                            dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
                                             dataTransferPercent = percentTransferred.roundToInt()
 
                                             Glide.with(ongoingDataTransferDataCategoryImageView)
