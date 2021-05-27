@@ -69,7 +69,7 @@
     </style>
 
     <style name="ShapeAppearanceOverlay.App.CornerSize8Percent" parent="">
-        <item name="cornerSize">8%</item>
+        <item name="cornerSize">6%</item>
     </style>
 
     <style name="CustomThemeForHomeScreenRecyclerView" parent="Theme.SpeedForce">
