@@ -9,7 +9,7 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.components.SingletonComponent
 
 
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 @Module
 abstract class CommunicationDIModule {
 
