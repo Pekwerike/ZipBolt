@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.imageview.ShapeableImageView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/medium_margin"
-    android:orientation="vertical"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="4dp">
+    android:layout_height="100dp"
+    android:alpha="0.6"
+    android:elevation="8dp"
+    android:scaleType="centerCrop"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8Percent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:alpha="0.6"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</com.google.android.material.card.MaterialCardView>
 

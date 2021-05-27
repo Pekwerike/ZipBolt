@@ -26,27 +26,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/ongoing_data_transfer_data_category_image_card_view"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ongoing_data_transfer_data_category_image_view"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_margin="4dp"
-            android:orientation="vertical"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="4dp"
+            android:background="@color/background_color"
+            android:elevation="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_undraw_well_done"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ongoing_data_transfer_data_category_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_undraw_well_done" />
-
-        </com.google.android.material.card.MaterialCardView>
-
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8Percent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_data_transfer_layout_data_display_name"
@@ -59,18 +51,19 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
-            app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_data_category_image_card_view"
-            app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_data_category_image_card_view" />
+            app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_data_category_image_view"
+            app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_data_category_image_view" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="90dp"
             android:layout_marginVertical="4dp"
             android:progress="@{dataTransferPercent}"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_item_data_size_text_view"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_item_transfer_percentage_text_view"
             app:layout_constraintStart_toStartOf="@+id/ongoing_data_transfer_layout_data_display_name"
+            app:showAnimationBehavior="outward"
             app:trackThickness="6dp" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -91,9 +84,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:src="@drawable/close_icon"
-            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_card_view"
+            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ongoing_data_transfer_data_category_image_card_view" />
+            app:layout_constraintTop_toTopOf="@+id/ongoing_data_transfer_data_category_image_view" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_data_transfer_layout_item_data_size_text_view"
@@ -102,7 +95,7 @@
             android:layout_marginVertical="4dp"
             android:text="@{dataSize}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_card_view"
+            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

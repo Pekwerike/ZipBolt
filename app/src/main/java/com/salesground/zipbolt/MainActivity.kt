@@ -331,24 +331,26 @@ class MainActivity : AppCompatActivity() {
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
                             // update the transfer section of the UI
                             lifecycleScope.launch(Dispatchers.Main) {
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    .apply {
-                                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                                            .alpha(0f)
-                                        ongoingTransferReceiveHeaderLayoutDataTransferView.apply {
-                                            dataDisplayName = dataToTransfer.dataDisplayName
-                                            dataTransferPercentAsString =
-                                                "${percentTransferred.roundToInt()}%"
-                                            dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
-                                            dataTransferPercent = percentTransferred.roundToInt()
+                                with(
+                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                        .expandedConnectedToPeerTransferOngoingLayout
+                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                ) {
+                                    ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                                        .alpha(0f)
+                                    ongoingTransferReceiveHeaderLayoutDataTransferView.apply {
+                                        dataDisplayName = dataToTransfer.dataDisplayName
+                                        dataTransferPercentAsString =
+                                            "${percentTransferred.roundToInt()}%"
+                                        dataSize =
+                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+                                        dataTransferPercent = percentTransferred.roundToInt()
 
-                                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                                .load(dataToTransfer.dataUri)
-                                                .into(ongoingDataTransferDataCategoryImageView)
-                                        }
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(dataToTransfer.dataUri)
+                                            .into(ongoingDataTransferDataCategoryImageView)
                                     }
+                                }
                             }
                         }
                     }

@@ -68,6 +68,10 @@
         <item name="colorPrimary">@color/white</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.CornerSize8Percent" parent="">
+        <item name="cornerSize">8%</item>
+    </style>
+
     <style name="CustomThemeForHomeScreenRecyclerView" parent="Theme.SpeedForce">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
