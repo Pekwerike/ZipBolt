@@ -44,7 +44,7 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/discovered_peer_recyclerview_item_header.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/expanded_connected_to_peer_no_action.xml" value="0.1" />
-        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/expanded_connnected_to_peer_transfer_ongoing.xml" value="0.125" />
+        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/expanded_connnected_to_peer_transfer_ongoing.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/expanded_searching_for_peers_information.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/fragment_app.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/fragment_files.xml" value="0.17708333333333334" />
@@ -63,7 +63,6 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/no_item_in_transfer_or_receive_layout.xml" value="0.11486486486486487" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/ongoing_data_transfer_layout_item.xml" value="0.25" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/ongoing_transfer_category_header.xml" value="0.11486486486486487" />
-        <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/ongoing_transfer_receive_header_layout.xml" value="0.11486486486486487" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/persistent_bottom_sheet_layout.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/video_layout_item.xml" value="0.129981884057971" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/wifi_p2p_device_item_layout.xml" value="0.1" />
@@ -74,7 +73,7 @@
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
