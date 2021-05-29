@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
 import com.salesground.zipbolt.repository.ZipBoltMediaCategory
@@ -29,7 +30,13 @@ class AdvanceImageRepository @Inject constructor(
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocolMetaData) -> Unit,
         bytesReadListener:
-            (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?) -> Unit
+            (
+            imageDisplayName: String,
+            imageSize: Long,
+            percentageOfDataRead: Float,
+            imageUri: Uri?,
+            dataTransferStatus: DataToTransfer.TransferStatus
+        ) -> Unit
     ) {
         var mediaSize = size
         val verifiedImageName = confirmImageName(displayName)
@@ -62,7 +69,8 @@ class AdvanceImageRepository @Inject constructor(
             displayName,
             size,
             0f,
-            null
+            null,
+            DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
 
 
@@ -95,7 +103,8 @@ class AdvanceImageRepository @Inject constructor(
                 displayName,
                 size,
                 ((size - mediaSize) / size.toFloat()) * 100f,
-                null
+                null,
+                DataToTransfer.TransferStatus.RECEIVE_ONGOING
             )
         }
 
@@ -112,12 +121,22 @@ class AdvanceImageRepository @Inject constructor(
                 context.contentResolver.update(imageUri, contentValues, null, null)
             }
 
+            /*context.contentResolver.query(
+                imageUri,
+                arrayOf(MediaStore.Images.Media._ID),
+                null,
+                null, null
+            )?.let {
+
+            }*/
+
             // percentage of image read is 100% with the image uri
             bytesReadListener(
                 displayName,
                 size,
                 100f,
-                imageUri
+                imageUri,
+                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             )
         }
     }

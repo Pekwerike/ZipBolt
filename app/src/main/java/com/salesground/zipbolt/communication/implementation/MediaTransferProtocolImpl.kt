@@ -55,7 +55,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
                 dataTransferListener(
-                   this.dataToTransfer!!,
+                    this.dataToTransfer!!,
                     0f,
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING
                 )
@@ -114,9 +114,10 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataInputStream: DataInputStream,
         bytesReceivedListener: (
             dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int,
-            dataUri: Uri?
+            dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus
         ) -> Unit
     ) {
+
         val mediaType = dataInputStream.readInt()
         val mediaName = dataInputStream.readUTF()
         val mediaSize = dataInputStream.readLong()
@@ -132,13 +133,15 @@ open class MediaTransferProtocolImpl @Inject constructor(
                             cancelCurrentTransfer(MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
                         }
                     },
-                    bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri? ->
+                    bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
+                                          dataTransferStatus: DataToTransfer.TransferStatus ->
                         bytesReceivedListener(
                             imageDisplayName,
                             imageSize,
                             percentageOfDataRead,
                             mediaType,
-                            imageUri
+                            imageUri,
+                            dataTransferStatus
                         )
                     }
                 )

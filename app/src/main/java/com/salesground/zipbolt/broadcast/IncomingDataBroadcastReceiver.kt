@@ -18,7 +18,7 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
             dataSize: Long,
             dataType: Int,
             percentTransferred: Float = 0f,
-            transferStatus: DataToTransfer.TransferStatus = DataToTransfer.TransferStatus.TRANSFER_WAITING
+            transferStatus: Int = DataToTransfer.TransferStatus.TRANSFER_WAITING.value
         )
     }
 
@@ -45,18 +45,18 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
                         INCOMING_FILE_MIME_TYPE,
                         DataToTransfer.MediaType.IMAGE.value
                     )
+                    val fileReceiveStatus = intent.getIntExtra(
+                        INCOMING_FILE_TRANSFER_STATUS,
+                        0
+                    )
                     dataReceiveListener.onDataReceive(
                         fileName,
                         fileUri,
                         fileSize,
                         fileType,
                         20f,
-
+                        fileReceiveStatus
                     )
-                    /*Log.i(
-                         "TransferMessage", "Receiving " +
-                                 "$fileName at $bytesReceived"
-                     )*/
                 }
                 else -> {
 

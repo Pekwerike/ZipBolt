@@ -92,7 +92,13 @@ open class ZipBoltImageRepository @Inject constructor(
         size: Long,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocol.MediaTransferProtocolMetaData) -> Unit,
-        bytesReadListener: (imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?) -> Unit
+        bytesReadListener: (
+            imageDisplayName: String,
+            imageSize: Long,
+            percentageOfDataRead: Float,
+            imageUri: Uri?,
+            dataTransferStatus: DataToTransfer.TransferStatus
+        ) -> Unit
     ) {
 
     }

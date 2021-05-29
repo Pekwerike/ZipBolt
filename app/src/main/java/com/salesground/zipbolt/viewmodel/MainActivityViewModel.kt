@@ -77,45 +77,53 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             )
     }
 
-fun collapsedSearchingForPeers() {
-    _peerConnectionUIState.value =
-        PeerConnectionUIState.CollapsedSearchingForPeer(currentPeersList.size)
-}
-
-fun expandedSearchingForPeers() {
-    _peerConnectionUIState.value =
-        PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
-}
-
-fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
-    wifiP2pCurrentConnectionInfo = wifiP2pInfo // remove this line, later after extensive tests
-    this.peeredDevice = peeredDevice
-    _peerConnectionUIState.value =
-        PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, peeredDevice)
-}
-
-fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
-    currentPeersList = peersList
-    _peerConnectionUIState.value = when (_peerConnectionUIState.value) {
-        is PeerConnectionUIState.CollapsedSearchingForPeer -> {
-            PeerConnectionUIState.CollapsedSearchingForPeer(peersList.size)
-        }
-        is PeerConnectionUIState.ExpandedSearchingForPeer -> {
-            PeerConnectionUIState.ExpandedSearchingForPeer(peersList)
-        }
-        else -> PeerConnectionUIState.NoConnectionUIAction
+    fun collapsedSearchingForPeers() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.CollapsedSearchingForPeer(currentPeersList.size)
     }
-}
 
-fun addDataToTransfer(dataToTransfer: DataToTransfer) {
-    collectionOfDataToTransfer.add(dataToTransfer)
-}
+    fun expandedSearchingForPeers() {
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
+    }
 
-fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer) {
-    collectionOfDataToTransfer.remove(dataToTransfer)
-}
+    fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
+        wifiP2pCurrentConnectionInfo = wifiP2pInfo // remove this line, later after extensive tests
+        this.peeredDevice = peeredDevice
+        _peerConnectionUIState.value =
+            PeerConnectionUIState.CollapsedConnectedToPeerNoAction(wifiP2pInfo, peeredDevice)
+    }
 
-fun clearCollectionOfDataToTransfer() {
-    collectionOfDataToTransfer = mutableListOf()
-}
+    fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
+        currentPeersList = peersList
+        _peerConnectionUIState.value = when (_peerConnectionUIState.value) {
+            is PeerConnectionUIState.CollapsedSearchingForPeer -> {
+                PeerConnectionUIState.CollapsedSearchingForPeer(peersList.size)
+            }
+            is PeerConnectionUIState.ExpandedSearchingForPeer -> {
+                PeerConnectionUIState.ExpandedSearchingForPeer(peersList)
+            }
+            else -> PeerConnectionUIState.NoConnectionUIAction
+        }
+    }
+
+    fun addDataFromReceiveToUIState(dataToTransfer: DataToTransfer) {
+        addDataToTransfer(dataToTransfer)
+        addCurrentDataToTransferToUIState()
+        if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing) {
+            expandedConnectedToPeerTransferOngoing()
+        }
+    }
+
+    fun addDataToTransfer(dataToTransfer: DataToTransfer) {
+        collectionOfDataToTransfer.add(dataToTransfer)
+    }
+
+    fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer) {
+        collectionOfDataToTransfer.remove(dataToTransfer)
+    }
+
+    private fun clearCollectionOfDataToTransfer() {
+        collectionOfDataToTransfer = mutableListOf()
+    }
 }

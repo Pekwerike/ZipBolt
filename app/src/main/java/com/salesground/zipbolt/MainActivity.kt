@@ -53,6 +53,8 @@ import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferon
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
+import com.salesground.zipbolt.utils.customizeDate
+import com.salesground.zipbolt.utils.parseDate
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -98,9 +100,31 @@ class MainActivity : AppCompatActivity() {
                 dataSize: Long,
                 dataType: Int,
                 percentTransferred: Float,
-                transferStatus: DataToTransfer.TransferStatus
+                transferStatus: Int
             ) {
-
+                when (transferStatus) {
+                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
+                        when (dataType) {
+                            DataToTransfer.MediaType.IMAGE.value -> {
+                                with(mainActivityViewModel) {
+                                    addDataFromReceiveToUIState(
+                                        DataToTransfer.DeviceImage(
+                                            0L,
+                                            dataUri!!,
+                                            System.currentTimeMillis().parseDate().customizeDate(),
+                                            dataDisplayName,
+                                            "",
+                                            dataSize,
+                                            ""
+                                        )
+                                    )
+                                }
+                            }
+                            else -> {
+                            }
+                        }
+                    }
+                }
             }
         })
     }
@@ -296,7 +320,7 @@ class MainActivity : AppCompatActivity() {
                 /* TODO 1. Change the activity UI to show the list of elements in transfer
                 2. As the progress of each elements happen, update the activity UI to reflect it
                 * */
-                mainActivityViewModel.clearCollectionOfDataToTransfer()
+                mainActivityViewModel.addCurrentDataToTransferToUIState()
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                     .expandedConnectedToPeerTransferOngoingLayout

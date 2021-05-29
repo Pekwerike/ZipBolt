@@ -273,7 +273,7 @@ class DataTransferService : Service() {
                     // read the number of files sent from the peer
                     val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
                     for (i in 0 until filesCount) {
-                        mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri? ->
+                        mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
                             incomingDataBroadcastIntent.apply {
                                 putExtra(
                                     IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
@@ -294,6 +294,10 @@ class DataTransferService : Service() {
                                 putExtra(
                                     IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE,
                                     dataSize
+                                )
+                                putExtra(
+                                    IncomingDataBroadcastReceiver.INCOMING_FILE_TRANSFER_STATUS,
+                                    dataTransferStatus.value
                                 )
                                 localBroadcastManager.sendBroadcast(this)
                             }

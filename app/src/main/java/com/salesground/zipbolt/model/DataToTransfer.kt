@@ -14,10 +14,12 @@ sealed class DataToTransfer(
 ) {
     enum class TransferStatus(val value: Int){
         NO_ACTION(9),
+        TRANSFER_STARTED(16),
         TRANSFER_WAITING(10),
         TRANSFER_COMPLETE(11),
         TRANSFER_ONGOING(13),
         RECEIVE_COMPLETE(14),
+        RECEIVE_STARTED(17),
         RECEIVE_ONGOING(15)
     }
     enum class MediaType(val value: Int) {
