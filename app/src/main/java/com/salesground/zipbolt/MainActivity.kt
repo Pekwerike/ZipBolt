@@ -341,12 +341,12 @@ class MainActivity : AppCompatActivity() {
                     when (transferStatus) {
                         DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                             lifecycleScope.launch {
-                                mainActivityViewModel.ongoingDataTransferUIStateList.find {
+                                mainActivityViewModel.currentTransferHistory.find {
                                     it.id == dataToTransfer.dataUri.toString()
                                 }.also {
                                     it?.let { ongoingDataTransferUIState ->
                                         val index =
-                                            mainActivityViewModel.ongoingDataTransferUIStateList.indexOf(
+                                            mainActivityViewModel.currentTransferHistory.indexOf(
                                                 ongoingDataTransferUIState
                                             )
                                         ongoingDataTransferUIState as OngoingDataTransferUIState.DataItem
@@ -354,7 +354,7 @@ class MainActivity : AppCompatActivity() {
                                             transferStatus
                                         withContext(Dispatchers.Main) {
                                             ongoingDataTransferRecyclerViewAdapter.submitList(
-                                                mainActivityViewModel.ongoingDataTransferUIStateList
+                                                mainActivityViewModel.currentTransferHistory
                                             )
                                             ongoingDataTransferRecyclerViewAdapter.notifyItemChanged(
                                                 index
@@ -392,6 +392,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                mainActivityViewModel.clearCollectionOfDataToTransfer()
             }
 
             mainActivityAllMediaOnDevice.apply {
@@ -461,11 +462,15 @@ class MainActivity : AppCompatActivity() {
                         collapseBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
+                        lifecycleScope.launch(Dispatchers.IO){
+                            Log.i("ItemsInserted", "ItemsInserted")
+                        }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
                         // submit the list of items in transfer queue to the adapter
                         ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
+
                         connectedToPeerTransferOngoingBottomSheetBehavior.apply {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED

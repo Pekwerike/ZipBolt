@@ -20,7 +20,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     val currentTransferHistory: MutableList<OngoingDataTransferUIState> =
         mutableListOf(OngoingDataTransferUIState.Header)
     var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
-    val ongoingDataTransferUIStateList: MutableList<OngoingDataTransferUIState> = mutableListOf()
 
     private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
         deviceName = "Samsung Galaxy X2"
@@ -56,17 +55,16 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         _peerConnectionUIState.value =
             PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing(
                 wifiP2pCurrentConnectionInfo,
-                collectionOfDataToTransfer[0]
+                (currentTransferHistory[1] as OngoingDataTransferUIState.DataItem).dataToTransfer
             )
     }
 
     fun addCurrentDataToTransferToUIState() {
-        currentTransferHistory.addAll(
+        currentTransferHistory.addAll(1,
             collectionOfDataToTransfer.map {
                 OngoingDataTransferUIState.DataItem(it)
             }
         )
-        clearCollectionOfDataToTransfer()
     }
 
     fun expandedConnectedToPeerTransferOngoing() {
@@ -113,6 +111,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing) {
             expandedConnectedToPeerTransferOngoing()
         }
+        clearCollectionOfDataToTransfer()
     }
 
     fun addDataToTransfer(dataToTransfer: DataToTransfer) {
@@ -123,7 +122,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         collectionOfDataToTransfer.remove(dataToTransfer)
     }
 
-    private fun clearCollectionOfDataToTransfer() {
+     fun clearCollectionOfDataToTransfer() {
         collectionOfDataToTransfer = mutableListOf()
     }
 }
