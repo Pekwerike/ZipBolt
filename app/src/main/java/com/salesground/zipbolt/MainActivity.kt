@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
@@ -90,7 +91,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
 
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
-        IncomingDataBroadcastReceiver()
+        IncomingDataBroadcastReceiver(object : IncomingDataBroadcastReceiver.DataReceiveListener {
+            override fun onDataReceive(
+                dataDisplayName: String,
+                dataUri: Uri?,
+                dataSize: Long,
+                dataType: Int,
+                percentTransferred: Float,
+                transferStatus: DataToTransfer.TransferStatus
+            ) {
+
+            }
+        })
     }
 
     // ui variables
@@ -284,6 +296,7 @@ class MainActivity : AppCompatActivity() {
                 /* TODO 1. Change the activity UI to show the list of elements in transfer
                 2. As the progress of each elements happen, update the activity UI to reflect it
                 * */
+                mainActivityViewModel.clearCollectionOfDataToTransfer()
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                     .expandedConnectedToPeerTransferOngoingLayout

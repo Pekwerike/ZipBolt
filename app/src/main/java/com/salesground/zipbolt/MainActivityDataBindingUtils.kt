@@ -6,7 +6,6 @@ import android.view.ViewStub
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.viewbinding.ViewBinding
-import androidx.viewbinding.ViewBindings
 import com.salesground.zipbolt.databinding.*
 
 
