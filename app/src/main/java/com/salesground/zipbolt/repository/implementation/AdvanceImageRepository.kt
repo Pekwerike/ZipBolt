@@ -19,9 +19,15 @@ class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context) {
-    private val buffer = ByteArray(1024 * 16)
+    private val buffer = ByteArray(1024 * 1000)
     private val contentValues = ContentValues()
-
+    private var mediaSize: Long = 0L
+    private var verifiedImageName: String = ""
+    private val imagesBaseDirectory =
+        savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
+    private lateinit var imageFile: File
+    private lateinit var imageFileBufferedOutputStream: BufferedOutputStream
+    private var currentTime: Long = 0L
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun insertImageIntoMediaStore(
@@ -38,24 +44,22 @@ class AdvanceImageRepository @Inject constructor(
             dataTransferStatus: DataToTransfer.TransferStatus
         ) -> Unit
     ) {
-        var mediaSize = size
-        val verifiedImageName = confirmImageName(displayName)
-        val imagesBaseDirectory =
-            savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
-        val imageFile = File(imagesBaseDirectory, verifiedImageName)
-        val imageFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(imageFile))
-
+        mediaSize = size
+        verifiedImageName = confirmImageName(displayName)
+        imageFile = File(imagesBaseDirectory, verifiedImageName)
+        imageFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(imageFile))
+        currentTime = System.currentTimeMillis() / 1000
         contentValues.clear()
         contentValues.apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)
             put(MediaStore.Images.Media.TITLE, imageFile.name)
             put(MediaStore.Images.Media.SIZE, size)
             put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
-            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000)
-            put(MediaStore.Images.Media.DATE_MODIFIED, System.currentTimeMillis() / 1000)
+            put(MediaStore.Images.Media.DATE_ADDED, currentTime)
+            put(MediaStore.Images.Media.DATE_MODIFIED, currentTime)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.OWNER_PACKAGE_NAME, context.packageName)
-                put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis() / 1000)
+                put(MediaStore.Images.Media.DATE_TAKEN, currentTime)
                 put(MediaStore.Images.Media.IS_PENDING, 1)
                 put(
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,

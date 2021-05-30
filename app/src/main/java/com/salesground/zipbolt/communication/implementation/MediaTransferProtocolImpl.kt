@@ -20,8 +20,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-    private val buffer = ByteArray(1024 * 16)
+    private val buffer = ByteArray(1024 * 1000)
     private var dataToTransfer: DataToTransfer? = null
+
+    // data receive variables
+    private var mediaType: Int = 0
+    private var mediaName: String = ""
+    private var mediaSize: Long = 0L
 
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData) {
@@ -117,9 +122,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
         ) -> Unit
     ) {
 
-        val mediaType = dataInputStream.readInt()
-        val mediaName = dataInputStream.readUTF()
-        val mediaSize = dataInputStream.readLong()
+        mediaType = dataInputStream.readInt()
+        mediaName = dataInputStream.readUTF()
+        mediaSize = dataInputStream.readLong()
 
         when (mediaType) {
             DataToTransfer.MediaType.IMAGE.value -> {

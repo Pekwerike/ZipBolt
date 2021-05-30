@@ -248,6 +248,7 @@ class DataTransferService : Service() {
                             )
                         }
                     }
+                    dataOutputStream.flush()
                     mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
                 }
                 MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
@@ -268,7 +269,7 @@ class DataTransferService : Service() {
             when (dataInputStream.readInt()) {
                 MediaTransferProtocolMetaData.NO_DATA.value -> continue
                 MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
-                    delay(300)
+                    delay(200)
                     // read the number of files sent from the peer
                     val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
                     for (i in 0 until filesCount) {
@@ -301,7 +302,7 @@ class DataTransferService : Service() {
                                 localBroadcastManager.sendBroadcast(this)
                             }
                         }
-                        delay(300)
+                        delay(200)
                     }
                 }
                 MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
