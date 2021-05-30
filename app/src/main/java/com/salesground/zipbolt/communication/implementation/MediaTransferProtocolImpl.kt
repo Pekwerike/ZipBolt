@@ -20,7 +20,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
 ) : MediaTransferProtocol {
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-    private val buffer = ByteArray(1024 * 8)
+    private val buffer = ByteArray(1024 * 16)
     private var dataToTransfer: DataToTransfer? = null
 
 
@@ -52,7 +52,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         FileInputStream(parcelFileDescriptor.fileDescriptor)
                     )
                 )
-
 
                 dataTransferListener(
                     this.dataToTransfer!!,

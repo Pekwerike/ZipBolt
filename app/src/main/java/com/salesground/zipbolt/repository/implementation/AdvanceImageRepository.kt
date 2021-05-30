@@ -19,7 +19,7 @@ class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context) {
-    private val buffer = ByteArray(1024 * 8)
+    private val buffer = ByteArray(1024 * 16)
     private val contentValues = ContentValues()
 
 
@@ -120,15 +120,6 @@ class AdvanceImageRepository @Inject constructor(
                 contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
                 context.contentResolver.update(imageUri, contentValues, null, null)
             }
-
-            /*context.contentResolver.query(
-                imageUri,
-                arrayOf(MediaStore.Images.Media._ID),
-                null,
-                null, null
-            )?.let {
-
-            }*/
 
             // percentage of image read is 100% with the image uri
             bytesReadListener(

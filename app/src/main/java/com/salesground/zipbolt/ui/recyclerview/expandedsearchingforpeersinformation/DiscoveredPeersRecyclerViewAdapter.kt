@@ -20,7 +20,7 @@ class DiscoveredPeersRecyclerViewAdapter(
     private val connectToDeviceClickListener: ConnectToDeviceClickListener
 ) :
     ListAdapter<DiscoveredPeersDataItem, RecyclerView.ViewHolder>(
-        DiscoveredPeersRecyclerViewAdapterDiffUitl
+        DiscoveredPeersRecyclerViewAdapterDiffUtil
     ) {
 
     interface ConnectToDeviceClickListener {
@@ -69,7 +69,7 @@ class DiscoveredPeersRecyclerViewAdapter(
         }
     }
 
-    object DiscoveredPeersRecyclerViewAdapterDiffUitl :
+    object DiscoveredPeersRecyclerViewAdapterDiffUtil :
         DiffUtil.ItemCallback<DiscoveredPeersDataItem>() {
         override fun areItemsTheSame(
             oldItem: DiscoveredPeersDataItem,

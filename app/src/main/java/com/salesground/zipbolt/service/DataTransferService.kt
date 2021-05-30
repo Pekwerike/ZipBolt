@@ -202,7 +202,6 @@ class DataTransferService : Service() {
     private fun configureClientSocket(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
-            delay(1000)
             withContext(Dispatchers.IO) { socket.bind(null) }
             withContext(Dispatchers.IO) {
                 socket.connect(
@@ -274,7 +273,7 @@ class DataTransferService : Service() {
                     val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
                     for (i in 0 until filesCount) {
                         mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
-                            incomingDataBroadcastIntent.apply {
+                            with(incomingDataBroadcastIntent){
                                 putExtra(
                                     IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
                                     dataDisplayName

@@ -106,19 +106,18 @@ class MainActivity : AppCompatActivity() {
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
-                                with(mainActivityViewModel) {
-                                    addDataFromReceiveToUIState(
-                                        DataToTransfer.DeviceImage(
-                                            0L,
-                                            dataUri!!,
-                                            System.currentTimeMillis().parseDate().customizeDate(),
-                                            dataDisplayName,
-                                            "",
-                                            dataSize,
-                                            ""
-                                        )
+                                mainActivityViewModel.addDataFromReceiveToUIState(
+                                    DataToTransfer.DeviceImage(
+                                        0L,
+                                        dataUri!!,
+                                        System.currentTimeMillis().parseDate()
+                                            .customizeDate(),
+                                        dataDisplayName,
+                                        "",
+                                        dataSize,
+                                        ""
                                     )
-                                }
+                                )
                             }
                             else -> {
                             }
@@ -462,14 +461,14 @@ class MainActivity : AppCompatActivity() {
                         collapseBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
-                        lifecycleScope.launch(Dispatchers.IO){
-                            Log.i("ItemsInserted", "ItemsInserted")
-                        }
+                        // Log.i("ReceivingInfo", "New file received UI update")
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
+
                         // submit the list of items in transfer queue to the adapter
                         ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
+                        ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
 
                         connectedToPeerTransferOngoingBottomSheetBehavior.apply {
                             state =
