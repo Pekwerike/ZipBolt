@@ -14,7 +14,6 @@ import android.os.Build
 
 class WifiDirectBroadcastReceiver(
     private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiverCallback,
-    private val connectivityManager: ConnectivityManager,
     private val wifiP2pManager: WifiP2pManager,
     private val wifiP2pChannel: WifiP2pManager.Channel
 ) : BroadcastReceiver() {
@@ -122,18 +121,4 @@ class WifiDirectBroadcastReceiver(
         }
     }
 
-    private fun isDeviceConnected(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val activeNetwork = connectivityManager.activeNetwork ?: return false
-            val networkCapabilities =
-                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-            return when {
-                networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_WIFI_P2P) -> true
-                else -> false
-            }
-        } else {
-            return connectivityManager.activeNetworkInfo?.isConnected ?: false
-        }
-    }
 }

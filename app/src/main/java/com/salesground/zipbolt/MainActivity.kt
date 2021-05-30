@@ -85,9 +85,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var wifiManager: WifiManager
 
     @Inject
-    lateinit var connectivityManager: ConnectivityManager
-
-    @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
@@ -991,7 +988,6 @@ class MainActivity : AppCompatActivity() {
         wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
             wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
                 wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
-                connectivityManager = connectivityManager,
                 wifiP2pManager = wifiP2pManager,
                 wifiP2pChannel = wifiP2pChannel
             )
