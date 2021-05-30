@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                                     ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
                                         .alpha(0f)
                                     with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                        ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                       // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
                                         root.animate().alpha(1f)
                                         this.dataDisplayName = dataDisplayName
                                         this.dataSize =
@@ -156,8 +156,8 @@ class MainActivity : AppCompatActivity() {
                                 // show the media thumbnail at the end of the transfer
                                 dataTransferPercent = 100
                                 dataTransferPercentAsString = "$dataTransferPercent%"
-                                // hide the cancel transfer/receive image button
-                                ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)
+                                /*// hide the cancel transfer/receive image button
+                                ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                 // load the receive image into the image view
                                 Glide.with(ongoingDataTransferDataCategoryImageView)
                                     .load(dataUri)
@@ -376,9 +376,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             sendFileButton.setOnClickListener {
-                /* TODO 1. Change the activity UI to show the list of elements in transfer
-                2. As the progress of each elements happen, update the activity UI to reflect it
-                * */
                 mainActivityViewModel.addCurrentDataToTransferToUIState()
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                 connectedToPeerTransferOngoingBottomSheetLayoutBinding

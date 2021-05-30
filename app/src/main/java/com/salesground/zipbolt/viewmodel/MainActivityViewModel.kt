@@ -5,18 +5,15 @@ import android.net.wifi.p2p.WifiP2pInfo
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
+    private var hasBeenNotifiedAboutReceive: Boolean = false
     var currentTransferHistory: MutableList<OngoingDataTransferUIState> =
         mutableListOf(OngoingDataTransferUIState.Header)
     var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
@@ -67,6 +64,15 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         )
     }
 
+    fun expandedConnectedToPeerReceiveOngoing() {
+        if (!hasBeenNotifiedAboutReceive) {
+            expandedConnectedToPeerTransferOngoing()
+            hasBeenNotifiedAboutReceive = true
+        } else {
+
+        }
+    }
+
     fun expandedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
             PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
@@ -112,9 +118,12 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             } == null) {
             dataToTransfer.transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             currentTransferHistory.add(1, OngoingDataTransferUIState.DataItem(dataToTransfer))
-            if(_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing) {
+            if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing
+                || _peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerNoAction
+                || _peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerNoAction
+            ) {
                 expandedConnectedToPeerTransferOngoing()
-            }else if (_peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing){
+            } else if (_peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing) {
                 collapsedConnectedToPeerTransferOngoing()
             }
         }
