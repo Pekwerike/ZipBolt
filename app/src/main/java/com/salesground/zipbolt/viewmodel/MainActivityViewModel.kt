@@ -112,7 +112,11 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             } == null) {
             dataToTransfer.transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             currentTransferHistory.add(1, OngoingDataTransferUIState.DataItem(dataToTransfer))
-            expandedConnectedToPeerTransferOngoing()
+            if(_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing) {
+                expandedConnectedToPeerTransferOngoing()
+            }else if (_peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing){
+                collapsedConnectedToPeerTransferOngoing()
+            }
         }
     }
 

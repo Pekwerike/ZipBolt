@@ -117,6 +117,7 @@ class MainActivity : AppCompatActivity() {
                                     ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
                                         .alpha(0f)
                                     with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                        ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)
                                         root.animate().alpha(1f)
                                         this.dataDisplayName = dataDisplayName
                                         this.dataSize =
@@ -158,7 +159,9 @@ class MainActivity : AppCompatActivity() {
                                 // show the media thumbnail at the end of the transfer
                                 dataTransferPercent = 100
                                 dataTransferPercentAsString = "$dataTransferPercent%"
-                                // load the image into the
+                                // hide the cancel transfer/receive image button
+                                ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)
+                                // load the receive image into the image view
                                 Glide.with(ongoingDataTransferDataCategoryImageView)
                                     .load(dataUri)
                                     .into(ongoingDataTransferDataCategoryImageView)
