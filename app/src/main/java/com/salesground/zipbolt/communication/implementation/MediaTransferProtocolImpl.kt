@@ -56,7 +56,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 dataTransferListener(
                     this.dataToTransfer!!,
                     0f,
-                    DataToTransfer.TransferStatus.TRANSFER_ONGOING
+                    DataToTransfer.TransferStatus.TRANSFER_STARTED
                 )
 
                 var lengthRead: Int

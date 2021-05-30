@@ -338,6 +338,26 @@ class MainActivity : AppCompatActivity() {
                     percentTransferred: Float,
                     transferStatus: DataToTransfer.TransferStatus ->
                     when (transferStatus) {
+                        DataToTransfer.TransferStatus.TRANSFER_STARTED -> {
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                with(
+                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                        .expandedConnectedToPeerTransferOngoingLayout
+                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                ) {
+                                    ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                                        .alpha(0f)
+                                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                                        dataSize =
+                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+                                        dataDisplayName = dataToTransfer.dataDisplayName
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(dataToTransfer.dataUri)
+                                            .into(ongoingDataTransferDataCategoryImageView)
+                                    }
+                                }
+                            }
+                        }
                         DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                             lifecycleScope.launch {
                                 mainActivityViewModel.currentTransferHistory.find {
@@ -372,19 +392,11 @@ class MainActivity : AppCompatActivity() {
                                         .expandedConnectedToPeerTransferOngoingLayout
                                         .expandedConnectedToPeerTransferOngoingLayoutHeader
                                 ) {
-                                    ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                                        .alpha(0f)
-                                    ongoingTransferReceiveHeaderLayoutDataTransferView.apply {
-                                        dataDisplayName = dataToTransfer.dataDisplayName
+
+                                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
                                         dataTransferPercentAsString =
                                             "${percentTransferred.roundToInt()}%"
-                                        dataSize =
-                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
                                         dataTransferPercent = percentTransferred.roundToInt()
-
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(dataToTransfer.dataUri)
-                                            .into(ongoingDataTransferDataCategoryImageView)
                                     }
                                 }
                             }
@@ -469,6 +481,7 @@ class MainActivity : AppCompatActivity() {
                         // submit the list of items in transfer queue to the adapter
                         ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
                         ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
+
 
                         connectedToPeerTransferOngoingBottomSheetBehavior.apply {
                             state =
