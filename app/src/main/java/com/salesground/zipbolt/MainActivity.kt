@@ -107,28 +107,32 @@ class MainActivity : AppCompatActivity() {
                     DataToTransfer.TransferStatus.RECEIVE_STARTED.value -> {
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
-                                Log.i("ReceiveSt", "ReceiveStarted")
-                                    with(
-                                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                            .expandedConnectedToPeerTransferOngoingLayout
-                                            .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    ) {
-                                        // hide the  no item in receive label
-                                        ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                            .alpha(0f)
-                                        with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                            root.animate().alpha(1f)
-                                            this.dataDisplayName = dataDisplayName
-                                            this.dataSize =
-                                                dataSize.transformDataSizeToMeasuredUnit()
-                                        }
+                                mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                                with(
+                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                        .expandedConnectedToPeerTransferOngoingLayout
+                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                ) {
+                                    // hide the  no item in receive label
+                                    ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                        .alpha(0f)
+                                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                        root.animate().alpha(1f)
+                                        this.dataDisplayName = dataDisplayName
+                                        this.dataSize =
+                                            dataSize.transformDataSizeToMeasuredUnit()
                                     }
                                 }
+                            }
                             else -> {
 
 
                             }
                         }
+                    }
+
+                    DataToTransfer.TransferStatus.RECEIVE_ONGOING.value -> {
+
                     }
 
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {

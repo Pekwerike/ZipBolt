@@ -112,11 +112,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             } == null) {
             dataToTransfer.transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             currentTransferHistory.add(1, OngoingDataTransferUIState.DataItem(dataToTransfer))
-            _peerConnectionUIState.value =
-                PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
-                    wifiP2pCurrentConnectionInfo,
-                    currentTransferHistory
-                )
+            expandedConnectedToPeerTransferOngoing()
         }
     }
 
