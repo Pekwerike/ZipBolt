@@ -121,6 +121,9 @@ class MainActivity : AppCompatActivity() {
                                         this.dataDisplayName = dataDisplayName
                                         this.dataSize =
                                             dataSize.transformDataSizeToMeasuredUnit()
+                                       Glide.with(ongoingDataTransferDataCategoryImageView)
+                                           .load(R.drawable.ic_undraw_well_done)
+                                           .into(ongoingDataTransferDataCategoryImageView)
                                     }
                                 }
                             }
@@ -140,23 +143,26 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             // show the receive progress indicator and the percentage received
                             dataTransferPercent = percentTransferred.roundToInt()
-                            dataTransferPercentAsString = "$dataTransferPercent"
+                            dataTransferPercentAsString = "$dataTransferPercent%"
                         }
                     }
 
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
-                        with(
-                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                .expandedConnectedToPeerTransferOngoingLayout
-                                .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                        ) {
-                            // show the media thumbnail at the end of the transfer
-                            dataTransferPercent = 100
-                            dataTransferPercentAsString = "$dataTransferPercent"
-                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                .load(dataUri)
-                                .into(ongoingDataTransferDataCategoryImageView)
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            with(
+                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                    .expandedConnectedToPeerTransferOngoingLayout
+                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                            ) {
+                                // show the media thumbnail at the end of the transfer
+                                dataTransferPercent = 100
+                                dataTransferPercentAsString = "$dataTransferPercent%"
+                                // load the image into the
+                                Glide.with(ongoingDataTransferDataCategoryImageView)
+                                    .load(dataUri)
+                                    .into(ongoingDataTransferDataCategoryImageView)
+                            }
                         }
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
