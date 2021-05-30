@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                                     ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
                                         .alpha(0f)
                                     with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                        ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)
+                                        ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
                                         root.animate().alpha(1f)
                                         this.dataDisplayName = dataDisplayName
                                         this.dataSize =
