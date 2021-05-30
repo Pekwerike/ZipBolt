@@ -23,6 +23,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.core.animate
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
@@ -103,6 +104,33 @@ class MainActivity : AppCompatActivity() {
                 transferStatus: Int
             ) {
                 when (transferStatus) {
+                    DataToTransfer.TransferStatus.RECEIVE_STARTED.value -> {
+                        when (dataType) {
+                            DataToTransfer.MediaType.IMAGE.value -> {
+                                Log.i("ReceiveSt", "ReceiveStarted")
+                                    with(
+                                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                            .expandedConnectedToPeerTransferOngoingLayout
+                                            .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    ) {
+                                        // hide the  no item in receive label
+                                        ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                            .alpha(0f)
+                                        with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                            root.animate().alpha(1f)
+                                            this.dataDisplayName = dataDisplayName
+                                            this.dataSize =
+                                                dataSize.transformDataSizeToMeasuredUnit()
+                                        }
+                                    }
+                                }
+                            else -> {
+
+
+                            }
+                        }
+                    }
+
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
