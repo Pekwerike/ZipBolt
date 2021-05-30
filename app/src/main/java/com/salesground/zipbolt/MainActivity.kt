@@ -132,10 +132,32 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     DataToTransfer.TransferStatus.RECEIVE_ONGOING.value -> {
-
+                        with(
+                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                .expandedConnectedToPeerTransferOngoingLayout
+                                .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                        ) {
+                            // show the receive progress indicator and the percentage received
+                            dataTransferPercent = percentTransferred.roundToInt()
+                            dataTransferPercentAsString = "$dataTransferPercent"
+                        }
                     }
 
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
+                        with(
+                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                .expandedConnectedToPeerTransferOngoingLayout
+                                .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                        ) {
+                            // show the media thumbnail at the end of the transfer
+                            dataTransferPercent = 100
+                            dataTransferPercentAsString = "$dataTransferPercent"
+                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                .load(dataUri)
+                                .into(ongoingDataTransferDataCategoryImageView)
+                        }
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
                                 mainActivityViewModel.addDataFromReceiveToUIState(
