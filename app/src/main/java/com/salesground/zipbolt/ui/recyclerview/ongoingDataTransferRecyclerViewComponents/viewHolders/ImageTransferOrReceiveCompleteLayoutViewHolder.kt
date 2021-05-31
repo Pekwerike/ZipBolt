@@ -11,22 +11,21 @@ import com.salesground.zipbolt.databinding.ImageTransferOrReceiveCompleteLayoutI
 import com.salesground.zipbolt.model.DataToTransfer
 
 class ImageTransferOrReceiveCompleteLayoutViewHolder(
-    private val imageTransferLayoutItemBinding: ImageTransferLayoutItemBinding
-) : RecyclerView.ViewHolder(imageTransferLayoutItemBinding.root) {
+    private val imageTransferOrReceiveCompleteLayoutItemBinding: ImageTransferOrReceiveCompleteLayoutItemBinding
+) : RecyclerView.ViewHolder(imageTransferOrReceiveCompleteLayoutItemBinding.root) {
 
     fun bindImageData(dataToTransfer: DataToTransfer) {
-        imageTransferLayoutItemBinding.apply {
-            imageWaitingForTransferLayoutItemImageView.alpha = 1f
-            Glide.with(imageWaitingForTransferLayoutItemImageView)
+        imageTransferOrReceiveCompleteLayoutItemBinding.apply {
+            Glide.with(imageTransferOrReceiveCompleteLayoutItemImageView)
                 .load(dataToTransfer.dataUri)
-                .into(imageWaitingForTransferLayoutItemImageView)
+                .into(imageTransferOrReceiveCompleteLayoutItemImageView)
         }
     }
 
     companion object {
         fun createViewHolder(parent: ViewGroup): ImageTransferOrReceiveCompleteLayoutViewHolder {
             val layoutBinding =
-                ImageTransferLayoutItemBinding.inflate(
+                ImageTransferOrReceiveCompleteLayoutItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false

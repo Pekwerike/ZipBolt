@@ -84,6 +84,9 @@ dependencies {
 
     // activity extensions for androidx
     implementation "androidx.activity:activity-ktx:$activity_version"
+
+    // shimmer dependency
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 }
 
 kapt {

@@ -6,19 +6,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="7dp"
-    android:orientation="vertical"
     app:cardCornerRadius="6dp"
     app:cardElevation="4dp">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/image_transfer_layout_item_loading_image_shimmer"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:alpha="0.6"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </com.google.android.material.card.MaterialCardView>
 
