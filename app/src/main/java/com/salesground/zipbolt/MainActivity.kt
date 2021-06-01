@@ -114,14 +114,14 @@ class MainActivity : AppCompatActivity() {
                                     ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
                                         .alpha(0f)
                                     with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                       // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                        // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
                                         root.animate().alpha(1f)
                                         this.dataDisplayName = dataDisplayName
                                         this.dataSize =
                                             dataSize.transformDataSizeToMeasuredUnit()
-                                       Glide.with(ongoingDataTransferDataCategoryImageView)
-                                           .load(R.drawable.ic_undraw_well_done)
-                                           .into(ongoingDataTransferDataCategoryImageView)
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(R.drawable.ic_undraw_well_done)
+                                            .into(ongoingDataTransferDataCategoryImageView)
                                     }
                                 }
                             }
@@ -540,14 +540,14 @@ class MainActivity : AppCompatActivity() {
                         ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
 
 
-                        connectedToPeerTransferOngoingBottomSheetBehavior.apply {
+                        with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED
                             peekHeight =
                                 getBottomSheetPeekHeight()
                         }
                         // hide the connected to pair no action bottom sheet
-                        connectedToPeerNoActionBottomSheetBehavior.apply {
+                        with(connectedToPeerNoActionBottomSheetBehavior) {
                             isHideable = true
                             state = BottomSheetBehavior.STATE_HIDDEN
                         }
@@ -637,12 +637,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
         isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true
-        connectedToPeerTransferOngoingBottomSheetLayoutBinding.apply {
-            collapsedConnectedToPeerOngoingDataTransferLayout.apply {
-
+        with(connectedToPeerTransferOngoingBottomSheetLayoutBinding) {
+            // configure collapsed connected to peer transfer ongoing layout
+            with(collapsedConnectedToPeerOngoingDataTransferLayout) {
+                root.animate().alpha(0f)
             }
-            expandedConnectedToPeerTransferOngoingLayout.apply {
-                expandedConnectedToPeerTransferOngoingRecyclerView.apply {
+
+            // configure expanded connected to peer transfer ongoing layout
+            with(expandedConnectedToPeerTransferOngoingLayout) {
+                with(expandedConnectedToPeerTransferOngoingRecyclerView) {
                     adapter = ongoingDataTransferRecyclerViewAdapter
                     val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
                     gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -660,12 +663,13 @@ class MainActivity : AppCompatActivity() {
                     layoutManager = gridLayoutManager
                     setHasFixedSize(true)
                 }
-                expandedConnectedToPeerTransferOngoingLayoutHeader.apply {
+                with(expandedConnectedToPeerTransferOngoingLayoutHeader) {
                     ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(0f)
                     ongoingTransferReceiveHeaderLayoutDataReceiveView.root.animate().alpha(0f)
                 }
             }
         }
+
         connectedToPeerTransferOngoingBottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
