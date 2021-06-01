@@ -78,11 +78,12 @@
             app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/ongoing_data_transfer_layout_cancel_transfer_image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/image_button_size"
+            android:layout_height="@dimen/image_button_size"
             android:layout_margin="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/close_icon"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintEnd_toEndOf="parent"

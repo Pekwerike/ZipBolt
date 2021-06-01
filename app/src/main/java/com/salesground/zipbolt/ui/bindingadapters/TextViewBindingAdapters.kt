@@ -61,8 +61,8 @@ fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: Strin
         val spannableStringBuilder = SpannableStringBuilder().apply {
             append("Name: $deviceName \n")
             offset += "Name: $deviceName \n".length
-            append("Ip Address: $deviceAddress \n")
-            offset += "Ip Address: $deviceAddress \n".length
+            append("Mac address: $deviceAddress \n")
+            offset += "Mac address: $deviceAddress \n".length
             append("Status: Connected")
             offset += "Status: ".length
 

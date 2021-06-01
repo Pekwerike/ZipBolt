@@ -51,9 +51,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     fun collapsedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
             PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing(
-                wifiP2pCurrentConnectionInfo,
-                (currentTransferHistory[1] as OngoingDataTransferUIState.DataItem).dataToTransfer
-            )
+                wifiP2pCurrentConnectionInfo )
     }
 
     fun addCurrentDataToTransferToUIState() {
@@ -111,6 +109,9 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun newDataReceiveStarted(){
+
+    }
 
     fun addDataFromReceiveToUIState(dataToTransfer: DataToTransfer) {
         if (currentTransferHistory.find {

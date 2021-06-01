@@ -104,25 +104,26 @@ class MainActivity : AppCompatActivity() {
                     DataToTransfer.TransferStatus.RECEIVE_STARTED.value -> {
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
-                                mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                                // mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                                 with(
                                     connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                         .expandedConnectedToPeerTransferOngoingLayout
                                         .expandedConnectedToPeerTransferOngoingLayoutHeader
+
                                 ) {
-                                    // hide the  no item in receive label
-                                    ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                        .alpha(0f)
-                                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                        // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
-                                        root.animate().alpha(1f)
-                                        this.dataDisplayName = dataDisplayName
-                                        this.dataSize =
-                                            dataSize.transformDataSizeToMeasuredUnit()
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(R.drawable.ic_undraw_well_done)
-                                            .into(ongoingDataTransferDataCategoryImageView)
-                                    }
+                                        // hide the  no item in receive label
+                                        ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                            .alpha(0f)
+                                        with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                            // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                            root.animate().alpha(1f)
+                                            this.dataDisplayName = dataDisplayName
+                                            this.dataSize =
+                                                dataSize.transformDataSizeToMeasuredUnit()
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(R.drawable.ic_undraw_well_done)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
                                 }
                             }
                             else -> {

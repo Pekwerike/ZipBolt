@@ -11,9 +11,9 @@
 
     <include
         android:id="@+id/collapsed_connected_to_peer_ongoing_data_transfer_layout"
-        layout="@layout/ongoing_data_transfer_layout_item" />
+        layout="@layout/collapsed_connected_to_peer_transfer_receive_ongoing_layout" />
 
     <include
         android:id="@+id/expanded_connected_to_peer_transfer_ongoing_layout"
-        layout="@layout/expanded_connnected_to_peer_transfer_ongoing" />
+        layout="@layout/expanded_connected_to_peer_transfer_ongoing" />
 </FrameLayout>
