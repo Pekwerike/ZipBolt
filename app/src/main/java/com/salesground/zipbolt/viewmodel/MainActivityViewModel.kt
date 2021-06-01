@@ -51,7 +51,8 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     fun collapsedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
             PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing(
-                wifiP2pCurrentConnectionInfo )
+                wifiP2pCurrentConnectionInfo
+            )
     }
 
     fun addCurrentDataToTransferToUIState() {
@@ -63,13 +64,12 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun expandedConnectedToPeerReceiveOngoing() {
-        if (!hasBeenNotifiedAboutReceive) {
+        if (!hasBeenNotifiedAboutReceive && _peerConnectionUIState.value !is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing) {
             expandedConnectedToPeerTransferOngoing()
             hasBeenNotifiedAboutReceive = true
-        } else {
-
         }
     }
+
 
     fun expandedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
@@ -109,8 +109,8 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun newDataReceiveStarted(){
-
+    fun totalFileReceiveComplete() {
+        hasBeenNotifiedAboutReceive = false
     }
 
     fun addDataFromReceiveToUIState(dataToTransfer: DataToTransfer) {

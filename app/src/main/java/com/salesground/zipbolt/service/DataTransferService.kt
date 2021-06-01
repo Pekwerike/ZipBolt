@@ -53,8 +53,7 @@ class DataTransferService : Service() {
         percentTransferred: Float,
         transferStatus: DataToTransfer.TransferStatus
     ) -> Unit)? = null
-    private val incomingDataBroadcastIntent =
-        Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
+    private val incomingDataBroadcastIntent = Intent()
 
 
     @Inject
@@ -274,7 +273,9 @@ class DataTransferService : Service() {
                     val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
                     for (i in 0 until filesCount) {
                         mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
-                            with(incomingDataBroadcastIntent){
+                            with(incomingDataBroadcastIntent) {
+                                action =
+                                    IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION
                                 putExtra(
                                     IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
                                     dataDisplayName
@@ -303,6 +304,10 @@ class DataTransferService : Service() {
                             }
                         }
                         delay(200)
+                    }
+                    with(incomingDataBroadcastIntent) {
+                        action = IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE
+                        localBroadcastManager.sendBroadcast(this)
                     }
                 }
                 MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {

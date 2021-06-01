@@ -20,6 +20,7 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
             percentTransferred: Float = 0f,
             transferStatus: Int = DataToTransfer.TransferStatus.TRANSFER_WAITING.value
         )
+        fun totalFileReceiveComplete()
     }
 
     companion object {
@@ -31,6 +32,7 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
         const val INCOMING_FILE_SIZE = "IncomingFileSize"
         const val INCOMING_FILE_MIME_TYPE = "IncomingFileMimeType"
         const val INCOMING_FILE_TRANSFER_STATUS = "IncomingFileTransferStatus"
+        const val ACTION_TOTAL_FILE_RECEIVE_COMPLETE ="TotalFileReceiveComplete"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -57,6 +59,9 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
                         percentageOfDataReceived,
                         fileReceiveStatus
                     )
+                }
+                ACTION_TOTAL_FILE_RECEIVE_COMPLETE -> {
+                    dataReceiveListener.totalFileReceiveComplete()
                 }
                 else -> {
 

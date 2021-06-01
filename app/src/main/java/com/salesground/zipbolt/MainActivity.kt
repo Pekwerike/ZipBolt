@@ -92,6 +92,10 @@ class MainActivity : AppCompatActivity() {
 
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver(object : IncomingDataBroadcastReceiver.DataReceiveListener {
+            override fun totalFileReceiveComplete() {
+                mainActivityViewModel.totalFileReceiveComplete()
+            }
+
             override fun onDataReceive(
                 dataDisplayName: String,
                 dataUri: Uri?,
@@ -104,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                     DataToTransfer.TransferStatus.RECEIVE_STARTED.value -> {
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
-                                // mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                               mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
                                 with(
                                     connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                         .expandedConnectedToPeerTransferOngoingLayout
@@ -440,7 +444,6 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             }
-
                         }
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
                             // update the transfer section of the UI
