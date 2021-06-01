@@ -976,6 +976,7 @@ class MainActivity : AppCompatActivity() {
     private fun createLocalBroadcastIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
+            addAction(IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE)
         }
     }
 

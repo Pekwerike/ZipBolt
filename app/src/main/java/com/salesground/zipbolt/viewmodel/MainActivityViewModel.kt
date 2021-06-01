@@ -64,7 +64,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun expandedConnectedToPeerReceiveOngoing() {
-        if (!hasBeenNotifiedAboutReceive && _peerConnectionUIState.value !is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing) {
+        if (!hasBeenNotifiedAboutReceive) {
             expandedConnectedToPeerTransferOngoing()
             hasBeenNotifiedAboutReceive = true
         }

@@ -270,7 +270,7 @@ class DataTransferService : Service() {
                 MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
                     delay(200)
                     // read the number of files sent from the peer
-                    val filesCount = withContext(Dispatchers.IO) { dataInputStream.readInt() }
+                    val filesCount = dataInputStream.readInt()
                     for (i in 0 until filesCount) {
                         mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
                             with(incomingDataBroadcastIntent) {
