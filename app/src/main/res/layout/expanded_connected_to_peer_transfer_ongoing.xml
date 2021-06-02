@@ -12,18 +12,22 @@
         app:elevation="0dp">
 
         <include
-            app:layout_scrollFlags="scroll"
+            android:id="@+id/expanded_connected_to_peer_transfer_ongoing_toolbar"
+            layout="@layout/expanded_bottom_sheet_layout_toolbar" />
+
+        <include
             android:id="@+id/expanded_connected_to_peer_transfer_ongoing_layout_header"
-            layout="@layout/ongoing_transfer_receive_header_layout" />
+            layout="@layout/ongoing_transfer_receive_header_layout"
+            app:layout_scrollFlags="scroll" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:id="@+id/expanded_connected_to_peer_transfer_ongoing_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/standard_margin"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
