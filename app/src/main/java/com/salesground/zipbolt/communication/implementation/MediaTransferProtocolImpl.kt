@@ -108,6 +108,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         100f,
                         DataToTransfer.TransferStatus.TRANSFER_COMPLETE
                     )
+                } else {
+                    // send event that transfer has been cancelled
+                    dataTransferListener(
+                        this.dataToTransfer!!,
+                        -1f,
+                        DataToTransfer.TransferStatus.TRANSFER_CANCELLED
+                    )
                 }
 
                 parcelFileDescriptor.close()

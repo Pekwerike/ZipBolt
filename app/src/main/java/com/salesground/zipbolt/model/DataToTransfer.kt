@@ -20,7 +20,8 @@ sealed class DataToTransfer(
         TRANSFER_ONGOING(13),
         RECEIVE_COMPLETE(14),
         RECEIVE_STARTED(17),
-        RECEIVE_ONGOING(15)
+        RECEIVE_ONGOING(15),
+        TRANSFER_CANCELLED(19)
     }
     enum class MediaType(val value: Int) {
         IMAGE(209),

@@ -472,6 +472,30 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
+                        DataToTransfer.TransferStatus.TRANSFER_CANCELLED -> {
+                            // from the cancelled media item from the queue of data in transfer
+                            lifecycleScope.launch {
+                                mainActivityViewModel.currentTransferHistory.find {
+                                    it.id == dataToTransfer.dataUri.toString()
+                                }.also {
+                                    it?.let { ongoingDataTransferUIState ->
+                                        val index =
+                                            mainActivityViewModel.currentTransferHistory.indexOf(
+                                                ongoingDataTransferUIState
+                                            )
+                                        mainActivityViewModel.currentTransferHistory.removeAt(index)
+                                        withContext(Dispatchers.Main) {
+                                            ongoingDataTransferRecyclerViewAdapter.submitList(
+                                                mainActivityViewModel.currentTransferHistory
+                                            )
+                                            ongoingDataTransferRecyclerViewAdapter.notifyItemRemoved(
+                                                index
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 mainActivityViewModel.clearCollectionOfDataToTransfer()

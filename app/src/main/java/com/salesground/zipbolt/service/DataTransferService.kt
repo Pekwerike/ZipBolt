@@ -112,6 +112,7 @@ class DataTransferService : Service() {
         mediaTransferProtocol.cancelCurrentTransfer(
             transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
         )
+
     }
 
     fun transferData(
