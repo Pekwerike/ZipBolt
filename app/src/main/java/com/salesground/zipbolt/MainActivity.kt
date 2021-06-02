@@ -69,8 +69,6 @@ import kotlin.math.roundToInt
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
 const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
-const val SERVER_IP_ADDRESS_KEY = "ServerIpAddress"
-const val IS_SERVER_KEY = "IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -134,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                                             .load(R.drawable.ic_startup_outline_)
                                             .into(ongoingDataReceiveLayoutImageView)
                                         // start shimmer
-                                        ongoingDataReceiveDataCategoryImageShimmer.startShimmer()
+                                        ongoingDataReceiveDataCategoryImageShimmer.showShimmer(true)
 
                                     }
                                 }
@@ -178,6 +176,7 @@ class MainActivity : AppCompatActivity() {
                                     .into(ongoingDataReceiveLayoutImageView)
                                 // stop shimmer
                                 ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
+                                ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
                             }
                         }
                         when (dataType) {
