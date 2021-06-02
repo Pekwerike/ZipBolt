@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="deviceName"
             type="String" />
+
         <variable
             name="deviceAddress"
             type="String" />
@@ -14,6 +16,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/collapse_expanded_connected_to_peer_no_action_image_button"
@@ -63,43 +66,45 @@
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/expanded_connected_to_peer_no_action_peer_device_details_text_view"
+            setConnectedDeviceIpAddress="@{deviceAddress}"
+            setConnectedDeviceName="@{deviceName}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/standard_margin"
             android:layout_marginVertical="6dp"
             android:lineSpacingExtra="4dp"
             android:padding="@dimen/standard_text_view_padding"
-            setConnectedDeviceName="@{deviceName}"
-            setConnectedDeviceIpAddress="@{deviceAddress}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintBottom_toTopOf="@+id/appCompatImageView"
+            app:layout_constraintBottom_toTopOf="@+id/connected_cubes_lottie_animation_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintTop_toBottomOf="@+id/expanded_connected_to_peer_no_action_header_text_view" />
+            app:layout_constraintTop_toBottomOf="@+id/expanded_connected_to_peer_no_action_header_text_view"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/appCompatImageView"
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/connected_cubes_lottie_animation_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="@dimen/standard_margin"
-            android:layout_marginVertical="4dp"
-            android:padding="8dp"
-            android:src="@drawable/ic_undraw_well_done"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_renderMode="automatic"
+            app:lottie_repeatMode="reverse"
             app:layout_constraintBottom_toTopOf="@+id/expanded_connected_to_peer_no_action_transfer_action_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/expanded_connected_to_peer_no_action_peer_device_details_text_view" />
+            app:layout_constraintTop_toBottomOf="@+id/expanded_connected_to_peer_no_action_peer_device_details_text_view"
+            app:lottie_rawRes="@raw/connected_cubes_animation_primary_color" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/expanded_connected_to_peer_no_action_transfer_action_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/standard_margin"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="64dp"
-            android:layout_marginHorizontal="@dimen/standard_margin"
             android:padding="@dimen/standard_text_view_padding"
             android:text="@string/you_can_transfer_and_receive_files_now"
             android:textAlignment="center"
@@ -108,7 +113,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatImageView" />
+            app:layout_constraintTop_toBottomOf="@+id/connected_cubes_lottie_animation_view" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

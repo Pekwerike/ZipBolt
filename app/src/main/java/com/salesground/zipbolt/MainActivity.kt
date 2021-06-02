@@ -89,10 +89,13 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
 
-    private val sendDataClickedIntent = Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
+    private val sendDataClickedIntent =
+        Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
+
+    private var dataTransferServiceIntent: Intent? = null
 
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver(object : IncomingDataBroadcastReceiver.DataReceiveListener {
@@ -127,9 +130,11 @@ class MainActivity : AppCompatActivity() {
                                         this.dataDisplayName = dataDisplayName
                                         this.dataSize =
                                             dataSize.transformDataSizeToMeasuredUnit()
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(R.drawable.ic_undraw_well_done)
-                                            .into(ongoingDataTransferDataCategoryImageView)
+                                        Glide.with(ongoingDataReceiveLayoutImageView)
+                                            .load(R.drawable.ic_startup_outline_)
+                                            .into(ongoingDataReceiveLayoutImageView)
+                                        // start shimmer
+                                        ongoingDataReceiveDataCategoryImageShimmer.startShimmer()
 
                                     }
                                 }
@@ -168,9 +173,11 @@ class MainActivity : AppCompatActivity() {
                                 /*// hide the cancel transfer/receive image button
                                 ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                 // load the receive image into the image view
-                                Glide.with(ongoingDataTransferDataCategoryImageView)
+                                Glide.with(ongoingDataReceiveLayoutImageView)
                                     .load(dataUri)
-                                    .into(ongoingDataTransferDataCategoryImageView)
+                                    .into(ongoingDataReceiveLayoutImageView)
+                                // stop shimmer
+                                ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
                             }
                         }
                         when (dataType) {
@@ -312,7 +319,8 @@ class MainActivity : AppCompatActivity() {
                             this@MainActivity,
                             DataTransferService::class.java
                         ).also { serviceIntent ->
-                            serviceIntent.apply {
+
+                            dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, true)
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -330,7 +338,7 @@ class MainActivity : AppCompatActivity() {
                         ).also { serviceIntent ->
                             val serverIpAddress =
                                 wifiP2pInfo.groupOwnerAddress.hostAddress
-                            serviceIntent.apply {
+                            dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, false)
                                 putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
                             }
@@ -690,6 +698,21 @@ class MainActivity : AppCompatActivity() {
 
             // configure expanded connected to peer transfer ongoing layout
             with(expandedConnectedToPeerTransferOngoingLayout) {
+                with(expandedConnectedToPeerTransferOngoingToolbar) {
+                    this.expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
+                        // close the connection with the peer
+                        dataTransferServiceIntent?.let {
+                            dataTransferService?.stopService(dataTransferServiceIntent)
+                        }
+                    }
+                    this.expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
+                        // collapse the connected to peer transfer ongoing bottom sheet
+                        connectedToPeerTransferOngoingBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
+                        connectedToPeerTransferOngoingBottomSheetBehavior.peekHeight =
+                            getBottomSheetPeekHeight()
+                    }
+                }
                 with(expandedConnectedToPeerTransferOngoingRecyclerView) {
                     adapter = ongoingDataTransferRecyclerViewAdapter
                     val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
@@ -714,7 +737,7 @@ class MainActivity : AppCompatActivity() {
 
                     with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
                         if (root.alpha != 0f) {
-                            ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
+                            ongoingDataReceiveLayoutCancelTransferImageButton.setOnClickListener {
                                 dataTransferService?.cancelActiveReceive()
                             }
                         }

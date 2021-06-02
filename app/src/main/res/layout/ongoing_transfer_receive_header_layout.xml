@@ -55,7 +55,7 @@
 
     <include
         android:id="@+id/ongoing_transfer_receive_header_layout_data_receive_view"
-        layout="@layout/ongoing_data_transfer_layout_item"
+        layout="@layout/ongoing_data_receive_layout_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/medium_margin"
