@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.ui.fragments
 
+import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
@@ -9,10 +11,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
@@ -20,7 +24,10 @@ import com.salesground.zipbolt.ui.customviews.ChipsLayout
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
@@ -28,6 +35,21 @@ class ImageFragment : Fragment() {
     private var selectedCategory: String = "All"
     private val bucketNames = mutableListOf<String>()
     private var mainActivity: MainActivity? = null
+
+    @Inject
+    lateinit var localBroadcastManager: LocalBroadcastManager
+
+    private val sendDataBroadcastReceiver = SendDataBroadcastReceiver(
+        object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun sendDataButtonClicked() {
+                // tell the view model to clear the collection of clicked images and notify
+                // the recycler that all clicked images have been sent
+                imagesViewModel.clearCollectionOfClickedImages()
+                dAdapter.notifyDataSetChanged()
+            }
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,5 +179,18 @@ class ImageFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        localBroadcastManager.registerReceiver(sendDataBroadcastReceiver,
+            IntentFilter().apply {
+                addAction(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
+            })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        localBroadcastManager.unregisterReceiver(sendDataBroadcastReceiver)
     }
 }

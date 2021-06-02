@@ -150,6 +150,9 @@ class ImagesViewModel @Inject constructor(
             }
         }
     }
+    fun clearCollectionOfClickedImages(){
+        collectionOfClickedImages.clear()
+    }
 }
 
 data class BucketNameAndSize(val bucketName: String, val bucketSize: Int)

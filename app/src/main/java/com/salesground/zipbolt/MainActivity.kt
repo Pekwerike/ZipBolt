@@ -36,6 +36,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
+import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.communication.MediaTransferProtocol
@@ -73,6 +74,7 @@ const val IS_SERVER_KEY = "IsDeviceServer"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
     @Inject
@@ -86,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
+
+    private val sendDataClickedIntent = Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
@@ -381,6 +385,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             sendFileButton.setOnClickListener {
+                // send broadcast event that send data button has been triggered
+                localBroadcastManager.sendBroadcast(sendDataClickedIntent)
+
                 mainActivityViewModel.addCurrentDataToTransferToUIState()
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                 with(
