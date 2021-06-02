@@ -86,10 +86,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         lengthUnread -= lengthRead
                     }
                     dataOutputStream.writeInt(mTransferMetaData.value)
-                    when (mTransferMetaData) {
+                    when(mTransferMetaData){
                         MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE -> break
-                        MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> break
+                        MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER -> {
+                            mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
+                        }
                     }
+
                     dataOutputStream.write(buffer, 0, lengthRead)
 
                     dataTransferListener(
@@ -145,7 +148,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = {
                         if (it == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
-                            cancelCurrentTransfer(MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                            cancelCurrentTransfer(MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE)
                         }
                     },
                     bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,

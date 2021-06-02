@@ -66,11 +66,6 @@ class DataTransferService : Service() {
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
 
-
-    fun cancelScheduledTransfer() {
-
-    }
-
     fun cancelActiveReceive() {
         when (mediaTransferProtocolMetaData) {
             MediaTransferProtocolMetaData.NO_DATA -> {
