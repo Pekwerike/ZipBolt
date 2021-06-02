@@ -108,26 +108,26 @@ class MainActivity : AppCompatActivity() {
                     DataToTransfer.TransferStatus.RECEIVE_STARTED.value -> {
                         when (dataType) {
                             DataToTransfer.MediaType.IMAGE.value -> {
-                               mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
+                                mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
                                 with(
                                     connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                         .expandedConnectedToPeerTransferOngoingLayout
                                         .expandedConnectedToPeerTransferOngoingLayoutHeader
-
                                 ) {
-                                        // hide the  no item in receive label
-                                        ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                            .alpha(0f)
-                                        with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                            // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
-                                            root.animate().alpha(1f)
-                                            this.dataDisplayName = dataDisplayName
-                                            this.dataSize =
-                                                dataSize.transformDataSizeToMeasuredUnit()
-                                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                                .load(R.drawable.ic_undraw_well_done)
-                                                .into(ongoingDataTransferDataCategoryImageView)
-                                        }
+                                    // hide the  no item in receive label
+                                    ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                        .alpha(0f)
+                                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                        // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                        root.animate().alpha(1f)
+                                        this.dataDisplayName = dataDisplayName
+                                        this.dataSize =
+                                            dataSize.transformDataSizeToMeasuredUnit()
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(R.drawable.ic_undraw_well_done)
+                                            .into(ongoingDataTransferDataCategoryImageView)
+
+                                    }
                                 }
                             }
                             else -> {
@@ -383,17 +383,14 @@ class MainActivity : AppCompatActivity() {
             sendFileButton.setOnClickListener {
                 mainActivityViewModel.addCurrentDataToTransferToUIState()
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                with(connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                    .expandedConnectedToPeerTransferOngoingLayout
-                    .expandedConnectedToPeerTransferOngoingLayoutHeader){
+                with(
+                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                        .expandedConnectedToPeerTransferOngoingLayout
+                        .expandedConnectedToPeerTransferOngoingLayoutHeader
+                ) {
                     ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
                         .alpha(0f)
-                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                        root.animate().alpha(1f)
-                        ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
-                            dataTransferService?.cancelActiveTransfer()
-                        }
-                    }
+                    ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(1f)
 
                 }
                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
@@ -683,6 +680,22 @@ class MainActivity : AppCompatActivity() {
                 with(expandedConnectedToPeerTransferOngoingLayoutHeader) {
                     ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(0f)
                     ongoingTransferReceiveHeaderLayoutDataReceiveView.root.animate().alpha(0f)
+
+                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                        if (root.alpha != 0f) {
+                            ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
+                                dataTransferService?.cancelActiveReceive()
+                            }
+                        }
+                    }
+
+                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                        if (root.alpha != 0f) {
+                            ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
+                                dataTransferService?.cancelActiveTransfer()
+                            }
+                        }
+                    }
                 }
             }
         }

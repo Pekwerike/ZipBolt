@@ -106,24 +106,6 @@ class DataTransferService : Service() {
 
             }
         }
-        /*  when (dataTransferUserEvent) {
-              DataTransferUserEvent.NO_DATA -> {
-                  // not transferring any data, but wants to stop receiving data from peer,
-                  // so send a message to peer to cancel ongoing transfer
-                  dataTransferUserEvent = DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER
-              }
-              DataTransferUserEvent.DATA_AVAILABLE -> {
-                  // transferring data to peer but wants to stop receiving from peer,
-                  // so send a message to the peer to stop reading for new bytes while I stop sending
-                  mediaTransferProtocol.cancelCurrentTransfer(
-                      transferMetaData =
-                      TransferMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
-                  )
-              }
-              DataTransferUserEvent.CANCEL_ON_GOING_TRANSFER -> {
-
-              }
-          }*/
     }
 
     fun cancelActiveTransfer() {
@@ -244,10 +226,8 @@ class DataTransferService : Service() {
                     mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
                 }
                 MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
-                    mediaTransferProtocol.cancelCurrentTransfer(
-                        transferMetaData =
-                        MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
-                    )
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                    mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
                 }
                 else -> {
 
