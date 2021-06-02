@@ -383,6 +383,19 @@ class MainActivity : AppCompatActivity() {
             sendFileButton.setOnClickListener {
                 mainActivityViewModel.addCurrentDataToTransferToUIState()
                 mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                with(connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                    .expandedConnectedToPeerTransferOngoingLayout
+                    .expandedConnectedToPeerTransferOngoingLayoutHeader){
+                    ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                        .alpha(0f)
+                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                        root.animate().alpha(1f)
+                        ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
+                            dataTransferService?.cancelActiveTransfer()
+                        }
+                    }
+
+                }
                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                     .expandedConnectedToPeerTransferOngoingLayout
                     .expandedConnectedToPeerTransferOngoingLayoutHeader

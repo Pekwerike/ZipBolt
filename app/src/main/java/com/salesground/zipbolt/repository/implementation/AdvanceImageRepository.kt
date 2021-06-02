@@ -82,6 +82,7 @@ class AdvanceImageRepository @Inject constructor(
             // read the current transfer status, to determine whether to continue with the transfer
             when (dataInputStream.readInt()) {
                 MediaTransferProtocolMetaData.KEEP_RECEIVING.value -> {
+
                 }
                 MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value -> {
                     // delete image file

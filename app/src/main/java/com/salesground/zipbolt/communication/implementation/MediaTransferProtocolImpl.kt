@@ -98,17 +98,21 @@ open class MediaTransferProtocolImpl @Inject constructor(
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
                     )
                 }
+                // set ongoing transfer to false, so that a user cannot attempt to cancel it
+                ongoingTransfer.set(false)
 
-                dataTransferListener(
-                    this.dataToTransfer!!,
-                    100f,
-                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE
-                )
+                // only send a 100% transfer event, when the data transfer was not cancelled
+                if (mTransferMetaData != MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
+                    dataTransferListener(
+                        this.dataToTransfer!!,
+                        100f,
+                        DataToTransfer.TransferStatus.TRANSFER_COMPLETE
+                    )
+                }
 
                 parcelFileDescriptor.close()
                 fileInputStream.close()
                 mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
-                ongoingTransfer.set(false)
             }
 
     }

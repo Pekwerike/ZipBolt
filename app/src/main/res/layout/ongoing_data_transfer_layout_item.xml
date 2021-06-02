@@ -50,7 +50,7 @@
             android:text="@{dataDisplayName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
-            app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
+            app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_button"
             app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_data_category_image_view" />
 
@@ -74,12 +74,12 @@
             android:text="@{dataTransferPercentAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
-            app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_view"
+            app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_button"
             app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/ongoing_data_transfer_layout_cancel_transfer_image_view"
+            android:id="@+id/ongoing_data_transfer_layout_cancel_transfer_image_button"
             android:layout_width="@dimen/image_button_size"
             android:layout_height="@dimen/image_button_size"
             android:layout_margin="4dp"

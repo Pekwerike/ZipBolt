@@ -1,14 +1,10 @@
 package com.salesground.zipbolt.service
 
-import android.app.Notification
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
-import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
@@ -18,7 +14,6 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.notification.FileTransferServiceNotification.Companion.FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -26,8 +21,6 @@ import java.io.DataOutputStream
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
-import java.net.SocketAddress
-import java.util.Queue
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -100,7 +93,7 @@ class DataTransferService : Service() {
             MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE -> {
 
             }
-            MediaTransferProtocolMetaData.CANCEL_ACTIVE_TRANSTER -> {
+            MediaTransferProtocolMetaData.CANCEL_ACTIVE_TRANSFER -> {
 
             }
             MediaTransferProtocolMetaData.KEEP_RECEIVING -> {
