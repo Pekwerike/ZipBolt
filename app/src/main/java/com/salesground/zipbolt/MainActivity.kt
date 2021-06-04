@@ -5,7 +5,6 @@ import android.Manifest.*
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
@@ -16,20 +15,16 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.core.animate
 import androidx.core.app.ActivityCompat
-import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -40,7 +35,6 @@ import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
-import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
@@ -52,8 +46,6 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
-import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter
-import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
 import com.salesground.zipbolt.utils.customizeDate
@@ -521,23 +513,21 @@ class MainActivity : AppCompatActivity() {
                                 lifecycleScope.launch {
                                     mainActivityViewModel.currentTransferHistory.find {
                                         it.id == dataToTransfer.dataUri.toString()
-                                    }.also {
-                                        it?.let { ongoingDataTransferUIState ->
-                                            val index =
-                                                mainActivityViewModel.currentTransferHistory.indexOf(
-                                                    ongoingDataTransferUIState
-                                                )
-                                            mainActivityViewModel.currentTransferHistory.removeAt(
+                                    }?.also { ongoingDataTransferUIState ->
+                                        val index =
+                                            mainActivityViewModel.currentTransferHistory.indexOf(
+                                                ongoingDataTransferUIState
+                                            )
+                                        mainActivityViewModel.currentTransferHistory.removeAt(
+                                            index
+                                        )
+                                        withContext(Dispatchers.Main) {
+                                            ongoingDataTransferRecyclerViewAdapter.submitList(
+                                                mainActivityViewModel.currentTransferHistory
+                                            )
+                                            ongoingDataTransferRecyclerViewAdapter.notifyItemRemoved(
                                                 index
                                             )
-                                            withContext(Dispatchers.Main) {
-                                                ongoingDataTransferRecyclerViewAdapter.submitList(
-                                                    mainActivityViewModel.currentTransferHistory
-                                                )
-                                                ongoingDataTransferRecyclerViewAdapter.notifyItemRemoved(
-                                                    index
-                                                )
-                                            }
                                         }
                                     }
                                 }
@@ -549,7 +539,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            with(mainActivityAllMediaOnDevice){
+            with(mainActivityAllMediaOnDevice) {
                 // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
                     TabLayout.MODE_SCROLLABLE
@@ -613,7 +603,7 @@ class MainActivity : AppCompatActivity() {
                         }
                         collapsedSearchingForPeersInfoBinding.numberOfDevicesFound =
                             it.numberOfDevicesFound
-                        collapseBottomSheet()
+                        collapseSearchingForPeersBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
                         // Log.i("ReceivingInfo", "New file received UI update")
@@ -923,7 +913,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun collapseBottomSheet() {
+    private fun collapseSearchingForPeersBottomSheet() {
         searchingForPeersBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
         searchingForPeersBottomSheetBehavior.state =
             BottomSheetBehavior.STATE_COLLAPSED
