@@ -99,11 +99,11 @@ class MainActivity : AppCompatActivity() {
         DataTransferServiceConnectionStateReceiver(object :
             DataTransferServiceConnectionStateReceiver.ConnectionStateListener {
             override fun disconnectedFromPeer() {
-
+                mainActivityViewModel.peerConnectionNoAction()
             }
 
             override fun cannotConnectToPeerAddress() {
-
+                mainActivityViewModel.peerConnectionNoAction()
             }
 
             override fun connectionBroken() {
@@ -654,6 +654,15 @@ class MainActivity : AppCompatActivity() {
                             searchingForPeersBottomSheetBehavior.state =
                                 BottomSheetBehavior.STATE_HIDDEN
                             isSearchingForPeersBottomSheetLayoutConfigured = false
+                        }
+                        if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
+                            connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
+                            connectedToPeerTransferOngoingBottomSheetBehavior.state =
+                                BottomSheetBehavior.STATE_HIDDEN
+                            isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = false
+                        }
+                        with(activityMainBinding) {
+                            sendFileButton.animate().alpha(0f)
                         }
                     }
                     is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {

@@ -94,7 +94,7 @@ class WifiDirectBroadcastReceiver(
                                         }
                                 } else {
                                     // send no action
-                                    wifiDirectBroadcastReceiverCallback.disconnectedFromPeer()
+                                   // wifiDirectBroadcastReceiverCallback.disconnectedFromPeer()
                                 }
                             }
                         }
