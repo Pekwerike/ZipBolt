@@ -1143,6 +1143,13 @@ class MainActivity : AppCompatActivity() {
             incomingDataBroadcastReceiver,
             createLocalBroadcastIntentFilter()
         )
+        localBroadcastManager.registerReceiver(
+            dataTransferServiceConnectionStateReceiver,
+            IntentFilter().apply {
+                addAction(DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER)
+                addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
+            }
+        )
         Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
@@ -1154,11 +1161,9 @@ class MainActivity : AppCompatActivity() {
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
         localBroadcastManager.unregisterReceiver(incomingDataBroadcastReceiver)
+        localBroadcastManager.unregisterReceiver(dataTransferServiceConnectionStateReceiver)
     }
 
-    override fun onBackPressed() {
-
-    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
