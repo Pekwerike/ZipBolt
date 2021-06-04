@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
@@ -48,7 +49,7 @@ class DataTransferService : Service() {
         transferStatus: DataToTransfer.TransferStatus
     ) -> Unit)? = null
     private val incomingDataBroadcastIntent = Intent()
-
+    private val dataTransferServiceConnectionStateIntent = Intent()
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -184,6 +185,12 @@ class DataTransferService : Service() {
             } catch (connectException: ConnectException) {
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
+                with(dataTransferServiceConnectionStateIntent) {
+                    action =
+                        DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
+
+                    localBroadcastManager.sendBroadcast(this)
+                }
                 stopForeground(true)
                 stopSelf()
             }
@@ -239,6 +246,14 @@ class DataTransferService : Service() {
                 }
             }
         } catch (exception: Exception) {
+            // send broadcast message to the main activity that we couldn't connect to peer.
+            // the main activity will use this message to determine how to update the ui
+            with(dataTransferServiceConnectionStateIntent) {
+                action =
+                    DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
+
+                localBroadcastManager.sendBroadcast(this)
+            }
             stopForeground(true)
             stopSelf()
         }
@@ -301,6 +316,15 @@ class DataTransferService : Service() {
                 }
             }
         } catch (exception: Exception) {
+            // send broadcast message to the main activity that we couldn't connect to peer.
+            // the main activity will use this message to determine how to update the ui
+            with(dataTransferServiceConnectionStateIntent) {
+                action =
+                    DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
+
+                localBroadcastManager.sendBroadcast(this)
+            }
+
             stopForeground(true)
             stopSelf()
         }

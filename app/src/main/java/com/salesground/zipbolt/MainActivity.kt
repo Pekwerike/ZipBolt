@@ -35,6 +35,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
@@ -92,8 +93,23 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
-
     private var dataTransferServiceIntent: Intent? = null
+
+    private val dataTransferServiceConnectionStateReceiver =
+        DataTransferServiceConnectionStateReceiver(object :
+            DataTransferServiceConnectionStateReceiver.ConnectionStateListener {
+            override fun disconnectedFromPeer() {
+
+            }
+
+            override fun cannotConnectToPeerAddress() {
+
+            }
+
+            override fun connectionBroken() {
+
+            }
+        })
 
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver(object : IncomingDataBroadcastReceiver.DataReceiveListener {
@@ -327,7 +343,11 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 startService(serviceIntent)
                             }
-                            bindService(serviceIntent, dataTransferServiceConnection, BIND_AUTO_CREATE)
+                            bindService(
+                                serviceIntent,
+                                dataTransferServiceConnection,
+                                BIND_AUTO_CREATE
+                            )
                         }
                     }
                     false -> {
@@ -347,7 +367,11 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 startService(serviceIntent)
                             }
-                            bindService(serviceIntent, dataTransferServiceConnection, BIND_AUTO_CREATE)
+                            bindService(
+                                serviceIntent,
+                                dataTransferServiceConnection,
+                                BIND_AUTO_CREATE
+                            )
                         }
                     }
                 }
@@ -826,7 +850,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            
+
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 connectedToPeerNoActionBottomSheetLayoutBinding.collapsedConnectedToPeerNoActionLayout.root.alpha =
                     1 - slideOffset * 3.5f

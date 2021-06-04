@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-class DataTransferServiceConnectionState : BroadcastReceiver() {
+class DataTransferServiceConnectionStateReceiver(
+    private val connectionStateListener: ConnectionStateListener
+) : BroadcastReceiver() {
 
     companion object {
         const val ACTION_DISCONNECTED_FROM_PEER = "DataTransferServiceActionDisconnectedFromPeer"
@@ -22,10 +24,10 @@ class DataTransferServiceConnectionState : BroadcastReceiver() {
         intent?.let {
             when (intent.action) {
                 ACTION_DISCONNECTED_FROM_PEER -> {
-
+                    connectionStateListener.disconnectedFromPeer()
                 }
                 ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS -> {
-
+                    connectionStateListener.cannotConnectToPeerAddress()
                 }
             }
         }
