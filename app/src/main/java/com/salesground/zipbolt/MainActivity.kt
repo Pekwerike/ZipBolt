@@ -327,6 +327,7 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 startService(serviceIntent)
                             }
+                            bindService(serviceIntent, dataTransferServiceConnection, BIND_AUTO_CREATE)
                         }
                     }
                     false -> {
@@ -346,6 +347,7 @@ class MainActivity : AppCompatActivity() {
                             } else {
                                 startService(serviceIntent)
                             }
+                            bindService(serviceIntent, dataTransferServiceConnection, BIND_AUTO_CREATE)
                         }
                     }
                 }
@@ -701,7 +703,8 @@ class MainActivity : AppCompatActivity() {
                     this.expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
                         // close the connection with the peer
                         dataTransferServiceIntent?.let {
-                            dataTransferService?.stopService(dataTransferServiceIntent)
+                            unbindService(dataTransferServiceConnection)
+                            stopService(dataTransferServiceIntent)
                         }
                     }
                     this.expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
@@ -823,6 +826,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 connectedToPeerNoActionBottomSheetLayoutBinding.collapsedConnectedToPeerNoActionLayout.root.alpha =
                     1 - slideOffset * 3.5f
@@ -1160,5 +1164,3 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
-
-

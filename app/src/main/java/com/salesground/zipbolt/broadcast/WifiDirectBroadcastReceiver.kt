@@ -76,20 +76,23 @@ class WifiDirectBroadcastReceiver(
                                 // send connected device the connection info to the mainActivityViewModel
                                 // so we can create a socket connection and begin data transfer
                                 if (wifiP2pInfo.groupFormed) {
-                                    val wifiP2pGroup =
-                                        intent.getParcelableExtra<WifiP2pGroup>(WifiP2pManager.EXTRA_WIFI_P2P_GROUP)!!
-                                    val connectedDevice: WifiP2pDevice =
-                                        if (wifiP2pInfo.isGroupOwner) {
-                                            wifiP2pGroup.clientList.first()
-                                        } else {
-                                            wifiP2pGroup.owner
-                                        }
 
-                                    wifiDirectBroadcastReceiverCallback.connectedToPeer(
-                                        wifiP2pInfo,
-                                        connectedDevice
-                                    )
-                                }else{
+                                    intent.getParcelableExtra<WifiP2pGroup>(WifiP2pManager.EXTRA_WIFI_P2P_GROUP)
+                                        ?.let { wifiP2pGroup ->
+                                            val connectedDevice: WifiP2pDevice =
+                                                if (wifiP2pInfo.isGroupOwner) {
+                                                    wifiP2pGroup.clientList.first()
+                                                } else {
+                                                    wifiP2pGroup.owner
+                                                }
+
+
+                                            wifiDirectBroadcastReceiverCallback.connectedToPeer(
+                                                wifiP2pInfo,
+                                                connectedDevice
+                                            )
+                                        }
+                                } else {
                                     // send no action
                                     wifiDirectBroadcastReceiverCallback.disconnectedFromPeer()
                                 }
