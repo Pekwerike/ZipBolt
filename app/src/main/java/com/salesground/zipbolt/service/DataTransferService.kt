@@ -18,6 +18,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
@@ -172,15 +173,21 @@ class DataTransferService : Service() {
     private fun configureClientSocket(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
-            withContext(Dispatchers.IO) { socket.bind(null) }
-            withContext(Dispatchers.IO) {
+            socket.bind(null)
+            try {
                 socket.connect(
                     InetSocketAddress(
                         serverIpAddress,
                         SOCKET_PORT
                     ), 100000
                 )
+            } catch (connectException: ConnectException) {
+                // send broadcast message to the main activity that we couldn't connect to peer.
+                // the main activity will use this message to determine how to update the ui
+                stopForeground(true)
+                stopSelf()
             }
+
             socketDOS =
                 DataOutputStream(BufferedOutputStream(withContext(Dispatchers.IO) { socket.getOutputStream() }))
             socketDIS =
