@@ -13,8 +13,6 @@ import com.salesground.zipbolt.model.DataToTransfer
 class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceiveListener) :
     BroadcastReceiver() {
 
-    val completedReceiveSet: ArraySet<String> = arraySetOf()
-
     interface DataReceiveListener {
         fun onDataReceive(
             dataDisplayName: String,
