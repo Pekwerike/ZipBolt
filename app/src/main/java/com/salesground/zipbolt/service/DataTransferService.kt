@@ -289,8 +289,7 @@ class DataTransferService : Service() {
                         val filesCount = dataInputStream.readInt()
                         for (i in 0 until filesCount) {
                             mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
-
-                                    dataReceiveListener?.onDataReceive(
+                                dataReceiveListener?.onDataReceive(
                                     dataDisplayName,
                                     dataSize,
                                     percentageOfDataRead,
@@ -298,42 +297,6 @@ class DataTransferService : Service() {
                                     dataUri,
                                     dataTransferStatus
                                 )
-
-                                /*with(incomingDataBroadcastIntent) {
-                                    action =
-                                        IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
-                                        dataDisplayName
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_URI,
-                                        dataUri
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                                        percentageOfDataRead
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
-                                        dataType
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE,
-                                        dataSize
-                                    )
-                                    putExtra(
-                                        IncomingDataBroadcastReceiver.INCOMING_FILE_TRANSFER_STATUS,
-                                        dataTransferStatus.value
-                                    )
-                                    localBroadcastManager.sendBroadcast(this)
-                                }*/
-                                if (dataTransferStatus.value == DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value) {
-                                    localBroadcastManager.sendBroadcast(incomingDataBroadcastIntent.apply {
-                                        action =
-                                            IncomingDataBroadcastReceiver.ACTION_FILE_RECEIVE_COMPLETE
-                                    })
-                                }
                             }
                             delay(200)
                         }

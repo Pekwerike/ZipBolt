@@ -1268,9 +1268,7 @@ class MainActivity : AppCompatActivity() {
         localBroadcastManager.registerReceiver(
             incomingDataBroadcastReceiver,
             IntentFilter().apply {
-                addAction(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
                 addAction(IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE)
-                addAction(IncomingDataBroadcastReceiver.ACTION_FILE_RECEIVE_COMPLETE)
             }
         )
         localBroadcastManager.registerReceiver(
