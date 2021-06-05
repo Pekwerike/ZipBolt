@@ -83,6 +83,7 @@ class DataTransferService : Service() {
             dataUri: Uri?,
             dataTransferStatus: DataToTransfer.TransferStatus
         )
+        fun totalFileReceiveComplete()
     }
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
@@ -300,11 +301,7 @@ class DataTransferService : Service() {
                             }
                             delay(200)
                         }
-                        with(incomingDataBroadcastIntent) {
-                            action =
-                                IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE
-                            localBroadcastManager.sendBroadcast(this)
-                        }
+                        dataReceiveListener?.totalFileReceiveComplete()
                     }
                     MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
                         mediaTransferProtocol.cancelCurrentTransfer(

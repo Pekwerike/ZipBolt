@@ -32,7 +32,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
-import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
@@ -220,126 +219,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-    private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
-        IncomingDataBroadcastReceiver(object : IncomingDataBroadcastReceiver.DataReceiveListener {
-            override fun totalFileReceiveComplete() {
-                mainActivityViewModel.totalFileReceiveComplete()
-            }
 
-            override fun onDataReceive(
-                dataDisplayName: String,
-                dataUri: Uri?,
-                dataSize: Long,
-                dataType: Int,
-                percentTransferred: Float,
-                transferStatus: Int
-            ) {
-                when (transferStatus) {
-                    DataToTransfer.TransferStatus.RECEIVE_STARTED.value -> {
-                        when (dataType) {
-                            DataToTransfer.MediaType.IMAGE.value -> {
-                                mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                                with(
-                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                        .expandedConnectedToPeerTransferOngoingLayout
-                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                ) {
-                                    // hide the  no item in receive label
-                                    ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                        .alpha(0f)
-                                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                        // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
-                                        root.animate().alpha(1f)
-                                        this.dataDisplayName = dataDisplayName
-                                        this.dataSize =
-                                            dataSize.transformDataSizeToMeasuredUnit()
-                                        Glide.with(ongoingDataReceiveLayoutImageView)
-                                            .load(R.drawable.ic_startup_outline_)
-                                            .into(ongoingDataReceiveLayoutImageView)
-                                        // start shimmer
-                                        ongoingDataReceiveDataCategoryImageShimmer.showShimmer(true)
-
-                                    }
-                                }
-                            }
-                            else -> {
-
-
-                            }
-                        }
-                    }
-
-                    DataToTransfer.TransferStatus.RECEIVE_ONGOING.value -> {
-                        with(
-                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                .expandedConnectedToPeerTransferOngoingLayout
-                                .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                        ) {
-                            // show the receive progress indicator and the percentage received
-                            dataTransferPercent = percentTransferred.roundToInt()
-                            dataTransferPercentAsString = "$dataTransferPercent%"
-                        }
-                    }
-
-                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                            ) {
-                                // show the media thumbnail at the end of the transfer
-                                dataTransferPercent = 100
-                                dataTransferPercentAsString = "$dataTransferPercent%"
-                                /*// hide the cancel transfer/receive image button
-                                ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
-                                // load the receive image into the image view
-                                Glide.with(ongoingDataReceiveLayoutImageView)
-                                    .load(dataUri)
-                                    .into(ongoingDataReceiveLayoutImageView)
-                                // stop shimmer
-                                ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
-                                ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
-                            }
-                            when (dataType) {
-                                DataToTransfer.MediaType.IMAGE.value -> {
-                                    with(mainActivityViewModel) {
-                                        addDataToCurrentTransferHistory(
-                                            OngoingDataTransferUIState.DataItem(
-                                                DataToTransfer.DeviceImage(
-                                                    0L,
-                                                    dataUri!!,
-                                                    System.currentTimeMillis().parseDate()
-                                                        .customizeDate(),
-                                                    dataDisplayName,
-                                                    "",
-                                                    dataSize,
-                                                    ""
-                                                ).apply {
-                                                    this.transferStatus =
-                                                        DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                }
-                                            )
-                                        )
-                                        ongoingDataTransferRecyclerViewAdapter.submitList(
-                                            currentTransferHistory
-                                        )
-                                        ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(
-                                            currentTransferHistory.size - 1
-                                        )
-                                    }
-                                }
-                                else -> {
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        })
+        override fun totalFileReceiveComplete() {
+            mainActivityViewModel.totalFileReceiveComplete()
+        }
     }
 
     // ui variables
@@ -1266,12 +1149,6 @@ class MainActivity : AppCompatActivity() {
         initializeChannelAndBroadcastReceiver()
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadcastManager.registerReceiver(
-            incomingDataBroadcastReceiver,
-            IntentFilter().apply {
-                addAction(IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE)
-            }
-        )
-        localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
             IntentFilter().apply {
                 addAction(DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER)
@@ -1285,7 +1162,6 @@ class MainActivity : AppCompatActivity() {
         unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
-        localBroadcastManager.unregisterReceiver(incomingDataBroadcastReceiver)
         localBroadcastManager.unregisterReceiver(dataTransferServiceConnectionStateReceiver)
     }
 
