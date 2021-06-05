@@ -15,6 +15,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.view.View.*
 import android.widget.FrameLayout
@@ -168,7 +169,6 @@ class MainActivity : AppCompatActivity() {
 
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value -> {
                         lifecycleScope.launch(Dispatchers.Main) {
-                            delay(200)
                             with(
                                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                     .expandedConnectedToPeerTransferOngoingLayout
@@ -188,23 +188,44 @@ class MainActivity : AppCompatActivity() {
                                 ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
                                 ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
                             }
-                        }
-                        when (dataType) {
-                            DataToTransfer.MediaType.IMAGE.value -> {
-                                mainActivityViewModel.addDataFromReceiveToUIState(
-                                    DataToTransfer.DeviceImage(
-                                        0L,
-                                        dataUri!!,
-                                        System.currentTimeMillis().parseDate()
-                                            .customizeDate(),
-                                        dataDisplayName,
-                                        "",
-                                        dataSize,
-                                        ""
-                                    )
-                                )
-                            }
-                            else -> {
+                            when (dataType) {
+                                DataToTransfer.MediaType.IMAGE.value -> {
+                                    with(mainActivityViewModel) {
+                                        currentTransferHistory.add(
+                                            OngoingDataTransferUIState.DataItem(
+                                                DataToTransfer.DeviceImage(
+                                                    0L,
+                                                    dataUri!!,
+                                                    System.currentTimeMillis().parseDate()
+                                                        .customizeDate(),
+                                                    dataDisplayName,
+                                                    "",
+                                                    dataSize,
+                                                    ""
+                                                )
+                                            )
+                                        )
+                                        ongoingDataTransferRecyclerViewAdapter.submitList(
+                                            currentTransferHistory
+                                        )
+                                        ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(currentTransferHistory.size - 1)
+                                    }
+
+                                    /*mainActivityViewModel.addDataFromReceiveToUIState(
+                                        DataToTransfer.DeviceImage(
+                                            0L,
+                                            dataUri!!,
+                                            System.currentTimeMillis().parseDate()
+                                                .customizeDate(),
+                                            dataDisplayName,
+                                            "",
+                                            dataSize,
+                                            ""
+                                        )
+                                    )*/
+                                }
+                                else -> {
+                                }
                             }
                         }
                     }
@@ -932,9 +953,6 @@ class MainActivity : AppCompatActivity() {
                     connectionInfoPersistentBottomSheetLayout.apply {
                         modalBottomSheetDialog.dismiss()
                         beginPeerDiscovery()
-                        /*    connectToPeerButton.animate().alpha(0f).start()
-                            connectionInfoBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                            connectionInfoBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()*/
                     }
                 }
             }

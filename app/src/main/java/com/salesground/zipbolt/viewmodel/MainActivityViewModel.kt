@@ -118,7 +118,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
                 it.id == dataToTransfer.dataUri.toString()
             } == null) {
             dataToTransfer.transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-            currentTransferHistory.add(1, OngoingDataTransferUIState.DataItem(dataToTransfer))
+            currentTransferHistory.add(OngoingDataTransferUIState.DataItem(dataToTransfer))
             if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing
                 || _peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerNoAction
                 || _peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerNoAction
