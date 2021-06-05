@@ -113,20 +113,18 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         hasBeenNotifiedAboutReceive = false
     }
 
-    fun addDataFromReceiveToUIState(dataToTransfer: DataToTransfer) {
-        if (currentTransferHistory.find {
-                it.id == dataToTransfer.dataUri.toString()
-            } == null) {
-            dataToTransfer.transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-            currentTransferHistory.add(OngoingDataTransferUIState.DataItem(dataToTransfer))
-            if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing
-                || _peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerNoAction
-                || _peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerNoAction
-            ) {
-                expandedConnectedToPeerTransferOngoing()
-            } else if (_peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing) {
-                collapsedConnectedToPeerTransferOngoing()
-            }
+    fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState){
+        currentTransferHistory.add(ongoingDataTransferUIState)
+    }
+
+    fun addDataFromReceiveToUIState() {
+        if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing
+            || _peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerNoAction
+            || _peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerNoAction
+        ) {
+            expandedConnectedToPeerTransferOngoing()
+        } else if (_peerConnectionUIState.value is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing) {
+            collapsedConnectedToPeerTransferOngoing()
         }
     }
 

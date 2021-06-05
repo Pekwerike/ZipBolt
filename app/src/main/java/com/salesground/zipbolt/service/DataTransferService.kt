@@ -67,6 +67,24 @@ class DataTransferService : Service() {
         }
     }
 
+    // variables, interfaces and functions for dataReceiveListener
+    private var dataReceiveListener: DataReceiveListener? = null
+
+    fun setOnDataReceiveListener(dataReceiveListener: DataReceiveListener) {
+        this.dataReceiveListener = dataReceiveListener
+    }
+
+    interface DataReceiveListener {
+        fun onDataReceive(
+            dataDisplayName: String,
+            dataSize: Long,
+            percentageOfDataRead: Float,
+            dataType: Int,
+            dataUri: Uri?,
+            dataTransferStatus: DataToTransfer.TransferStatus
+        )
+    }
+
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
 
     fun cancelActiveReceive() {
@@ -271,7 +289,17 @@ class DataTransferService : Service() {
                         val filesCount = dataInputStream.readInt()
                         for (i in 0 until filesCount) {
                             mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
-                                with(incomingDataBroadcastIntent) {
+
+                                    dataReceiveListener?.onDataReceive(
+                                    dataDisplayName,
+                                    dataSize,
+                                    percentageOfDataRead,
+                                    dataType,
+                                    dataUri,
+                                    dataTransferStatus
+                                )
+
+                                /*with(incomingDataBroadcastIntent) {
                                     action =
                                         IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION
                                     putExtra(
@@ -299,6 +327,12 @@ class DataTransferService : Service() {
                                         dataTransferStatus.value
                                     )
                                     localBroadcastManager.sendBroadcast(this)
+                                }*/
+                                if (dataTransferStatus.value == DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value) {
+                                    localBroadcastManager.sendBroadcast(incomingDataBroadcastIntent.apply {
+                                        action =
+                                            IncomingDataBroadcastReceiver.ACTION_FILE_RECEIVE_COMPLETE
+                                    })
                                 }
                             }
                             delay(200)

@@ -13,7 +13,8 @@ import com.salesground.zipbolt.model.DataToTransfer
 class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceiveListener) :
     BroadcastReceiver() {
 
-    val completedReceiveSet : ArraySet<String> = arraySetOf()
+    val completedReceiveSet: ArraySet<String> = arraySetOf()
+
     interface DataReceiveListener {
         fun onDataReceive(
             dataDisplayName: String,
@@ -23,6 +24,7 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
             percentTransferred: Float = 0f,
             transferStatus: Int = DataToTransfer.TransferStatus.TRANSFER_WAITING.value
         )
+
         fun totalFileReceiveComplete()
     }
 
@@ -35,7 +37,8 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
         const val INCOMING_FILE_SIZE = "IncomingFileSize"
         const val INCOMING_FILE_MIME_TYPE = "IncomingFileMimeType"
         const val INCOMING_FILE_TRANSFER_STATUS = "IncomingFileTransferStatus"
-        const val ACTION_TOTAL_FILE_RECEIVE_COMPLETE ="TotalFileReceiveComplete"
+        const val ACTION_TOTAL_FILE_RECEIVE_COMPLETE = "TotalFileReceiveComplete"
+        const val ACTION_FILE_RECEIVE_COMPLETE = "ActionFileReceiveComplete"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -43,7 +46,8 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
             when (intent.action) {
                 INCOMING_DATA_BYTES_RECEIVED_ACTION -> {
                     val fileName = intent.getStringExtra(INCOMING_FILE_NAME) ?: ""
-                    val percentageOfDataReceived = intent.getFloatExtra(PERCENTAGE_OF_DATA_RECEIVED, 0f)
+                    val percentageOfDataReceived =
+                        intent.getFloatExtra(PERCENTAGE_OF_DATA_RECEIVED, 0f)
                     val fileUri = intent.getParcelableExtra<Uri?>(INCOMING_FILE_URI)
                     val fileSize = intent.getLongExtra(INCOMING_FILE_SIZE, 0)
                     val fileType = intent.getIntExtra(
@@ -55,10 +59,9 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
                         0
                     )
                     if (fileReceiveStatus == DataToTransfer.TransferStatus.RECEIVE_COMPLETE.value) {
-                        Log.i("TestingSomething", "Completed receive of $fileName")
-                        if(completedReceiveSet.contains(fileUri!!.toString() + fileName)){
+                        if (completedReceiveSet.contains(fileUri!!.toString() + fileName)) {
                             // do not send onDataReceive call
-                        }else {
+                        } else {
                             completedReceiveSet.add(fileUri.toString() + fileName)
                             dataReceiveListener.onDataReceive(
                                 fileName,
@@ -68,9 +71,8 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
                                 percentageOfDataReceived,
                                 fileReceiveStatus
                             )
-                            Log.i("TestingSomethingTwo", "Completed receive of $fileName")
                         }
-                    }else {
+                    } else {
                         dataReceiveListener.onDataReceive(
                             fileName,
                             fileUri,
@@ -83,6 +85,9 @@ class IncomingDataBroadcastReceiver(private val dataReceiveListener: DataReceive
                 }
                 ACTION_TOTAL_FILE_RECEIVE_COMPLETE -> {
                     dataReceiveListener.totalFileReceiveComplete()
+                }
+                ACTION_FILE_RECEIVE_COMPLETE -> {
+                    Log.i("TestingSomethingTwo", "FileReceiveComplete")
                 }
                 else -> {
 

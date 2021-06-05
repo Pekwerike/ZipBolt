@@ -105,6 +105,122 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    private val dataTransferServiceDataReceiveListener = object: DataTransferService.DataReceiveListener{
+        override fun onDataReceive(
+            dataDisplayName: String,
+            dataSize: Long,
+            percentageOfDataRead: Float,
+            dataType: Int,
+            dataUri: Uri?,
+            dataTransferStatus: DataToTransfer.TransferStatus
+        ) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                when (dataTransferStatus) {
+                    DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
+                        when (dataType) {
+                            DataToTransfer.MediaType.IMAGE.value -> {
+                                mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
+                                with(
+                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                        .expandedConnectedToPeerTransferOngoingLayout
+                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                ) {
+                                    // hide the  no item in receive label
+                                    ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                        .alpha(0f)
+                                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                        // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                        root.animate().alpha(1f)
+                                        this.dataDisplayName = dataDisplayName
+                                        this.dataSize =
+                                            dataSize.transformDataSizeToMeasuredUnit()
+                                        Glide.with(ongoingDataReceiveLayoutImageView)
+                                            .load(R.drawable.ic_startup_outline_)
+                                            .into(ongoingDataReceiveLayoutImageView)
+                                        // start shimmer
+                                        ongoingDataReceiveDataCategoryImageShimmer.showShimmer(true)
+
+                                    }
+                                }
+                            }
+                            else -> {
+
+
+                            }
+                        }
+                    }
+
+                    DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
+                        with(
+                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                .expandedConnectedToPeerTransferOngoingLayout
+                                .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                        ) {
+                            // show the receive progress indicator and the percentage received
+                            dataTransferPercent = percentageOfDataRead.roundToInt()
+                            dataTransferPercentAsString = "$dataTransferPercent%"
+                        }
+                    }
+
+                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            with(
+                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                    .expandedConnectedToPeerTransferOngoingLayout
+                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                            ) {
+                                // show the media thumbnail at the end of the transfer
+                                dataTransferPercent = 100
+                                dataTransferPercentAsString = "$dataTransferPercent%"
+                                /*// hide the cancel transfer/receive image button
+                            ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
+                                // load the receive image into the image view
+                                Glide.with(ongoingDataReceiveLayoutImageView)
+                                    .load(dataUri)
+                                    .into(ongoingDataReceiveLayoutImageView)
+                                // stop shimmer
+                                ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
+                                ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
+                            }
+                            when (dataType) {
+                                DataToTransfer.MediaType.IMAGE.value -> {
+                                    with(mainActivityViewModel) {
+                                        addDataToCurrentTransferHistory(
+                                            OngoingDataTransferUIState.DataItem(
+                                                DataToTransfer.DeviceImage(
+                                                    0L,
+                                                    dataUri!!,
+                                                    System.currentTimeMillis().parseDate()
+                                                        .customizeDate(),
+                                                    dataDisplayName,
+                                                    "",
+                                                    dataSize,
+                                                    ""
+                                                ).apply {
+                                                    this.transferStatus =
+                                                        DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                }
+                                            )
+                                        )
+                                        ongoingDataTransferRecyclerViewAdapter.submitList(
+                                            currentTransferHistory
+                                        )
+                                        ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(
+                                            currentTransferHistory.size - 1
+                                        )
+                                    }
+                                }
+                                else -> {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     private val incomingDataBroadcastReceiver: IncomingDataBroadcastReceiver by lazy {
         IncomingDataBroadcastReceiver(object : IncomingDataBroadcastReceiver.DataReceiveListener {
             override fun totalFileReceiveComplete() {
@@ -191,7 +307,7 @@ class MainActivity : AppCompatActivity() {
                             when (dataType) {
                                 DataToTransfer.MediaType.IMAGE.value -> {
                                     with(mainActivityViewModel) {
-                                        currentTransferHistory.add(
+                                        addDataToCurrentTransferHistory(
                                             OngoingDataTransferUIState.DataItem(
                                                 DataToTransfer.DeviceImage(
                                                     0L,
@@ -202,27 +318,19 @@ class MainActivity : AppCompatActivity() {
                                                     "",
                                                     dataSize,
                                                     ""
-                                                )
+                                                ).apply {
+                                                    this.transferStatus =
+                                                        DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                }
                                             )
                                         )
                                         ongoingDataTransferRecyclerViewAdapter.submitList(
                                             currentTransferHistory
                                         )
-                                        ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(currentTransferHistory.size - 1)
-                                    }
-
-                                    /*mainActivityViewModel.addDataFromReceiveToUIState(
-                                        DataToTransfer.DeviceImage(
-                                            0L,
-                                            dataUri!!,
-                                            System.currentTimeMillis().parseDate()
-                                                .customizeDate(),
-                                            dataDisplayName,
-                                            "",
-                                            dataSize,
-                                            ""
+                                        ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(
+                                            currentTransferHistory.size - 1
                                         )
-                                    )*/
+                                    }
                                 }
                                 else -> {
                                 }
@@ -310,6 +418,7 @@ class MainActivity : AppCompatActivity() {
     private val dataTransferServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             service as DataTransferService.DataTransferServiceBinder
+            service.getServiceInstance().setOnDataReceiveListener(dataTransferServiceDataReceiveListener)
             dataTransferService = service.getServiceInstance()
         }
 
@@ -1103,12 +1212,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createLocalBroadcastIntentFilter(): IntentFilter {
-        return IntentFilter().apply {
-            addAction(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
-            addAction(IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE)
-        }
-    }
 
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
@@ -1164,7 +1267,11 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadcastManager.registerReceiver(
             incomingDataBroadcastReceiver,
-            createLocalBroadcastIntentFilter()
+            IntentFilter().apply {
+                addAction(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
+                addAction(IncomingDataBroadcastReceiver.ACTION_TOTAL_FILE_RECEIVE_COMPLETE)
+                addAction(IncomingDataBroadcastReceiver.ACTION_FILE_RECEIVE_COMPLETE)
+            }
         )
         localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
@@ -1173,9 +1280,6 @@ class MainActivity : AppCompatActivity() {
                 addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
             }
         )
-        Intent(this, DataTransferService::class.java).also {
-            bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
-        }
     }
 
     override fun onStop() {
