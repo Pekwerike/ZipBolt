@@ -23,10 +23,10 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/application_icon_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="2dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/medium_margin"
             android:scaleType="centerInside" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -45,7 +45,7 @@
             android:id="@+id/application_size_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{applicationSizeFormattedAsString"
+            android:text="@{applicationSizeFormattedAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
     </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
