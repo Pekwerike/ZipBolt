@@ -9,7 +9,7 @@
             type="String" />
     </data>
 
-    <LinearLayout
+    <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -35,6 +35,10 @@
             android:text="@{applicationLabel}"
             android:textAlignment="center"
             android:textSize="12sp" />
+        
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width=""
+            android:layout_height=""
 
-    </LinearLayout>
+    </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
 </layout>
