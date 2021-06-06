@@ -106,7 +106,7 @@ sealed class DataToTransfer(
         val appIcon: Drawable?,
         val appSize: Long
     ) : DataToTransfer(
-        dataDisplayName = applicationName ?: "Unknow App",
+        dataDisplayName = applicationName ?: "Unknown App",
         dataUri = apkPath.toUri(),
         dataSize = appSize,
         dataType = MediaType.APP.value

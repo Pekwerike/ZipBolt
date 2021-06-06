@@ -5,8 +5,13 @@
     <data>
 
         <variable
-            name="applicationLabel"
+            name="applicationName"
             type="String" />
+
+        <variable
+            name="applicationSizeFormattedAsString"
+            type="String" />
+
     </data>
 
     <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
@@ -21,8 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="8dp"
-            android:scaleType="centerInside"
-            android:paddingVertical="2dp" />
+            android:paddingVertical="2dp"
+            android:scaleType="centerInside" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_label_text_view"
@@ -30,15 +35,18 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:layout_marginBottom="8dp"
-            android:fontFamily="@font/work_sans_extra_light"
             android:lines="1"
-            android:text="@{applicationLabel}"
+            android:text="@{applicationName}"
             android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textSize="12sp" />
-        
+
         <com.google.android.material.textview.MaterialTextView
-            android:layout_width=""
-            android:layout_height=""
+            android:id="@+id/application_size_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{applicationSizeFormattedAsString"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
     </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
 </layout>
