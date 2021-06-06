@@ -1,4 +1,4 @@
-import com.salesground.zipbolt.repository.DeviceApplicationsRepository
+import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
 
 
 import android.content.Context

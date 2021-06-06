@@ -1,11 +1,11 @@
-package com.salesground.zipbolt.repository
+package com.salesground.zipbolt.repository.implementation
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import com.salesground.zipbolt.model.ApplicationModel
+import com.salesground.zipbolt.repository.ApplicationsRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,10 +13,11 @@ import java.io.File
 import javax.inject.Inject
 
 
-class DeviceApplicationsRepository @Inject constructor(@ApplicationContext private val context: Context) {
+class DeviceApplicationsRepository @Inject constructor(@ApplicationContext private val context: Context) :
+    ApplicationsRepositoryInterface {
 
 
-    fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
+    override fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.packageManager.getInstalledApplications(PackageManager.INSTALL_REASON_USER)
         } else {
@@ -24,7 +25,7 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
         }
     }
 
-    fun getNonSystemAppsOnDevice(): List<ApplicationModel> {
+    override fun getNonSystemAppsOnDevice(): List<ApplicationModel> {
         return getAllAppsOnDevice().filter {
             context.packageManager.getLaunchIntentForPackage(it.packageName) != null
         }.map {
