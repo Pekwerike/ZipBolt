@@ -6,9 +6,8 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="blue_415">#FF2E9DFF</color>
-    <color name="blue_415_20_percent_alpha">#332E9DFF</color>
+    <color name="blue_415_15_percent_alpha">#262E9DFF</color>
     <color name="orange_300">#FFFF6859</color>
-    <color name="orange_300_20_percent_alpha">#33FF6859</color>
     <color name="green_500">#54E369</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

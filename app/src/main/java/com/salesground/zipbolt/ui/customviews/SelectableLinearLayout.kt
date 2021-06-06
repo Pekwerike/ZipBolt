@@ -16,24 +16,11 @@ class SelectableLinearLayout @JvmOverloads constructor(
     private var isViewSelected = true
     private val cornerRect = RectF()
     private val cornerRectRadius = 4 * resources.displayMetrics.density
-    private var randomlySelectedColorPair = Pair(
-        ContextCompat.getColor(context, R.color.blue_415),
-        ContextCompat.getColor(context, R.color.blue_415_20_percent_alpha)
-    )
-    private val selectedColorsList = listOf(
-        Pair(
-            ContextCompat.getColor(context, R.color.blue_415),
-            ContextCompat.getColor(context, R.color.blue_415_20_percent_alpha)
-        ),
-        Pair(
-            ContextCompat.getColor(context, R.color.orange_300),
-            ContextCompat.getColor(context, R.color.orange_300_20_percent_alpha)
-        )
-    )
     private val cornerRectStrokePaint = Paint().apply {
         style = Paint.Style.STROKE
         isAntiAlias = true
         isDither = true
+        color = ContextCompat.getColor(context, R.color.blue_415)
         strokeWidth = 4 * resources.displayMetrics.density
         pathEffect = CornerPathEffect(cornerRectRadius)
         strokeJoin = Paint.Join.ROUND
@@ -43,6 +30,7 @@ class SelectableLinearLayout @JvmOverloads constructor(
     private val cornerRectFillPaint = Paint().apply {
         style = Paint.Style.FILL
         isAntiAlias = true
+        color = ContextCompat.getColor(context, R.color.blue_415_15_percent_alpha)
         isDither = true
 
     }
@@ -65,9 +53,6 @@ class SelectableLinearLayout @JvmOverloads constructor(
             right = measuredWidth.toFloat()
             bottom = measuredHeight.toFloat()
         }
-        randomlySelectedColorPair = selectedColorsList.random()
-        cornerRectFillPaint.color = randomlySelectedColorPair.second
-        cornerRectStrokePaint.color = randomlySelectedColorPair.first
     }
 
     private fun drawScrim(canvas: Canvas) {
