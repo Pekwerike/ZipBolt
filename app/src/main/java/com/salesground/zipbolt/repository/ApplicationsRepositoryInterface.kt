@@ -5,6 +5,6 @@ import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.DataToTransfer
 
 interface ApplicationsRepositoryInterface {
-    fun getAllAppsOnDevice(): MutableList<ApplicationInfo>
-    fun getNonSystemAppsOnDevice(): List<DataToTransfer>
+    suspend fun getAllAppsOnDevice(): MutableList<ApplicationInfo>
+    suspend fun getNonSystemAppsOnDevice(): List<DataToTransfer>
 }

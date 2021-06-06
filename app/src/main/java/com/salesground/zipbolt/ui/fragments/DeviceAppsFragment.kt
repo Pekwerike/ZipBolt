@@ -26,16 +26,16 @@ class DeviceAppsFragment : Fragment() {
         spanCount = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
-                    2
-                } else {
                     3
+                } else {
+                    4
                 }
             }
             else -> {
                 if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
-                    4
+                    5
                 } else {
-                    6
+                    7
                 }
             }
         }

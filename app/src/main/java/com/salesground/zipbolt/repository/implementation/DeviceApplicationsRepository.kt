@@ -17,7 +17,7 @@ import javax.inject.Inject
 class DeviceApplicationsRepository @Inject constructor(@ApplicationContext private val context: Context) :
     ApplicationsRepositoryInterface {
 
-    override fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
+    override suspend fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.packageManager.getInstalledApplications(PackageManager.INSTALL_REASON_USER)
         } else {
@@ -25,7 +25,7 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
         }
     }
 
-    override fun getNonSystemAppsOnDevice(): List<DataToTransfer> {
+    override suspend fun getNonSystemAppsOnDevice(): List<DataToTransfer> {
         return getAllAppsOnDevice().filter {
             context.packageManager.getLaunchIntentForPackage(it.packageName) != null
         }.map {
@@ -35,6 +35,8 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
                 appIcon = it.loadIcon(context.packageManager),
                 appSize = File(it.sourceDir).length()
             )
+        }.sortedBy {
+            it.applicationName
         }
     }
 }

@@ -13,7 +13,7 @@ import com.salesground.zipbolt.R
 class SelectableLinearLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : LinearLayoutCompat(context, attrs) {
-    private var isViewSelected = true
+    private var isViewSelected = false
     private val cornerRect = RectF()
     private val cornerRectRadius = 4 * resources.displayMetrics.density
     private val cornerRectStrokePaint = Paint().apply {

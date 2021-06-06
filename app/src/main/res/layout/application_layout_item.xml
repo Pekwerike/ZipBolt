@@ -17,25 +17,26 @@
     <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="2dp"
+        android:layout_margin="1dp"
         android:orientation="vertical"
         android:padding="@dimen/medium_margin">
 
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/application_icon_image_view"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/medium_margin"
+            android:layout_margin="4dp"
             android:scaleType="centerInside" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_label_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:lines="1"
-            android:padding="@dimen/standard_text_view_padding"
+            android:padding="2dp"
             android:text="@{applicationName}"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
@@ -45,7 +46,9 @@
             android:id="@+id/application_size_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/standard_text_view_padding"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="2dp"
             android:text="@{applicationSizeFormattedAsString}"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />

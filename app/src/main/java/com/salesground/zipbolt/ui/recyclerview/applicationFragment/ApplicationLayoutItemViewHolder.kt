@@ -18,7 +18,14 @@ class ApplicationLayoutItemViewHolder(
     fun bindApplicationDetails(dataToTransfer: DataToTransfer) {
         dataToTransfer as DataToTransfer.DeviceApplication
         with(applicationLayoutItemBinding) {
-            applicationName = dataToTransfer.applicationName
+            applicationName = if (dataToTransfer.applicationName?.contains("Google", true) == true
+                && dataToTransfer.applicationName.trim().length != 6
+            ) {
+                dataToTransfer.applicationName.subSequence(7, dataToTransfer.applicationName.length)
+                    .trim().toString()
+            } else {
+                dataToTransfer.applicationName
+            }
             applicationSizeFormattedAsString =
                 dataToTransfer.appSize.transformDataSizeToMeasuredUnit()
             Glide.with(applicationIconImageView)
