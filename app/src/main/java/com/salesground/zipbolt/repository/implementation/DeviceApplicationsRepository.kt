@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import com.salesground.zipbolt.model.ApplicationModel
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ApplicationsRepositoryInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,6 @@ import javax.inject.Inject
 class DeviceApplicationsRepository @Inject constructor(@ApplicationContext private val context: Context) :
     ApplicationsRepositoryInterface {
 
-
     override fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.packageManager.getInstalledApplications(PackageManager.INSTALL_REASON_USER)
@@ -25,11 +25,11 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
         }
     }
 
-    override fun getNonSystemAppsOnDevice(): List<ApplicationModel> {
+    override fun getNonSystemAppsOnDevice(): List<DataToTransfer> {
         return getAllAppsOnDevice().filter {
             context.packageManager.getLaunchIntentForPackage(it.packageName) != null
         }.map {
-            ApplicationModel(
+            DataToTransfer.DeviceApplication(
                 applicationName = it.loadLabel(context.packageManager).toString(),
                 apkPath = it.sourceDir,
                 appIcon = it.loadIcon(context.packageManager),
@@ -37,19 +37,4 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
             )
         }
     }
-
-    fun getAllApplicationAsCustomModel(): Flow<ApplicationModel> = flow {
-        val allAppsOnDevice = getAllAppsOnDevice()
-        allAppsOnDevice.map {
-            emit(
-                ApplicationModel(
-                    applicationName = it.name,
-                    apkPath = it.sourceDir,
-                    appIcon = it.loadIcon(context.packageManager),
-                    appSize = File(it.sourceDir).length()
-                )
-            )
-        }
-    }
-
 }
