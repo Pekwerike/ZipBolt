@@ -15,7 +15,7 @@ class SelectableLinearLayout @JvmOverloads constructor(
 ) : LinearLayoutCompat(context, attrs) {
     private var isViewSelected = true
     private val cornerRect = RectF()
-    private val cornerRectRadius = 8 * resources.displayMetrics.density
+    private val cornerRectRadius = 4 * resources.displayMetrics.density
     private var randomlySelectedColorPair = Pair(
         ContextCompat.getColor(context, R.color.blue_415),
         ContextCompat.getColor(context, R.color.blue_415_20_percent_alpha)
@@ -34,7 +34,7 @@ class SelectableLinearLayout @JvmOverloads constructor(
         style = Paint.Style.STROKE
         isAntiAlias = true
         isDither = true
-        strokeWidth = 8 * resources.displayMetrics.density
+        strokeWidth = 4 * resources.displayMetrics.density
         pathEffect = CornerPathEffect(cornerRectRadius)
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND

@@ -44,6 +44,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/application_size_text_view"
             android:layout_width="match_parent"
+            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:text="@{applicationSizeFormattedAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
