@@ -20,19 +20,6 @@ interface MediaTransferProtocol {
         PAUSE_ACTIVE_TRANSFER(208)
     }
 
-    enum class TransferState {
-        RECEIVING,
-        TRANSFERING
-    }
-
-    interface MediaTransferListener {
-        fun percentageOfBytesTransferred(
-            bytesTransferred: Pair<String, Float>,
-            transferState: TransferState
-        )
-    }
-
-
     fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData)
 
     suspend fun transferMedia(
@@ -45,6 +32,20 @@ interface MediaTransferProtocol {
         ) -> Unit
     )
 
+    suspend fun transferMediaTwo(
+        dataToTransfer: DataToTransfer,
+        dataOutputStream: DataOutputStream,
+        dataTransferListener: DataTransferListenerInterface
+    )
+
+    interface DataTransferListenerInterface {
+        fun transferListener(
+            dataToTransfer: DataToTransfer,
+            percentTransferred: Float,
+            transferStatus: DataToTransfer.TransferStatus
+        )
+    }
+
     suspend fun receiveMedia(
         dataInputStream: DataInputStream,
         bytesReceivedListener: (
@@ -52,4 +53,16 @@ interface MediaTransferProtocol {
             dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus
         ) -> Unit
     )
+
+    suspend fun receiveMediaTwo(
+        dataInputStream: DataInputStream,
+        dataReceiveListener: DataReceiveListenerInterface
+    )
+
+    interface DataReceiveListenerInterface {
+        fun receiveListener(
+            dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int,
+            dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus
+        )
+    }
 }

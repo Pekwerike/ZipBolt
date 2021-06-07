@@ -25,7 +25,7 @@ interface ImageRepository {
         size: Long,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: (MediaTransferProtocolMetaData) -> Unit,
-        bytesReadListener:
+       bytesReadListener:
             (
             imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
             dataTransferStatus: DataToTransfer.TransferStatus
