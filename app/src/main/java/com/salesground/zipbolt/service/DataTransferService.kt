@@ -65,14 +65,59 @@ class DataTransferService : Service() {
         }
     }
 
-    // variables, interfaces and functions for dataReceiveListener
-    private var dataReceiveListener: DataReceiveListener? = null
+    // variables, interfaces and functions for dataFlowListener
+    private var dataFlowListener: DataFlowListener? = null
 
-    fun setOnDataReceiveListener(dataReceiveListener: DataReceiveListener) {
-        this.dataReceiveListener = dataReceiveListener
+    fun setOnDataReceiveListener(dataFlowListener: DataFlowListener) {
+        this.dataFlowListener = dataFlowListener
     }
 
-    interface DataReceiveListener {
+    private val mediaTransferProtocolDataTransferListener: DataTransferListenerInterface by lazy {
+        object : DataTransferListenerInterface {
+            override fun onTransfer(
+                dataToTransfer: DataToTransfer,
+                percentTransferred: Float,
+                transferStatus: DataToTransfer.TransferStatus
+            ) {
+                dataTransferListener?.invoke(
+                    dataToTransfer,
+                    percentTransferred,
+                    transferStatus
+                )
+            }
+        }
+
+    }
+
+    private val mediaTransferProtocolDataReceiveListener: DataReceiveListenerInterface by lazy {
+        object : DataReceiveListenerInterface {
+            override fun onReceive(
+                dataDisplayName: String,
+                dataSize: Long,
+                percentageOfDataRead: Float,
+                dataType: Int,
+                dataUri: Uri?,
+                dataTransferStatus: DataToTransfer.TransferStatus
+            ) {
+                dataFlowListener?.onDataReceive(
+                    dataDisplayName,
+                    dataSize,
+                    percentageOfDataRead,
+                    dataType,
+                    dataUri,
+                    dataTransferStatus
+                )
+            }
+        }
+    }
+
+    interface DataFlowListener {
+        fun onDataTransfer(
+            dataToTransfer: DataToTransfer,
+            percentTransferred: Float,
+            transferStatus: DataToTransfer.TransferStatus
+        )
+
         fun onDataReceive(
             dataDisplayName: String,
             dataSize: Long,
@@ -81,7 +126,9 @@ class DataTransferService : Service() {
             dataUri: Uri?,
             dataTransferStatus: DataToTransfer.TransferStatus
         )
+
         fun totalFileReceiveComplete()
+
     }
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
@@ -130,20 +177,12 @@ class DataTransferService : Service() {
 
     }
 
-    fun transferData(
-        dataCollectionSelected: MutableList<DataToTransfer>,
-        dataTransferListener: (
-            dataToTransfer: DataToTransfer,
-            percentTransferred: Float,
-            transferStatus: DataToTransfer.TransferStatus
-        ) -> Unit
-    ) {
+    fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
         while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
             // get stuck here
             return
         }
         // when dataTransferUserEvent shows data is not available then assign the new data
-        this.dataTransferListener = dataTransferListener
         dataCollection = dataCollectionSelected
         mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
     }
@@ -240,16 +279,9 @@ class DataTransferService : Service() {
                         for (dataToTransfer in dataCollection) {
                             mediaTransferProtocol.transferMedia(
                                 dataToTransfer,
-                                dataOutputStream
-                            ) { dataToTransfer: DataToTransfer,
-                                percentTransferred: Float,
-                                transferStatus: DataToTransfer.TransferStatus ->
-                                dataTransferListener?.invoke(
-                                    dataToTransfer,
-                                    percentTransferred,
-                                    transferStatus
-                                )
-                            }
+                                dataOutputStream,
+                                mediaTransferProtocolDataTransferListener
+                            )
                         }
                         dataOutputStream.flush()
                         mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
@@ -287,19 +319,13 @@ class DataTransferService : Service() {
                         // read the number of files sent from the peer
                         val filesCount = dataInputStream.readInt()
                         for (i in 0 until filesCount) {
-                            mediaTransferProtocol.receiveMedia(dataInputStream) { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int, dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus ->
-                                dataReceiveListener?.onDataReceive(
-                                    dataDisplayName,
-                                    dataSize,
-                                    percentageOfDataRead,
-                                    dataType,
-                                    dataUri,
-                                    dataTransferStatus
-                                )
-                            }
+                            mediaTransferProtocol.receiveMedia(
+                                dataInputStream,
+                                mediaTransferProtocolDataReceiveListener
+                            )
                             delay(200)
                         }
-                        dataReceiveListener?.totalFileReceiveComplete()
+                        dataFlowListener?.totalFileReceiveComplete()
                     }
                     MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
                         mediaTransferProtocol.cancelCurrentTransfer(
