@@ -185,7 +185,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     )
                 )
 
-                dataTransferListener.transferListener(
+                dataTransferListener.onTransfer(
                     this.dataToTransfer!!,
                     0f,
                     DataToTransfer.TransferStatus.TRANSFER_STARTED
@@ -222,7 +222,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
                     dataOutputStream.write(buffer, 0, lengthRead)
 
-                    dataTransferListener.transferListener(
+                    dataTransferListener.onTransfer(
                         this.dataToTransfer!!,
                         ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
@@ -233,14 +233,14 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
                 // only send a 100% transfer event, when the data transfer was not cancelled
                 if (mTransferMetaData != MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
-                    dataTransferListener.transferListener(
+                    dataTransferListener.onTransfer(
                         this.dataToTransfer!!,
                         100f,
                         DataToTransfer.TransferStatus.TRANSFER_COMPLETE
                     )
                 } else {
                     // send event that transfer has been cancelled
-                    dataTransferListener.transferListener(
+                    dataTransferListener.onTransfer(
                         this.dataToTransfer!!,
                         -1f,
                         DataToTransfer.TransferStatus.TRANSFER_CANCELLED

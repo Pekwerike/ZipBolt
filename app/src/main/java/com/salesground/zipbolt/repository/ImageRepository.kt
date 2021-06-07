@@ -20,22 +20,25 @@ import java.io.DataInputStream
  */
 interface ImageRepository {
 
+
+    interface TransferMetaDataUpdateListener {
+        fun onMetaTransferDataUpdate(mediaTransferProtocolMetaData: MediaTransferProtocolMetaData)
+    }
+
+    interface BytesReadListener {
+        fun onByteRead(
+            imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
+            dataTransferStatus: DataToTransfer.TransferStatus
+        )
+    }
+
     suspend fun insertImageIntoMediaStore(
         displayName: String,
         size: Long,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: (MediaTransferProtocolMetaData) -> Unit,
-       bytesReadListener:
-            (
-            imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
-            dataTransferStatus: DataToTransfer.TransferStatus
-        ) -> Unit
+        transferMetaDataUpdateListener: TransferMetaDataUpdateListener,
+        bytesReadListener: BytesReadListener
     )
-
-    interface BytesReadListener{
-        fun onByteRead(imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
-                       dataTransferStatus: DataToTransfer.TransferStatus)
-    }
 
     suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer
     suspend fun getImagesOnDevice(limit: Int = 0): MutableList<DataToTransfer>

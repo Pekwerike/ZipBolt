@@ -39,7 +39,7 @@ interface MediaTransferProtocol {
     )
 
     interface DataTransferListenerInterface {
-        fun transferListener(
+        fun onTransfer(
             dataToTransfer: DataToTransfer,
             percentTransferred: Float,
             transferStatus: DataToTransfer.TransferStatus
