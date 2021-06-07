@@ -55,7 +55,6 @@ class SearchingForDevicesAnimatedView @JvmOverloads constructor(
         alpha = 80
     }
 
-
     override fun onDraw(canvas: Canvas?) {
         canvas?.let {
             drawCircles(canvas = canvas)

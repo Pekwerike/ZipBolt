@@ -36,5 +36,12 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter :
             return oldItem == newItem
         }
     }
+}
 
+class ApplicationFragmentAppsDisplayRecyclerViewItemClickListener(
+   val clicked : (DataToTransfer) -> Unit
+){
+    fun onClick(dataToTransfer: DataToTransfer){
+        return clicked(dataToTransfer)
+    }
 }
