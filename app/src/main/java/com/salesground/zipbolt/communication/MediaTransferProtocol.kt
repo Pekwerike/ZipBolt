@@ -60,7 +60,7 @@ interface MediaTransferProtocol {
     )
 
     interface DataReceiveListenerInterface {
-        fun receiveListener(
+        fun onReceive(
             dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int,
             dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus
         )

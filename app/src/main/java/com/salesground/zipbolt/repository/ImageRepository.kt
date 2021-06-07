@@ -32,6 +32,11 @@ interface ImageRepository {
         ) -> Unit
     )
 
+    interface BytesReadListener{
+        fun onByteRead(imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
+                       dataTransferStatus: DataToTransfer.TransferStatus)
+    }
+
     suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer
     suspend fun getImagesOnDevice(limit: Int = 0): MutableList<DataToTransfer>
 

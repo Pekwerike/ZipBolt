@@ -274,7 +274,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     },
                     bytesReadListener = { imageDisplayName: String, imageSize: Long, percentageOfDataRead: Float, imageUri: Uri?,
                                           dataTransferStatus: DataToTransfer.TransferStatus ->
-                        dataReceiveListener.receiveListener(
+                        dataReceiveListener.onReceive(
                             imageDisplayName,
                             imageSize,
                             percentageOfDataRead,
