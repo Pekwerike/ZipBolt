@@ -91,18 +91,10 @@ open class ZipBoltImageRepository @Inject constructor(
         displayName: String,
         size: Long,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: (MediaTransferProtocol.MediaTransferProtocolMetaData) -> Unit,
-        bytesReadListener: (
-            imageDisplayName: String,
-            imageSize: Long,
-            percentageOfDataRead: Float,
-            imageUri: Uri?,
-            dataTransferStatus: DataToTransfer.TransferStatus
-        ) -> Unit
+        transferMetaDataUpdateListener: ImageRepository.TransferMetaDataUpdateListener,
+        bytesReadListener: ImageRepository.BytesReadListener
     ) {
-
     }
-
 
     override suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer {
         val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

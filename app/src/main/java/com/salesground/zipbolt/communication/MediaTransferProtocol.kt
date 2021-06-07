@@ -25,17 +25,13 @@ interface MediaTransferProtocol {
     suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
-        dataTransferListener: (
-            dataToTransfer: DataToTransfer,
-            percentTransferred: Float,
-            transferStatus: DataToTransfer.TransferStatus
-        ) -> Unit
+        dataTransferListener: DataTransferListenerInterface
     )
 
-    suspend fun transferMediaTwo(
-        dataToTransfer: DataToTransfer,
-        dataOutputStream: DataOutputStream,
-        dataTransferListener: DataTransferListenerInterface
+
+    suspend fun receiveMedia(
+        dataInputStream: DataInputStream,
+        dataReceiveListener: DataReceiveListenerInterface
     )
 
     interface DataTransferListenerInterface {
@@ -45,19 +41,6 @@ interface MediaTransferProtocol {
             transferStatus: DataToTransfer.TransferStatus
         )
     }
-
-    suspend fun receiveMedia(
-        dataInputStream: DataInputStream,
-        bytesReceivedListener: (
-            dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: Int,
-            dataUri: Uri?, dataTransferStatus: DataToTransfer.TransferStatus
-        ) -> Unit
-    )
-
-    suspend fun receiveMediaTwo(
-        dataInputStream: DataInputStream,
-        dataReceiveListener: DataReceiveListenerInterface
-    )
 
     interface DataReceiveListenerInterface {
         fun onReceive(
