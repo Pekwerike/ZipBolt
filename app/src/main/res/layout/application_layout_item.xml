@@ -24,8 +24,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/application_icon_image_view"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
             android:scaleType="centerInside" />

@@ -79,7 +79,7 @@ class DataTransferService : Service() {
                 percentTransferred: Float,
                 transferStatus: DataToTransfer.TransferStatus
             ) {
-                dataTransferListener?.invoke(
+                dataFlowListener?.onDataTransfer(
                     dataToTransfer,
                     percentTransferred,
                     transferStatus
