@@ -10,7 +10,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
     private val dataToTransferRecyclerViewItemClickListener:
     DataToTransferRecyclerViewItemClickListener,
-    private val clickedApplications: MutableList<DataToTransfer>
+    private val selectedApplications: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
     ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil
 ) {
@@ -26,7 +26,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
             val currentItem = getItem(position)
             holder.bindApplicationDetails(
                 currentItem,
-                clickedApplications
+                selectedApplications
             )
         }
     }

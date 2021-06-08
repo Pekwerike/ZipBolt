@@ -1,6 +1,5 @@
 package com.salesground.zipbolt.ui.recyclerview.applicationFragment
 
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -19,7 +18,7 @@ class ApplicationLayoutItemViewHolder(
 
     fun bindApplicationDetails(
         dataToTransfer: DataToTransfer,
-        clickedApplications: MutableList<DataToTransfer>
+        selectedApplications: MutableList<DataToTransfer>
     ) {
         dataToTransfer as DataToTransfer.DeviceApplication
         with(applicationLayoutItemBinding) {
@@ -43,17 +42,17 @@ class ApplicationLayoutItemViewHolder(
                         dataToTransfer
                     )
 
-                    if (clickedApplications.contains(dataToTransfer)) {
+                    if (selectedApplications.contains(dataToTransfer)) {
                         setIsViewSelected(false)
                         // user un-selected, so remove the application from the collection
-                        clickedApplications.remove(dataToTransfer)
+                        selectedApplications.remove(dataToTransfer)
                     } else {
                         setIsViewSelected(true)
                         // user selects, so add the application to the collection of clicked application
-                        clickedApplications.add(dataToTransfer)
+                        selectedApplications.add(dataToTransfer)
                     }
                 }
-                if (clickedApplications.contains(dataToTransfer)) {
+                if (selectedApplications.contains(dataToTransfer)) {
                     setIsViewSelected(true)
                 } else {
                     setIsViewSelected(false)
