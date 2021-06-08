@@ -18,7 +18,7 @@ class ApplicationsViewModel @Inject constructor(
 ) : ViewModel() {
     // the view model is going to hold all clicked applications from the
     // ApplicationFragmentAppsDisplayRecyclerViewAdapter
-    private var clickedApplications : MutableList<DataToTransfer> = mutableListOf()
+    val clickedApplications : MutableList<DataToTransfer> = mutableListOf()
 
     private var allNonSystemAppsOnDevice = listOf<DataToTransfer>()
     private val _allApplicationsOnDevice = MutableLiveData<List<DataToTransfer>>(
