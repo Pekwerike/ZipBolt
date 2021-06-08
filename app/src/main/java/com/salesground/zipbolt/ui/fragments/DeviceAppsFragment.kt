@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentAppBinding
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.ApplicationsViewModel
 
@@ -22,7 +23,13 @@ class DeviceAppsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         applicationFragmentAppsDisplayRecyclerViewAdapter =
-            ApplicationFragmentAppsDisplayRecyclerViewAdapter()
+            ApplicationFragmentAppsDisplayRecyclerViewAdapter(
+                DataToTransferRecyclerViewItemClickListener {
+                    // TODO: If application was selected for transfer, send it to the main activity
+                    // TODO: else remove it from the collection of data to transfer
+                },
+                applicationsViewModel.clickedApplications
+            )
         spanCount = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
                 if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
