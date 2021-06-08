@@ -26,7 +26,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
             val currentItem = getItem(position)
             holder.bindApplicationDetails(
                 currentItem,
-                clickedApplications.contains(currentItem)
+                clickedApplications
             )
         }
     }

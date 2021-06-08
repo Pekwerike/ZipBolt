@@ -19,7 +19,7 @@ class ApplicationLayoutItemViewHolder(
 
     fun bindApplicationDetails(
         dataToTransfer: DataToTransfer,
-        isApplicationItemSelected: Boolean
+        clickedApplications: MutableList<DataToTransfer>
     ) {
         dataToTransfer as DataToTransfer.DeviceApplication
         with(applicationLayoutItemBinding) {
@@ -42,9 +42,18 @@ class ApplicationLayoutItemViewHolder(
                     dataToTransferRecyclerViewItemClickListener.onClick(
                         dataToTransfer
                     )
-                    setIsViewSelected(true)
+
+                    if (clickedApplications.contains(dataToTransfer)) {
+                        setIsViewSelected(false)
+                        // user un-selected, so remove the application from the collection
+                        clickedApplications.remove(dataToTransfer)
+                    } else {
+                        setIsViewSelected(true)
+                        // user selects, so add the application to the collection of clicked application
+                        clickedApplications.add(dataToTransfer)
+                    }
                 }
-                if (isApplicationItemSelected) {
+                if (clickedApplications.contains(dataToTransfer)) {
                     setIsViewSelected(true)
                 } else {
                     setIsViewSelected(false)
