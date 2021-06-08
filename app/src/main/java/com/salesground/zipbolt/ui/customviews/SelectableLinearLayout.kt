@@ -70,8 +70,13 @@ class SelectableLinearLayout @JvmOverloads constructor(
     }
 
     fun setIsViewSelected(selected: Boolean) {
-        isViewSelected = selected
-        invalidate()
+        if (isViewSelected && !selected) {
+            isViewSelected = selected
+            invalidate()
+        } else if (!isViewSelected && selected) {
+            isViewSelected = selected
+            invalidate()
+        }
     }
 
 }
