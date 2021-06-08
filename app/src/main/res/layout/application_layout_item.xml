@@ -15,6 +15,7 @@
     </data>
 
     <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
+        android:id="@+id/application_layout_item_selectable_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="1dp"

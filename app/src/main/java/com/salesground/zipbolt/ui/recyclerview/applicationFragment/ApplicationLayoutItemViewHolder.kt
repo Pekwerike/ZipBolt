@@ -9,13 +9,18 @@ import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ApplicationLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 class ApplicationLayoutItemViewHolder(
-    private val applicationLayoutItemBinding: ApplicationLayoutItemBinding
+    private val applicationLayoutItemBinding: ApplicationLayoutItemBinding,
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
 ) : RecyclerView.ViewHolder(applicationLayoutItemBinding.root) {
 
-    fun bindApplicationDetails(dataToTransfer: DataToTransfer) {
+    fun bindApplicationDetails(
+        dataToTransfer: DataToTransfer,
+        isApplicationItemSelected: Boolean
+    ) {
         dataToTransfer as DataToTransfer.DeviceApplication
         with(applicationLayoutItemBinding) {
             applicationName = if (dataToTransfer.applicationName?.contains("Google", true) == true
@@ -32,18 +37,37 @@ class ApplicationLayoutItemViewHolder(
                 .load(dataToTransfer.appIcon)
                 .into(applicationIconImageView)
             executePendingBindings()
+            with(applicationLayoutItemSelectableLinearlayout) {
+                setOnClickListener {
+                    dataToTransferRecyclerViewItemClickListener.onClick(
+                        dataToTransfer
+                    )
+                    setIsViewSelected(true)
+                }
+                if (isApplicationItemSelected) {
+                    setIsViewSelected(true)
+                } else {
+                    setIsViewSelected(false)
+                }
+            }
         }
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): ApplicationLayoutItemViewHolder {
+        fun createViewHolder(
+            parent: ViewGroup,
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+        ): ApplicationLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<ApplicationLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.application_layout_item,
                 parent,
                 false
             )
-            return ApplicationLayoutItemViewHolder(layoutBinding)
+            return ApplicationLayoutItemViewHolder(
+                layoutBinding,
+                dataToTransferRecyclerViewItemClickListener
+            )
         }
     }
 }
