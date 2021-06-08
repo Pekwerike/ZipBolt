@@ -38,6 +38,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter :
     }
 }
 
+
 class ApplicationFragmentAppsDisplayRecyclerViewItemClickListener(
    val clicked : (DataToTransfer) -> Unit
 ){
