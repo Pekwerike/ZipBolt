@@ -6,10 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.salesground.zipbolt.R
+import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.databinding.FragmentAppBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
@@ -21,15 +20,25 @@ class DeviceAppsFragment : Fragment() {
     private lateinit var applicationFragmentAppsDisplayRecyclerViewAdapter: ApplicationFragmentAppsDisplayRecyclerViewAdapter
     private lateinit var fragmentAppBinding: FragmentAppBinding
     private var spanCount: Int = 3
+    private var mainActivity: MainActivity? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activity?.let {
+            mainActivity = it as MainActivity
+        }
+
         applicationFragmentAppsDisplayRecyclerViewAdapter =
             ApplicationFragmentAppsDisplayRecyclerViewAdapter(
                 DataToTransferRecyclerViewItemClickListener {
-                    // TODO: If application was selected for transfer, send it to the main activity
-                    // TODO: else remove it from the collection of data to transfer
+                    if (applicationsViewModel.selectedApplications.contains(it)) {
+                        mainActivity?.addToDataToTransferList(it)
+                    } else {
+                        mainActivity?.removeFromDataToTransferList(it)
+                    }
                 },
-                applicationsViewModel.clickedApplications
+                applicationsViewModel.selectedApplications
             )
         spanCount = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
