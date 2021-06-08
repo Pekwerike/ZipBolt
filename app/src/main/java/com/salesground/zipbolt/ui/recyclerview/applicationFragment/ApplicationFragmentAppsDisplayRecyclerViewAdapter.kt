@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 
-class ApplicationFragmentAppsDisplayRecyclerViewAdapter :
+class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
+
+) :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
         ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil
     ) {
@@ -38,11 +40,3 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter :
     }
 }
 
-
-class ApplicationFragmentAppsDisplayRecyclerViewItemClickListener(
-   val clicked : (DataToTransfer) -> Unit
-){
-    fun onClick(dataToTransfer: DataToTransfer){
-        return clicked(dataToTransfer)
-    }
-}
