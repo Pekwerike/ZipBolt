@@ -14,46 +14,19 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
     ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil
 ) {
-    enum class AdapterViewTypes(val value: Int) {
-        NORMAL(1),
-        EXPANDED(2)
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        val currentItemNameLength = getItem(position).dataDisplayName.length
-        return if (currentItemNameLength < 15) {
-            AdapterViewTypes.NORMAL.value
-        } else {
-            AdapterViewTypes.EXPANDED.value
-        }
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            AdapterViewTypes.NORMAL.value -> {
-                ApplicationLayoutItemViewHolder.createViewHolder(
-                    parent,
-                    dataToTransferRecyclerViewItemClickListener
-                )
-            }
-            else -> {
-                ApplicationLayoutItemExpandedViewHolder.createViewHolder(
-                    parent,
-                    dataToTransferRecyclerViewItemClickListener
-                )
-            }
-        }
+        return ApplicationLayoutItemViewHolder.createViewHolder(
+            parent,
+            dataToTransferRecyclerViewItemClickListener
+        )
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ApplicationLayoutItemViewHolder) {
+            val currentItem = getItem(position)
             holder.bindApplicationDetails(
-                getItem(position),
-                selectedApplications
-            )
-        } else if (holder is ApplicationLayoutItemExpandedViewHolder) {
-            holder.bindAppData(
-                getItem(position),
+                currentItem,
                 selectedApplications
             )
         }

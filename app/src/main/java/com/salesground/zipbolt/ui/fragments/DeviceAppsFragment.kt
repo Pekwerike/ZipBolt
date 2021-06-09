@@ -73,21 +73,10 @@ class DeviceAppsFragment : Fragment() {
         with(fragmentAppBinding) {
             fragmentAppDeviceApplicationsDisplayRecyclerview.adapter =
                 applicationFragmentAppsDisplayRecyclerViewAdapter
-            val deviceAppsFragmentGridLayoutManager = GridLayoutManager(requireContext(), spanCount)
-            deviceAppsFragmentGridLayoutManager.spanSizeLookup =
-                object : GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when (applicationFragmentAppsDisplayRecyclerViewAdapter.getItemViewType(
-                            position
-                        )) {
-                            ApplicationFragmentAppsDisplayRecyclerViewAdapter.AdapterViewTypes.NORMAL.value -> 1
-                            ApplicationFragmentAppsDisplayRecyclerViewAdapter.AdapterViewTypes.EXPANDED.value -> spanCount
-                            else -> 1
-                        }
-                    }
-                }
-            fragmentAppDeviceApplicationsDisplayRecyclerview.layoutManager =
-                deviceAppsFragmentGridLayoutManager
+            fragmentAppDeviceApplicationsDisplayRecyclerview.layoutManager = GridLayoutManager(
+                requireContext(),
+                spanCount
+            )
         }
         observeViewModelLiveData()
     }
