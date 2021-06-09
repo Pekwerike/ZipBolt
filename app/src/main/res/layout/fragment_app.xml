@@ -10,6 +10,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_app_device_applications_display_recyclerview"
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="1dp"
         android:layout_height="match_parent"
         tools:listitem="@layout/application_layout_item" />
 

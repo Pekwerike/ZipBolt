@@ -22,7 +22,7 @@ class ApplicationLayoutItemViewHolder(
     ) {
         dataToTransfer as DataToTransfer.DeviceApplication
         with(applicationLayoutItemBinding) {
-            applicationName = if (dataToTransfer.applicationName?.contains("Google", true) == true
+            applicationName = if (dataToTransfer.applicationName?.startsWith("Google", true) == true
                 && dataToTransfer.applicationName.trim().length != 6
             ) {
                 dataToTransfer.applicationName.subSequence(7, dataToTransfer.applicationName.length)
@@ -35,7 +35,7 @@ class ApplicationLayoutItemViewHolder(
             Glide.with(applicationIconImageView)
                 .load(dataToTransfer.appIcon)
                 .into(applicationIconImageView)
-            executePendingBindings()
+
             with(applicationLayoutItemSelectableLinearlayout) {
                 setOnClickListener {
                     dataToTransferRecyclerViewItemClickListener.onClick(
@@ -58,6 +58,7 @@ class ApplicationLayoutItemViewHolder(
                     setIsViewSelected(false)
                 }
             }
+            executePendingBindings()
         }
     }
 

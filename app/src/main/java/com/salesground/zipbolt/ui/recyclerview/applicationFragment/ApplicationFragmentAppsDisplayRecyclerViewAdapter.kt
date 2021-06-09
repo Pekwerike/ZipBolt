@@ -14,6 +14,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
     ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil
 ) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ApplicationLayoutItemViewHolder.createViewHolder(
             parent,
