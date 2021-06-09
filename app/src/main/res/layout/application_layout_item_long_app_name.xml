@@ -17,6 +17,7 @@
 
 
     <com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout
+        android:id="@+id/application_layout_item_long_app_name_selectable_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/view_group_standard_padding">

@@ -6,37 +6,31 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
-import com.salesground.zipbolt.databinding.ApplicationLayoutItemBinding
+import com.salesground.zipbolt.databinding.ApplicationLayoutItemLongAppNameBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
-class ApplicationLayoutItemViewHolder(
-    private val applicationLayoutItemBinding: ApplicationLayoutItemBinding,
+class ApplicationLayoutItemExpandedViewHolder(
+    private val applicationLayoutItemLongAppNameBinding: ApplicationLayoutItemLongAppNameBinding,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
-) : RecyclerView.ViewHolder(applicationLayoutItemBinding.root) {
+) : RecyclerView.ViewHolder(applicationLayoutItemLongAppNameBinding.root) {
 
-    fun bindApplicationDetails(
+    fun bindAppData(
         dataToTransfer: DataToTransfer,
         selectedApplications: MutableList<DataToTransfer>
     ) {
         dataToTransfer as DataToTransfer.DeviceApplication
-        with(applicationLayoutItemBinding) {
-            applicationName = if (dataToTransfer.applicationName?.contains("Google", true) == true
-                && dataToTransfer.applicationName.trim().length != 6
-            ) {
-                dataToTransfer.applicationName.subSequence(7, dataToTransfer.applicationName.length)
-                    .trim().toString()
-            } else {
-                dataToTransfer.applicationName
-            }
+
+        applicationLayoutItemLongAppNameBinding.run {
+            applicationName = dataToTransfer.applicationName
             applicationSizeFormattedAsString =
                 dataToTransfer.appSize.transformDataSizeToMeasuredUnit()
-            Glide.with(applicationIconImageView)
+            Glide.with(applicationLayoutItemLongAppNameAppIconImageView)
                 .load(dataToTransfer.appIcon)
-                .into(applicationIconImageView)
+                .into(applicationLayoutItemLongAppNameAppIconImageView)
 
-            with(applicationLayoutItemSelectableLinearlayout) {
+            applicationLayoutItemLongAppNameSelectableConstraintLayout.run {
                 setOnClickListener {
                     dataToTransferRecyclerViewItemClickListener.onClick(
                         dataToTransfer
@@ -58,7 +52,6 @@ class ApplicationLayoutItemViewHolder(
                     setIsViewSelected(false)
                 }
             }
-            executePendingBindings()
         }
     }
 
@@ -66,14 +59,14 @@ class ApplicationLayoutItemViewHolder(
         fun createViewHolder(
             parent: ViewGroup,
             dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
-        ): ApplicationLayoutItemViewHolder {
-            val layoutBinding = DataBindingUtil.inflate<ApplicationLayoutItemBinding>(
+        ): ApplicationLayoutItemExpandedViewHolder {
+            val layoutBinding = DataBindingUtil.inflate<ApplicationLayoutItemLongAppNameBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.application_layout_item,
+                R.layout.application_layout_item_long_app_name,
                 parent,
                 false
             )
-            return ApplicationLayoutItemViewHolder(
+            return ApplicationLayoutItemExpandedViewHolder(
                 layoutBinding,
                 dataToTransferRecyclerViewItemClickListener
             )
