@@ -19,6 +19,7 @@
     <com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout
         android:id="@+id/application_layout_item_long_app_name_selectable_constraint_layout"
         android:layout_width="match_parent"
+        android:layout_margin="1dp"
         android:layout_height="wrap_content"
         android:padding="@dimen/view_group_standard_padding">
 
@@ -27,7 +28,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:padding="@dimen/view_group_standard_padding"
-            android:scaleType="fitCenter"
+            android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="@+id/application_layout_item_long_app_name_app_size_text_view"
             app:layout_constraintEnd_toStartOf="@+id/application_layout_item_long_app_name_app_name_textview"
             app:layout_constraintHorizontal_bias="0.5"
@@ -43,7 +44,6 @@
             android:padding="@dimen/standard_text_view_padding"
             android:text="@{applicationName}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/application_layout_item_long_app_name_app_size_text_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -55,7 +55,7 @@
             android:id="@+id/application_layout_item_long_app_name_app_size_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="@dimen/standard_text_view_padding"
+            android:paddingHorizontal="@dimen/standard_text_view_padding"
             android:text="@{applicationSizeFormattedAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="parent"
