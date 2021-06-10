@@ -22,7 +22,7 @@ class DeviceApplicationsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ApplicationsRepositoryInterface {
-    private val buffer = ByteArray(1024 * 1000)
+    private val buffer = ByteArray(1024 * 1024)
     private lateinit var appFileBufferedOutputStream: BufferedOutputStream
 
     private val zipBoltAppsFolder = savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(

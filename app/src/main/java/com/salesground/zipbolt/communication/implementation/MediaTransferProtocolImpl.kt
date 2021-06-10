@@ -50,7 +50,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     }
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-    private val buffer = ByteArray(1024 * 1000)
+    private val buffer = ByteArray(1024 * 1024)
     private var dataToTransfer: DataToTransfer? = null
 
     // data receive variables

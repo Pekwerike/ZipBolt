@@ -17,7 +17,7 @@ class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context) {
-    private val buffer = ByteArray(1024 * 1000)
+    private val buffer = ByteArray(1024 * 1024)
     private val contentValues = ContentValues()
     private var mediaSize: Long = 0L
     private var verifiedImageName: String = ""
