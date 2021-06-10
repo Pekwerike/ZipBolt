@@ -33,9 +33,9 @@ class DeviceAppsFragment : Fragment() {
             ApplicationFragmentAppsDisplayRecyclerViewAdapter(
                 DataToTransferRecyclerViewItemClickListener {
                     if (applicationsViewModel.selectedApplications.contains(it)) {
-                        mainActivity?.addToDataToTransferList(it)
-                    } else {
                         mainActivity?.removeFromDataToTransferList(it)
+                    } else {
+                        mainActivity?.addToDataToTransferList(it)
                     }
                 },
                 applicationsViewModel.selectedApplications

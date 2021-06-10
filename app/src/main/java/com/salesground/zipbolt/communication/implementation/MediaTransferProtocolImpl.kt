@@ -28,7 +28,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     private val imageRepository: ImageRepository by lazy {
         AdvanceImageRepository(
             context,
-            savedFilesRepository = savedFilesRepository
+            savedFilesRepository
         )
     }
 
@@ -50,7 +50,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     }
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-    private val buffer = ByteArray(1024 * 1000)
+    private val buffer = ByteArray(1024 * 1024)
     private var dataToTransfer: DataToTransfer? = null
 
     // data receive variables
@@ -83,7 +83,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 }
             } else {
                 dataToTransfer as DataToTransfer.DeviceApplication
-                FileInputStream(File(dataToTransfer.apkPath))
+                FileInputStream(dataToTransfer.apkPath)
             }
 
         fileInputStream?.let {
