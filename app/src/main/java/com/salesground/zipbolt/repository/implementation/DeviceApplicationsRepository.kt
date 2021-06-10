@@ -39,4 +39,8 @@ class DeviceApplicationsRepository @Inject constructor(@ApplicationContext priva
             it.applicationName
         }
     }
+
+    override suspend fun insertApplicationIntoDevice() {
+
+    }
 }

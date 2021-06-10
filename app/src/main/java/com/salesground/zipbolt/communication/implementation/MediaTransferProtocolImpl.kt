@@ -17,29 +17,8 @@ open class MediaTransferProtocolImpl @Inject constructor(
     private val advancedImageRepository: ImageRepository
 ) : MediaTransferProtocol {
 
-    private val bytesReadListener: ImageRepository.BytesReadListener by lazy {
-        object : ImageRepository.BytesReadListener {
-            override fun onByteRead(
-                imageDisplayName: String,
-                imageSize: Long,
-                percentageOfDataRead: Float,
-                imageUri: Uri?,
-                dataTransferStatus: DataToTransfer.TransferStatus
-            ) {
-                dataReceiveListener?.onReceive(
-                    imageDisplayName,
-                    imageSize,
-                    percentageOfDataRead,
-                    mediaType,
-                    imageUri,
-                    dataTransferStatus
-                )
-            }
-        }
-    }
-
-    private val transferMetaDataUpdateListener: ImageRepository.TransferMetaDataUpdateListener by lazy {
-        object : ImageRepository.TransferMetaDataUpdateListener {
+    private val transferMetaDataUpdateListener: TransferMetaDataUpdateListener by lazy {
+        object : TransferMetaDataUpdateListener {
             override fun onMetaTransferDataUpdate(mediaTransferProtocolMetaData: MediaTransferProtocolMetaData) {
                 if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
                     cancelCurrentTransfer(MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE)
@@ -48,7 +27,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
         }
     }
 
-    private var dataReceiveListener: DataReceiveListenerInterface? = null
+    private var dataReceiveListener: DataReceiveListener? = null
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
     private val buffer = ByteArray(1024 * 1000)
@@ -68,7 +47,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     override suspend fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
-        dataTransferListener: DataTransferListenerInterface
+        dataTransferListener: DataTransferListener
     ) {
         ongoingTransfer.set(true)
         this.dataToTransfer = dataToTransfer
@@ -156,9 +135,8 @@ open class MediaTransferProtocolImpl @Inject constructor(
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun receiveMedia(
         dataInputStream: DataInputStream,
-        dataReceiveListener: DataReceiveListenerInterface
+        dataReceiveListener: DataReceiveListener
     ) {
-        this.dataReceiveListener = dataReceiveListener
         mediaType = dataInputStream.readInt()
         mediaName = dataInputStream.readUTF()
         mediaSize = dataInputStream.readLong()
@@ -170,7 +148,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     size = mediaSize,
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
-                    bytesReadListener = bytesReadListener
+                    dataReceiveListener = dataReceiveListener
                 )
             }
         }

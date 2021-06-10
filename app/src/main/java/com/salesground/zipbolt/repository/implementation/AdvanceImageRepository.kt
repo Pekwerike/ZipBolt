@@ -35,8 +35,8 @@ class AdvanceImageRepository @Inject constructor(
         displayName: String,
         size: Long,
         dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: ImageRepository.TransferMetaDataUpdateListener,
-        bytesReadListener: ImageRepository.BytesReadListener
+        transferMetaDataUpdateListener: TransferMetaDataUpdateListener,
+        dataReceiveListener: DataReceiveListener
     ) {
         mediaSize = size
         verifiedImageName = confirmImageName(displayName)
@@ -63,10 +63,11 @@ class AdvanceImageRepository @Inject constructor(
         }
 
         // percentage of bytes read is 0% here
-        bytesReadListener.onByteRead(
+        dataReceiveListener.onReceive(
             displayName,
             size,
             0f,
+            DataToTransfer.MediaType.IMAGE.value,
             null,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
@@ -84,7 +85,9 @@ class AdvanceImageRepository @Inject constructor(
                     return
                 }
                 MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.value -> {
-                    transferMetaDataUpdateListener.onMetaTransferDataUpdate(MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER)
+                    transferMetaDataUpdateListener.onMetaTransferDataUpdate(
+                        MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
+                    )
                 }
             }
 
@@ -98,10 +101,11 @@ class AdvanceImageRepository @Inject constructor(
             )
             mediaSize -= min(buffer.size.toLong(), mediaSize).toInt()
 
-            bytesReadListener.onByteRead(
+            dataReceiveListener.onReceive(
                 displayName,
                 size,
                 ((size - mediaSize) / size.toFloat()) * 100f,
+                DataToTransfer.MediaType.IMAGE.value,
                 null,
                 DataToTransfer.TransferStatus.RECEIVE_ONGOING
             )
@@ -121,10 +125,11 @@ class AdvanceImageRepository @Inject constructor(
             }
 
             // percentage of image read is 100% with the image uri
-            bytesReadListener.onByteRead(
+            dataReceiveListener.onReceive(
                 displayName,
                 size,
                 100f,
+                DataToTransfer.MediaType.IMAGE.value,
                 imageUri,
                 DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             )
