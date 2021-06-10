@@ -101,7 +101,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
             }
 
             else -> {
-                throw Exception()
+                ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
         }
     }

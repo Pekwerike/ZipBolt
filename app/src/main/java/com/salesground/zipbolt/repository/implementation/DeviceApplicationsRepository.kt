@@ -52,6 +52,7 @@ class DeviceApplicationsRepository @Inject constructor(
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun insertApplicationIntoDevice(
         appFileName: String,
         appSize: Long,
@@ -59,7 +60,7 @@ class DeviceApplicationsRepository @Inject constructor(
         transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener
     ) {
-        val applicationFile = File(zipBoltAppsFolder, appFileName)
+        val applicationFile = File(zipBoltAppsFolder, "$appFileName.apk")
         appFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(applicationFile))
         val applicationFileUri = Uri.fromFile(applicationFile)
         // percentage of bytes read is 0%
