@@ -48,8 +48,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
             }
         }
     }
-
-    private var dataReceiveListener: DataReceiveListener? = null
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
     private val buffer = ByteArray(1024 * 1000)
@@ -77,81 +75,90 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
+        val fileInputStream: FileInputStream? =
+            if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value) {
+                context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r").run {
+                    if (this == null) null
+                    else FileInputStream(fileDescriptor)
+                }
+            } else {
+                dataToTransfer as DataToTransfer.DeviceApplication
+                FileInputStream(File(dataToTransfer.apkPath))
+            }
 
-        context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r")
-            ?.also { parcelFileDescriptor ->
-                val fileInputStream = DataInputStream(
-                    BufferedInputStream(
-                        FileInputStream(parcelFileDescriptor.fileDescriptor)
-                    )
+        fileInputStream?.let {
+            val fileDataInputStream = DataInputStream(
+                BufferedInputStream(
+                    it
                 )
+            )
+
+            dataTransferListener.onTransfer(
+                this.dataToTransfer!!,
+                0f,
+                DataToTransfer.TransferStatus.TRANSFER_STARTED
+            )
+
+            var lengthRead: Int
+            var lengthUnread = dataToTransfer.dataSize
+            fileDataInputStream.readFully(
+                buffer, 0, min(lengthUnread, buffer.size.toLong())
+                    .toInt()
+            ).also {
+                lengthRead = min(lengthUnread, buffer.size.toLong())
+                    .toInt()
+                lengthUnread -= lengthRead
+                dataOutputStream.writeInt(mTransferMetaData.value)
+                dataOutputStream.write(buffer, 0, lengthRead)
+            }
+
+            while (lengthUnread > 0) {
+                fileDataInputStream.readFully(
+                    buffer, 0,
+                    min(lengthUnread, buffer.size.toLong()).toInt()
+                ).also {
+                    lengthRead = min(lengthUnread, buffer.size.toLong()).toInt()
+                    lengthUnread -= lengthRead
+                }
+                dataOutputStream.writeInt(mTransferMetaData.value)
+
+                if (mTransferMetaData == MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
+                    break
+                } else if (mTransferMetaData == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
+                    mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
+                }
+
+                dataOutputStream.write(buffer, 0, lengthRead)
 
                 dataTransferListener.onTransfer(
                     this.dataToTransfer!!,
-                    0f,
-                    DataToTransfer.TransferStatus.TRANSFER_STARTED
+                    ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
+                    DataToTransfer.TransferStatus.TRANSFER_ONGOING
                 )
-
-                var lengthRead: Int
-                var lengthUnread = dataToTransfer.dataSize
-                fileInputStream.readFully(
-                    buffer, 0, min(lengthUnread, buffer.size.toLong())
-                        .toInt()
-                ).also {
-                    lengthRead = min(lengthUnread, buffer.size.toLong())
-                        .toInt()
-                    lengthUnread -= lengthRead
-                    dataOutputStream.writeInt(mTransferMetaData.value)
-                    dataOutputStream.write(buffer, 0, lengthRead)
-                }
-
-                while (lengthUnread > 0) {
-                    fileInputStream.readFully(
-                        buffer, 0,
-                        min(lengthUnread, buffer.size.toLong()).toInt()
-                    ).also {
-                        lengthRead = min(lengthUnread, buffer.size.toLong()).toInt()
-                        lengthUnread -= lengthRead
-                    }
-                    dataOutputStream.writeInt(mTransferMetaData.value)
-
-                    if (mTransferMetaData == MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
-                        break
-                    } else if (mTransferMetaData == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
-                        mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
-                    }
-
-                    dataOutputStream.write(buffer, 0, lengthRead)
-
-                    dataTransferListener.onTransfer(
-                        this.dataToTransfer!!,
-                        ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
-                        DataToTransfer.TransferStatus.TRANSFER_ONGOING
-                    )
-                }
-                // set ongoing transfer to false, so that a user cannot attempt to cancel it
-                ongoingTransfer.set(false)
-
-                // only send a 100% transfer event, when the data transfer was not cancelled
-                if (mTransferMetaData != MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
-                    dataTransferListener.onTransfer(
-                        this.dataToTransfer!!,
-                        100f,
-                        DataToTransfer.TransferStatus.TRANSFER_COMPLETE
-                    )
-                } else {
-                    // send event that transfer has been cancelled
-                    dataTransferListener.onTransfer(
-                        this.dataToTransfer!!,
-                        -1f,
-                        DataToTransfer.TransferStatus.TRANSFER_CANCELLED
-                    )
-                }
-
-                parcelFileDescriptor.close()
-                fileInputStream.close()
-                mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
             }
+            // set ongoing transfer to false, so that a user cannot attempt to cancel it
+            ongoingTransfer.set(false)
+
+            // only send a 100% transfer event, when the data transfer was not cancelled
+            if (mTransferMetaData != MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
+                dataTransferListener.onTransfer(
+                    this.dataToTransfer!!,
+                    100f,
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE
+                )
+            } else {
+                // send event that transfer has been cancelled
+                dataTransferListener.onTransfer(
+                    this.dataToTransfer!!,
+                    -1f,
+                    DataToTransfer.TransferStatus.TRANSFER_CANCELLED
+                )
+            }
+
+            fileDataInputStream.close()
+            mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
+
+        }
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
