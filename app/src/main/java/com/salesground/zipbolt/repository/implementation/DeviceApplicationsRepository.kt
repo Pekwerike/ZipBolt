@@ -23,7 +23,7 @@ class DeviceApplicationsRepository @Inject constructor(
     private val savedFilesRepository: SavedFilesRepository
 ) : ApplicationsRepositoryInterface {
     private val buffer = ByteArray(1024 * 1000)
-    private lateinit var appFileBufferedOutputStream : BufferedOutputStream
+    private lateinit var appFileBufferedOutputStream: BufferedOutputStream
 
     private val zipBoltAppsFolder = savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(
         SavedFilesRepository.ZipBoltMediaCategory.APPS_BASE_DIRECTORY
@@ -72,14 +72,27 @@ class DeviceApplicationsRepository @Inject constructor(
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
 
-        dataInputStream.readStreamDataIntoFile(
-            dataReceiveListener,
+        if (!dataInputStream.readStreamDataIntoFile(
+                dataReceiveListener,
+                appFileName,
+                appSize,
+                transferMetaDataUpdateListener,
+                applicationFile,
+                appFileBufferedOutputStream,
+                buffer,
+                DataToTransfer.MediaType.APP
+            )
+        ) {
+            // application receive was cancelled
+            return
+        }
+
+        dataReceiveListener.onReceive(
             appFileName,
-            appSize,
-            transferMetaDataUpdateListener,
-            applicationFile,
-
+            appSize, 100f,
+            DataToTransfer.MediaType.APP.value,
+            applicationFileUri,
+            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
         )
-
     }
 }

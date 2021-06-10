@@ -5,7 +5,12 @@ import android.net.Uri
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.repository.ApplicationsRepositoryInterface
 import com.salesground.zipbolt.repository.ImageRepository
+import com.salesground.zipbolt.repository.SavedFilesRepository
+import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
+import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
+import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -13,9 +18,26 @@ import javax.inject.Inject
 import kotlin.math.min
 
 open class MediaTransferProtocolImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val advancedImageRepository: ImageRepository
+    @ApplicationContext private val context: Context
 ) : MediaTransferProtocol {
+
+    private val savedFilesRepository: SavedFilesRepository by lazy {
+        ZipBoltSavedFilesRepository()
+    }
+
+    private val imageRepository: ImageRepository by lazy {
+        AdvanceImageRepository(
+            context,
+            savedFilesRepository = savedFilesRepository
+        )
+    }
+
+    private val applicationsRepository: ApplicationsRepositoryInterface by lazy {
+        DeviceApplicationsRepository(
+            context,
+            savedFilesRepository
+        )
+    }
 
     private val transferMetaDataUpdateListener: TransferMetaDataUpdateListener by lazy {
         object : TransferMetaDataUpdateListener {
@@ -143,9 +165,18 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
         when (mediaType) {
             DataToTransfer.MediaType.IMAGE.value -> {
-                advancedImageRepository.insertImageIntoMediaStore(
+                imageRepository.insertImageIntoMediaStore(
                     displayName = mediaName,
                     size = mediaSize,
+                    dataInputStream = dataInputStream,
+                    transferMetaDataUpdateListener = transferMetaDataUpdateListener,
+                    dataReceiveListener = dataReceiveListener
+                )
+            }
+            DataToTransfer.MediaType.APP.value -> {
+                applicationsRepository.insertApplicationIntoDevice(
+                    appFileName = mediaName,
+                    appSize = mediaSize,
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                     dataReceiveListener = dataReceiveListener
