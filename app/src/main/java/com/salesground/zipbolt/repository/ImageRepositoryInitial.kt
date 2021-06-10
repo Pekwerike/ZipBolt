@@ -287,7 +287,7 @@ class ImageRepositoryInitial @Inject constructor
         var mediaSize1 = mediaSize
 
         val imagesBaseDirectory = zipBoltSavedFilesRepository
-            .getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
+            .getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
 
         // check if an image with this name is already in the mediaStore
         val verifiedImageName = confirmImageName(mediaName)
