@@ -15,29 +15,22 @@ import java.io.File
 import javax.inject.Inject
 
 const val ZIP_BOLT_MAIN_DIRECTORY = "ZipBolt"
-enum class ZipBoltMediaCategory(val categoryName: String){
-    IMAGES_BASE_DIRECTORY("ZipBolt Images"),
-    VIDEOS_BASE_DIRECTORY("ZipBolt Videos"),
-    AUDIO_BASE_DIRECTORY("ZipBolt Audios"),
-    FILES_BASE_DIRECTORY("Files"),
-    APPS_BASE_DIRECTORY("Apps"),
-    FOLDERS_BASE_DIRECTORY("Folders")
-}
 
 class ZipBoltSavedFilesRepository @Inject constructor() : SavedFilesRepository {
+
     override fun getZipBoltBaseDirectory(): File {
         val baseDirectory = File(Environment.getExternalStorageDirectory(), ZIP_BOLT_MAIN_DIRECTORY)
         checkIfDirectoryExist(baseDirectory)
         return baseDirectory
     }
 
-    override fun getZipBoltMediaCategoryBaseDirectory(categoryType : ZipBoltMediaCategory) : File{
+    override fun getZipBoltMediaCategoryBaseDirectory(categoryType: SavedFilesRepository.ZipBoltMediaCategory): File {
         val categoryBaseDirectory = File(getZipBoltBaseDirectory(), categoryType.categoryName)
         checkIfDirectoryExist(categoryBaseDirectory)
         return categoryBaseDirectory
     }
 
-    override fun checkIfDirectoryExist(directory: File) {
+    private fun checkIfDirectoryExist(directory: File) {
         if (!directory.exists()) directory.mkdirs()
     }
 }

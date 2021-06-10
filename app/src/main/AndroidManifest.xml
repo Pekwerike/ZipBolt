@@ -32,15 +32,6 @@
             android:enabled="true"
             android:exported="true"/>
 
-        <service
-            android:name=".service.ServerService"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".service.ClientService"
-            android:enabled="true"
-            android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"

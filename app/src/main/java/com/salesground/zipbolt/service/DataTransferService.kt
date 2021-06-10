@@ -72,8 +72,8 @@ class DataTransferService : Service() {
         this.dataFlowListener = dataFlowListener
     }
 
-    private val mediaTransferProtocolDataTransferListener: DataTransferListenerInterface by lazy {
-        object : DataTransferListenerInterface {
+    private val mediaTransferProtocolDataTransferListener: DataTransferListener by lazy {
+        object : DataTransferListener {
             override fun onTransfer(
                 dataToTransfer: DataToTransfer,
                 percentTransferred: Float,
@@ -89,8 +89,8 @@ class DataTransferService : Service() {
 
     }
 
-    private val mediaTransferProtocolDataReceiveListener: DataReceiveListenerInterface by lazy {
-        object : DataReceiveListenerInterface {
+    private val mediaTransferProtocolDataReceiveListener: DataReceiveListener by lazy {
+        object : DataReceiveListener {
             override fun onReceive(
                 dataDisplayName: String,
                 dataSize: Long,
