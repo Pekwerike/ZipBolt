@@ -7,10 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.repository.SavedFilesRepository
-import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
-import com.salesground.zipbolt.repository.ZipBoltMediaCategory
+import com.salesground.zipbolt.repository.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import javax.inject.Inject
@@ -25,7 +22,7 @@ class AdvanceImageRepository @Inject constructor(
     private var mediaSize: Long = 0L
     private var verifiedImageName: String = ""
     private val imagesBaseDirectory =
-        savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
+        savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
     private lateinit var imageFile: File
     private lateinit var imageFileBufferedOutputStream: BufferedOutputStream
     private var currentTime: Long = 0L
