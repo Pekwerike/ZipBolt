@@ -44,8 +44,8 @@ class DeviceApplicationsRepository @Inject constructor(
             DataToTransfer.DeviceApplication(
                 applicationName = it.loadLabel(context.packageManager).toString(),
                 apkPath = it.sourceDir,
-                appIcon = it.loadIcon(context.packageManager),
-                appSize = File(it.sourceDir).length()
+                appSize = File(it.sourceDir).length(),
+                applicationInfo = it
             )
         }.sortedBy {
             it.applicationName

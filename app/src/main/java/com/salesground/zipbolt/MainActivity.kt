@@ -232,20 +232,49 @@ class MainActivity : AppCompatActivity() {
                 when (transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_STARTED -> {
                         lifecycleScope.launch(Dispatchers.Main) {
-                            with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                            ) {
-                                ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                                    .alpha(0f)
-                                with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                                    dataSize =
-                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
-                                    dataDisplayName = dataToTransfer.dataDisplayName
-                                    Glide.with(ongoingDataTransferDataCategoryImageView)
-                                        .load(dataToTransfer.dataUri)
-                                        .into(ongoingDataTransferDataCategoryImageView)
+
+                            when {
+                                dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
+                                        dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value -> {
+                                    with(
+                                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                            .expandedConnectedToPeerTransferOngoingLayout
+                                            .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    ) {
+                                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                                            .alpha(0f)
+                                        with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                                            dataSize =
+                                                dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+                                            dataDisplayName = dataToTransfer.dataDisplayName
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(dataToTransfer.dataUri)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                    }
+                                }
+                                dataToTransfer.dataType == DataToTransfer.MediaType.APP.value -> {
+                                    dataToTransfer as DataToTransfer.DeviceApplication
+                                    with(
+                                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                            .expandedConnectedToPeerTransferOngoingLayout
+                                            .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    ) {
+                                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                                            .alpha(0f)
+                                        with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                                            dataSize =
+                                                dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+                                            dataDisplayName = dataToTransfer.dataDisplayName
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(
+                                                    dataToTransfer.applicationInfo.loadIcon(
+                                                        packageManager
+                                                    )
+                                                )
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -816,7 +845,8 @@ class MainActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         mainActivityViewModel.collapsedConnectedToPeerTransferOngoing()
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
 

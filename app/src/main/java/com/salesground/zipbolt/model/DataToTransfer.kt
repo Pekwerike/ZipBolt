@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.model
 
+import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.core.net.toUri
@@ -12,7 +13,7 @@ sealed class DataToTransfer(
     var percentTransferred: Float = 0f,
     var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING
 ) {
-    enum class TransferStatus(val value: Int){
+    enum class TransferStatus(val value: Int) {
         NO_ACTION(9),
         TRANSFER_STARTED(16),
         TRANSFER_WAITING(10),
@@ -23,6 +24,7 @@ sealed class DataToTransfer(
         RECEIVE_ONGOING(15),
         TRANSFER_CANCELLED(19)
     }
+
     enum class MediaType(val value: Int) {
         IMAGE(209),
         VIDEO(210),
@@ -103,8 +105,8 @@ sealed class DataToTransfer(
     data class DeviceApplication(
         val applicationName: String?,
         val apkPath: String,
-        val appIcon: Drawable?,
-        val appSize: Long
+        val appSize: Long,
+        val applicationInfo: ApplicationInfo
     ) : DataToTransfer(
         dataDisplayName = applicationName ?: "Unknown App",
         dataUri = apkPath.toUri(),
