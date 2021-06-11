@@ -23,7 +23,7 @@ fun Uri.getMediaDuration(context: Context): String {
 
 fun Long.transformDataSizeToMeasuredUnit(): String {
     return when (this) {
-        in 1..99 -> "${this}b"
+        in 0..99 -> "${this}b"
         in 1000..999_999 -> "${(this / 1000F).toBigDecimal().round(MathContext(3))}kb"
         in 1_000_000..9_999_999 -> "${(this / 1_000_000F).toBigDecimal().round(MathContext(2))}mb"
         in 10_000_000..999_999_999 -> "${(this / 1_000_000F).toBigDecimal().round(MathContext(3))}mb"
