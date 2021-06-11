@@ -56,6 +56,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -101,6 +102,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    var currentDataToTransferSizeAsString = ""
     private val dataTransferServiceDataReceiveListener: DataTransferService.DataFlowListener by lazy {
         object : DataTransferService.DataFlowListener {
             override fun onDataReceive(
@@ -229,6 +231,11 @@ class MainActivity : AppCompatActivity() {
                 percentTransferred: Float,
                 transferStatus: DataToTransfer.TransferStatus
             ) {
+                // cache the current data to transfer size, formatted as string
+                if(currentDataToTransferSizeAsString == ""){
+                    currentDataToTransferSizeAsString = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+                }
+
                 when (transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_STARTED -> {
                         lifecycleScope.launch(Dispatchers.Main) {
@@ -241,11 +248,26 @@ class MainActivity : AppCompatActivity() {
                                     .alpha(0f)
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
                                     dataSize =
-                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+                                        "${0L.transformDataSizeToMeasuredUnit()}/$currentDataToTransferSizeAsString"
+
                                     dataDisplayName = dataToTransfer.dataDisplayName
+                                    if( dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
+                                        dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value){
                                     Glide.with(ongoingDataTransferDataCategoryImageView)
                                         .load(dataToTransfer.dataUri)
                                         .into(ongoingDataTransferDataCategoryImageView)
+                                    }else if(dataToTransfer.dataType == DataToTransfer.MediaType.APP.value){
+                                        dataToTransfer as DataToTransfer.DeviceApplication
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(
+                                                dataToTransfer.applicationInfo.loadIcon(
+                                                    packageManager
+                                                )
+                                            )
+                                            .into(ongoingDataTransferDataCategoryImageView)
+                                    }else {
+
+                                    }
                                 }
                             }
                         }
@@ -273,6 +295,8 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             }
+                            // reformat the current data to transfer size, formatted as string, for the next data to transfer
+                            currentDataToTransferSizeAsString = ""
                         }
                     }
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
@@ -285,6 +309,11 @@ class MainActivity : AppCompatActivity() {
                             ) {
 
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                                    dataSize =
+                                        "${(dataToTransfer.dataSize * (percentTransferred/100))
+                                                .roundToLong()
+                                                .transformDataSizeToMeasuredUnit()
+                                        }/$currentDataToTransferSizeAsString"
                                     dataTransferPercentAsString =
                                         "${percentTransferred.roundToInt()}%"
                                     dataTransferPercent = percentTransferred.roundToInt()
@@ -816,7 +845,8 @@ class MainActivity : AppCompatActivity() {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
                         mainActivityViewModel.collapsedConnectedToPeerTransferOngoing()
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
 
