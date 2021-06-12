@@ -28,11 +28,6 @@ import javax.inject.Inject
 class DataTransferService : Service() {
     var isActive = false
 
-    companion object {
-        const val IS_SERVER: String = "IsDeviceTheServer"
-        const val SERVER_IP_ADDRESS = "ServerIpAddress"
-        const val SOCKET_PORT = 7091
-    }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
 
@@ -199,38 +194,48 @@ class DataTransferService : Service() {
             fileTransferServiceNotification.configureFileTransferNotification()
         )
         intent?.let {
-            when (intent.getBooleanExtra(IS_SERVER, false)) {
-                false -> configureClientSocket(intent.getStringExtra(SERVER_IP_ADDRESS)!!)
-                true -> configureServerSocket()
-            }
+             when (intent.getBooleanExtra(IS_SERVER, false)) {
+                    false -> configureClientSocket(intent.getStringExtra(SERVER_IP_ADDRESS)!!)
+                    true -> configureServerSocket()
+                }
+
         }
         return START_NOT_STICKY
     }
 
 
     private fun configureServerSocket() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val serverSocket = withContext(Dispatchers.IO) { ServerSocket() }
+       CoroutineScope(Dispatchers.IO).launch {
+            val serverSocket = ServerSocket()
+            serverSocket.receiveBufferSize = 1024 * 1024
             serverSocket.reuseAddress = true
-            withContext(Dispatchers.IO) { serverSocket.bind(InetSocketAddress(SOCKET_PORT)) }
-            socket = withContext(Dispatchers.IO) { serverSocket.accept() }
+            serverSocket.bind(InetSocketAddress(SOCKET_PORT))
+            socket = serverSocket.accept()
+            socket.sendBufferSize = 1024 * 1024
+            socket.receiveBufferSize = 1024 * 1024
             socketDOS =
-                DataOutputStream(BufferedOutputStream(withContext(Dispatchers.IO) { socket.getOutputStream() }))
+                DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS =
-                DataInputStream(BufferedInputStream(withContext(Dispatchers.IO) { socket.getInputStream() }))
+                DataInputStream(BufferedInputStream(socket.getInputStream()))
 
-            launch {
-                listenForMediaToTransfer(socketDOS)
-            }
-            delay(300)
-            listenForMediaToReceive(socketDIS)
+            listenForMediaToTransfer(socketDOS)
+            /*Thread(Runnable {
+                runBlocking {
+                    listenForMediaToTransfer(socketDOS)
+                }
+            }).start()*/
+
+         //   delay(300)
+        //    listenForMediaToReceive(socketDIS)
         }
     }
 
 
     private fun configureClientSocket(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            socket = Socket()
+        socket = Socket()
+            socket.sendBufferSize = 1024 * 1024
+            socket.receiveBufferSize = 1024 * 1024
             socket.bind(null)
             try {
                 socket.connect(
@@ -256,11 +261,15 @@ class DataTransferService : Service() {
                 DataOutputStream(BufferedOutputStream(withContext(Dispatchers.IO) { socket.getOutputStream() }))
             socketDIS =
                 DataInputStream(BufferedInputStream(withContext(Dispatchers.IO) { socket.getInputStream() }))
-            launch {
-                listenForMediaToTransfer(socketDOS)
-            }
-            delay(300)
             listenForMediaToReceive(socketDIS)
+        // listenForMediaToTransfer(socketDOS)
+         /*   Thread(Runnable {
+                runBlocking {
+                    listenForMediaToTransfer(socketDOS)
+                }
+            }).start()
+            delay(300)
+            listenForMediaToReceive(socketDIS)*/
         }
     }
 
@@ -276,6 +285,7 @@ class DataTransferService : Service() {
                         // write the collection size to the peer
                         dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                         dataOutputStream.writeInt(dataCollection.size)
+                        dataOutputStream.flush()
                         for (dataToTransfer in dataCollection) {
                             mediaTransferProtocol.transferMedia(
                                 dataToTransfer,
@@ -283,7 +293,6 @@ class DataTransferService : Service() {
                                 mediaTransferProtocolDataTransferListener
                             )
                         }
-                        dataOutputStream.flush()
                         mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
                     }
                     MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {

@@ -51,6 +51,7 @@ import com.salesground.zipbolt.utils.parseDate
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -66,6 +67,7 @@ const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 class MainActivity : AppCompatActivity() {
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
+
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -462,6 +464,9 @@ class MainActivity : AppCompatActivity() {
                 // start data transfer service
                 when (wifiP2pInfo.isGroupOwner) {
                     true -> {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            displayToast("Server")
+                        }
                         // you are the server
                         Intent(
                             this@MainActivity,

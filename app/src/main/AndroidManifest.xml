@@ -28,9 +28,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeedForce">
         <service
-            android:name=".service.DataTransferService"
+            android:name=".service.OneDirectionalDataTransferService"
             android:enabled="true"
             android:exported="true"/>
+        <service
+            android:name=".service.DataTransferService"
+            android:enabled="true"
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
