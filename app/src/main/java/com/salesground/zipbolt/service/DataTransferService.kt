@@ -12,6 +12,7 @@ import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.notification.FileTransferServiceNotification.Companion.FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.BufferedInputStream
@@ -28,6 +29,12 @@ import javax.inject.Inject
 class DataTransferService : Service() {
     var isActive = false
 
+    companion object {
+        const val IS_SERVER: String = "IsDeviceTheServer"
+        const val SERVER_IP_ADDRESS = "ServerIpAddress"
+        const val SOCKET_PORT = 7091
+        const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
+    }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
 
@@ -194,18 +201,43 @@ class DataTransferService : Service() {
             fileTransferServiceNotification.configureFileTransferNotification()
         )
         intent?.let {
-             when (intent.getBooleanExtra(IS_SERVER, false)) {
-                    false -> configureClientSocket(intent.getStringExtra(SERVER_IP_ADDRESS)!!)
-                    true -> configureServerSocket()
+            val isServer = intent.getBooleanExtra(IS_SERVER, false)
+            val isOneDirectionalTransfer = intent.getBooleanExtra(IS_ONE_DIRECTIONAL_TRANSFER, true)
+            val serverIpAddress = intent.getStringExtra(SERVER_IP_ADDRESS)
+            when {
+                isServer && isOneDirectionalTransfer -> {
+                    configureSenderSocketForOneDirectionalTransfer()
                 }
-
+                !isServer && isOneDirectionalTransfer -> {
+                    configureReceiverSocketForOneDirectionalReceive(serverIpAddress!!)
+                }
+                isServer && !isOneDirectionalTransfer -> {
+                    configureServerSocket()
+                }
+                !isServer && !isOneDirectionalTransfer -> {
+                    configureClientSocket(serverIpAddress!!)
+                }
+            }
         }
         return START_NOT_STICKY
     }
 
+    private fun configureSenderSocketForOneDirectionalTransfer() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val serverSocket = ServerSocket()
+            serverSocket.receiveBufferSize = 1024 * 1024
+            serverSocket.reuseAddress = true
+            serverSocket.bind(InetSocketAddress(SOCKET_PORT))
+            socket = serverSocket.accept()
+            socket.sendBufferSize = 1024 * 1024
+            socket.receiveBufferSize = 1024 * 1024
+            socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
+            listenForMediaToTransfer(socketDOS)
+        }
+    }
 
     private fun configureServerSocket() {
-       CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val serverSocket = ServerSocket()
             serverSocket.receiveBufferSize = 1024 * 1024
             serverSocket.reuseAddress = true
@@ -219,21 +251,48 @@ class DataTransferService : Service() {
                 DataInputStream(BufferedInputStream(socket.getInputStream()))
 
             listenForMediaToTransfer(socketDOS)
-            /*Thread(Runnable {
-                runBlocking {
-                    listenForMediaToTransfer(socketDOS)
-                }
-            }).start()*/
-
-         //   delay(300)
-        //    listenForMediaToReceive(socketDIS)
+            delay(300)
+            listenForMediaToReceive(socketDIS)
         }
     }
 
 
+    private fun configureReceiverSocketForOneDirectionalReceive(serverIpAddress: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            socket = Socket()
+            socket.sendBufferSize = 1024 * 1024
+            socket.receiveBufferSize = 1024 * 1024
+            socket.bind(null)
+            try {
+                socket.connect(
+                    InetSocketAddress(
+                        serverIpAddress,
+                        SOCKET_PORT
+                    ),
+                    1000
+                )
+            } catch (connectException: ConnectException) {
+                // send broadcast message to the main activity that we couldn't connect to peer.
+                // the main activity will use this message to determine how to update the ui
+                with(dataTransferServiceConnectionStateIntent) {
+                    action =
+                        DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
+
+                    localBroadcastManager.sendBroadcast(this)
+                }
+                stopForeground(true)
+                stopSelf()
+            }
+            socketDIS =
+                DataInputStream(BufferedInputStream(socket.getInputStream()))
+
+            listenForMediaToReceive(socketDIS)
+        }
+    }
+
     private fun configureClientSocket(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
-        socket = Socket()
+            socket = Socket()
             socket.sendBufferSize = 1024 * 1024
             socket.receiveBufferSize = 1024 * 1024
             socket.bind(null)
@@ -258,18 +317,13 @@ class DataTransferService : Service() {
             }
 
             socketDOS =
-                DataOutputStream(BufferedOutputStream(withContext(Dispatchers.IO) { socket.getOutputStream() }))
+                DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS =
-                DataInputStream(BufferedInputStream(withContext(Dispatchers.IO) { socket.getInputStream() }))
-            listenForMediaToReceive(socketDIS)
-        // listenForMediaToTransfer(socketDOS)
-         /*   Thread(Runnable {
-                runBlocking {
-                    listenForMediaToTransfer(socketDOS)
-                }
-            }).start()
+                DataInputStream(BufferedInputStream(socket.getInputStream()))
+
+            listenForMediaToTransfer(socketDOS)
             delay(300)
-            listenForMediaToReceive(socketDIS)*/
+            listenForMediaToReceive(socketDIS)
         }
     }
 
