@@ -27,10 +27,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpeedForce">
-        <service
-            android:name=".service.DataTransferService"
-            android:enabled="true"
-            android:exported="true"/>
 
         <activity
             android:name=".MainActivity"
