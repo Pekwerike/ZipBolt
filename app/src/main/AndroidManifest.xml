@@ -40,6 +40,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".service.DataTransferService"
+            android:exported="true"
+            android:enabled="true"/>
     </application>
 
 </manifest>

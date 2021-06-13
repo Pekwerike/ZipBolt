@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
@@ -49,7 +50,7 @@ class DataTransferService : Service() {
         percentTransferred: Float,
         transferStatus: DataToTransfer.TransferStatus
     ) -> Unit)? = null
-    private val incomingDataBroadcastIntent = Intent()
+
     private val dataTransferServiceConnectionStateIntent = Intent()
 
     @Inject
@@ -202,7 +203,8 @@ class DataTransferService : Service() {
         )
         intent?.let {
             val isServer = intent.getBooleanExtra(IS_SERVER, false)
-            val isOneDirectionalTransfer = intent.getBooleanExtra(IS_ONE_DIRECTIONAL_TRANSFER, true)
+            val isOneDirectionalTransfer =
+                intent.getBooleanExtra(IS_ONE_DIRECTIONAL_TRANSFER, false)
             val serverIpAddress = intent.getStringExtra(SERVER_IP_ADDRESS)
             when {
                 isServer && isOneDirectionalTransfer -> {
@@ -216,6 +218,9 @@ class DataTransferService : Service() {
                 }
                 !isServer && !isOneDirectionalTransfer -> {
                     configureClientSocket(serverIpAddress!!)
+                }
+                else -> {
+
                 }
             }
         }
@@ -232,6 +237,7 @@ class DataTransferService : Service() {
             socket.sendBufferSize = 1024 * 1024
             socket.receiveBufferSize = 1024 * 1024
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
+
             listenForMediaToTransfer(socketDOS)
         }
     }
@@ -286,6 +292,7 @@ class DataTransferService : Service() {
             socketDIS =
                 DataInputStream(BufferedInputStream(socket.getInputStream()))
 
+            delay(300)
             listenForMediaToReceive(socketDIS)
         }
     }
