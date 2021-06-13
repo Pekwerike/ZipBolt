@@ -8,7 +8,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 
 class ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
-        ExpandedConenctedToPeerTransferOngoingRecyclerViewDiffUtil
+        ExpandedConnectedToPeerTransferOngoingRecyclerViewDiffUtil
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -21,7 +21,7 @@ class ExpandedConnectedToPeerTransferOngoingRecyclerviewAdapter :
         }
     }
 
-    object ExpandedConenctedToPeerTransferOngoingRecyclerViewDiffUtil :
+    object ExpandedConnectedToPeerTransferOngoingRecyclerViewDiffUtil :
         DiffUtil.ItemCallback<DataToTransfer>() {
         override fun areItemsTheSame(oldItem: DataToTransfer, newItem: DataToTransfer): Boolean {
             return oldItem.dataUri == newItem.dataUri
