@@ -5,7 +5,6 @@
     style="@style/DataCategoryTextViewTheme"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
     android:padding="4dp"
     android:text="@string/queue"
     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
