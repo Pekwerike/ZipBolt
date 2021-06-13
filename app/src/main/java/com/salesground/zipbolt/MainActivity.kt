@@ -247,7 +247,8 @@ class MainActivity : AppCompatActivity() {
                                 ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
                                     .alpha(0f)
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                                    dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                    dataSize =
+                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
                                             0L
                                         )
 
@@ -980,6 +981,29 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.STATE_COLLAPSED
     }
 
+
+    private fun configureConnectionOptionsModalBottomSheetLayout() {
+        modalBottomSheetDialog = BottomSheetDialog(this)
+        modalBottomSheetDialog.setContentView(
+            ZipBoltProConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater).apply {
+                zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
+                    // TODO     1. Turn on device wifi,
+                    // TODO     2. Display waiting for peer screen and instructions for peer device to follow
+                    // TODO     3. Create Wifi p2p group
+                }
+                zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
+                    // TODO 1. Turn on device wifi
+                    // TODO 2. Turn on device location
+                    // TODO 3. Display searching for peer layout and instructions for potential sender to follow
+                }
+
+                zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
+
+                }
+            }.root
+        )
+
+    }
 
     private fun configurePlatformOptionsModalBottomSheetLayout() {
         modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
