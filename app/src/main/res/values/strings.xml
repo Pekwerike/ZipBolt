@@ -29,4 +29,10 @@
     <string name="sending">Sending</string>
     <string name="receiving">Receiving</string>
     <string name="active_data_flow_label">Active data flow, swipe up to view details.</string>
+    <string name="send_to_peer_connection_description">Very fast file transfer but you cannot receive from peer. Peer must choose Receive.</string>
+    <string name="receive_connection_description">Very fast file receive but you cannot send file to peer. Peer must choose Send.</string>
+    <string name="receive">Receive</string>
+    <string name="bidirectional_file_transfer_description">Slow speed bidirectional file transfer and receive. You can transfer and receive files from peer. Peer must also
+    choose Send and Receive.</string>
+    <string name="send_and_receive">Send and Receive</string>
 </resources>

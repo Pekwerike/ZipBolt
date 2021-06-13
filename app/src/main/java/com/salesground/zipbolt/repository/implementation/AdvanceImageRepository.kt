@@ -69,43 +69,49 @@ class AdvanceImageRepository @Inject constructor(
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
 
+        try {
+            while (mediaSize > 0) {
+                // read the current transfer status, to determine whether to continue with the transfer
+                when (dataInputStream.readInt()) {
+                    MediaTransferProtocolMetaData.KEEP_RECEIVING.value -> {
 
-        while (mediaSize > 0) {
-            // read the current transfer status, to determine whether to continue with the transfer
-            when (dataInputStream.readInt()) {
-                MediaTransferProtocolMetaData.KEEP_RECEIVING.value -> {
+                    }
+                    MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value -> {
+                        // delete image file
+                        imageFile.delete()
+                        return
+                    }
+                    MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.value -> {
+                        transferMetaDataUpdateListener.onMetaTransferDataUpdate(
+                            MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
+                        )
+                    }
+                }
 
-                }
-                MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value -> {
-                    // delete image file
-                    imageFile.delete()
-                    return
-                }
-                MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.value -> {
-                    transferMetaDataUpdateListener.onMetaTransferDataUpdate(
-                        MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
-                    )
-                }
+                dataInputStream.readFully(
+                    buffer, 0,
+                    min(buffer.size.toLong(), mediaSize).toInt()
+                )
+                imageFileBufferedOutputStream.write(
+                    buffer,
+                    0, min(buffer.size.toLong(), mediaSize).toInt()
+                )
+                mediaSize -= min(buffer.size.toLong(), mediaSize).toInt()
+
+                dataReceiveListener.onReceive(
+                    displayName,
+                    size,
+                    ((size - mediaSize) / size.toFloat()) * 100f,
+                    DataToTransfer.MediaType.IMAGE.value,
+                    null,
+                    DataToTransfer.TransferStatus.RECEIVE_ONGOING
+                )
             }
-
-            dataInputStream.readFully(
-                buffer, 0,
-                min(buffer.size.toLong(), mediaSize).toInt()
-            )
-            imageFileBufferedOutputStream.write(
-                buffer,
-                0, min(buffer.size.toLong(), mediaSize).toInt()
-            )
-            mediaSize -= min(buffer.size.toLong(), mediaSize).toInt()
-
-            dataReceiveListener.onReceive(
-                displayName,
-                size,
-                ((size - mediaSize) / size.toFloat()) * 100f,
-                DataToTransfer.MediaType.IMAGE.value,
-                null,
-                DataToTransfer.TransferStatus.RECEIVE_ONGOING
-            )
+        } catch (ioException: IOException) {
+            // delete image file if read was not successful
+            imageFile.delete()
+            imageFileBufferedOutputStream.close()
+            return
         }
 
         imageFileBufferedOutputStream.close()

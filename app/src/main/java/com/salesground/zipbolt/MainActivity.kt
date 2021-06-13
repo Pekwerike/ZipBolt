@@ -3,6 +3,7 @@ package com.salesground.zipbolt
 
 import android.Manifest.*
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -58,6 +59,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
+import androidx.core.app.ActivityCompat.startActivityForResult
+
+import android.content.Intent
+import android.provider.Settings
+import androidx.activity.result.contract.ActivityResultContracts
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -87,6 +93,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private var dataTransferServiceIntent: Intent? = null
+
+    private val turnOnWifiResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // wifi is on, do whatever you want to do
+            }
+        }
 
     private val dataTransferServiceConnectionStateReceiver =
         DataTransferServiceConnectionStateReceiver(object :
@@ -248,11 +260,9 @@ class MainActivity : AppCompatActivity() {
                                     .alpha(0f)
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
                                     dataSize =
-                                        "${
-                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
-                                                0L
-                                            )
-                                        }"
+                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                            0L
+                                        )
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
                                     if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
@@ -983,6 +993,39 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.STATE_COLLAPSED
     }
 
+
+    private fun configureConnectionOptionsModalBottomSheetLayout() {
+        modalBottomSheetDialog = BottomSheetDialog(this)
+        modalBottomSheetDialog.setContentView(
+            ZipBoltProConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater).apply {
+                zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
+                    // Turn on device wifi if it is off
+                    if (!wifiManager.isWifiEnabled) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                        } else {
+                            wifiManager.isWifiEnabled = true
+                        }
+                    }
+                    // TODO     2. Display waiting for peer screen and instructions for peer device to follow
+
+                    // Create Wifi p2p group
+                    createWifiDirectGroup()
+                }
+                zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
+                    // TODO 1. Turn on device wifi
+                    // TODO 2. Turn on device location
+                    // TODO 3. Display searching for peer layout and instructions for potential sender to follow
+                    // search for peers to connect to
+                }
+
+                zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
+
+                }
+            }.root
+        )
+
+    }
 
     private fun configurePlatformOptionsModalBottomSheetLayout() {
         modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)

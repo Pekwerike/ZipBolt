@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="applicationName"
+            type="String" />
+
+        <variable
+            name="applicationSize"
+            type="String" />
+    </data>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/application_layout_item_transfer_or_receive_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@color/background_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ongoing_data_receive_layout_item_constraint_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/application_layout_item_transfer_or_receive_image_view"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:background="@color/background_color"
+                android:elevation="8dp"
+                android:scaleType="fitCenter"
+                android:layout_margin="@dimen/medium_margin"
+                android:src="@drawable/ic_startup_outline_"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/application_layout_item_transfer_or_receive_app_name_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:lines="1"
+                android:paddingBottom="@dimen/standard_text_view_padding"
+                android:text="@{applicationName}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:layout_constraintBottom_toTopOf="@id/application_layout_item_transfer_or_receive_data_size_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/application_layout_item_transfer_or_receive_image_view"
+                app:layout_constraintTop_toTopOf="@id/application_layout_item_transfer_or_receive_image_view" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/application_layout_item_transfer_or_receive_data_size_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:text="@{applicationSize}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:layout_constraintBottom_toBottomOf="@+id/application_layout_item_transfer_or_receive_image_view"
+                app:layout_constraintStart_toStartOf="@id/application_layout_item_transfer_or_receive_app_name_text_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</layout>
