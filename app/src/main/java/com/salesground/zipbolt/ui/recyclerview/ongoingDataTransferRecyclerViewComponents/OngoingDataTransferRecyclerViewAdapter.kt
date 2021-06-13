@@ -6,11 +6,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.ImageTransferOrReceiveCompleteLayoutViewHolder
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.ImageTransferWaitingLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageTransferOrReceiveCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
-import com.salesground.zipbolt.ui.recyclerview.expandedconnectedtopeertransferongoing.OngoingDataTransferViewHolder
-import java.lang.Exception
 
 class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUIState,
         RecyclerView.ViewHolder>(OngoingDataTransferRecyclerViewAdapterDiffUtil) {

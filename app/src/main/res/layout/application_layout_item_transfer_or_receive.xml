@@ -5,16 +5,16 @@
     <data>
 
         <variable
-            name="dataDisplayName"
+            name="applicationName"
             type="String" />
 
         <variable
-            name="dataSize"
+            name="applicationSize"
             type="String" />
     </data>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/ongoing_data_receive_data_category_image_shimmer"
+        android:id="@+id/application_layout_item_transfer_or_receive_shimmer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
@@ -47,7 +47,7 @@
                 android:layout_margin="6dp"
                 android:lines="1"
                 android:paddingBottom="@dimen/standard_text_view_padding"
-                android:text="@{dataDisplayName}"
+                android:text="@{applicationName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toTopOf="@id/application_layout_item_transfer_or_receive_data_size_text_view"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                android:text="@{dataSize}"
+                android:text="@{applicationSize}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintBottom_toBottomOf="@+id/application_layout_item_transfer_or_receive_image_view"
                 app:layout_constraintStart_toStartOf="@id/application_layout_item_transfer_or_receive_app_name_text_view" />
