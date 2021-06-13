@@ -20,6 +20,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/standard_text_view_padding"
                 android:text="@string/send_label"
@@ -54,6 +55,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:padding="@dimen/standard_text_view_padding"
                 android:text="@string/receive"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
@@ -87,6 +89,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:padding="@dimen/standard_text_view_padding"
                 android:text="@string/send_and_receive"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />

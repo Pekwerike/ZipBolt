@@ -96,7 +96,8 @@ class MainActivity : AppCompatActivity() {
 
     private val turnOnWifiResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                // wifi is on, do whatever you want to do
+                // create wifi direct group only if this device wants to be a sender
+                createWifiDirectGroup()
             }
         }
 
@@ -116,7 +117,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-    var currentDataToTransferSizeAsString = ""
     private val dataTransferServiceDataReceiveListener: DataTransferService.DataFlowListener by lazy {
         object : DataTransferService.DataFlowListener {
             override fun onDataReceive(
@@ -569,7 +569,7 @@ class MainActivity : AppCompatActivity() {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) {
-                    configurePlatformOptionsModalBottomSheetLayout()
+                    configureConnectionOptionsModalBottomSheetLayout()
                     modalBottomSheetDialog.show()
                 }
             }
@@ -1001,16 +1001,13 @@ class MainActivity : AppCompatActivity() {
                 zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
-                        } else {
-                            wifiManager.isWifiEnabled = true
-                        }
+                        turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                    }else {
+                        // Create Wifi p2p group, if wifi is enabled
+                        createWifiDirectGroup()
                     }
                     // TODO     2. Display waiting for peer screen and instructions for peer device to follow
 
-                    // Create Wifi p2p group
-                    createWifiDirectGroup()
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
                     // TODO 1. Turn on device wifi

@@ -16,12 +16,8 @@
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/application_layout_item_transfer_or_receive_shimmer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@color/background_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:shimmer_duration="600"
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ongoing_data_receive_layout_item_constraint_layout"
@@ -32,11 +28,8 @@
                 android:id="@+id/application_layout_item_transfer_or_receive_image_view"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
-                android:background="@color/background_color"
-                android:elevation="8dp"
                 android:scaleType="fitCenter"
                 android:layout_margin="@dimen/medium_margin"
-                android:src="@drawable/ic_startup_outline_"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -45,9 +38,9 @@
                 android:id="@+id/application_layout_item_transfer_or_receive_app_name_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="2dp"
                 android:lines="1"
-                android:paddingBottom="@dimen/standard_text_view_padding"
                 android:text="@{applicationName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintBottom_toTopOf="@id/application_layout_item_transfer_or_receive_data_size_text_view"

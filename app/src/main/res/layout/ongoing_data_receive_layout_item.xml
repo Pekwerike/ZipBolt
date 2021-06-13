@@ -40,8 +40,6 @@
                 android:id="@+id/ongoing_data_receive__layout_image_view"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
-                android:background="@color/background_color"
-                android:elevation="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_startup_outline_"
                 app:layout_constraintBottom_toBottomOf="parent"
