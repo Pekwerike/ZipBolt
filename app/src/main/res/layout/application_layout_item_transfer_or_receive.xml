@@ -16,9 +16,8 @@
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/application_layout_item_transfer_or_receive_shimmer"
         android:layout_width="match_parent"
-        app:shimmer_auto_start="true"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp">
+        app:shimmer_duration="600"
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ongoing_data_receive_layout_item_constraint_layout"
@@ -39,7 +38,8 @@
                 android:id="@+id/application_layout_item_transfer_or_receive_app_name_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="2dp"
                 android:lines="1"
                 android:text="@{applicationName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
