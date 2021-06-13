@@ -62,6 +62,8 @@ import kotlin.math.roundToLong
 import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
+import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 
@@ -94,7 +96,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private var dataTransferServiceIntent: Intent? = null
 
-    private val turnOnWifiResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    private val turnOnWifiResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // create wifi direct group only if this device wants to be a sender
                 createWifiDirectGroup()
@@ -640,6 +643,7 @@ class MainActivity : AppCompatActivity() {
             addObserver(ftsNotification)
         }
         observeViewModelLiveData()
+        initializeChannelAndBroadcastReceiver()
         // bind to the data transfer service
         Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
@@ -1002,7 +1006,7 @@ class MainActivity : AppCompatActivity() {
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
                         turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
-                    }else {
+                    } else {
                         // Create Wifi p2p group, if wifi is enabled
                         createWifiDirectGroup()
                     }
@@ -1187,14 +1191,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("MissingPermission")
     private fun initializeChannelAndBroadcastReceiver() {
         wifiP2pChannel =
             wifiP2pManager.initialize(
                 this, mainLooper
-            )
-            // The channel to the framework has been disconnected.
-            // Application could try re-initializing
-            {
+            ) {
 
             }
         // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
@@ -1204,6 +1206,32 @@ class MainActivity : AppCompatActivity() {
                 wifiP2pManager = wifiP2pManager,
                 wifiP2pChannel = wifiP2pChannel
             )
+        }
+
+        // register the zipBolt file transfer service
+        val record: Map<String, String> = mapOf(
+            "peerName" to "P.C. Ekwerike"
+        )
+
+        val serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(
+            "ZipBolt File Transfer Service",
+            "_presence._tcp",
+            record
+        )
+
+        if (isLocationPermissionGranted()) {
+            wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+                        // local service addition was successfully sent to the android framework
+                    }
+
+                    override fun onFailure(reason: Int) {
+                        // local service addition was not successfully sent to the android framework
+                    }
+                })
+        } else {
+            // request location permission and addLocalService again
         }
     }
 
@@ -1236,8 +1264,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        // register the broadcast receiver
-        initializeChannelAndBroadcastReceiver()
         registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
