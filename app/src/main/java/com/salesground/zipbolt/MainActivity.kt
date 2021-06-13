@@ -247,12 +247,9 @@ class MainActivity : AppCompatActivity() {
                                 ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
                                     .alpha(0f)
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                                    dataSize =
-                                        "${
-                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
-                                                0L
-                                            )
-                                        }"
+                                    dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                            0L
+                                        )
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
                                     if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
