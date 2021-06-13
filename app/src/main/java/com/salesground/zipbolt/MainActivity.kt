@@ -248,7 +248,11 @@ class MainActivity : AppCompatActivity() {
                                     .alpha(0f)
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
                                     dataSize =
-                                        "${dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(0L)}"
+                                        "${
+                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                                0L
+                                            )
+                                        }"
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
                                     if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
@@ -279,13 +283,10 @@ class MainActivity : AppCompatActivity() {
                                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                     .expandedConnectedToPeerTransferOngoingLayout
                                     .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    .ongoingTransferReceiveHeaderLayoutDataTransferView
                             ) {
-
-                                with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                                    dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
-                                    dataTransferPercentAsString = "100%"
-                                    dataTransferPercent = 100
-                                }
+                                dataSize =
+                                    dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
                             }
 
                             mainActivityViewModel.currentTransferHistory.find {
@@ -321,8 +322,10 @@ class MainActivity : AppCompatActivity() {
                             ) {
 
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                                    dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
-                                                    ((percentTransferred / 100) * dataToTransfer.dataSize).roundToLong())
+                                    dataSize =
+                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                            ((percentTransferred / 100) * dataToTransfer.dataSize).roundToLong()
+                                        )
                                     dataTransferPercentAsString =
                                         "${percentTransferred.roundToInt()}%"
                                     dataTransferPercent = percentTransferred.roundToInt()
