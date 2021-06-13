@@ -275,6 +275,19 @@ class MainActivity : AppCompatActivity() {
                     }
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         lifecycleScope.launch {
+                            with(
+                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                    .expandedConnectedToPeerTransferOngoingLayout
+                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                            ) {
+
+                                with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                                    dataSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
+                                    dataTransferPercentAsString = "100%"
+                                    dataTransferPercent = 100
+                                }
+                            }
+
                             mainActivityViewModel.currentTransferHistory.find {
                                 it.id == dataToTransfer.dataUri.toString()
                             }.also {
@@ -296,8 +309,6 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             }
-                            // reformat the current data to transfer size, formatted as string, for the next data to transfer
-                            currentDataToTransferSizeAsString = ""
                         }
                     }
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
