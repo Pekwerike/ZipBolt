@@ -116,7 +116,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-    var currentDataToTransferSizeAsString = ""
     private val dataTransferServiceDataReceiveListener: DataTransferService.DataFlowListener by lazy {
         object : DataTransferService.DataFlowListener {
             override fun onDataReceive(
@@ -569,7 +568,7 @@ class MainActivity : AppCompatActivity() {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) {
-                    configurePlatformOptionsModalBottomSheetLayout()
+                    configureConnectionOptionsModalBottomSheetLayout()
                     modalBottomSheetDialog.show()
                 }
             }

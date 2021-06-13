@@ -30,7 +30,7 @@ class ApplicationTransferOngoingViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): ApplicationTransferOrReceiveCompleteLayoutViewHolder {
+        fun createViewHolder(parent: ViewGroup): ApplicationTransferOngoingViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<ApplicationLayoutItemTransferOrReceiveBinding>(
                     LayoutInflater.from(parent.context),
@@ -38,7 +38,7 @@ class ApplicationTransferOngoingViewHolder(
                     parent,
                     false
                 )
-            return ApplicationTransferOrReceiveCompleteLayoutViewHolder(layoutBinding)
+            return ApplicationTransferOngoingViewHolder(layoutBinding)
         }
     }
 }

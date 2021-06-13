@@ -81,6 +81,7 @@ class WifiDirectBroadcastReceiver(
                                         ?.let { wifiP2pGroup ->
                                             val connectedDevice: WifiP2pDevice =
                                                 if (wifiP2pInfo.isGroupOwner) {
+                                                    if(wifiP2pGroup.clientList.isEmpty()) return@let
                                                     wifiP2pGroup.clientList.first()
                                                 } else {
                                                     wifiP2pGroup.owner
