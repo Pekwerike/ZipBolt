@@ -9,6 +9,8 @@ import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageTransferOrReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOngoingViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOrReceiveCompleteLayoutViewHolder
 
 class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUIState,
         RecyclerView.ViewHolder>(OngoingDataTransferRecyclerViewAdapterDiffUtil) {
@@ -21,8 +23,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
         VIDEO_TRANSFER_COMPLETE(4),
         VIDEO_RECEIVE_COMPLETE(5),
         APP_TRANSFER_WAITING(6),
-        APP_TRANSFER_COMPLETE(7),
-        APP_RECEIVE_COMPLETE(9)
+        APP_TRANSFER_OR_RECEIVE_COMPLETE(7)
     }
 
 
@@ -38,7 +39,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value
                             }
                             is DataToTransfer.DeviceApplication -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.APP_TRANSFER_WAITING.value
                             }
                             is DataToTransfer.DeviceAudio -> {
                                 300
@@ -54,7 +55,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceApplication -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.APP_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceAudio -> {
                                 300
@@ -70,7 +71,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceApplication -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.APP_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceAudio -> {
                                 300
@@ -98,6 +99,14 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 OngoingTransferCategoryHeaderViewHolder.createViewHolder(parent)
             }
 
+            OngoingDataTransferAdapterViewTypes.APP_TRANSFER_OR_RECEIVE_COMPLETE.value -> {
+                ApplicationTransferOrReceiveCompleteLayoutViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.APP_TRANSFER_WAITING.value -> {
+                ApplicationTransferOngoingViewHolder.createViewHolder(parent)
+            }
+
             else -> {
                 ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
@@ -111,6 +120,12 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
             }
             is ImageTransferWaitingLayoutItemViewHolder -> {
                 holder.bindImageData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is ApplicationTransferOngoingViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is ApplicationTransferOrReceiveCompleteLayoutViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
         }
     }
