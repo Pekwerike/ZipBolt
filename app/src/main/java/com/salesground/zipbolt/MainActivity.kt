@@ -134,7 +134,9 @@ class MainActivity : AppCompatActivity() {
                                             root.animate().alpha(1f)
                                             this.dataDisplayName = dataDisplayName
                                             this.dataSize =
-                                                dataSize.transformDataSizeToMeasuredUnit()
+                                                dataSize.transformDataSizeToMeasuredUnit(
+                                                    ((percentageOfDataRead / 100) * dataSize).roundToLong()
+                                                )
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(R.drawable.ic_startup_outline_)
                                                 .into(ongoingDataReceiveLayoutImageView)
@@ -233,10 +235,6 @@ class MainActivity : AppCompatActivity() {
                 percentTransferred: Float,
                 transferStatus: DataToTransfer.TransferStatus
             ) {
-                // cache the current data to transfer size, formatted as string
-                if(currentDataToTransferSizeAsString == ""){
-                    currentDataToTransferSizeAsString = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
-                }
 
                 when (transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_STARTED -> {
@@ -250,15 +248,20 @@ class MainActivity : AppCompatActivity() {
                                     .alpha(0f)
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
                                     dataSize =
-                                        "${0L.transformDataSizeToMeasuredUnit()}/$currentDataToTransferSizeAsString"
+                                        "${
+                                            dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                                0L
+                                            )
+                                        }"
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
-                                    if( dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
-                                        dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value){
-                                    Glide.with(ongoingDataTransferDataCategoryImageView)
-                                        .load(dataToTransfer.dataUri)
-                                        .into(ongoingDataTransferDataCategoryImageView)
-                                    }else if(dataToTransfer.dataType == DataToTransfer.MediaType.APP.value){
+                                    if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
+                                        dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
+                                    ) {
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(dataToTransfer.dataUri)
+                                            .into(ongoingDataTransferDataCategoryImageView)
+                                    } else if (dataToTransfer.dataType == DataToTransfer.MediaType.APP.value) {
                                         dataToTransfer as DataToTransfer.DeviceApplication
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(
@@ -267,7 +270,7 @@ class MainActivity : AppCompatActivity() {
                                                 )
                                             )
                                             .into(ongoingDataTransferDataCategoryImageView)
-                                    }else {
+                                    } else {
 
                                     }
                                 }
@@ -276,6 +279,16 @@ class MainActivity : AppCompatActivity() {
                     }
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         lifecycleScope.launch {
+                            with(
+                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                    .expandedConnectedToPeerTransferOngoingLayout
+                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                    .ongoingTransferReceiveHeaderLayoutDataTransferView
+                            ) {
+                                dataSize =
+                                    dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
+                            }
+
                             mainActivityViewModel.currentTransferHistory.find {
                                 it.id == dataToTransfer.dataUri.toString()
                             }.also {
@@ -297,8 +310,6 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             }
-                            // reformat the current data to transfer size, formatted as string, for the next data to transfer
-                            currentDataToTransferSizeAsString = ""
                         }
                     }
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
@@ -312,10 +323,9 @@ class MainActivity : AppCompatActivity() {
 
                                 with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
                                     dataSize =
-                                        "${(dataToTransfer.dataSize * (percentTransferred/100))
-                                                .roundToLong()
-                                                .transformDataSizeToMeasuredUnit()
-                                        }/$currentDataToTransferSizeAsString"
+                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                            ((percentTransferred / 100) * dataToTransfer.dataSize).roundToLong()
+                                        )
                                     dataTransferPercentAsString =
                                         "${percentTransferred.roundToInt()}%"
                                     dataTransferPercent = percentTransferred.roundToInt()
@@ -464,9 +474,6 @@ class MainActivity : AppCompatActivity() {
                 // start data transfer service
                 when (wifiP2pInfo.isGroupOwner) {
                     true -> {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            displayToast("Server")
-                        }
                         // you are the server
                         Intent(
                             this@MainActivity,
@@ -475,6 +482,7 @@ class MainActivity : AppCompatActivity() {
 
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, true)
+                                putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 startForegroundService(serviceIntent)
@@ -499,6 +507,7 @@ class MainActivity : AppCompatActivity() {
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, false)
                                 putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
+                                putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 startForegroundService(serviceIntent)

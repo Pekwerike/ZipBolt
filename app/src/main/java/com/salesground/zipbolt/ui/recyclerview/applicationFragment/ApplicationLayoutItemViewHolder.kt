@@ -34,7 +34,7 @@ class ApplicationLayoutItemViewHolder(
                 dataToTransfer.appSize.transformDataSizeToMeasuredUnit()
 
             Glide.with(applicationIconImageView)
-                .load(dataToTransfer.applicationInfo.loadIcon(root.context.packageManager))
+                .load(dataToTransfer.applicationIcon)
                 .into(applicationIconImageView)
 
             with(applicationLayoutItemSelectableLinearlayout) {
