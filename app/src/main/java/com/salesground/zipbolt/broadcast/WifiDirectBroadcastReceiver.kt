@@ -76,7 +76,6 @@ class WifiDirectBroadcastReceiver(
                                 // send connected device the connection info to the mainActivityViewModel
                                 // so we can create a socket connection and begin data transfer
                                 if (wifiP2pInfo.groupFormed) {
-
                                     intent.getParcelableExtra<WifiP2pGroup>(WifiP2pManager.EXTRA_WIFI_P2P_GROUP)
                                         ?.let { wifiP2pGroup ->
                                             val connectedDevice: WifiP2pDevice =
