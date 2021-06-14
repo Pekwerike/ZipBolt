@@ -63,8 +63,10 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 
 
@@ -75,7 +77,6 @@ const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 class MainActivity : AppCompatActivity() {
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
-
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -553,12 +554,13 @@ class MainActivity : AppCompatActivity() {
         override fun wifiP2pDiscoveryStarted() {
             // only inform the view model that the device has began searching
             // for peers when there is no ui action
-            if (mainActivityViewModel.peerConnectionUIState.value ==
-                PeerConnectionUIState.NoConnectionUIAction
-            ) {
-                mainActivityViewModel.expandedSearchingForPeers()
-            }
+                if (mainActivityViewModel.peerConnectionUIState.value ==
+                    PeerConnectionUIState.NoConnectionUIAction
+                ) {
+                    mainActivityViewModel.expandedSearchingForPeers()
+                }
         }
+
 
         override fun disconnectedFromPeer() {
             mainActivityViewModel.peerConnectionNoAction()
@@ -1005,19 +1007,36 @@ class MainActivity : AppCompatActivity() {
                 zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
-                        turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                        } else {
+                            wifiManager.isWifiEnabled = true
+                        }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                        createWifiDirectGroup()
+                        //createWifiDirectGroup()
+                        beginPeerDiscovery()
                     }
                     // TODO     2. Display waiting for peer screen and instructions for peer device to follow
 
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
-                    // TODO 1. Turn on device wifi
-                    // TODO 2. Turn on device location
-                    // TODO 3. Display searching for peer layout and instructions for potential sender to follow
-                    // search for peers to connect to
+                    // Turn on device wifi
+                    if (!wifiManager.isWifiEnabled) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                        } else {
+                            wifiManager.isWifiEnabled = true
+                        }
+                    } else {
+                        // TODO 2. Turn on device location
+
+                        // Create Wifi p2p group, if wifi is enabled
+                        // begin peer discovery
+                        beginPeerDiscovery()
+                    }
+
+
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
@@ -1071,7 +1090,7 @@ class MainActivity : AppCompatActivity() {
     private fun createWifiDirectGroup() {
         val wifiP2pConfig = WifiP2pConfig().apply {
             deviceAddress = wifiManager.connectionInfo.macAddress
-            wps.setup = WpsInfo.PBC
+            wps.setup = WpsInfo.DISPLAY
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
@@ -1108,12 +1127,14 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     private fun connectToADevice(device: WifiP2pDevice) {
-        val wifiP2pConfiguration = WifiP2pConfig().apply {
+        val wifiP2pConfig = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
             wps.setup = WpsInfo.PBC
+            // this device that initiates the connect shall be the group owner
+            groupOwnerIntent = 0
         }
 
-        wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfiguration,
+        wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfig,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
@@ -1128,9 +1149,45 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private val nearByDevices = mutableMapOf<String, String>()
+
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
         if (isLocationPermissionGranted()) {
+           /* val recordListener = WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
+                                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
+                if (txtRecordMap != null && srcDevice != null) {
+                    txtRecordMap["peerName"]?.let { peerName ->
+                        nearByDevices[srcDevice.deviceAddress] = peerName
+                    }
+                }
+            }
+
+            val serviceInfoListener =
+                WifiP2pManager.DnsSdServiceResponseListener { instanceName: String?,
+                                                              registrationType: String?,
+                                                              srcDevice: WifiP2pDevice? ->
+
+                    Log.i("Movement", "${srcDevice?.deviceName} is advertising $instanceName")
+                    // replace the default device name, with the peer name sent through the service record
+                    srcDevice?.let {
+                        srcDevice.deviceName = nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
+                    }
+                }
+
+            wifiP2pManager.setDnsSdResponseListeners(wifiP2pChannel, serviceInfoListener, recordListener)
+            wifiP2pManager.addServiceRequest(wifiP2pChannel,
+            WifiP2pDnsSdServiceRequest.newInstance(),
+            object: WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+
+                }
+
+                override fun onFailure(reason: Int) {
+
+                }
+            })*/
+
             wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     startPeerDiscovery = true
@@ -1219,7 +1276,7 @@ class MainActivity : AppCompatActivity() {
             record
         )
 
-        if (isLocationPermissionGranted()) {
+       /* if (isLocationPermissionGranted()) {
             wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
@@ -1232,7 +1289,7 @@ class MainActivity : AppCompatActivity() {
                 })
         } else {
             // request location permission and addLocalService again
-        }
+        }*/
     }
 
     // check if SpeedForce has access to device fine location
