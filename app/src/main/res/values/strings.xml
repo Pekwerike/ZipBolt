@@ -35,4 +35,5 @@
     <string name="bidirectional_file_transfer_description">Low-speed bidirectional file transfer. You can transfer and receive files from peer. Peer must also
     choose Send and Receive.</string>
     <string name="send_and_receive">Send and Receive</string>
+    <string name="zip_bolt_file_transfer_service">ZipBoltFileTransferService</string>
 </resources>

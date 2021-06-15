@@ -1171,7 +1171,10 @@ class MainActivity : AppCompatActivity() {
                     srcDevice?.let {
                         srcDevice.deviceName =
                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
-                        Log.i("Movement", "${srcDevice?.deviceName} is advertising $instanceName")
+                        if(instanceName == getString(R.string.zip_bolt_file_transfer_service))
+                        mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
+                            srcDevice
+                        )
                     }
                 }
 
@@ -1284,13 +1287,12 @@ class MainActivity : AppCompatActivity() {
         )
 
         val serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(
-            "ZipBolt File Transfer Service",
+            getString(R.string.zip_bolt_file_transfer_service),
             "_presence._tcp",
             record
         )
 
         if (isLocationPermissionGranted()) {
-
             wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
