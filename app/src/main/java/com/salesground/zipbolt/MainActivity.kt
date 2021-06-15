@@ -554,11 +554,11 @@ class MainActivity : AppCompatActivity() {
         override fun wifiP2pDiscoveryStarted() {
             // only inform the view model that the device has began searching
             // for peers when there is no ui action
-                if (mainActivityViewModel.peerConnectionUIState.value ==
-                    PeerConnectionUIState.NoConnectionUIAction
-                ) {
-                    mainActivityViewModel.expandedSearchingForPeers()
-                }
+            if (mainActivityViewModel.peerConnectionUIState.value ==
+                PeerConnectionUIState.NoConnectionUIAction
+            ) {
+                mainActivityViewModel.expandedSearchingForPeers()
+            }
         }
 
 
@@ -1154,7 +1154,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
         if (isLocationPermissionGranted()) {
-           /* val recordListener = WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
+            val recordListener = WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
                                                                          txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
                 if (txtRecordMap != null && srcDevice != null) {
                     txtRecordMap["peerName"]?.let { peerName ->
@@ -1167,18 +1167,32 @@ class MainActivity : AppCompatActivity() {
                 WifiP2pManager.DnsSdServiceResponseListener { instanceName: String?,
                                                               registrationType: String?,
                                                               srcDevice: WifiP2pDevice? ->
-
-                    Log.i("Movement", "${srcDevice?.deviceName} is advertising $instanceName")
                     // replace the default device name, with the peer name sent through the service record
                     srcDevice?.let {
-                        srcDevice.deviceName = nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
+                        srcDevice.deviceName =
+                            nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
+                        Log.i("Movement", "${srcDevice?.deviceName} is advertising $instanceName")
                     }
                 }
 
-            wifiP2pManager.setDnsSdResponseListeners(wifiP2pChannel, serviceInfoListener, recordListener)
+            wifiP2pManager.setDnsSdResponseListeners(
+                wifiP2pChannel,
+                serviceInfoListener,
+                recordListener
+            )
             wifiP2pManager.addServiceRequest(wifiP2pChannel,
-            WifiP2pDnsSdServiceRequest.newInstance(),
-            object: WifiP2pManager.ActionListener {
+                WifiP2pDnsSdServiceRequest.newInstance(),
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
+
+                    }
+
+                    override fun onFailure(reason: Int) {
+
+                    }
+                })
+
+            wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
 
                 }
@@ -1186,9 +1200,8 @@ class MainActivity : AppCompatActivity() {
                 override fun onFailure(reason: Int) {
 
                 }
-            })*/
-
-            wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+            })
+            /*wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     startPeerDiscovery = true
                     // TODO Peer discovery started alert the user
@@ -1201,7 +1214,7 @@ class MainActivity : AppCompatActivity() {
                     displayToast("Peer discovery initiation failed")
                 }
 
-            })
+            })*/
         } else {
             checkFineLocationPermission()
         }
@@ -1276,7 +1289,8 @@ class MainActivity : AppCompatActivity() {
             record
         )
 
-       /* if (isLocationPermissionGranted()) {
+        if (isLocationPermissionGranted()) {
+
             wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
@@ -1289,7 +1303,7 @@ class MainActivity : AppCompatActivity() {
                 })
         } else {
             // request location permission and addLocalService again
-        }*/
+        }
     }
 
     // check if SpeedForce has access to device fine location
