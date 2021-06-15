@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/collapsed_waiting_for_receiver_layout_waiting_animation"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_margin="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/collapsed_waiting_for_receiver_layout_waiting_for_device_label_text_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/waiting_for_connection"
+            app:lottie_renderMode="automatic"
+            app:lottie_repeatMode="reverse" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/collapsed_waiting_for_receiver_layout_waiting_for_device_label_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:paddingHorizontal="4dp"
+            android:text="@string/waiting_for_receiver"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/orange_300"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/collapsed_waiting_for_receiver_layout_cancel_group_creation_image_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/collapsed_waiting_for_receiver_layout_waiting_animation"
+            app:layout_constraintTop_toTopOf="@+id/collapsed_waiting_for_receiver_layout_waiting_animation"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/collapsed_waiting_for_receiver_layout_cancel_group_creation_image_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/stop_searching_for_peers_content_description"
+            android:src="@drawable/close_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/collapsed_waiting_for_receiver_layout_waiting_for_device_label_text_view"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
+
+</LinearLayout>
