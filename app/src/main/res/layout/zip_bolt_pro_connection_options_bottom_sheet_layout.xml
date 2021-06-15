@@ -20,11 +20,12 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
-                android:textColor="@color/blue_415"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/standard_text_view_padding"
                 android:text="@string/send_label"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="@color/blue_415"
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
@@ -55,10 +56,11 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/green_500"
                 android:padding="@dimen/standard_text_view_padding"
                 android:text="@string/receive"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="@color/green_500"
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
@@ -89,10 +91,11 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/orange_300"
                 android:padding="@dimen/standard_text_view_padding"
                 android:text="@string/send_and_receive"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="@color/orange_300"
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
