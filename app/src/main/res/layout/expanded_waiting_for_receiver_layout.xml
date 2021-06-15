@@ -13,14 +13,14 @@
         android:layout_margin="@dimen/standard_margin"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/connected_cubes_animation_primary_color"
+        app:lottie_rawRes="@raw/waiting_for_connection"
         app:lottie_renderMode="automatic"
         app:lottie_repeatMode="reverse" />
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/standard_margin"
+        android:layout_marginHorizontal="@dimen/standard_margin"
         android:padding="@dimen/standard_text_view_padding"
         android:text="@string/waiting_for_receiver"
         android:textAlignment="center"
