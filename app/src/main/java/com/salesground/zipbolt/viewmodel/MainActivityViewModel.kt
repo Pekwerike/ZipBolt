@@ -13,6 +13,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
+    private val devicesAdvertizingZipBoltTransferService: MutableList<WifiP2pDevice> =
+        mutableListOf()
+
     private var hasBeenNotifiedAboutReceive: Boolean = false
     var currentTransferHistory: MutableList<OngoingDataTransferUIState> =
         mutableListOf(OngoingDataTransferUIState.Header)
@@ -29,6 +32,13 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     val peerConnectionUIState: LiveData<PeerConnectionUIState>
         get() = _peerConnectionUIState
 
+    fun newDeviceAdvertisingZipBoltTransferService(device: WifiP2pDevice) {
+        if (!devicesAdvertizingZipBoltTransferService.contains(device)) {
+            devicesAdvertizingZipBoltTransferService.add(device)
+            currentPeersList = devicesAdvertizingZipBoltTransferService
+        }
+        expandedSearchingForPeers()
+    }
 
     fun peerConnectionNoAction() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
@@ -113,7 +123,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         hasBeenNotifiedAboutReceive = false
     }
 
-    fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState){
+    fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState) {
         currentTransferHistory.add(ongoingDataTransferUIState)
     }
 
