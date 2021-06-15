@@ -36,4 +36,7 @@
     choose Send and Receive.</string>
     <string name="send_and_receive">Send and Receive</string>
     <string name="zip_bolt_file_transfer_service">ZipBoltFileTransferService</string>
+    <string name="waiting_for_receiver">Waiting for receiver</string>
+    <string name="waiting_for_peers_description">Tell your friend to open the ZipBolt app, click on "Connect" and then
+    click on "Receive" to discover your device</string>
 </resources>

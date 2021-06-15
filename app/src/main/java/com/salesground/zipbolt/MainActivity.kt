@@ -1014,8 +1014,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                        //createWifiDirectGroup()
-                        beginPeerDiscovery()
+                        createWifiDirectGroup()
                     }
                     // TODO     2. Display waiting for peer screen and instructions for peer device to follow
 
@@ -1090,7 +1089,7 @@ class MainActivity : AppCompatActivity() {
     private fun createWifiDirectGroup() {
         val wifiP2pConfig = WifiP2pConfig().apply {
             deviceAddress = wifiManager.connectionInfo.macAddress
-            wps.setup = WpsInfo.DISPLAY
+            wps.setup = WpsInfo.PBC
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
@@ -1130,8 +1129,6 @@ class MainActivity : AppCompatActivity() {
         val wifiP2pConfig = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
             wps.setup = WpsInfo.PBC
-            // this device that initiates the connect shall be the group owner
-            groupOwnerIntent = 0
         }
 
         wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfig,
@@ -1204,20 +1201,7 @@ class MainActivity : AppCompatActivity() {
 
                 }
             })
-            /*wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    startPeerDiscovery = true
-                    // TODO Peer discovery started alert the user
-                    //  displayToast("Peer discovery successfully initiated")
 
-                }
-
-                override fun onFailure(p0: Int) {
-                    // TODO Peer discovery initiation failed, alert the user
-                    displayToast("Peer discovery initiation failed")
-                }
-
-            })*/
         } else {
             checkFineLocationPermission()
         }
