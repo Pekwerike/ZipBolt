@@ -382,6 +382,7 @@ class MainActivity : AppCompatActivity() {
     private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured: Boolean = false
+    private var isWaitingForReceiverBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
 
@@ -427,6 +428,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private val waitingForReceiverPersistentBottomSheetLayoutBinding:
+            WaitingForReceiverPersistentBottomSheetLayoutBinding by lazy {
+        MainActivityDataBindingUtils.getWaitingForReceiverPersistentBottomSheetBinding(this)
+    }
+
     // persistent bottom sheet behavior variables
     private val searchingForPeersBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
@@ -443,6 +449,12 @@ class MainActivity : AppCompatActivity() {
     private val connectedToPeerTransferOngoingBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
             connectedToPeerTransferOngoingBottomSheetLayoutBinding.root
+        )
+    }
+
+    private val waitingForReceiverBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
+        BottomSheetBehavior.from(
+            waitingForReceiverPersistentBottomSheetLayoutBinding.root
         )
     }
 
@@ -684,7 +696,6 @@ class MainActivity : AppCompatActivity() {
                         collapseSearchingForPeersBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
-                        // Log.i("ReceivingInfo", "New file received UI update")
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
@@ -701,9 +712,19 @@ class MainActivity : AppCompatActivity() {
                                 getBottomSheetPeekHeight()
                         }
                         // hide the connected to pair no action bottom sheet
-                        with(connectedToPeerNoActionBottomSheetBehavior) {
-                            isHideable = true
-                            state = BottomSheetBehavior.STATE_HIDDEN
+                        if(isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
+                            with(connectedToPeerNoActionBottomSheetBehavior) {
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        }
+
+                        // if waiting for receive bottom sheet is configured hide it
+                        if(isWaitingForReceiverBottomSheetLayoutConfigured){
+                            waitingForReceiverBottomSheetBehavior.run{
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
                         }
                     }
                     is PeerConnectionUIState.ExpandedSearchingForPeer -> {
@@ -793,9 +814,62 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_EXPANDED
                     }
+                    PeerConnectionUIState.CollapsedWaitingForReceiver -> {
+                        if (!isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            configureWaitingForReceiverBottomSheetLayout()
+                        }
+                        waitingForReceiverBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
+                        waitingForReceiverBottomSheetBehavior.peekHeight =
+                            getBottomSheetPeekHeight()
+                    }
+                    PeerConnectionUIState.ExpandedWaitingForReceiver -> {
+                        if (!isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            configureWaitingForReceiverBottomSheetLayout()
+                        }
+                        waitingForReceiverBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_EXPANDED
+                        waitingForReceiverBottomSheetBehavior.peekHeight =
+                            getBottomSheetPeekHeight()
+                    }
                 }
             }
         }
+    }
+
+    private fun configureWaitingForReceiverBottomSheetLayout() {
+        isWaitingForReceiverBottomSheetLayoutConfigured = true
+        waitingForReceiverPersistentBottomSheetLayoutBinding.run {
+            // collapsed layout
+            waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.run {
+                root.animate().alpha(0f)
+            }
+
+            waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.run {
+
+            }
+        }
+
+        waitingForReceiverBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    mainActivityViewModel.expandedWaitingForReceiver()
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    mainActivityViewModel.collapsedWaitingForReceiver()
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                waitingForReceiverPersistentBottomSheetLayoutBinding.run {
+                    waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.root.alpha =
+                        1 - slideOffset * 3.5f
+                    waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.root.alpha =
+                        slideOffset
+                }
+            }
+        })
     }
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
@@ -827,18 +901,19 @@ class MainActivity : AppCompatActivity() {
                 with(expandedConnectedToPeerTransferOngoingRecyclerView) {
                     adapter = ongoingDataTransferRecyclerViewAdapter
                     val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
-                    gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
-                                position
-                            )) {
-                                OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
-                                OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
-                                OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
-                                else -> 3
+                    gridLayoutManager.spanSizeLookup =
+                        object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
+                                    position
+                                )) {
+                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
+                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
+                                    OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
+                                    else -> 3
+                                }
                             }
                         }
-                    }
                     layoutManager = gridLayoutManager
                     setHasFixedSize(true)
                 }
@@ -891,11 +966,14 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(connectedDevice: WifiP2pDevice) {
+    private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(
+        connectedDevice: WifiP2pDevice
+    ) {
         isConnectedToPeerNoActionBottomSheetLayoutConfigured = true
         connectedToPeerNoActionBottomSheetLayoutBinding.apply {
             collapsedConnectedToPeerNoActionLayout.apply {
-                deviceConnectedTo = "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
+                deviceConnectedTo =
+                    "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
                 collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
 
                 }
@@ -1014,10 +1092,9 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
+                        modalBottomSheetDialog.hide()
                         createWifiDirectGroup()
                     }
-                    // TODO     2. Display waiting for peer screen and instructions for peer device to follow
-
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
                     // Turn on device wifi
@@ -1028,14 +1105,11 @@ class MainActivity : AppCompatActivity() {
                             wifiManager.isWifiEnabled = true
                         }
                     } else {
-                        // TODO 2. Turn on device location
-
                         // Create Wifi p2p group, if wifi is enabled
                         // begin peer discovery
                         beginPeerDiscovery()
+                        modalBottomSheetDialog.dismiss()
                     }
-
-
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
@@ -1095,7 +1169,9 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        displayToast("Group created successfully")
+                        /* group created successfully, update the device UI, that we are now
+                        * waiting for a receiver*/
+                        mainActivityViewModel.expandedWaitingForReceiver()
                     }
 
                     override fun onFailure(p0: Int) {
@@ -1106,15 +1182,17 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.createGroup(wifiP2pChannel,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        displayToast("Group created successfully")
-                        wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
+                        /* group created successfully, update the device UI, that we are now
+                        * waiting for a receiver*/
+                        mainActivityViewModel.expandedWaitingForReceiver()
+                     /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
                             it?.let {
                                 Toast.makeText(
                                     this@MainActivity, "Password is " +
                                             it.passphrase, Toast.LENGTH_LONG
                                 ).show()
                             }
-                        }
+                        }*/
                     }
 
                     override fun onFailure(p0: Int) {
@@ -1146,19 +1224,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val nearByDevices = mutableMapOf<String, String>()
+    private
+    val nearByDevices = mutableMapOf<String, String>()
 
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
         if (isLocationPermissionGranted()) {
-            val recordListener = WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
-                                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
-                if (txtRecordMap != null && srcDevice != null) {
-                    txtRecordMap["peerName"]?.let { peerName ->
-                        nearByDevices[srcDevice.deviceAddress] = peerName
+            val recordListener =
+                WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
+                                                        txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
+                    if (txtRecordMap != null && srcDevice != null) {
+                        txtRecordMap["peerName"]?.let { peerName ->
+                            nearByDevices[srcDevice.deviceAddress] = peerName
+                        }
                     }
                 }
-            }
 
             val serviceInfoListener =
                 WifiP2pManager.DnsSdServiceResponseListener { instanceName: String?,
@@ -1168,10 +1248,10 @@ class MainActivity : AppCompatActivity() {
                     srcDevice?.let {
                         srcDevice.deviceName =
                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
-                        if(instanceName == getString(R.string.zip_bolt_file_transfer_service))
-                        mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
-                            srcDevice
-                        )
+                        if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
+                            mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
+                                srcDevice
+                            )
                     }
                 }
 
@@ -1192,15 +1272,17 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
 
-            wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
+            wifiP2pManager.discoverServices(
+                wifiP2pChannel,
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
 
-                }
+                    }
 
-                override fun onFailure(reason: Int) {
+                    override fun onFailure(reason: Int) {
 
-                }
-            })
+                    }
+                })
 
         } else {
             checkFineLocationPermission()
@@ -1241,7 +1323,7 @@ class MainActivity : AppCompatActivity() {
         return IntentFilter().apply {
             addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-           // addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+            // addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION)
         }

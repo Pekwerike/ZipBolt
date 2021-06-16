@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,8 +9,12 @@
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/connected_cubes_lottie_animation_view"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="0dp"
         android:layout_margin="@dimen/standard_margin"
+        app:layout_constraintBottom_toTopOf="@id/expanded_waiting_for_receiver_layout_waiting_for_receiver_header_textview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/waiting_for_connection"
@@ -18,6 +22,7 @@
         app:lottie_repeatMode="reverse" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/expanded_waiting_for_receiver_layout_waiting_for_receiver_header_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/standard_margin"
@@ -25,14 +30,23 @@
         android:text="@string/waiting_for_receiver"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        android:textColor="@color/orange_300" />
+        android:textColor="@color/orange_300"
+        app:layout_constraintBottom_toTopOf="@id/expanded_waiting_for_receiver_layout_context_description_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/expanded_waiting_for_receiver_layout_context_description_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/standard_margin"
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_marginBottom="64dp"
         android:padding="@dimen/standard_text_view_padding"
         android:text="@string/waiting_for_peers_description"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

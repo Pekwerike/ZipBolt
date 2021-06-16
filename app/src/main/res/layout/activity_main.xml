@@ -38,19 +38,24 @@
 
     <ViewStub
         android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_view_stub"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout_height="match_parent"
         android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
-        />
+        app:layout_behavior="@string/bottom_sheet_behavior" />
 
     <ViewStub
         android:id="@+id/connected_to_peer_transfer_ongoing_persistent_bottom_sheet_view_stub"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:layout_height="match_parent"
         android:layout="@layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet"
-        />
+        app:layout_behavior="@string/bottom_sheet_behavior" />
+
+    <ViewStub
+        android:id="@+id/waiting_for_receiver_persistent_bottom_sheet_view_stub"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout="@layout/waiting_for_receiver_persistent_bottom_sheet_layout"
+        app:layout_behavior="@string/bottom_sheet_behavior" />
 
     <include
         android:id="@+id/connection_info_persistent_bottom_sheet_layout"

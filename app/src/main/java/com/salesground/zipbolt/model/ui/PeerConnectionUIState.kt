@@ -12,6 +12,9 @@ sealed class PeerConnectionUIState {
 
     object NoConnectionUIAction : PeerConnectionUIState()
 
+    object ExpandedWaitingForReceiver : PeerConnectionUIState()
+    object CollapsedWaitingForReceiver : PeerConnectionUIState()
+
     data class CollapsedSearchingForPeer(val numberOfDevicesFound: Int) : PeerConnectionUIState()
 
     data class ExpandedSearchingForPeer(val devices: MutableList<WifiP2pDevice>) :
@@ -20,7 +23,7 @@ sealed class PeerConnectionUIState {
     data class CollapsedConnectedToPeerTransferOngoing(
         val peeredDeviceConnectionInfo: WifiP2pInfo,
 
-    ) : PeerConnectionUIState()
+        ) : PeerConnectionUIState()
 
     data class ExpandedConnectedToPeerTransferOngoing(
         val peeredDeviceConnectionInfo: WifiP2pInfo,
