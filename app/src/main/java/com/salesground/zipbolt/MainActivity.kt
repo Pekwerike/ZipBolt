@@ -1107,8 +1107,8 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
                         // begin peer discovery
+                        modalBottomSheetDialog.hide()
                         beginPeerDiscovery()
-                        modalBottomSheetDialog.dismiss()
                     }
                 }
 
@@ -1118,31 +1118,6 @@ class MainActivity : AppCompatActivity() {
             }.root
         )
 
-    }
-
-    private fun configurePlatformOptionsModalBottomSheetLayout() {
-        modalBottomSheetDialog = BottomSheetDialog(this@MainActivity)
-        val modalBottomSheetLayoutBinding =
-            ZipBoltConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater)
-
-        modalBottomSheetLayoutBinding.apply {
-            connectToAndroid.setOnClickListener {
-                if (!isSearchingForPeersBottomSheetLayoutConfigured) configureSearchingForPeersPersistentBottomSheetInfo()
-                activityMainBinding.apply {
-                    connectionInfoPersistentBottomSheetLayout.apply {
-                        modalBottomSheetDialog.dismiss()
-                        beginPeerDiscovery()
-                    }
-                }
-            }
-            connectToIphone.setOnClickListener {
-                displayToast("Connect to iPhone")
-            }
-            connectToDesktop.setOnClickListener {
-                displayToast("Connect to Desktop")
-            }
-            modalBottomSheetDialog.setContentView(root)
-        }
     }
 
     fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
@@ -1235,7 +1210,11 @@ class MainActivity : AppCompatActivity() {
                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
                     if (txtRecordMap != null && srcDevice != null) {
                         txtRecordMap["peerName"]?.let { peerName ->
-                            nearByDevices[srcDevice.deviceAddress] = peerName
+                            nearByDevices[srcDevice.deviceAddress] = if(peerName.isBlank()){
+                                srcDevice.deviceName
+                            }else{
+                                peerName
+                            }
                         }
                     }
                 }
@@ -1349,7 +1328,7 @@ class MainActivity : AppCompatActivity() {
 
         // register the zipBolt file transfer service
         val record: Map<String, String> = mapOf(
-            "peerName" to "P.C. Ekwerike"
+            "peerName" to ""
         )
 
         val serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(
@@ -1370,7 +1349,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
         } else {
-            // request location permission and addLocalService again
+            //TODO request location permission and addLocalService again
         }
     }
 
