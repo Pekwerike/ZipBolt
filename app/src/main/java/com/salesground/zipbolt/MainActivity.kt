@@ -382,6 +382,7 @@ class MainActivity : AppCompatActivity() {
     private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured: Boolean = false
+    private var isWaitingForReceiverBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
 
@@ -428,8 +429,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val waitingForReceiverPersistentBottomSheetLayoutBinding:
-            WaitingForReceiverPersistentBottomSheetLayoutBinding by lazy{
-        MainActivityDataBindingUtils.getWaitingForReceive
+            WaitingForReceiverPersistentBottomSheetLayoutBinding by lazy {
+        MainActivityDataBindingUtils.getWaitingForReceiverPersistentBottomSheetBinding(this)
     }
 
     // persistent bottom sheet behavior variables
@@ -448,6 +449,12 @@ class MainActivity : AppCompatActivity() {
     private val connectedToPeerTransferOngoingBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
             connectedToPeerTransferOngoingBottomSheetLayoutBinding.root
+        )
+    }
+
+    private val waitingForReceiverBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
+        BottomSheetBehavior.from(
+            waitingForReceiverPersistentBottomSheetLayoutBinding.root
         )
     }
 
@@ -801,6 +808,34 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun configureWaitingForReceiverBottomSheetLayout() {
+        isWaitingForReceiverBottomSheetLayoutConfigured = true
+        waitingForReceiverPersistentBottomSheetLayoutBinding.run {
+            // collapsed layout
+            waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.run {
+                root.animate().alpha(0f)
+            }
+
+            waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.run {
+
+            }
+        }
+
+        waitingForReceiverBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                waitingForReceiverPersistentBottomSheetLayoutBinding.run {
+                    waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.root.alpha = 1 - slideOffset * 3.5f
+                    waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.root.alpha = slideOffset
+                }
+            }
+        })
     }
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
@@ -1173,10 +1208,10 @@ class MainActivity : AppCompatActivity() {
                     srcDevice?.let {
                         srcDevice.deviceName =
                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
-                        if(instanceName == getString(R.string.zip_bolt_file_transfer_service))
-                        mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
-                            srcDevice
-                        )
+                        if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
+                            mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
+                                srcDevice
+                            )
                     }
                 }
 
@@ -1246,7 +1281,7 @@ class MainActivity : AppCompatActivity() {
         return IntentFilter().apply {
             addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-           // addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+            // addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION)
         }
