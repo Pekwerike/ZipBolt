@@ -77,14 +77,17 @@
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/zip_bolt_connection_options_bottom_sheet_layout.xml" value="0.3534361851332398" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/zip_bolt_entry_point_layout.xml" value="0.178125" />
         <entry key="..\:/Users/Prosper's PC/AndroidStudioProjects/SpeedForce/app/src/main/res/layout/zip_botl_connection_options_bottom_sheet_layout.xml" value="0.178125" />
+        <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/application_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/application_layout_item_large_application_name.xml" value="0.1322463768115942" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/application_layout_item_long_app_name.xml" value="0.1796875" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/collapsed_waiting_for_receiver_layout.xml" value="0.13677536231884058" />
+        <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet.xml" value="0.1796875" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/custom_dialog_layout_for_user_to_enter_discovery_name.xml" value="0.14628623188405798" />
-        <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/expanded_waiting_for_receiver_layout.xml" value="0.13677536231884058" />
+        <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/expanded_waiting_for_receiver_layout.xml" value="0.22" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_app.xml" value="0.12681159420289856" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/waiting_for_peer_to_connect_layout.xml" value="0.14628623188405798" />
+        <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/waiting_for_receiver_persistent_bottom_sheet_layout.xml" value="0.1796875" />
       </map>
     </option>
   </component>

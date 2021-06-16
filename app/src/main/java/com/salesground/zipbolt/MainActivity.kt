@@ -427,6 +427,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private val waitingForReceiverPersistentBottomSheetLayoutBinding:
+            WaitingForReceiverPersistentBottomSheetLayoutBinding by lazy{
+        MainActivityDataBindingUtils.getWaitingForReceive
+    }
+
     // persistent bottom sheet behavior variables
     private val searchingForPeersBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(

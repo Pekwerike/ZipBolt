@@ -48,4 +48,13 @@ object MainActivityDataBindingUtils {
         return ConnectedToPeerTransferOngoingPersistentBottomSheetBinding.bind(view)
     }
 
+    fun getWaitingForReceiverPersistentBottomSheetBinding(activity: Activity):
+            WaitingForReceiverPersistentBottomSheetLayoutBinding {
+        val view =
+            activity.findViewById<ViewStub>(R.id.waiting_for_receiver_persistent_bottom_sheet_view_stub)
+                .inflate()
+        return WaitingForReceiverPersistentBottomSheetLayoutBinding.bind(view)
+
+    }
+
 }
