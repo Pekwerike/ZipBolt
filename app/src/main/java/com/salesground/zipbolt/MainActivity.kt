@@ -696,7 +696,6 @@ class MainActivity : AppCompatActivity() {
                         collapseSearchingForPeersBottomSheet()
                     }
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
-                        // Log.i("ReceivingInfo", "New file received UI update")
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
@@ -713,9 +712,19 @@ class MainActivity : AppCompatActivity() {
                                 getBottomSheetPeekHeight()
                         }
                         // hide the connected to pair no action bottom sheet
-                        with(connectedToPeerNoActionBottomSheetBehavior) {
-                            isHideable = true
-                            state = BottomSheetBehavior.STATE_HIDDEN
+                        if(isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
+                            with(connectedToPeerNoActionBottomSheetBehavior) {
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        }
+
+                        // if waiting for receive bottom sheet is configured hide it
+                        if(isWaitingForReceiverBottomSheetLayoutConfigured){
+                            waitingForReceiverBottomSheetBehavior.run{
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
                         }
                     }
                     is PeerConnectionUIState.ExpandedSearchingForPeer -> {
@@ -805,6 +814,24 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_EXPANDED
                     }
+                    PeerConnectionUIState.CollapsedWaitingForReceiver -> {
+                        if (!isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            configureWaitingForReceiverBottomSheetLayout()
+                        }
+                        waitingForReceiverBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_COLLAPSED
+                        waitingForReceiverBottomSheetBehavior.peekHeight =
+                            getBottomSheetPeekHeight()
+                    }
+                    PeerConnectionUIState.ExpandedWaitingForReceiver -> {
+                        if (!isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            configureWaitingForReceiverBottomSheetLayout()
+                        }
+                        waitingForReceiverBottomSheetBehavior.state =
+                            BottomSheetBehavior.STATE_EXPANDED
+                        waitingForReceiverBottomSheetBehavior.peekHeight =
+                            getBottomSheetPeekHeight()
+                    }
                 }
             }
         }
@@ -829,8 +856,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (newState == BottomSheetBehavior.STATE_EXPANDED) {
                     mainActivityViewModel.expandedWaitingForReceiver()
-                }
-                else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
                     mainActivityViewModel.collapsedWaitingForReceiver()
                 }
             }
@@ -1066,10 +1092,9 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
+                        modalBottomSheetDialog.hide()
                         createWifiDirectGroup()
                     }
-                    // TODO     2. Display waiting for peer screen and instructions for peer device to follow
-
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
                     // Turn on device wifi
@@ -1080,14 +1105,11 @@ class MainActivity : AppCompatActivity() {
                             wifiManager.isWifiEnabled = true
                         }
                     } else {
-                        // TODO 2. Turn on device location
-
                         // Create Wifi p2p group, if wifi is enabled
                         // begin peer discovery
                         beginPeerDiscovery()
+                        modalBottomSheetDialog.dismiss()
                     }
-
-
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
@@ -1147,7 +1169,9 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        displayToast("Group created successfully")
+                        /* group created successfully, update the device UI, that we are now
+                        * waiting for a receiver*/
+                        mainActivityViewModel.expandedWaitingForReceiver()
                     }
 
                     override fun onFailure(p0: Int) {
@@ -1158,15 +1182,17 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager.createGroup(wifiP2pChannel,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        displayToast("Group created successfully")
-                        wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
+                        /* group created successfully, update the device UI, that we are now
+                        * waiting for a receiver*/
+                        mainActivityViewModel.expandedWaitingForReceiver()
+                     /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
                             it?.let {
                                 Toast.makeText(
                                     this@MainActivity, "Password is " +
                                             it.passphrase, Toast.LENGTH_LONG
                                 ).show()
                             }
-                        }
+                        }*/
                     }
 
                     override fun onFailure(p0: Int) {
