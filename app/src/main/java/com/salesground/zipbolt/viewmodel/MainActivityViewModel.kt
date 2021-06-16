@@ -99,6 +99,14 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             PeerConnectionUIState.ExpandedSearchingForPeer(currentPeersList)
     }
 
+    fun collapsedWaitingForReceiver() {
+        _peerConnectionUIState.value = PeerConnectionUIState.CollapsedWaitingForReceiver
+    }
+
+    fun expandedWaitingForReceiver() {
+        _peerConnectionUIState.value = PeerConnectionUIState.ExpandedWaitingForReceiver
+    }
+
     fun connectedToPeer(wifiP2pInfo: WifiP2pInfo, peeredDevice: WifiP2pDevice) {
         wifiP2pCurrentConnectionInfo = wifiP2pInfo // remove this line, later after extensive tests
         this.peeredDevice = peeredDevice

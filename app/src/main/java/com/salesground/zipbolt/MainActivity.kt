@@ -827,12 +827,20 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
 
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    mainActivityViewModel.expandedWaitingForReceiver()
+                }
+                else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    mainActivityViewModel.collapsedWaitingForReceiver()
+                }
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 waitingForReceiverPersistentBottomSheetLayoutBinding.run {
-                    waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.root.alpha = 1 - slideOffset * 3.5f
-                    waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.root.alpha = slideOffset
+                    waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.root.alpha =
+                        1 - slideOffset * 3.5f
+                    waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.root.alpha =
+                        slideOffset
                 }
             }
         })
@@ -867,18 +875,19 @@ class MainActivity : AppCompatActivity() {
                 with(expandedConnectedToPeerTransferOngoingRecyclerView) {
                     adapter = ongoingDataTransferRecyclerViewAdapter
                     val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
-                    gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                        override fun getSpanSize(position: Int): Int {
-                            return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
-                                position
-                            )) {
-                                OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
-                                OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
-                                OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
-                                else -> 3
+                    gridLayoutManager.spanSizeLookup =
+                        object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                                return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
+                                    position
+                                )) {
+                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
+                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
+                                    OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
+                                    else -> 3
+                                }
                             }
                         }
-                    }
                     layoutManager = gridLayoutManager
                     setHasFixedSize(true)
                 }
@@ -931,11 +940,14 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(connectedDevice: WifiP2pDevice) {
+    private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(
+        connectedDevice: WifiP2pDevice
+    ) {
         isConnectedToPeerNoActionBottomSheetLayoutConfigured = true
         connectedToPeerNoActionBottomSheetLayoutBinding.apply {
             collapsedConnectedToPeerNoActionLayout.apply {
-                deviceConnectedTo = "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
+                deviceConnectedTo =
+                    "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
                 collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
 
                 }
@@ -1186,19 +1198,21 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val nearByDevices = mutableMapOf<String, String>()
+    private
+    val nearByDevices = mutableMapOf<String, String>()
 
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
         if (isLocationPermissionGranted()) {
-            val recordListener = WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
-                                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
-                if (txtRecordMap != null && srcDevice != null) {
-                    txtRecordMap["peerName"]?.let { peerName ->
-                        nearByDevices[srcDevice.deviceAddress] = peerName
+            val recordListener =
+                WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
+                                                        txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
+                    if (txtRecordMap != null && srcDevice != null) {
+                        txtRecordMap["peerName"]?.let { peerName ->
+                            nearByDevices[srcDevice.deviceAddress] = peerName
+                        }
                     }
                 }
-            }
 
             val serviceInfoListener =
                 WifiP2pManager.DnsSdServiceResponseListener { instanceName: String?,
@@ -1232,15 +1246,17 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
 
-            wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
+            wifiP2pManager.discoverServices(
+                wifiP2pChannel,
+                object : WifiP2pManager.ActionListener {
+                    override fun onSuccess() {
 
-                }
+                    }
 
-                override fun onFailure(reason: Int) {
+                    override fun onFailure(reason: Int) {
 
-                }
-            })
+                    }
+                })
 
         } else {
             checkFineLocationPermission()
