@@ -106,7 +106,6 @@ sealed class DataToTransfer(
         val applicationName: String?,
         val apkPath: String,
         val appSize: Long,
-        val applicationInfo: ApplicationInfo,
         val applicationIcon: Drawable?
     ) : DataToTransfer(
         dataDisplayName = applicationName ?: "Unknown App",
