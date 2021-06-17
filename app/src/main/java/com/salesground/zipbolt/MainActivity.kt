@@ -1392,8 +1392,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
