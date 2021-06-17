@@ -231,7 +231,14 @@ class MainActivity : AppCompatActivity() {
                                                         applicationName = dataDisplayName,
                                                         apkPath = "",
                                                         appSize = dataSize,
-                                                        applicationIcon = Drawable.createFromPath(dataUri?.path)
+                                                        // TODO, Optimize this later
+                                                        applicationIcon = packageManager.getApplicationIcon(
+                                                            packageManager.getPackageArchiveInfo(
+                                                                dataUri!!.path!!,
+                                                                PackageManager.GET_ACTIVITIES
+                                                            )!!.applicationInfo.apply {
+                                                                publicSourceDir = dataUri!!.path!!
+                                                            })
                                                     ).apply {
                                                         this.transferStatus =
                                                             DataToTransfer.TransferStatus.RECEIVE_COMPLETE
@@ -1404,8 +1411,8 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(wifiDirectBroadcastReceiver)
