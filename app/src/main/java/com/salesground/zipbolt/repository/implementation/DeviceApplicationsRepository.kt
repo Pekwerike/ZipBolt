@@ -45,7 +45,6 @@ class DeviceApplicationsRepository @Inject constructor(
                 applicationName = it.loadLabel(context.packageManager).toString(),
                 apkPath = it.sourceDir,
                 appSize = File(it.sourceDir).length(),
-                applicationInfo = it,
                 applicationIcon = it.loadIcon(context.packageManager)
             )
         }.sortedBy {

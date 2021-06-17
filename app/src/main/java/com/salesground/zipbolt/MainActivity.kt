@@ -62,6 +62,7 @@ import kotlin.math.roundToLong
 import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
@@ -134,41 +135,35 @@ class MainActivity : AppCompatActivity() {
                 lifecycleScope.launch(Dispatchers.Main) {
                     when (dataTransferStatus) {
                         DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
-                            when (dataType) {
-                                DataToTransfer.MediaType.IMAGE.value -> {
-                                    mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                                    with(
-                                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                            .expandedConnectedToPeerTransferOngoingLayout
-                                            .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    ) {
-                                        // hide the  no item in receive label
-                                        ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                            .alpha(0f)
-                                        with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                            // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
-                                            root.animate().alpha(1f)
-                                            this.dataDisplayName = dataDisplayName
-                                            this.dataSize =
-                                                dataSize.transformDataSizeToMeasuredUnit(
-                                                    ((percentageOfDataRead / 100) * dataSize).roundToLong()
-                                                )
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(R.drawable.ic_startup_outline_)
-                                                .into(ongoingDataReceiveLayoutImageView)
-                                            // start shimmer
-                                            ongoingDataReceiveDataCategoryImageShimmer.showShimmer(
-                                                true
-                                            )
+                            // expand the bottom sheet to show receive has started
+                            mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
+                            with(
+                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                    .expandedConnectedToPeerTransferOngoingLayout
+                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
+                            ) {
+                                // hide the  no item in receive label
+                                ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                    .alpha(0f)
+                                with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                    // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                    root.animate().alpha(1f)
+                                    this.dataDisplayName = dataDisplayName
+                                    this.dataSize =
+                                        dataSize.transformDataSizeToMeasuredUnit(
+                                            ((percentageOfDataRead / 100) * dataSize).roundToLong()
+                                        )
 
-                                        }
-                                    }
-                                }
-                                else -> {
-
-
+                                    Glide.with(ongoingDataReceiveLayoutImageView)
+                                        .load(R.drawable.ic_startup_outline_)
+                                        .into(ongoingDataReceiveLayoutImageView)
+                                    // start shimmer
+                                    ongoingDataReceiveDataCategoryImageShimmer.showShimmer(
+                                        true
+                                    )
                                 }
                             }
+
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
@@ -205,15 +200,18 @@ class MainActivity : AppCompatActivity() {
                                     ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
                                     ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
                                 }
-                                when (dataType) {
-                                    DataToTransfer.MediaType.IMAGE.value -> {
-                                        with(mainActivityViewModel) {
+
+                                with(mainActivityViewModel) {
+                                    // based on the data type of the file receive, create an object for it to add to the Ui
+                                    when (dataType) {
+                                        DataToTransfer.MediaType.IMAGE.value -> {
                                             addDataToCurrentTransferHistory(
                                                 OngoingDataTransferUIState.DataItem(
                                                     DataToTransfer.DeviceImage(
                                                         0L,
                                                         dataUri!!,
-                                                        System.currentTimeMillis().parseDate()
+                                                        System.currentTimeMillis()
+                                                            .parseDate()
                                                             .customizeDate(),
                                                         dataDisplayName,
                                                         "",
@@ -225,22 +223,45 @@ class MainActivity : AppCompatActivity() {
                                                     }
                                                 )
                                             )
-                                            ongoingDataTransferRecyclerViewAdapter.submitList(
-                                                currentTransferHistory
-                                            )
-                                            ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(
-                                                currentTransferHistory.size - 1
-                                            )
                                         }
+                                        DataToTransfer.MediaType.APP.value -> {
+                                            addDataToCurrentTransferHistory(
+                                                OngoingDataTransferUIState.DataItem(
+                                                    DataToTransfer.DeviceApplication(
+                                                        applicationName = dataDisplayName,
+                                                        apkPath = "",
+                                                        appSize = dataSize,
+                                                        // TODO, Optimize this later
+                                                        applicationIcon = packageManager.getApplicationIcon(
+                                                            packageManager.getPackageArchiveInfo(
+                                                                dataUri!!.path!!,
+                                                                PackageManager.GET_ACTIVITIES
+                                                            )!!.applicationInfo.apply {
+                                                                publicSourceDir = dataUri!!.path!!
+                                                            })
+                                                    ).apply {
+                                                        this.transferStatus =
+                                                            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                    }
+                                                ))
+                                        }
+                                        else -> {
+                                        }
+
                                     }
-                                    else -> {
-                                    }
+                                    ongoingDataTransferRecyclerViewAdapter.submitList(
+                                        currentTransferHistory
+                                    )
+                                    ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(
+                                        currentTransferHistory.size - 1
+                                    )
                                 }
                             }
                         }
                     }
                 }
             }
+
 
             override fun totalFileReceiveComplete() {
                 mainActivityViewModel.totalFileReceiveComplete()
@@ -279,9 +300,7 @@ class MainActivity : AppCompatActivity() {
                                         dataToTransfer as DataToTransfer.DeviceApplication
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(
-                                                dataToTransfer.applicationInfo.loadIcon(
-                                                    packageManager
-                                                )
+                                                dataToTransfer.applicationIcon
                                             )
                                             .into(ongoingDataTransferDataCategoryImageView)
                                     } else {
@@ -712,7 +731,7 @@ class MainActivity : AppCompatActivity() {
                                 getBottomSheetPeekHeight()
                         }
                         // hide the connected to pair no action bottom sheet
-                        if(isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
+                        if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
                             with(connectedToPeerNoActionBottomSheetBehavior) {
                                 isHideable = true
                                 state = BottomSheetBehavior.STATE_HIDDEN
@@ -720,8 +739,8 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         // if waiting for receive bottom sheet is configured hide it
-                        if(isWaitingForReceiverBottomSheetLayoutConfigured){
-                            waitingForReceiverBottomSheetBehavior.run{
+                        if (isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            waitingForReceiverBottomSheetBehavior.run {
                                 isHideable = true
                                 state = BottomSheetBehavior.STATE_HIDDEN
                             }
@@ -1160,14 +1179,14 @@ class MainActivity : AppCompatActivity() {
                         /* group created successfully, update the device UI, that we are now
                         * waiting for a receiver*/
                         mainActivityViewModel.expandedWaitingForReceiver()
-                     /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
-                            it?.let {
-                                Toast.makeText(
-                                    this@MainActivity, "Password is " +
-                                            it.passphrase, Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }*/
+                        /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
+                               it?.let {
+                                   Toast.makeText(
+                                       this@MainActivity, "Password is " +
+                                               it.passphrase, Toast.LENGTH_LONG
+                                   ).show()
+                               }
+                           }*/
                     }
 
                     override fun onFailure(p0: Int) {
@@ -1210,9 +1229,9 @@ class MainActivity : AppCompatActivity() {
                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
                     if (txtRecordMap != null && srcDevice != null) {
                         txtRecordMap["peerName"]?.let { peerName ->
-                            nearByDevices[srcDevice.deviceAddress] = if(peerName.isBlank()){
+                            nearByDevices[srcDevice.deviceAddress] = if (peerName.isBlank()) {
                                 srcDevice.deviceName
-                            }else{
+                            } else {
                                 peerName
                             }
                         }
