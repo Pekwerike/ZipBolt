@@ -192,12 +192,27 @@ class MainActivity : AppCompatActivity() {
                                     // show the media thumbnail at the end of the transfer
                                     dataTransferPercent = 100
                                     dataTransferPercentAsString = "$dataTransferPercent%"
+                                    this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
+                                        dataSize
+                                    )
                                     /*// hide the cancel transfer/receive image button
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
-                                    Glide.with(ongoingDataReceiveLayoutImageView)
-                                        .load(dataUri)
-                                        .into(ongoingDataReceiveLayoutImageView)
+                                    if(dataType == DataToTransfer.MediaType.IMAGE.value) {
+                                        Glide.with(ongoingDataReceiveLayoutImageView)
+                                            .load(dataUri)
+                                            .into(ongoingDataReceiveLayoutImageView)
+                                    }else if(dataType == DataToTransfer.MediaType.APP.value){
+                                        Glide.with(ongoingDataReceiveLayoutImageView)
+                                            .load(packageManager.getApplicationIcon(
+                                                packageManager.getPackageArchiveInfo(
+                                                    dataUri!!.path!!,
+                                                    0
+                                                )!!.applicationInfo.apply {
+                                                    publicSourceDir = dataUri!!.path!!
+                                                }))
+                                            .into(ongoingDataReceiveLayoutImageView)
+                                    }
                                     // stop shimmer
                                     ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
                                     ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
