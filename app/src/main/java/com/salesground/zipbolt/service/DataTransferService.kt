@@ -262,6 +262,7 @@ class DataTransferService : Service() {
 
     private fun configureReceiverSocketForOneDirectionalReceive(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            delay(300)
             socket = Socket()
             socket.sendBufferSize = 1024 * 1024
             socket.receiveBufferSize = 1024 * 1024

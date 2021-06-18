@@ -1280,8 +1280,7 @@ class MainActivity : AppCompatActivity() {
                 serviceInfoListener,
                 recordListener
             )
-            wifiP2pManager.removeServiceRequest(wifiP2pChannel,
-                WifiP2pDnsSdServiceRequest.newInstance(),
+            wifiP2pManager.clearServiceRequests(wifiP2pChannel,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
                         wifiP2pManager.addServiceRequest(wifiP2pChannel,
