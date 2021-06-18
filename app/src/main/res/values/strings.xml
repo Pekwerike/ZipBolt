@@ -25,7 +25,7 @@
     <string name="device_connection_details">Device Details</string>
     <string name="connect_to">Connect to</string>
     <string name="no_item_label">No item</string>
-    <string name="queue">Queue</string>
+    <string name="completed_and_scheduled">Completed and Scheduled</string>
     <string name="sending">Sending</string>
     <string name="receiving">Receiving</string>
     <string name="active_data_flow_label">Active data flow, swipe up to view details.</string>

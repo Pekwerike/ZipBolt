@@ -62,6 +62,7 @@ import kotlin.math.roundToLong
 import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInstaller
 import android.graphics.drawable.Drawable
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
@@ -173,11 +174,11 @@ class MainActivity : AppCompatActivity() {
                                     .ongoingTransferReceiveHeaderLayoutDataReceiveView
                             ) {
                                 // show the receive progress indicator and the percentage received
-                                dataTransferPercent = percentageOfDataRead.roundToInt()
-                                dataTransferPercentAsString = "$dataTransferPercent%"
                                 this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
                                     ((percentageOfDataRead / 100) * dataSize).roundToLong()
                                 )
+                                dataTransferPercent = percentageOfDataRead.roundToInt()
+                                dataTransferPercentAsString = "$dataTransferPercent%"
                             }
                         }
 
@@ -198,20 +199,22 @@ class MainActivity : AppCompatActivity() {
                                     /*// hide the cancel transfer/receive image button
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
-                                    if(dataType == DataToTransfer.MediaType.IMAGE.value) {
+                                    if (dataType == DataToTransfer.MediaType.IMAGE.value) {
                                         Glide.with(ongoingDataReceiveLayoutImageView)
                                             .load(dataUri)
                                             .into(ongoingDataReceiveLayoutImageView)
-                                    }else if(dataType == DataToTransfer.MediaType.APP.value){
-                                        Glide.with(ongoingDataReceiveLayoutImageView)
-                                            .load(packageManager.getApplicationIcon(
-                                                packageManager.getPackageArchiveInfo(
-                                                    dataUri!!.path!!,
-                                                    0
-                                                )!!.applicationInfo.apply {
-                                                    publicSourceDir = dataUri!!.path!!
-                                                }))
-                                            .into(ongoingDataReceiveLayoutImageView)
+                                    } else if (dataType == DataToTransfer.MediaType.APP.value) {
+                                      dataUri?.path?.let { path ->
+                                            packageManager.getPackageArchiveInfo(path, 0)
+                                                ?.let { packageInfo ->
+                                                    Glide.with(ongoingDataReceiveLayoutImageView)
+                                                        .load(
+                                                    packageManager.getApplicationIcon(packageInfo.applicationInfo.apply {
+                                                        sourceDir = path
+                                                        publicSourceDir = path
+                                                    })).into(ongoingDataReceiveLayoutImageView)
+                                                }
+                                        }
                                     }
                                     // stop shimmer
                                     ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
@@ -1173,6 +1176,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission", "HardwareIds")
     private fun createWifiDirectGroup() {
+        broadcastZipBoltFileTransferService()
         val wifiP2pConfig = WifiP2pConfig().apply {
             deviceAddress = wifiManager.connectionInfo.macAddress
             wps.setup = WpsInfo.PBC
@@ -1276,23 +1280,31 @@ class MainActivity : AppCompatActivity() {
                 serviceInfoListener,
                 recordListener
             )
-            wifiP2pManager.addServiceRequest(wifiP2pChannel,
+            wifiP2pManager.removeServiceRequest(wifiP2pChannel,
                 WifiP2pDnsSdServiceRequest.newInstance(),
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
+                        wifiP2pManager.addServiceRequest(wifiP2pChannel,
+                            WifiP2pDnsSdServiceRequest.newInstance(),
+                            object : WifiP2pManager.ActionListener {
+                                override fun onSuccess() {
+                                    wifiP2pManager.discoverServices(
+                                        wifiP2pChannel,
+                                        object : WifiP2pManager.ActionListener {
+                                            override fun onSuccess() {
 
-                    }
+                                            }
 
-                    override fun onFailure(reason: Int) {
+                                            override fun onFailure(reason: Int) {
 
-                    }
-                })
+                                            }
+                                        })
+                                }
 
-            wifiP2pManager.discoverServices(
-                wifiP2pChannel,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
+                                override fun onFailure(reason: Int) {
 
+                                }
+                            })
                     }
 
                     override fun onFailure(reason: Int) {
@@ -1363,6 +1375,12 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
+        broadcastZipBoltFileTransferService()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun broadcastZipBoltFileTransferService() {
+
         // register the zipBolt file transfer service
         val record: Map<String, String> = mapOf(
             "peerName" to ""
@@ -1375,16 +1393,27 @@ class MainActivity : AppCompatActivity() {
         )
 
         if (isLocationPermissionGranted()) {
-            wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
+            wifiP2pManager.clearLocalServices(
+                wifiP2pChannel,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        // local service addition was successfully sent to the android framework
+                        wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
+                            object : WifiP2pManager.ActionListener {
+                                override fun onSuccess() {
+                                    // local service addition was successfully sent to the android framework
+                                }
+
+                                override fun onFailure(reason: Int) {
+                                    // local service addition was not successfully sent to the android framework
+                                }
+                            })
                     }
 
                     override fun onFailure(reason: Int) {
-                        // local service addition was not successfully sent to the android framework
+
                     }
                 })
+
         } else {
             //TODO request location permission and addLocalService again
         }
