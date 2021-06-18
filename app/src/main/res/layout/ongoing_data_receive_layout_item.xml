@@ -92,7 +92,7 @@
             android:layout_width="@dimen/image_button_size"
             android:layout_height="@dimen/image_button_size"
             android:layout_marginVertical="4dp"
-            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/close_icon"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_receive_data_category_image_shimmer"

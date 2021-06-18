@@ -50,7 +50,7 @@ fun DataInputStream.readStreamDataIntoFile(
 
         dataReceiveListener.onReceive(
             dataDisplayName,
-            dataSize,
+            size,
             ((size - dataSize) / size.toFloat()) * 100f,
             dataType.value,
             null,
