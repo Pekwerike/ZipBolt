@@ -366,6 +366,7 @@ class DataTransferService : Service() {
                 }
             }
         } catch (exception: Exception) {
+            Log.i("UnseenError", exception.stackTraceToString())
             // send broadcast message to the main activity that we couldn't connect to peer.
             // the main activity will use this message to determine how to update the ui
             with(dataTransferServiceConnectionStateIntent) {
@@ -405,6 +406,7 @@ class DataTransferService : Service() {
                 }
             }
         } catch (exception: Exception) {
+            Log.i("UnseenError", exception.stackTraceToString())
             // send broadcast message to the main activity that we couldn't connect to peer.
             // the main activity will use this message to determine how to update the ui
             with(dataTransferServiceConnectionStateIntent) {

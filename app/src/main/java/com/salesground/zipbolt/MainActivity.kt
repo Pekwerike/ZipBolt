@@ -62,6 +62,7 @@ import kotlin.math.roundToLong
 import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
+import android.content.pm.PackageInstaller
 import android.graphics.drawable.Drawable
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
@@ -150,9 +151,7 @@ class MainActivity : AppCompatActivity() {
                                     root.animate().alpha(1f)
                                     this.dataDisplayName = dataDisplayName
                                     this.dataSize =
-                                        dataSize.transformDataSizeToMeasuredUnit(
-                                            ((percentageOfDataRead / 100) * dataSize).roundToLong()
-                                        )
+                                        dataSize.transformDataSizeToMeasuredUnit(0l)
 
                                     Glide.with(ongoingDataReceiveLayoutImageView)
                                         .load(R.drawable.ic_startup_outline_)
@@ -176,6 +175,9 @@ class MainActivity : AppCompatActivity() {
                                 // show the receive progress indicator and the percentage received
                                 dataTransferPercent = percentageOfDataRead.roundToInt()
                                 dataTransferPercentAsString = "$dataTransferPercent%"
+                                this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
+                                    ((percentageOfDataRead / 100) * dataSize).roundToLong()
+                                )
                             }
                         }
 
@@ -235,7 +237,7 @@ class MainActivity : AppCompatActivity() {
                                                         applicationIcon = packageManager.getApplicationIcon(
                                                             packageManager.getPackageArchiveInfo(
                                                                 dataUri!!.path!!,
-                                                                PackageManager.GET_ACTIVITIES
+                                                                0
                                                             )!!.applicationInfo.apply {
                                                                 publicSourceDir = dataUri!!.path!!
                                                             })
@@ -246,6 +248,7 @@ class MainActivity : AppCompatActivity() {
                                                 ))
                                         }
                                         else -> {
+
                                         }
 
                                     }
