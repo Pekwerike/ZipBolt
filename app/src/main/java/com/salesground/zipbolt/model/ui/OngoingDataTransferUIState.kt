@@ -4,7 +4,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 
 sealed class OngoingDataTransferUIState(val id: String) {
 
-    object  Header : OngoingDataTransferUIState("Queue")
+    object  Header : OngoingDataTransferUIState("Completed & Scheduled")
     data class DataItem(val dataToTransfer: DataToTransfer) :
         OngoingDataTransferUIState(dataToTransfer.dataUri.toString())
 }
