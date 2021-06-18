@@ -16,10 +16,7 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification.Comp
 
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
+import java.io.*
 import java.net.ConnectException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -270,14 +267,18 @@ class DataTransferService : Service() {
             socket.receiveBufferSize = 1024 * 1024
             socket.bind(null)
             try {
-                socket.connect(
-                    InetSocketAddress(
-                        serverIpAddress,
-                        SOCKET_PORT
-                    ),
-                    1000
-                )
-            } catch (connectException: ConnectException) {
+                while (true) {
+                    socket.connect(
+                        InetSocketAddress(
+                            serverIpAddress,
+                            SOCKET_PORT
+                        ),
+                        1000
+                    )
+                    if (socket.isConnected) break
+                }
+            } catch (exception: IOException) {
+                Log.e("UnseenError", exception.stackTraceToString())
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
                 with(dataTransferServiceConnectionStateIntent) {
@@ -289,6 +290,7 @@ class DataTransferService : Service() {
                 stopForeground(true)
                 stopSelf()
             }
+
             socketDIS =
                 DataInputStream(BufferedInputStream(socket.getInputStream()))
 
@@ -366,7 +368,7 @@ class DataTransferService : Service() {
                 }
             }
         } catch (exception: Exception) {
-            Log.i("UnseenError", exception.stackTraceToString())
+            Log.e("UnseenError", exception.stackTraceToString())
             // send broadcast message to the main activity that we couldn't connect to peer.
             // the main activity will use this message to determine how to update the ui
             with(dataTransferServiceConnectionStateIntent) {
@@ -406,7 +408,7 @@ class DataTransferService : Service() {
                 }
             }
         } catch (exception: Exception) {
-            Log.i("UnseenError", exception.stackTraceToString())
+            Log.e("UnseenError", exception.stackTraceToString())
             // send broadcast message to the main activity that we couldn't connect to peer.
             // the main activity will use this message to determine how to update the ui
             with(dataTransferServiceConnectionStateIntent) {

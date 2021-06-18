@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
                                     root.animate().alpha(1f)
                                     this.dataDisplayName = dataDisplayName
                                     this.dataSize =
-                                        dataSize.transformDataSizeToMeasuredUnit(0l)
+                                        dataSize.transformDataSizeToMeasuredUnit(0L)
 
                                     Glide.with(ongoingDataReceiveLayoutImageView)
                                         .load(R.drawable.ic_startup_outline_)
