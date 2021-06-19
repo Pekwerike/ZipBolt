@@ -13,7 +13,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
-    private val devicesAdvertizingZipBoltTransferService: MutableList<WifiP2pDevice> =
+    // this variable will be used to maintain the recyclerview list order for receive items
+    private var lastReceivedItemAddedPosition: Int = 1
+
+    private val devicesAdvertisingZipBoltTransferService: MutableList<WifiP2pDevice> =
         mutableListOf()
 
     private var hasBeenNotifiedAboutReceive: Boolean = false
@@ -33,12 +36,17 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         get() = _peerConnectionUIState
 
     fun newDeviceAdvertisingZipBoltTransferService(device: WifiP2pDevice) {
-        if (!devicesAdvertizingZipBoltTransferService.contains(device)) {
-            devicesAdvertizingZipBoltTransferService.add(device)
-            currentPeersList = devicesAdvertizingZipBoltTransferService
+        if (!devicesAdvertisingZipBoltTransferService.contains(device)) {
+            devicesAdvertisingZipBoltTransferService.add(device)
+            currentPeersList = devicesAdvertisingZipBoltTransferService
         }
         expandedSearchingForPeers()
     }
+
+    fun getLastReceivedItemAddedPosition(): Int {
+        return lastReceivedItemAddedPosition - 1
+    }
+
 
     fun peerConnectionNoAction() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
@@ -129,10 +137,15 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun totalFileReceiveComplete() {
         hasBeenNotifiedAboutReceive = false
+
+        // set the lastReceivedItemAddedPosition back to zero, to match the sender order
+        // for the next transfer
+        lastReceivedItemAddedPosition = 1
     }
 
     fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState) {
-        currentTransferHistory.add(ongoingDataTransferUIState)
+        currentTransferHistory.add(lastReceivedItemAddedPosition, ongoingDataTransferUIState)
+        lastReceivedItemAddedPosition += 1
     }
 
     fun addDataFromReceiveToUIState() {
