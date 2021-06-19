@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
     // this variable will be used to maintain the recyclerview list order for receive items
-    private var lastReceivedItemAddedPosition: Int = 0
+    private var lastReceivedItemAddedPosition: Int = 1
 
     private val devicesAdvertisingZipBoltTransferService: MutableList<WifiP2pDevice> =
         mutableListOf()
@@ -43,12 +43,8 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         expandedSearchingForPeers()
     }
 
-    fun onReceivedItemAdded() {
-        lastReceivedItemAddedPosition += 1
-    }
-
     fun getLastReceivedItemAddedPosition(): Int {
-        return lastReceivedItemAddedPosition
+        return lastReceivedItemAddedPosition - 1
     }
 
 
@@ -144,7 +140,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
         // set the lastReceivedItemAddedPosition back to zero, to match the sender order
         // for the next transfer
-        lastReceivedItemAddedPosition = 0
+        lastReceivedItemAddedPosition = 1
     }
 
     fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState) {

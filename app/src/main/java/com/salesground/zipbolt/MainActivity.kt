@@ -52,10 +52,6 @@ import com.salesground.zipbolt.utils.parseDate
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
@@ -71,6 +67,7 @@ import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import kotlinx.coroutines.*
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -215,7 +212,7 @@ class MainActivity : AppCompatActivity() {
                                                         dataDisplayName,
                                                         "",
                                                         dataSize,
-                                                        ""
+                                                        "ZipBolt Images"
                                                     ).apply {
                                                         this.transferStatus =
                                                             DataToTransfer.TransferStatus.RECEIVE_COMPLETE
@@ -224,16 +221,22 @@ class MainActivity : AppCompatActivity() {
                                             )
                                         }
                                     } else if (dataType == DataToTransfer.MediaType.APP.value) {
-                                        val applicationIcon = dataUri?.path?.let { path ->
-                                            packageManager.getPackageArchiveInfo(path, 0)
-                                                ?.let { packageInfo ->
-                                                    packageManager.getApplicationIcon(
-                                                        packageInfo.applicationInfo.apply {
-                                                            sourceDir = path
-                                                            publicSourceDir = path
-                                                        })
-                                                }
+                                        val applicationIcon = try {
+                                            dataUri?.path!!.let { path ->
+                                                packageManager.getPackageArchiveInfo(path, 0)
+                                                    .let { packageInfo ->
+                                                        packageManager.getApplicationIcon(
+                                                            packageInfo!!
+                                                                .applicationInfo.apply {
+                                                                    sourceDir = path
+                                                                    publicSourceDir = path
+                                                                })
+                                                    }
+                                            }
+                                        } catch (nullPointerException: NullPointerException) {
+                                            null
                                         }
+
                                         Glide.with(ongoingDataReceiveLayoutImageView)
                                             .load(applicationIcon)
                                             .into(ongoingDataReceiveLayoutImageView)
@@ -243,9 +246,8 @@ class MainActivity : AppCompatActivity() {
                                                 OngoingDataTransferUIState.DataItem(
                                                     DataToTransfer.DeviceApplication(
                                                         applicationName = dataDisplayName,
-                                                        apkPath = "",
+                                                        apkPath = dataUri!!.path ?: "",
                                                         appSize = dataSize,
-                                                        // TODO, Optimize this later
                                                         applicationIcon = applicationIcon
                                                     ).apply {
                                                         this.transferStatus =
@@ -257,12 +259,13 @@ class MainActivity : AppCompatActivity() {
                                     // stop shimmer
                                     ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
                                     ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
-                                }
-
-                                mainActivityViewModel.run {
-                                    ongoingDataTransferRecyclerViewAdapter.run {
-                                        submitList(currentTransferHistory)
-                                        notifyItemInserted(getLastReceivedItemAddedPosition() - 1)
+                                    mainActivityViewModel.run {
+                                        ongoingDataTransferRecyclerViewAdapter.run {
+                                            submitList(currentTransferHistory)
+                                            var lastPosition = getLastReceivedItemAddedPosition()
+                                            delay(100)
+                                            notifyItemInserted(lastPosition)
+                                        }
                                     }
                                 }
                             }
