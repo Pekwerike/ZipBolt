@@ -13,8 +13,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor() : ViewModel() {
-    // this variable will be used to maintain the recyclerview list order for receive items
-    private var lastReceivedItemAddedPosition: Int = 1
 
     private val devicesAdvertisingZipBoltTransferService: MutableList<WifiP2pDevice> =
         mutableListOf()
@@ -43,11 +41,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         expandedSearchingForPeers()
     }
 
-    fun getLastReceivedItemAddedPosition(): Int {
-        return lastReceivedItemAddedPosition - 1
-    }
-
-
     fun peerConnectionNoAction() {
         _peerConnectionUIState.value = PeerConnectionUIState.NoConnectionUIAction
     }
@@ -74,11 +67,17 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     }
 
     fun addCurrentDataToTransferToUIState() {
-        currentTransferHistory.addAll(1,
+      /*  currentTransferHistory.addAll(1,
             collectionOfDataToTransfer.map {
                 OngoingDataTransferUIState.DataItem(it)
             }
+        )*/
+
+        currentTransferHistory.addAll(collectionOfDataToTransfer.map {
+                OngoingDataTransferUIState.DataItem(it)
+            }
         )
+
     }
 
     fun expandedConnectedToPeerReceiveOngoing() {
@@ -137,15 +136,10 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun totalFileReceiveComplete() {
         hasBeenNotifiedAboutReceive = false
-
-        // set the lastReceivedItemAddedPosition back to zero, to match the sender order
-        // for the next transfer
-        lastReceivedItemAddedPosition = 1
     }
 
     fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState) {
-        currentTransferHistory.add(lastReceivedItemAddedPosition, ongoingDataTransferUIState)
-        lastReceivedItemAddedPosition += 1
+        currentTransferHistory.add(ongoingDataTransferUIState)
     }
 
     fun addDataFromReceiveToUIState() {

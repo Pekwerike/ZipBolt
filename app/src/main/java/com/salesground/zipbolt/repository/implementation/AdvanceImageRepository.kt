@@ -69,7 +69,7 @@ class AdvanceImageRepository @Inject constructor(
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
 
-        try {
+       // try {
             while (mediaSize > 0) {
                 // read the current transfer status, to determine whether to continue with the transfer
                 when (dataInputStream.readInt()) {
@@ -107,12 +107,12 @@ class AdvanceImageRepository @Inject constructor(
                     DataToTransfer.TransferStatus.RECEIVE_ONGOING
                 )
             }
-        } catch (ioException: IOException) {
+      /* } catch (ioException: IOException) {
             // delete image file if read was not successful
             imageFile.delete()
             imageFileBufferedOutputStream.close()
             return
-        }
+        }*/
 
         imageFileBufferedOutputStream.close()
 

@@ -339,7 +339,7 @@ class DataTransferService : Service() {
 
 
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
-        try {
+       // try {
             while (true) {
                 when (mediaTransferProtocolMetaData) {
                     MediaTransferProtocolMetaData.NO_DATA -> {
@@ -368,7 +368,7 @@ class DataTransferService : Service() {
                     }
                 }
             }
-        } catch (exception: Exception) {
+       /* } catch (exception: Exception) {
             Log.e("UnseenError", exception.stackTraceToString())
             // send broadcast message to the main activity that we couldn't connect to peer.
             // the main activity will use this message to determine how to update the ui
@@ -380,11 +380,11 @@ class DataTransferService : Service() {
             }
             stopForeground(true)
             stopSelf()
-        }
+        }*/
     }
 
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-        try {
+      //  try {
             while (true) {
                 when (dataInputStream.readInt()) {
                     MediaTransferProtocolMetaData.NO_DATA.value -> continue
@@ -408,7 +408,7 @@ class DataTransferService : Service() {
                     }
                 }
             }
-        } catch (exception: Exception) {
+      /* } catch (exception: Exception) {
             Log.e("UnseenError", exception.stackTraceToString())
             // send broadcast message to the main activity that we couldn't connect to peer.
             // the main activity will use this message to determine how to update the ui
@@ -421,7 +421,7 @@ class DataTransferService : Service() {
 
             stopForeground(true)
             stopSelf()
-        }
+        }*/
     }
 
     override fun onDestroy() {
