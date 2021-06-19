@@ -203,28 +203,7 @@ class MainActivity : AppCompatActivity() {
                                         Glide.with(ongoingDataReceiveLayoutImageView)
                                             .load(dataUri)
                                             .into(ongoingDataReceiveLayoutImageView)
-                                    } else if (dataType == DataToTransfer.MediaType.APP.value) {
-                                      dataUri?.path?.let { path ->
-                                            packageManager.getPackageArchiveInfo(path, 0)
-                                                ?.let { packageInfo ->
-                                                    Glide.with(ongoingDataReceiveLayoutImageView)
-                                                        .load(
-                                                    packageManager.getApplicationIcon(packageInfo.applicationInfo.apply {
-                                                        sourceDir = path
-                                                        publicSourceDir = path
-                                                    })).into(ongoingDataReceiveLayoutImageView)
-                                                }
-                                        }
-                                    }
-                                    // stop shimmer
-                                    ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
-                                    ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
-                                }
-
-                                with(mainActivityViewModel) {
-                                    // based on the data type of the file receive, create an object for it to add to the Ui
-                                    when (dataType) {
-                                        DataToTransfer.MediaType.IMAGE.value -> {
+                                        mainActivityViewModel.run {
                                             addDataToCurrentTransferHistory(
                                                 OngoingDataTransferUIState.DataItem(
                                                     DataToTransfer.DeviceImage(
@@ -244,7 +223,22 @@ class MainActivity : AppCompatActivity() {
                                                 )
                                             )
                                         }
-                                        DataToTransfer.MediaType.APP.value -> {
+                                    } else if (dataType == DataToTransfer.MediaType.APP.value) {
+                                        val applicationIcon = dataUri?.path?.let { path ->
+                                            packageManager.getPackageArchiveInfo(path, 0)
+                                                ?.let { packageInfo ->
+                                                    packageManager.getApplicationIcon(
+                                                        packageInfo.applicationInfo.apply {
+                                                            sourceDir = path
+                                                            publicSourceDir = path
+                                                        })
+                                                }
+                                        }
+                                        Glide.with(ongoingDataReceiveLayoutImageView)
+                                            .load(applicationIcon)
+                                            .into(ongoingDataReceiveLayoutImageView)
+
+                                        mainActivityViewModel.run {
                                             addDataToCurrentTransferHistory(
                                                 OngoingDataTransferUIState.DataItem(
                                                     DataToTransfer.DeviceApplication(
@@ -252,30 +246,24 @@ class MainActivity : AppCompatActivity() {
                                                         apkPath = "",
                                                         appSize = dataSize,
                                                         // TODO, Optimize this later
-                                                        applicationIcon = packageManager.getApplicationIcon(
-                                                            packageManager.getPackageArchiveInfo(
-                                                                dataUri!!.path!!,
-                                                                0
-                                                            )!!.applicationInfo.apply {
-                                                                publicSourceDir = dataUri!!.path!!
-                                                            })
+                                                        applicationIcon = applicationIcon
                                                     ).apply {
                                                         this.transferStatus =
                                                             DataToTransfer.TransferStatus.RECEIVE_COMPLETE
                                                     }
                                                 ))
                                         }
-                                        else -> {
-
-                                        }
-
                                     }
-                                    ongoingDataTransferRecyclerViewAdapter.submitList(
-                                        currentTransferHistory
-                                    )
-                                    ongoingDataTransferRecyclerViewAdapter.notifyItemInserted(
-                                        currentTransferHistory.size - 1
-                                    )
+                                    // stop shimmer
+                                    ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
+                                    ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
+                                }
+
+                                mainActivityViewModel.run {
+                                    ongoingDataTransferRecyclerViewAdapter.run {
+                                        submitList(currentTransferHistory)
+                                        notifyItemInserted(getLastReceivedItemAddedPosition() - 1)
+                                    }
                                 }
                             }
                         }
