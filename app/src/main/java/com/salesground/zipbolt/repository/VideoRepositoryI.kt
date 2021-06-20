@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.repository
 
+import android.content.Context
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import java.io.DataInputStream
@@ -7,6 +8,7 @@ import java.io.DataInputStream
 interface VideoRepositoryI {
 
     suspend fun insertVideoIntoMediaStore(
+        context: Context,
         videoName: String,
         videoSize: Long,
         dataInputStream: DataInputStream,
@@ -14,6 +16,7 @@ interface VideoRepositoryI {
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener
     )
 
-    suspend fun getMetaDataOfVideo(video: DataToTransfer.DeviceVideo): DataToTransfer
-    suspend fun getVideosOnDevice(limit: Int = 0): MutableList<DataToTransfer>
+    suspend fun getMetaDataOfVideo(video: DataToTransfer.DeviceVideo,
+    context: Context): DataToTransfer
+    suspend fun getVideosOnDevice(context: Context): MutableList<DataToTransfer>
 }
