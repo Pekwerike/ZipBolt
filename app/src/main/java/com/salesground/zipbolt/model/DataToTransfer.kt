@@ -92,9 +92,7 @@ sealed class DataToTransfer(
         val videoDisplayName: String,
         val videoDuration: Long,
         val videoSize: Long,
-        val videoBucketName: String,
-        val videoMimeType: String,
-        val videoDateModified: String
+        val videoMimeType: String = "",
     ) : DataToTransfer(
         dataDisplayName = videoDisplayName,
         dataUri = videoUri,

@@ -31,7 +31,7 @@ class ZipBoltVideosRepository @Inject constructor(
     }
 
     override suspend fun getVideosOnDevice(context: Context): MutableList<DataToTransfer> {
-
+        val videosOnDevice = mutableListOf<DataToTransfer>()
         val collection: Uri = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -40,7 +40,8 @@ class ZipBoltVideosRepository @Inject constructor(
             MediaStore.Video.Media._ID,
             MediaStore.Video.Media.DISPLAY_NAME,
             MediaStore.Video.Media.SIZE,
-            MediaStore.Video.Media.DURATION
+            MediaStore.Video.Media.DURATION,
+            MediaStore.Video.Media.MIME_TYPE
         )
 
         val sortOrder = "${MediaStore.Video.Media.DATE_MODIFIED} DESC"
@@ -56,15 +57,22 @@ class ZipBoltVideosRepository @Inject constructor(
                 cursor.getColumnIndex(MediaStore.Video.Media.DISPLAY_NAME)
             val videoSizeColumnIndex = cursor.getColumnIndex(MediaStore.Video.Media.SIZE)
             val videoDurationColumnIndex = cursor.getColumnIndex(MediaStore.Video.Media.DURATION)
+            val videoMimeTypeColumnIndex = cursor.getColumnIndex(MediaStore.Video.Media.MIME_TYPE)
 
             while (cursor.moveToNext()) {
                 val videoId = cursor.getLong(videoIdColumnIndex)
-                val videoName = cursor.getString(videoDisplayNameColumnIndex)
-                val videoSize = cursor.getLong(videoSizeColumnIndex)
-                val videoDuration = cursor.getLong(videoDurationColumnIndex)
+                videosOnDevice.add(
+                    DataToTransfer.DeviceVideo(
+                        videoId = cursor.getLong(videoIdColumnIndex),
+                        videoDisplayName = cursor.getString(videoDisplayNameColumnIndex),
+                        videoSize = cursor.getLong(videoSizeColumnIndex),
+                        videoDuration = cursor.getLong(videoDurationColumnIndex),
+                        videoUri = ContentUris.withAppendedId(collection, videoId),
+                        videoMimeType = cursor.getString(videoMimeTypeColumnIndex)
+                    )
+                )
 
-                val videoUri =  ContentUris.withAppendedId(collection, videoId)
             }
         }
-
+        return videosOnDevice
     }
