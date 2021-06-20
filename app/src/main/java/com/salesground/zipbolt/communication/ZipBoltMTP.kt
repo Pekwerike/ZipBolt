@@ -48,8 +48,7 @@ class ZipBoltMTP @Inject constructor (
             // read media bytes and save it into the media store based on the mime type
             when {
                 mediaType.contains("image" , true) -> {
-                    ImageRepositoryInitial(context, zipBoltSavedFilesRepository).insertImageIntoMediaStore(mediaName,
-                    mediaSize, mediaType, DIS)
+
                 }
                 mediaType.contains("video", true) -> {
 
