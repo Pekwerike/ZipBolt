@@ -80,7 +80,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
     // jetpack compose
-    implementation "androidx.compose.ui:ui:1.0.0-beta07"
+    implementation "androidx.compose.ui:ui:1.0.0-beta08"
 
     // activity extensions for androidx
     implementation "androidx.activity:activity-ktx:$activity_version"
