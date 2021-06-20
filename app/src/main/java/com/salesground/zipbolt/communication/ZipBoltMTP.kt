@@ -3,7 +3,6 @@ package com.salesground.zipbolt.communication
 import android.content.Context
 import android.os.ParcelFileDescriptor
 import com.salesground.zipbolt.model.MediaModel
-import com.salesground.zipbolt.repository.ImageRepositoryInitial
 import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*

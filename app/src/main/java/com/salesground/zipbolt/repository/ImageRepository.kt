@@ -11,7 +11,7 @@ import java.io.DataInputStream
  *        1. image mimeType
  *        2. image size
  *        3. image display name
- *        These details above will be used for socket communication when transfering the image
+ *        These details above will be used for socket communication when transferring the image
  * C. getAllImagesOnDevice
  * D. getTenImagesOnDevice
  *
