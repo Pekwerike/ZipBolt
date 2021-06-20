@@ -16,7 +16,5 @@ interface VideoRepositoryI {
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener
     )
 
-    suspend fun getMetaDataOfVideo(video: DataToTransfer.DeviceVideo,
-    context: Context): DataToTransfer
     suspend fun getVideosOnDevice(context: Context): MutableList<DataToTransfer>
 }

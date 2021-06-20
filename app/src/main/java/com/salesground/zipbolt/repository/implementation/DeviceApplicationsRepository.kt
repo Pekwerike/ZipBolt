@@ -22,8 +22,6 @@ class DeviceApplicationsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ApplicationsRepositoryInterface {
-    private val buffer = ByteArray(1024 * 1024)
-    private lateinit var appFileBufferedOutputStream: BufferedOutputStream
 
     private val zipBoltAppsFolder = savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(
         SavedFilesRepository.ZipBoltMediaCategory.APPS_BASE_DIRECTORY
@@ -61,8 +59,8 @@ class DeviceApplicationsRepository @Inject constructor(
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener
     ) {
         val applicationFile = File(zipBoltAppsFolder, "$appFileName.apk")
-        appFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(applicationFile))
         val applicationFileUri = Uri.fromFile(applicationFile)
+
         // percentage of bytes read is 0%
         dataReceiveListener.onReceive(
             appFileName,
@@ -79,8 +77,6 @@ class DeviceApplicationsRepository @Inject constructor(
                 appSize,
                 transferMetaDataUpdateListener,
                 applicationFile,
-                appFileBufferedOutputStream,
-                buffer,
                 DataToTransfer.MediaType.APP
             )
         ) {

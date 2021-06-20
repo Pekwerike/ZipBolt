@@ -4,8 +4,11 @@ import com.salesground.zipbolt.model.DataToTransfer
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.File
+import java.io.FileOutputStream
 import kotlin.math.min
 
+
+private val dataBuffer = ByteArray(1024 * 1024)
 
 fun DataInputStream.readStreamDataIntoFile(
     dataReceiveListener: MediaTransferProtocol.DataReceiveListener,
@@ -13,12 +16,10 @@ fun DataInputStream.readStreamDataIntoFile(
     size: Long,
     transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
     receivingFile: File,
-    receivingFileBufferedOutputStream: BufferedOutputStream,
-    dataBuffer: ByteArray,
     dataType: DataToTransfer.MediaType
 ): Boolean {
     var dataSize = size
-
+    val receivingFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(receivingFile))
     while (dataSize > 0) {
         // read the current transfer status, to determine whether to continue with the transfer
         when (readInt()) {
