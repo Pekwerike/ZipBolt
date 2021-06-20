@@ -262,9 +262,7 @@ class MainActivity : AppCompatActivity() {
                                     mainActivityViewModel.run {
                                         ongoingDataTransferRecyclerViewAdapter.run {
                                             submitList(currentTransferHistory)
-                                            var lastPosition = getLastReceivedItemAddedPosition()
-                                            delay(100)
-                                            notifyItemInserted(lastPosition)
+                                            notifyItemInserted(currentTransferHistory.size - 1)
                                         }
                                     }
                                 }
@@ -1483,5 +1481,18 @@ class MainActivity : AppCompatActivity() {
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        wifiP2pManager.removeGroup(wifiP2pChannel, object: WifiP2pManager.ActionListener{
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailure(reason: Int) {
+
+            }
+        })
     }
 }
