@@ -75,15 +75,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
-        val fileInputStream: FileInputStream? =
+        val fileInputStream: InputStream? =
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value) {
-                context.contentResolver.openInputStream(dataToTransfer.dataUri).run{
-                    this
-                }
-                context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r").run {
-                    if (this == null) null
-                    else FileInputStream(fileDescriptor)
-                }
+                context.contentResolver.openInputStream(dataToTransfer.dataUri)
             } else {
                 dataToTransfer as DataToTransfer.DeviceApplication
                 FileInputStream(dataToTransfer.apkPath)
