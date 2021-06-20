@@ -77,6 +77,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
         val fileInputStream: FileInputStream? =
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value) {
+                context.contentResolver.openInputStream(dataToTransfer.dataUri).run{
+                    this
+                }
                 context.contentResolver.openFileDescriptor(dataToTransfer.dataUri, "r").run {
                     if (this == null) null
                     else FileInputStream(fileDescriptor)

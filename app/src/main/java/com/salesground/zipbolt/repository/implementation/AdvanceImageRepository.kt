@@ -72,7 +72,7 @@ class AdvanceImageRepository @Inject constructor(
        // try {
             while (mediaSize > 0) {
                 // read the current transfer status, to determine whether to continue with the transfer
-                when (dataInputStream.readInt()) {
+                    when (dataInputStream.readInt()) {
                     MediaTransferProtocolMetaData.KEEP_RECEIVING.value -> {
 
                     }
