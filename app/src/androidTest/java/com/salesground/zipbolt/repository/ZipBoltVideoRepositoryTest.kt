@@ -1,10 +1,10 @@
-package com.salesground.zipbolt.repository.implementation
+package com.salesground.zipbolt.repository
 
 import org.junit.Assert.*
 
 import org.junit.Test
 
-class ZipBoltVideosRepositoryTest {
+class ZipBoltVideoRepositoryTest {
 
     @Test
     fun insertVideoIntoMediaStore() {

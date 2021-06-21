@@ -16,7 +16,7 @@ import java.io.DataInputStream
 import java.io.File
 import javax.inject.Inject
 
-class ZipBoltVideosRepository @Inject constructor(
+class ZipBoltVideoRepository @Inject constructor(
     savedFilesRepository: SavedFilesRepository,
 ) : VideoRepositoryI {
     private val zipBoltVideosFolder: File =
