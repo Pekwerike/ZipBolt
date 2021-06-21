@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.test.core.app.ApplicationProvider
-import com.salesground.zipbolt.broadcast.IncomingDataBroadcastReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.ImageRepository
@@ -38,10 +37,8 @@ class MediaTransferProtocolImplTest {
     private var imagesToCancelTransfer: MutableList<String> = mutableListOf()
     private val deletedImages: MutableList<String> = mutableListOf()
 
-    private val incomingDataBroadcastReceiver = IncomingDataBroadcastReceiver()
     private val localBroadcastManager = LocalBroadcastManager.getInstance(context)
-    private val incomingDataBroadcastIntent =
-        Intent(IncomingDataBroadcastReceiver.INCOMING_DATA_BYTES_RECEIVED_ACTION)
+
 
     @Inject
     lateinit var savedFilesRepository: SavedFilesRepository
@@ -79,38 +76,38 @@ class MediaTransferProtocolImplTest {
                 mediaTransferProtocolImpl.transferMedia(
                     dataToTransfer = it,
                     dataOutputStream = gateWayOutputStream,
-                    dataTransferListener = { displayName: String, dataSize: Long, percentTransferred: Float, transferState: MediaTransferProtocol.TransferState ->
-                        val logMessage = StringBuilder().apply {
-                            append("DisplayName: $displayName \n")
-                            append("PercentageOfDataRead: $percentTransferred \n")
-                            append("DataSize: $dataSize")
+                    dataTransferListener = object : MediaTransferProtocol.DataTransferListener {
+                        override fun onTransfer(
+                            dataToTransfer: DataToTransfer,
+                            percentTransferred: Float,
+                            transferStatus: DataToTransfer.TransferStatus
+                        ) {
+                            val logMessage = StringBuilder().apply {
+                                append("DisplayName: ${dataToTransfer.dataDisplayName} \n")
+                                append("PercentageOfDataRead: ${dataToTransfer.percentTransferred} \n")
+                                append("DataSize: ${dataToTransfer.dataSize}")
+                            }
+                            // Log.i("DataTransferred", logMessage.toString())
                         }
-                        // Log.i("DataTransferred", logMessage.toString())
                     }
                 )
             }
             delay(300)
             mediaTransferProtocolImpl.receiveMedia(
                 dataInputStream = gateWayInputStream,
-                bytesReceivedListener = { dataDisplayName: String, dataSize: Long, percentageOfDataRead: Float, dataType: String, dataUri: Uri ->
-                    incomingDataBroadcastIntent.apply {
-                        putExtra(
-                            IncomingDataBroadcastReceiver.INCOMING_FILE_NAME,
-                            dataDisplayName
-                        )
-                        putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_URI, dataUri)
-                        putExtra(
-                            IncomingDataBroadcastReceiver.PERCENTAGE_OF_DATA_RECEIVED,
-                            percentageOfDataRead
-                        )
-                        putExtra(
-                            IncomingDataBroadcastReceiver.INCOMING_FILE_MIME_TYPE,
-                            dataType
-                        )
-                        putExtra(IncomingDataBroadcastReceiver.INCOMING_FILE_SIZE, dataSize)
-                        localBroadcastManager.sendBroadcast(this)
+                dataReceiveListener = object : MediaTransferProtocol.DataReceiveListener {
+                    override fun onReceive(
+                        dataDisplayName: String,
+                        dataSize: Long,
+                        percentageOfDataRead: Float,
+                        dataType: Int,
+                        dataUri: Uri?,
+                        dataTransferStatus: DataToTransfer.TransferStatus
+                    ) {
+                        if (dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_COMPLETE) {
+                            assert(dataUri != null)
+                        }
                     }
-                    incomingDataBroadcastReceiver.onReceive(context, incomingDataBroadcastIntent)
                 }
             )
         }
