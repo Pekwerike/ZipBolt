@@ -1,36 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
-    <FrameLayout
+    <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/device_video_preview_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="98dp"
-            android:scaleType="centerCrop" />
+            android:id="@+id/video_layout_item_video_preview_image_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="@dimen/medium_margin"
+            android:src="@color/orange_300"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.1"
-            android:background="@color/black" />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/video_layout_item_video_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="@dimen/standard_text_view_padding"
+            android:text="Captain America.mp4"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintBottom_toTopOf="@+id/video_layout_item_video_duration_and_size_text_view"
+            app:layout_constraintEnd_toStartOf="@id/barrier5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/video_layout_item_video_preview_image_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/video_layout_item_video_duration_and_size_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/standard_text_view_padding"
+            android:text="120min . 800mb"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/video_layout_item_video_name_text_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/video_layout_item_video_name_text_view"
+            app:layout_constraintTop_toBottomOf="@+id/video_layout_item_video_name_text_view" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/video_layout_item_video_selected_check_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:tint="@color/white"
-            app:srcCompat="@drawable/video_icon" />
+            android:layout_margin="@dimen/medium_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barrier5"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="start"
+            app:constraint_referenced_ids="video_layout_item_video_selected_check_box"
+            tools:layout_editor_absoluteX="411dp" />
 
-    </FrameLayout>
+    </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
+
 </layout>
