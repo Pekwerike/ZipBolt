@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -13,10 +14,10 @@ import org.junit.Test
 @HiltAndroidTest
 class ZipBoltVideoRepositoryTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private lateinit var zipBoltVideoRepository : ZipBoltVideoRepository
+    private lateinit var zipBoltVideoRepository: ZipBoltVideoRepository
 
     @Before
-    fun setUp(){
+    fun setUp() {
         zipBoltVideoRepository = ZipBoltVideoRepository(
             ZipBoltSavedFilesRepository()
         )
@@ -30,7 +31,14 @@ class ZipBoltVideoRepositoryTest {
     @Test
     fun getVideosOnDevice() {
         runBlocking {
-            zipBoltVideoRepository.getVideosOnDevice()
+            zipBoltVideoRepository.getVideosOnDevice(
+                context
+            ).let {
+                assert(it.isNotEmpty())
+                it.forEach {
+                    Log.i("VideosReceived", it.dataDisplayName)
+                }
+            }
         }
     }
 }
