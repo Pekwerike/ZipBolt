@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.repository
 
+import com.salesground.zipbolt.repository.SavedFilesRepository.*
 import org.junit.Before
 
 import org.junit.Assert.*

@@ -3,6 +3,7 @@ package com.salesground.zipbolt.di
 import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
+import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,13 +15,17 @@ import javax.inject.Singleton
 abstract class RepositoryDIModule {
     @Singleton
     @Binds
-    abstract fun zipBoltImageRepository(advanceImageRepository: AdvanceImageRepository): ImageRepository
+    abstract fun getZipBoltImageRepository(advanceImageRepository: AdvanceImageRepository): ImageRepository
 
     @Singleton
     @Binds
-    abstract fun zipBoltSavedFilesRepository(zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository): SavedFilesRepository
+    abstract fun getZipBoltSavedFilesRepository(zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository): SavedFilesRepository
 
     @Singleton
     @Binds
-    abstract fun applicationsRepository(deviceApplicationsRepository: DeviceApplicationsRepository): ApplicationsRepositoryInterface
+    abstract fun getAapplicationsRepository(deviceApplicationsRepository: DeviceApplicationsRepository): ApplicationsRepositoryInterface
+
+    @Singleton
+    @Binds
+    abstract fun getZipBoltVideoRepository(zipBoltVideoRepository: ZipBoltVideoRepository): VideoRepositoryI
 }

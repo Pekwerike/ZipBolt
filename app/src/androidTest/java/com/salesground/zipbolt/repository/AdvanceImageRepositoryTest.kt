@@ -19,6 +19,7 @@ import java.io.*
 import java.lang.StringBuilder
 import javax.inject.Inject
 
+/*
 @HiltAndroidTest
 class AdvanceImageRepositoryTest {
 
@@ -133,8 +134,6 @@ class AdvanceImageRepositoryTest {
                 val buffer = ByteArray(10_000_000)
                 var unwrittenBytes = secondImage.dataSize
                 while (unwrittenBytes > 0) {
-                    gateWayOutputStream.writeInt(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status.length)
-                    gateWayOutputStream.writeChars(MediaTransferProtocol.TransferMetaData.KEEP_RECEIVING.status)
                     secondImageInputStream.read(buffer).also {
                         gateWayOutputStream.write(buffer, 0, it)
                         unwrittenBytes -= it
@@ -142,4 +141,4 @@ class AdvanceImageRepositoryTest {
                 }
             }
     }
-}
+}*/

@@ -16,7 +16,7 @@ import java.io.DataInputStream
 import java.io.File
 import javax.inject.Inject
 
-class ZipBoltVideosRepository @Inject constructor(
+class ZipBoltVideoRepository @Inject constructor(
     savedFilesRepository: SavedFilesRepository,
 ) : VideoRepositoryI {
     private val zipBoltVideosFolder: File =
@@ -33,10 +33,17 @@ class ZipBoltVideosRepository @Inject constructor(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
 
         val projection: Array<String> = arrayOf(MediaStore.Video.Media.DISPLAY_NAME)
-        val selection = "${MediaStore.Video.Media.DISPLAY_NAME} = ? LIMIT 1"
+        val selection = "${MediaStore.Video.Media.DISPLAY_NAME} = ?"
         val selectionArgs = arrayOf(videoName)
+        val sortOrder = "${MediaStore.Video.Media.DISPLAY_NAME} ASC LIMIT 1"
 
-        context.contentResolver.query(collection, projection, selection, selectionArgs, null)
+        context.contentResolver.query(
+            collection,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
+        )
             ?.let { cursor ->
                 return cursor.moveToFirst()
             }
