@@ -35,22 +35,23 @@ class ZipBoltVideoRepositoryTest {
         )
 
         gateWayFile = File(context.getExternalFilesDir(null), "Gateway.txt")
-        gateWayInputStream = DataInputStream(
-            BufferedInputStream(
-                FileInputStream(gateWayFile)
-            )
-        )
         gateWayOutputStream = DataOutputStream(
             BufferedOutputStream(
                 FileOutputStream(gateWayFile)
             )
         )
+        gateWayInputStream = DataInputStream(
+            BufferedInputStream(
+                FileInputStream(gateWayFile)
+            )
+        )
+
     }
 
     @After
-    fun destory() {
-        gateWayOutputStream.close()
-        gateWayInputStream.close()
+    fun shutDown() {
+        //gateWayInputStream.close()
+        //gateWayOutputStream.close()
         gateWayFile.delete()
     }
 
@@ -68,9 +69,17 @@ class ZipBoltVideoRepositoryTest {
                 val buffer = ByteArray(1024 * 1024)
                 var dataSize = videoToInsertIntoMediaStore.dataSize
 
-                while(dataSize > 0){
-                    fileDataInputStream.readFully(buffer, 0, (min(buffer.size.toLong(), dataSize).toInt()))
+                while (dataSize > 0) {
+                    // write to the gate way output stream that the receiver can continue receiving
+                    gateWayOutputStream.writeInt(MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING.value)
 
+                    val currentReadSize = min(buffer.size.toLong(), dataSize).toInt()
+                    // read out the video bytes from the video file input stream
+                    fileDataInputStream.readFully(buffer, 0, currentReadSize)
+
+                    // write out the video bytes to the gateWay output stream
+                    gateWayOutputStream.write(buffer, 0, currentReadSize)
+                    dataSize -= currentReadSize
                 }
             }
 
@@ -79,13 +88,7 @@ class ZipBoltVideoRepositoryTest {
                 context = context,
                 videoName = videoToInsertIntoMediaStore.dataDisplayName,
                 videoSize = videoToInsertIntoMediaStore.dataSize,
-                dataInputStream = DataInputStream(
-                    BufferedInputStream(
-                        context.contentResolver.openInputStream(
-                            videoToInsertIntoMediaStore.dataUri
-                        )
-                    )
-                ),
+                dataInputStream = gateWayInputStream,
                 transferMetaDataUpdateListener = object :
                     MediaTransferProtocol.TransferMetaDataUpdateListener {
                     override fun onMetaTransferDataUpdate(mediaTransferProtocolMetaData: MediaTransferProtocol.MediaTransferProtocolMetaData) {
