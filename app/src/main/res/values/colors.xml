@@ -14,4 +14,5 @@
     <color name="material_color_surface_dark">#FF121212</color>
     <color name="onBackgroundColor">#616161</color>
     <color name="background_color">#FFFFFFFF</color>
+    <color name="uncheck_box_gray">#E0E0E0</color>
 </resources>

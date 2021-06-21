@@ -89,6 +89,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="CustomCheckBoxAppearance" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/check_box_selector</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
     <style name="Theme.SpeedForce.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.SpeedForce.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
