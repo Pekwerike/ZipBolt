@@ -9,23 +9,49 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 
 import org.junit.Test
-import java.io.DataInputStream
-import java.io.FileInputStream
+import java.io.*
+import kotlin.math.min
 
 @HiltAndroidTest
 class ZipBoltVideoRepositoryTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var zipBoltVideoRepository: ZipBoltVideoRepository
 
+    // the gateWay streams will try to recreate a socket connection for stream so that,
+    // we can test the insertVideoIntoMediaStore function
+    private lateinit var gateWayFile: File
+    private lateinit var gateWayInputStream: DataInputStream
+    private lateinit var gateWayOutputStream: DataOutputStream
+
     @Before
     fun setUp() {
         zipBoltVideoRepository = ZipBoltVideoRepository(
             ZipBoltSavedFilesRepository()
         )
+
+        gateWayFile = File(context.getExternalFilesDir(null), "Gateway.txt")
+        gateWayInputStream = DataInputStream(
+            BufferedInputStream(
+                FileInputStream(gateWayFile)
+            )
+        )
+        gateWayOutputStream = DataOutputStream(
+            BufferedOutputStream(
+                FileOutputStream(gateWayFile)
+            )
+        )
+    }
+
+    @After
+    fun destory() {
+        gateWayOutputStream.close()
+        gateWayInputStream.close()
+        gateWayFile.delete()
     }
 
 
@@ -35,14 +61,29 @@ class ZipBoltVideoRepositoryTest {
             val videoToInsertIntoMediaStore =
                 zipBoltVideoRepository.getVideosOnDevice(context).first()
 
+            // write the video file into the gateway file
+            context.contentResolver.openInputStream(videoToInsertIntoMediaStore.dataUri)?.let {
+                val fileDataInputStream = DataInputStream(BufferedInputStream(it))
+
+                val buffer = ByteArray(1024 * 1024)
+                var dataSize = videoToInsertIntoMediaStore.dataSize
+
+                while(dataSize > 0){
+                    fileDataInputStream.readFully(buffer, 0, (min(buffer.size.toLong(), dataSize).toInt()))
+
+                }
+            }
+
 
             zipBoltVideoRepository.insertVideoIntoMediaStore(
                 context = context,
                 videoName = videoToInsertIntoMediaStore.dataDisplayName,
                 videoSize = videoToInsertIntoMediaStore.dataSize,
                 dataInputStream = DataInputStream(
-                    context.contentResolver.openInputStream(
-                        videoToInsertIntoMediaStore.dataUri
+                    BufferedInputStream(
+                        context.contentResolver.openInputStream(
+                            videoToInsertIntoMediaStore.dataUri
+                        )
                     )
                 ),
                 transferMetaDataUpdateListener = object :
@@ -64,8 +105,9 @@ class ZipBoltVideoRepositoryTest {
                         if (dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_COMPLETE) {
                             assertEquals(100f, percentageOfDataRead)
                             assert(dataUri != null)
-                        }else if(dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_ONGOING ||
-                                dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED){
+                        } else if (dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_ONGOING ||
+                            dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED
+                        ) {
                             assertEquals(null, dataUri)
                         }
                     }
