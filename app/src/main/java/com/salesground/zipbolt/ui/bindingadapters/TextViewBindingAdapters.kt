@@ -18,6 +18,8 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.textview.MaterialTextView
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.utils.formatVideoDurationToString
+import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 @BindingAdapter("addGreenHighLightToText")
 fun TextView.addGreenHighLightToText(placeHolder: String?) {
@@ -87,5 +89,15 @@ fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: Strin
 
         }
         text = spannableStringBuilder
+    }
+}
+
+@BindingAdapter("setVideoDuration", "setVideoSize", requireAll = true)
+fun TextView.setVideoDurationAndSize(videoDuration: Long?, videoSize: Long?) {
+    if (videoDuration != null && videoSize != null) {
+        text = context.getString(
+            R.string.video_duration_and_size, videoDuration.formatVideoDurationToString(),
+            videoSize.transformDataSizeToMeasuredUnit()
+        )
     }
 }
