@@ -52,13 +52,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="@dimen/standard_text_view_padding"
-            android:text="120min . 800mb"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/video_layout_item_video_name_text_view"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/video_layout_item_video_name_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/video_layout_item_video_name_text_view" />
+            app:layout_constraintTop_toBottomOf="@+id/video_layout_item_video_name_text_view"
+            app:setVideoDuration="@{videoDuration}"
+            app:setVideoSize="@{videoSize" />
 
         <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/video_layout_item_video_selected_check_box"
