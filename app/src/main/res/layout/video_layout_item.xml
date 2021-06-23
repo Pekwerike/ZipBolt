@@ -26,8 +26,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/video_layout_item_video_preview_image_view"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_margin="@dimen/medium_margin"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/medium_margin"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
             android:padding="@dimen/standard_text_view_padding"
             android:text="@{videoName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
