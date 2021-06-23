@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
 class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
@@ -12,7 +13,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
     DataToTransferRecyclerViewItemClickListener,
     private val selectedApplications: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
-    ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil
+    DataToTransferDiffUtill()
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -32,7 +33,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
         }
     }
 
-    object ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil :
+    /*object ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil :
         DiffUtil.ItemCallback<DataToTransfer>() {
         override fun areItemsTheSame(
             oldItem: DataToTransfer,
@@ -47,6 +48,6 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
         ): Boolean {
             return oldItem == newItem
         }
-    }
+    }*/
 }
 
