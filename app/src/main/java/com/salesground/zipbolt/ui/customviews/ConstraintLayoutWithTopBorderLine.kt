@@ -12,7 +12,7 @@ class ConstraintLayoutWithTopBorderLine @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
-  private val borderLinePaint = Paint().apply{
+    private val borderLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         strokeWidth = 0.85f * resources.displayMetrics.density
         strokeJoin = Paint.Join.ROUND
@@ -22,6 +22,7 @@ class ConstraintLayoutWithTopBorderLine @JvmOverloads constructor(
         alpha = 75
         color = ContextCompat.getColor(context, R.color.onBackgroundColor)
     }
+
     override fun dispatchDraw(canvas: Canvas?) {
         super.dispatchDraw(canvas)
         canvas?.drawLine(

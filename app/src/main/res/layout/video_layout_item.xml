@@ -18,7 +18,8 @@
             type="Long" />
     </data>
 
-    <com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine
+    <com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout
+        android:id="@+id/video_layout_item_selectable_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -66,7 +67,7 @@
             style="@style/CustomCheckBoxAppearance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
+            android:layout_marginStart="@dimen/standard_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier5"
@@ -80,6 +81,6 @@
             app:constraint_referenced_ids="video_layout_item_video_selected_check_box"
             tools:layout_editor_absoluteX="411dp" />
 
-    </com.salesground.zipbolt.ui.customviews.ConstraintLayoutWithTopBorderLine>
+    </com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout>
 
 </layout>
