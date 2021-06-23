@@ -31,7 +31,8 @@ class ZipBoltVideoRepositoryTest {
     @Before
     fun setUp() {
         zipBoltVideoRepository = ZipBoltVideoRepository(
-            ZipBoltSavedFilesRepository()
+            ZipBoltSavedFilesRepository(),
+            context
         )
 
         gateWayFile = File(context.getExternalFilesDir(null), "Gateway.txt")
@@ -60,7 +61,7 @@ class ZipBoltVideoRepositoryTest {
     fun insertVideoIntoMediaStore() {
         runBlocking {
             val videoToInsertIntoMediaStore =
-                zipBoltVideoRepository.getVideosOnDevice(context).first()
+                zipBoltVideoRepository.getVideosOnDevice().first()
 
             // write the video file into the gateway file
             context.contentResolver.openInputStream(videoToInsertIntoMediaStore.dataUri)?.let {
@@ -85,7 +86,6 @@ class ZipBoltVideoRepositoryTest {
 
 
             zipBoltVideoRepository.insertVideoIntoMediaStore(
-                context = context,
                 videoName = videoToInsertIntoMediaStore.dataDisplayName,
                 videoSize = videoToInsertIntoMediaStore.dataSize,
                 dataInputStream = gateWayInputStream,
@@ -122,9 +122,7 @@ class ZipBoltVideoRepositoryTest {
     @Test
     fun getVideosOnDevice() {
         runBlocking {
-            zipBoltVideoRepository.getVideosOnDevice(
-                context
-            ).let {
+            zipBoltVideoRepository.getVideosOnDevice().let {
                 assert(it.isNotEmpty())
                 it.forEach {
                     Log.i("VideosReceived", it.dataDisplayName)

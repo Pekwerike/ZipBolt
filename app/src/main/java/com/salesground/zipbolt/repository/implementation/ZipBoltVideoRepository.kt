@@ -12,12 +12,14 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.VideoRepositoryI
 import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.File
 import javax.inject.Inject
 
 class ZipBoltVideoRepository @Inject constructor(
     savedFilesRepository: SavedFilesRepository,
+    @ApplicationContext val context: Context
 ) : VideoRepositoryI {
     private val zipBoltVideosFolder: File =
         savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.VIDEOS_BASE_DIRECTORY)
@@ -26,7 +28,6 @@ class ZipBoltVideoRepository @Inject constructor(
 
     private fun checkIfVideoWithNameExistsInMediaStore(
         videoName: String,
-        context: Context
     ): Boolean {
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
@@ -51,14 +52,13 @@ class ZipBoltVideoRepository @Inject constructor(
     }
 
     override suspend fun insertVideoIntoMediaStore(
-        context: Context,
         videoName: String,
         videoSize: Long,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener
     ) {
-        val videoFile: File = if (checkIfVideoWithNameExistsInMediaStore(videoName, context)) {
+        val videoFile: File = if (checkIfVideoWithNameExistsInMediaStore(videoName)) {
             File(zipBoltVideosFolder, "Vid_${Math.random()}$videoName")
         } else {
             File(zipBoltVideosFolder, videoName)
@@ -96,17 +96,18 @@ class ZipBoltVideoRepository @Inject constructor(
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
 
-       if(!dataInputStream.readStreamDataIntoFile(
-            dataReceiveListener = dataReceiveListener,
-            dataDisplayName = videoName,
-            size = videoSize,
-            transferMetaDataUpdateListener = transferMetaDataUpdateListener,
-            receivingFile = videoFile,
-            dataType = DataToTransfer.MediaType.VIDEO
-        )) {
-		// video receive was cancelled 
-                return
-            } 
+        if (!dataInputStream.readStreamDataIntoFile(
+                dataReceiveListener = dataReceiveListener,
+                dataDisplayName = videoName,
+                size = videoSize,
+                transferMetaDataUpdateListener = transferMetaDataUpdateListener,
+                receivingFile = videoFile,
+                dataType = DataToTransfer.MediaType.VIDEO
+            )
+        ) {
+            // video receive was cancelled
+            return
+        }
 
         context.contentResolver.insert(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
@@ -132,7 +133,7 @@ class ZipBoltVideoRepository @Inject constructor(
     }
 
 
-    override suspend fun getVideosOnDevice(context: Context): MutableList<DataToTransfer> {
+    override suspend fun getVideosOnDevice(): MutableList<DataToTransfer> {
         val videosOnDevice = mutableListOf<DataToTransfer>()
         val collection: Uri = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)
             MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
