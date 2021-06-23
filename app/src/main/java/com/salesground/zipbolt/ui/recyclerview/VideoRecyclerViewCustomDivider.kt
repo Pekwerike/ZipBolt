@@ -14,22 +14,9 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import kotlin.math.roundToInt
 
 
-/**
- * DividerItemDecoration is a [RecyclerView.ItemDecoration] that can be used as a divider
- * between items of a [LinearLayoutManager]. It supports both [.HORIZONTAL] and
- * [.VERTICAL] orientations.
- *
- * <pre>
- * mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
- * mLayoutManager.getOrientation());
- * recyclerView.addItemDecoration(mDividerItemDecoration);
-</pre> *
- */
 class VideoRecyclerViewCustomDivider(private val context: Context, orientation: Int) :
     ItemDecoration() {
-    /**
-     * @return the [Drawable] for this divider.
-     */
+
     var drawable: Drawable?
         private set
 
