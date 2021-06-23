@@ -167,11 +167,11 @@ class ZipBoltVideoRepository @Inject constructor(
                 videosOnDevice.add(
                     DataToTransfer.DeviceVideo(
                         videoId = cursor.getLong(videoIdColumnIndex),
-                        videoDisplayName = cursor.getString(videoDisplayNameColumnIndex),
+                        videoDisplayName = cursor.getString(videoDisplayNameColumnIndex) ?: "Name not specified",
                         videoSize = cursor.getLong(videoSizeColumnIndex),
                         videoDuration = cursor.getLong(videoDurationColumnIndex),
                         videoUri = ContentUris.withAppendedId(collection, videoId),
-                        videoMimeType = cursor.getString(videoMimeTypeColumnIndex)
+                        videoMimeType = cursor.getString(videoMimeTypeColumnIndex) ?: "Video"
                     )
                 )
 

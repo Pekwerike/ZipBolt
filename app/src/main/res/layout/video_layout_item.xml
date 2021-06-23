@@ -26,8 +26,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/video_layout_item_video_preview_image_view"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_margin="@dimen/medium_margin"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -70,7 +70,9 @@
             style="@style/CustomCheckBoxAppearance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/standard_margin"
+            android:layout_margin="@dimen/medium_margin"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/barrier5"
