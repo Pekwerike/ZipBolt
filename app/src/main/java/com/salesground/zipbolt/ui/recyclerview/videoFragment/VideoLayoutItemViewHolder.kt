@@ -31,6 +31,20 @@ class VideoLayoutItemViewHolder(
                 .into(videoLayoutItemVideoPreviewImageView)
 
             videoLayoutItemSelectableConstraintLayout.run {
+                videoLayoutItemVideoSelectedCheckBox.setOnCheckedChangeListener { _, _ ->
+                    if (selectedVideos.contains(dataToTransfer)) {
+                        // user un-selected, so remove the video from the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        selectedVideos.remove(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(true)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        selectedVideos.add(dataToTransfer)
+                    }
+                }
+
                 setOnClickListener {
                     dataToTransferRecyclerViewItemClickListener.onClick(
                         dataToTransfer
