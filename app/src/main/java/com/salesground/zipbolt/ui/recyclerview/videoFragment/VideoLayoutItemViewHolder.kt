@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
@@ -21,8 +22,45 @@ class VideoLayoutItemViewHolder(
         dataToTransfer as DataToTransfer.DeviceVideo
 
         videoLayoutItemBinding.run {
+            videoDuration = dataToTransfer.videoDuration
+            videoSize = dataToTransfer.videoSize
+            videoName = dataToTransfer.videoDisplayName
+
+            Glide.with(videoLayoutItemVideoPreviewImageView)
+                .load(dataToTransfer.videoUri)
+                .into(videoLayoutItemVideoPreviewImageView)
+
             videoLayoutItemSelectableConstraintLayout.run {
+                videoLayoutItemVideoSelectedCheckBox.setOnCheckedChangeListener { _, _ ->
+                    if (selectedVideos.contains(dataToTransfer)) {
+                        // user un-selected, so remove the video from the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        selectedVideos.remove(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(true)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        selectedVideos.add(dataToTransfer)
+                    }
+                }
+
                 setOnClickListener {
+                    dataToTransferRecyclerViewItemClickListener.onClick(
+                        dataToTransfer
+                    )
+
+                    if (selectedVideos.contains(dataToTransfer)) {
+                        // user un-selected, so remove the video from the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        selectedVideos.remove(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(true)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        selectedVideos.add(dataToTransfer)
+                    }
 
                 }
 
@@ -34,7 +72,6 @@ class VideoLayoutItemViewHolder(
                     videoLayoutItemVideoSelectedCheckBox.isChecked = false
                 }
             }
-            videoLayoutItemSelectableConstraintLayout.setIsViewSelected(true)
             executePendingBindings()
         }
     }

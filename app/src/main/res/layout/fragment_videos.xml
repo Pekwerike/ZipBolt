@@ -11,9 +11,7 @@
         android:id="@+id/fragment_videos_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/standard_margin"
-        android:orientation="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:layout_margin="@dimen/medium_margin"
         tools:listitem="@layout/video_layout_item" />
 
 </LinearLayout>

@@ -1,7 +1,10 @@
 package com.salesground.zipbolt.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.VideoRepositoryI
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,12 +17,21 @@ class VideoViewModel @Inject constructor(
     private val videoRepositoryI: VideoRepositoryI
 ) : ViewModel() {
 
+    val selectedVideosForTransfer: MutableList<DataToTransfer> = mutableListOf()
 
-    fun getAllVideosOnDevice() {
+    private val _allVideosOnDevice = MutableLiveData<MutableList<DataToTransfer>>(mutableListOf())
+    val allVideosOnDevice: LiveData<MutableList<DataToTransfer>>
+    get() = _allVideosOnDevice
+
+    init {
+        getAllVideosOnDevice()
+    }
+
+    private fun getAllVideosOnDevice() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+           _allVideosOnDevice.value = withContext(Dispatchers.IO) {
                 videoRepositoryI.getVideosOnDevice()
-            }
+            }!!
         }
     }
 }
