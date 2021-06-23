@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
@@ -21,6 +22,14 @@ class VideoLayoutItemViewHolder(
         dataToTransfer as DataToTransfer.DeviceVideo
 
         videoLayoutItemBinding.run {
+            videoDuration = dataToTransfer.videoDuration
+            videoSize = dataToTransfer.videoSize
+            videoName = dataToTransfer.videoDisplayName
+
+            Glide.with(videoLayoutItemVideoPreviewImageView)
+                .load(dataToTransfer.videoUri)
+                .into(videoLayoutItemVideoPreviewImageView)
+
             videoLayoutItemSelectableConstraintLayout.run {
                 setOnClickListener {
                     dataToTransferRecyclerViewItemClickListener.onClick(
@@ -49,7 +58,6 @@ class VideoLayoutItemViewHolder(
                     videoLayoutItemVideoSelectedCheckBox.isChecked = false
                 }
             }
-            videoLayoutItemSelectableConstraintLayout.setIsViewSelected(true)
             executePendingBindings()
         }
     }

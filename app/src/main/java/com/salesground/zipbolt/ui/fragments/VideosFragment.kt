@@ -6,16 +6,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentVideosBinding
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.VideoViewModel
 
 class VideosFragment : Fragment() {
     private lateinit var fragmentVideosBinding: FragmentVideosBinding
+    private lateinit var videoFragmentRecyclerViewAdapter: VideoFragmentRecyclerViewAdapter
+    private var mainActivity: MainActivity? = null
 
-    private val videoViewModel: VideoViewModel by activityViewModels<VideoViewModel>()
+    private val videoViewModel: VideoViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        activity?.let {
+            mainActivity = it as MainActivity
+        }
+
+        videoFragmentRecyclerViewAdapter = VideoFragmentRecyclerViewAdapter(
+            DataToTransferRecyclerViewItemClickListener {
+                if (videoViewModel.selectedVideosForTransfer.contains(it)) {
+                    mainActivity?.removeFromDataToTransferList(it)
+                } else {
+                    mainActivity?.addToDataToTransferList(it)
+                }
+            },
+            videoViewModel.selectedVideosForTransfer
+        )
+
+        observeVideoViewModelLiveData()
 
     }
 
@@ -24,8 +47,21 @@ class VideosFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val fragmentVideosLayout = FragmentVideosBinding.inflate(inflater, container, false)
-        return fragmentVideosLayout.root
+        fragmentVideosBinding = FragmentVideosBinding.inflate(inflater, container, false)
+        return fragmentVideosBinding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragmentVideosBinding.run {
+            fragmentVideosRecyclerview.adapter = videoFragmentRecyclerViewAdapter
+            fragmentVideosRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun observeVideoViewModelLiveData() {
+        videoViewModel.allVideosOnDevice.observe(this) {
+            videoFragmentRecyclerViewAdapter.submitList(it)
+        }
     }
 }

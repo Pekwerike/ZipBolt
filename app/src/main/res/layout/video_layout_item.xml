@@ -21,13 +21,15 @@
     <com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout
         android:id="@+id/video_layout_item_selectable_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/medium_margin">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/video_layout_item_video_preview_image_view"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="@dimen/medium_margin"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -36,6 +38,7 @@
             android:id="@+id/video_layout_item_video_name_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="@dimen/standard_text_view_padding"
@@ -60,9 +63,9 @@
             app:layout_constraintStart_toStartOf="@id/video_layout_item_video_name_text_view"
             app:layout_constraintTop_toBottomOf="@+id/video_layout_item_video_name_text_view"
             app:setVideoDuration="@{videoDuration}"
-            app:setVideoSize="@{videoSize" />
+            app:setVideoSize="@{videoSize}" />
 
-        <com.google.android.material.checkbox.MaterialCheckBox
+        <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/video_layout_item_video_selected_check_box"
             style="@style/CustomCheckBoxAppearance"
             android:layout_width="wrap_content"
