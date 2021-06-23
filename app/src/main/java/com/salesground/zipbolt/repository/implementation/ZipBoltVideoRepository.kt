@@ -96,14 +96,17 @@ class ZipBoltVideoRepository @Inject constructor(
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
 
-        dataInputStream.readStreamDataIntoFile(
+       if(!dataInputStream.readStreamDataIntoFile(
             dataReceiveListener = dataReceiveListener,
             dataDisplayName = videoName,
             size = videoSize,
             transferMetaDataUpdateListener = transferMetaDataUpdateListener,
             receivingFile = videoFile,
             dataType = DataToTransfer.MediaType.VIDEO
-        )
+        )) {
+		// video receive was cancelled 
+                return
+            } 
 
         context.contentResolver.insert(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
