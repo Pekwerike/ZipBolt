@@ -61,7 +61,6 @@ class VideoLayoutItemViewHolder(
                         videoLayoutItemVideoSelectedCheckBox.isChecked = true
                         selectedVideos.add(dataToTransfer)
                     }
-
                 }
 
                 if (selectedVideos.contains(dataToTransfer)) {
