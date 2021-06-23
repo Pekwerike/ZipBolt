@@ -22,7 +22,7 @@ class VideoFragmentRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is VideoLayoutItemViewHolder) {
-            holder.bindVideoData(currentList[position], selectedVideos)
+            holder.bindVideoData(getItem(position), selectedVideos)
         }
     }
 }

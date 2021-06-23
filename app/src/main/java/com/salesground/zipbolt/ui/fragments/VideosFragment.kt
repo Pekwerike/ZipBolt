@@ -59,12 +59,12 @@ class VideosFragment : Fragment() {
             fragmentVideosRecyclerview.run {
                 adapter = videoFragmentRecyclerViewAdapter
                 layoutManager = LinearLayoutManager(requireContext())
-                addItemDecoration(
+                /*addItemDecoration(
                     VideoRecyclerViewCustomDivider(
                         requireContext(),
                         DividerItemDecoration.VERTICAL
                     )
-                )
+                )*/
             }
         }
     }

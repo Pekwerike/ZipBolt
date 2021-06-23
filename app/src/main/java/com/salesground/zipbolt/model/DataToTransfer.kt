@@ -47,7 +47,7 @@ sealed class DataToTransfer(
     override fun hashCode(): Int {
         val prime = 7
         var result = 5
-        result = prime * result + dataUri.hashCode()
+        result = prime * result + dataUri.toString().hashCode()
         result = prime * result + (dataSize xor (dataSize ushr 32)).toInt()
         result = prime * result + dataDisplayName.hashCode()
         result = prime * result + dataType.hashCode()
