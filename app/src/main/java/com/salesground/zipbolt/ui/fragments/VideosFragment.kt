@@ -5,11 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentVideosBinding
+import com.salesground.zipbolt.viewmodel.VideoViewModel
 
 class VideosFragment : Fragment() {
+    private lateinit var fragmentVideosBinding: FragmentVideosBinding
 
+    private val videoViewModel: VideoViewModel by activityViewModels<VideoViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
