@@ -31,8 +31,11 @@ class VideoLayoutItemViewHolder(
                 .into(videoLayoutItemVideoPreviewImageView)
 
             videoLayoutItemSelectableConstraintLayout.run {
-                videoLayoutItemVideoSelectedCheckBox.setOnCheckedChangeListener { _, _ ->
+                videoLayoutItemVideoSelectedCheckBox.setOnClickListener {
                     if (selectedVideos.contains(dataToTransfer)) {
+                        dataToTransferRecyclerViewItemClickListener.onClick(
+                            dataToTransfer
+                        )
                         // user un-selected, so remove the video from the collection of selected videos
                         setIsViewSelected(false)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = false
