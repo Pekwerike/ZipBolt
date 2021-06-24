@@ -196,7 +196,9 @@ class MainActivity : AppCompatActivity() {
                                     /*// hide the cancel transfer/receive image button
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
-                                    if (dataType == DataToTransfer.MediaType.IMAGE.value) {
+                                    if (dataType == DataToTransfer.MediaType.IMAGE.value
+                                        || dataType == DataToTransfer.MediaType.VIDEO.value
+                                    ) {
                                         Glide.with(ongoingDataReceiveLayoutImageView)
                                             .load(dataUri)
                                             .into(ongoingDataReceiveLayoutImageView)
@@ -1485,7 +1487,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        wifiP2pManager.removeGroup(wifiP2pChannel, object: WifiP2pManager.ActionListener{
+        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
 
             }

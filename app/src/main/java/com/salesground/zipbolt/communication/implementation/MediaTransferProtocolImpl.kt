@@ -5,12 +5,10 @@ import android.net.Uri
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ApplicationsRepositoryInterface
-import com.salesground.zipbolt.repository.ImageRepository
-import com.salesground.zipbolt.repository.SavedFilesRepository
-import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
+import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
+import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -36,6 +34,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
         DeviceApplicationsRepository(
             context,
             savedFilesRepository
+        )
+    }
+
+    private val videoRepository: VideoRepositoryI by lazy {
+        ZipBoltVideoRepository(
+            savedFilesRepository,
+            context
         )
     }
 
@@ -76,7 +81,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
         val fileInputStream: InputStream? =
-            if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value) {
+            if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
+                || dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
+            ) {
                 context.contentResolver.openInputStream(dataToTransfer.dataUri)
             } else {
                 dataToTransfer as DataToTransfer.DeviceApplication
@@ -181,6 +188,16 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 applicationsRepository.insertApplicationIntoDevice(
                     appFileName = mediaName,
                     appSize = mediaSize,
+                    dataInputStream = dataInputStream,
+                    transferMetaDataUpdateListener = transferMetaDataUpdateListener,
+                    dataReceiveListener = dataReceiveListener
+                )
+            }
+
+            DataToTransfer.MediaType.VIDEO.value -> {
+                videoRepository.insertVideoIntoMediaStore(
+                    videoName = mediaName,
+                    videoSize = mediaSize,
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                     dataReceiveListener = dataReceiveListener
