@@ -11,6 +11,8 @@ import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewCo
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOngoingViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOrReceiveCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
 class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUIState,
         RecyclerView.ViewHolder>(OngoingDataTransferRecyclerViewAdapterDiffUtil) {
@@ -107,6 +109,14 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 ApplicationTransferOngoingViewHolder.createViewHolder(parent)
             }
 
+            OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_WAITING.value -> {
+                VideoTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value -> {
+                VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
             else -> {
                 ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
@@ -125,6 +135,12 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is ApplicationTransferOrReceiveCompleteLayoutViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is VideoTransferWaitingLayoutItemViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is VideoTransferCompleteLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
         }
