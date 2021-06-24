@@ -81,7 +81,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
         // write the video duration if dataToTransfer is a video
-        if (dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value) {
+        if (dataToTransfer is DataToTransfer.DeviceVideo) {
             dataOutputStream.writeLong(dataToTransfer.videoDuration)
         }
 
