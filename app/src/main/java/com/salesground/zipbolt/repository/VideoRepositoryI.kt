@@ -9,6 +9,7 @@ interface VideoRepositoryI {
     suspend fun insertVideoIntoMediaStore(
         videoName: String,
         videoSize: Long,
+        videoDuration: Long,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener

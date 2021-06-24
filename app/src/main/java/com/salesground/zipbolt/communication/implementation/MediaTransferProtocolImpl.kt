@@ -1,7 +1,6 @@
 package com.salesground.zipbolt.communication.implementation
 
 import android.content.Context
-import android.net.Uri
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
@@ -79,6 +78,11 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream.writeInt(dataToTransfer.dataType)
         dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
+
+        // write the video duration if dataToTransfer is a video
+        if (dataToTransfer is DataToTransfer.DeviceVideo) {
+            dataOutputStream.writeLong(dataToTransfer.videoDuration)
+        }
 
         val fileInputStream: InputStream? =
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
@@ -174,6 +178,8 @@ open class MediaTransferProtocolImpl @Inject constructor(
         mediaName = dataInputStream.readUTF()
         mediaSize = dataInputStream.readLong()
 
+
+
         when (mediaType) {
             DataToTransfer.MediaType.IMAGE.value -> {
                 imageRepository.insertImageIntoMediaStore(
@@ -198,6 +204,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 videoRepository.insertVideoIntoMediaStore(
                     videoName = mediaName,
                     videoSize = mediaSize,
+                    videoDuration = dataInputStream.readLong(),
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                     dataReceiveListener = dataReceiveListener

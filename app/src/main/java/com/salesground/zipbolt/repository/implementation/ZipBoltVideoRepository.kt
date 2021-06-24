@@ -54,6 +54,7 @@ class ZipBoltVideoRepository @Inject constructor(
     override suspend fun insertVideoIntoMediaStore(
         videoName: String,
         videoSize: Long,
+        videoDuration: Long,
         dataInputStream: DataInputStream,
         transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener
@@ -72,6 +73,7 @@ class ZipBoltVideoRepository @Inject constructor(
             put(MediaStore.Video.Media.TITLE, videoFile.name)
             put(MediaStore.Video.Media.SIZE, videoSize)
             put(MediaStore.Video.Media.MIME_TYPE, "video/*")
+            put(MediaStore.Video.Media.DURATION, videoDuration)
             put(MediaStore.Video.Media.DATE_MODIFIED, currentTime / 1000)
             put(MediaStore.Video.Media.DATE_ADDED, currentTime / 1000)
             put(MediaStore.Video.Media.DATA, videoFile.absolutePath)
@@ -166,7 +168,8 @@ class ZipBoltVideoRepository @Inject constructor(
                 videosOnDevice.add(
                     DataToTransfer.DeviceVideo(
                         videoId = cursor.getLong(videoIdColumnIndex),
-                        videoDisplayName = cursor.getString(videoDisplayNameColumnIndex) ?: "Name not specified",
+                        videoDisplayName = cursor.getString(videoDisplayNameColumnIndex)
+                            ?: "Name not specified",
                         videoSize = cursor.getLong(videoSizeColumnIndex),
                         videoDuration = cursor.getLong(videoDurationColumnIndex),
                         videoUri = ContentUris.withAppendedId(collection, videoId),
