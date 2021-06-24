@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -18,53 +17,57 @@
             type="Long" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/video_transfer_layout_item_shimmer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_margin">
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/video_transfer_layout_item_video_preview_image_view"
-            android:layout_width="58dp"
-            android:layout_height="58dp"
-            android:layout_margin="@dimen/medium_margin"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/video_transfer_layout_item_video_name_text_view"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/medium_margin"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:padding="@dimen/standard_text_view_padding"
-            android:text="@{videoName}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            app:layout_constraintBottom_toTopOf="@+id/video_transfer_layout_item_video_duration_and_size_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/video_transfer_layout_item_video_preview_image_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            android:layout_marginTop="@dimen/medium_margin">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/video_transfer_layout_item_video_duration_and_size_text_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/standard_text_view_padding"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/video_transfer_layout_item_video_name_text_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/video_transfer_layout_item_video_name_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/video_transfer_layout_item_video_name_text_view"
-            app:setVideoDuration="@{videoDuration}"
-            app:setVideoSize="@{videoSize}" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/video_transfer_layout_item_video_preview_image_view"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_margin="@dimen/medium_margin"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_transfer_layout_item_video_name_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/medium_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:padding="@dimen/standard_text_view_padding"
+                android:text="@{videoName}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintBottom_toTopOf="@+id/video_transfer_layout_item_video_duration_and_size_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/video_transfer_layout_item_video_preview_image_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_transfer_layout_item_video_duration_and_size_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/standard_text_view_padding"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/video_transfer_layout_item_video_name_text_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@id/video_transfer_layout_item_video_name_text_view"
+                app:layout_constraintTop_toBottomOf="@+id/video_transfer_layout_item_video_name_text_view"
+                app:setVideoDuration="@{videoDuration}"
+                app:setVideoSize="@{videoSize}" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 </layout>
