@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
             android:lines="1"
+            android:ellipsize="end"
             android:paddingBottom="@dimen/standard_text_view_padding"
             android:text="@{dataDisplayName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
