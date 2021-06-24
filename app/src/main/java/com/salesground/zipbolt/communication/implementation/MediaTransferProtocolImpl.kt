@@ -1,7 +1,6 @@
 package com.salesground.zipbolt.communication.implementation
 
 import android.content.Context
-import android.net.Uri
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer

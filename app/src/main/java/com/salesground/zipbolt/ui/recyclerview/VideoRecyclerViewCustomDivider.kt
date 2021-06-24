@@ -59,7 +59,7 @@ class VideoRecyclerViewCustomDivider(private val context: Context, orientation: 
         val left: Int
         val right: Int
         if (parent.clipToPadding) {
-            left = parent.paddingLeft + (80 * context.resources.displayMetrics.density).roundToInt()
+            left = parent.paddingLeft + (78 * context.resources.displayMetrics.density).roundToInt()
             right = parent.width - parent.paddingRight
             canvas.clipRect(
                 left, parent.paddingTop, right,
