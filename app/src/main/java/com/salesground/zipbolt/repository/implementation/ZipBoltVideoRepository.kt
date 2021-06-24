@@ -125,10 +125,9 @@ class ZipBoltVideoRepository @Inject constructor(
                 videoSize,
                 100f,
                 DataToTransfer.MediaType.VIDEO.value,
-                null,
-                DataToTransfer.TransferStatus.RECEIVE_STARTED
+                videoUri,
+                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             )
-
         }
     }
 
