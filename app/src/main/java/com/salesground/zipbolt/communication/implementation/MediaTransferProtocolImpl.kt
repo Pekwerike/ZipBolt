@@ -80,6 +80,11 @@ open class MediaTransferProtocolImpl @Inject constructor(
         dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
+        // write the video duration if dataToTransfer is a video
+        if (dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value) {
+            dataOutputStream.writeLong(dataToTransfer.videoDuration)
+        }
+
         val fileInputStream: InputStream? =
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
                 || dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
@@ -174,6 +179,8 @@ open class MediaTransferProtocolImpl @Inject constructor(
         mediaName = dataInputStream.readUTF()
         mediaSize = dataInputStream.readLong()
 
+
+
         when (mediaType) {
             DataToTransfer.MediaType.IMAGE.value -> {
                 imageRepository.insertImageIntoMediaStore(
@@ -198,6 +205,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 videoRepository.insertVideoIntoMediaStore(
                     videoName = mediaName,
                     videoSize = mediaSize,
+                    videoDuration = dataInputStream.readLong(),
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                     dataReceiveListener = dataReceiveListener
