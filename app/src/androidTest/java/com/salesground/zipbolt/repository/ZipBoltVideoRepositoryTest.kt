@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
+import com.salesground.zipbolt.utils.getVideoDuration
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -137,8 +138,7 @@ class ZipBoltVideoRepositoryTest {
         runBlocking {
             val videoToGetDuration =
                 zipBoltVideoRepository.getVideosOnDevice()[1] as DataToTransfer.DeviceVideo
-            val videoDuration =
-                zipBoltVideoRepository.getVideoDuration(videoToGetDuration.dataUri)
+            val videoDuration = videoToGetDuration.dataUri.getVideoDuration(context)
             assertEquals(videoToGetDuration.videoDuration, videoDuration)
         }
     }

@@ -18,5 +18,4 @@ interface VideoRepositoryI {
 
     suspend fun getVideosOnDevice(): MutableList<DataToTransfer>
 
-    suspend fun getVideoDuration(videoUri: Uri): Long
 }
