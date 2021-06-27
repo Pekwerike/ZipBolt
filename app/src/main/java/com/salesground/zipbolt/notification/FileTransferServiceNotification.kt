@@ -28,7 +28,7 @@ constructor(
     companion object {
         const val FILE_TRANSFER_SERVICE_NOTIFICATION_ID = "FileTransferServiceNotificationID"
         const val FILE_TRANSFER_SERVICE_CHANNEL_NAME = "ZipBolt File Transfer Service Notification"
-        const val FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID = 2
+        const val FILE_TRANSFER_FOREGROUND_NOTIFICATION_ID = 1
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -39,7 +39,7 @@ constructor(
                 NotificationCompat.PRIORITY_DEFAULT
             )
                 .apply {
-                    setDescription("This notification channel is responsible for alerting you that ZipBolt is sharing files on the background")
+                    description = "This notification channel is responsible for alerting you that ZipBolt is sharing files on the background"
                     setShowBadge(false)
                 }
             notificationManager.createNotificationChannel(ftsChannel)

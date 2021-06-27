@@ -67,6 +67,8 @@ import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import com.salesground.zipbolt.utils.getVideoDuration
 import kotlinx.coroutines.*
 
 
@@ -196,66 +198,93 @@ class MainActivity : AppCompatActivity() {
                                     /*// hide the cancel transfer/receive image button
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
-                                    if (dataType == DataToTransfer.MediaType.IMAGE.value
-                                        || dataType == DataToTransfer.MediaType.VIDEO.value
-                                    ) {
-                                        Glide.with(ongoingDataReceiveLayoutImageView)
-                                            .load(dataUri)
-                                            .into(ongoingDataReceiveLayoutImageView)
-                                        mainActivityViewModel.run {
-                                            addDataToCurrentTransferHistory(
-                                                OngoingDataTransferUIState.DataItem(
-                                                    DataToTransfer.DeviceImage(
-                                                        0L,
-                                                        dataUri!!,
-                                                        System.currentTimeMillis()
-                                                            .parseDate()
-                                                            .customizeDate(),
-                                                        dataDisplayName,
-                                                        "",
-                                                        dataSize,
-                                                        "ZipBolt Images"
-                                                    ).apply {
-                                                        this.transferStatus =
-                                                            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                    }
+                                    when (dataType) {
+                                        DataToTransfer.MediaType.IMAGE.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(dataUri)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceImage(
+                                                            0L,
+                                                            dataUri!!,
+                                                            System.currentTimeMillis()
+                                                                .parseDate()
+                                                                .customizeDate(),
+                                                            dataDisplayName,
+                                                            "",
+                                                            dataSize,
+                                                            "ZipBolt Images"
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
                                                 )
-                                            )
-                                        }
-                                    } else if (dataType == DataToTransfer.MediaType.APP.value) {
-                                        val applicationIcon = try {
-                                            dataUri?.path!!.let { path ->
-                                                packageManager.getPackageArchiveInfo(path, 0)
-                                                    .let { packageInfo ->
-                                                        packageManager.getApplicationIcon(
-                                                            packageInfo!!
-                                                                .applicationInfo.apply {
-                                                                    sourceDir = path
-                                                                    publicSourceDir = path
-                                                                })
-                                                    }
                                             }
-                                        } catch (nullPointerException: NullPointerException) {
-                                            null
                                         }
+                                        DataToTransfer.MediaType.VIDEO.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(dataUri)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            mainActivityViewModel.run {
+                                                lifecycleScope.launch {
+                                                    val videoDuration =
+                                                        dataUri!!.getVideoDuration(this@MainActivity)
+                                                    addDataToCurrentTransferHistory(
+                                                        OngoingDataTransferUIState.DataItem(
+                                                            DataToTransfer.DeviceVideo(
+                                                                0L,
+                                                                dataUri!!,
+                                                                dataDisplayName,
+                                                                videoDuration,
+                                                                dataSize,
+                                                                "Video/*"
+                                                            ).apply {
+                                                                this.transferStatus =
+                                                                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                            }
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        DataToTransfer.MediaType.APP.value -> {
+                                            val applicationIcon = try {
+                                                dataUri?.path!!.let { path ->
+                                                    packageManager.getPackageArchiveInfo(path, 0)
+                                                        .let { packageInfo ->
+                                                            packageManager.getApplicationIcon(
+                                                                packageInfo!!
+                                                                    .applicationInfo.apply {
+                                                                        sourceDir = path
+                                                                        publicSourceDir = path
+                                                                    })
+                                                        }
+                                                }
+                                            } catch (nullPointerException: NullPointerException) {
+                                                null
+                                            }
 
-                                        Glide.with(ongoingDataReceiveLayoutImageView)
-                                            .load(applicationIcon)
-                                            .into(ongoingDataReceiveLayoutImageView)
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(applicationIcon)
+                                                .into(ongoingDataReceiveLayoutImageView)
 
-                                        mainActivityViewModel.run {
-                                            addDataToCurrentTransferHistory(
-                                                OngoingDataTransferUIState.DataItem(
-                                                    DataToTransfer.DeviceApplication(
-                                                        applicationName = dataDisplayName,
-                                                        apkPath = dataUri!!.path ?: "",
-                                                        appSize = dataSize,
-                                                        applicationIcon = applicationIcon
-                                                    ).apply {
-                                                        this.transferStatus =
-                                                            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                    }
-                                                ))
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceApplication(
+                                                            applicationName = dataDisplayName,
+                                                            apkPath = dataUri!!.path ?: "",
+                                                            appSize = dataSize,
+                                                            applicationIcon = applicationIcon
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    ))
+                                            }
                                         }
                                     }
                                     // stop shimmer
@@ -542,7 +571,10 @@ class MainActivity : AppCompatActivity() {
                                 putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                startForegroundService(serviceIntent)
+                                ContextCompat.startForegroundService(
+                                    this@MainActivity,
+                                    serviceIntent
+                                )
                             } else {
                                 startService(serviceIntent)
                             }
@@ -567,7 +599,10 @@ class MainActivity : AppCompatActivity() {
                                 putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                startForegroundService(serviceIntent)
+                                ContextCompat.startForegroundService(
+                                    this@MainActivity,
+                                    serviceIntent
+                                )
                             } else {
                                 startService(serviceIntent)
                             }
@@ -1241,6 +1276,9 @@ class MainActivity : AppCompatActivity() {
                 WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
                     if (txtRecordMap != null && srcDevice != null) {
+                        txtRecordMap["listeningPort"]?.let {
+                            //  DataTransferService.SOCKET_PORT = it.toInt()
+                        }
                         txtRecordMap["peerName"]?.let { peerName ->
                             nearByDevices[srcDevice.deviceAddress] = if (peerName.isBlank()) {
                                 srcDevice.deviceName
@@ -1341,7 +1379,7 @@ class MainActivity : AppCompatActivity() {
         return IntentFilter().apply {
             addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-            // addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
+            addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION)
         }
@@ -1370,10 +1408,12 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     private fun broadcastZipBoltFileTransferService() {
-
+        /* val listeningPort : Int = DataTransferService.arrayOfPossiblePorts.random()
+          DataTransferService.SOCKET_PORT = listeningPort */
         // register the zipBolt file transfer service
         val record: Map<String, String> = mapOf(
-            "peerName" to ""
+            "peerName" to "",
+            //  "listeningPort" to listeningPort.toString()
         )
 
         val serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(

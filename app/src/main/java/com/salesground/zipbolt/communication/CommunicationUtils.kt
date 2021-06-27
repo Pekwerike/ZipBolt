@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.communication
 
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.service.DataTransferService
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.File
@@ -8,7 +9,7 @@ import java.io.FileOutputStream
 import kotlin.math.min
 
 
-private val dataBuffer = ByteArray(1024 * 1024)
+private val dataBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
 
 fun DataInputStream.readStreamDataIntoFile(
     dataReceiveListener: MediaTransferProtocol.DataReceiveListener,

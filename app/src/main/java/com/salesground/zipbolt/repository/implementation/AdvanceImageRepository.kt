@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.*
+import com.salesground.zipbolt.service.DataTransferService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import javax.inject.Inject
@@ -17,7 +18,7 @@ class AdvanceImageRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val savedFilesRepository: SavedFilesRepository
 ) : ZipBoltImageRepository(context) {
-    private val buffer = ByteArray(1024 * 1024)
+    private val buffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private val contentValues = ContentValues()
     private var mediaSize: Long = 0L
     private var verifiedImageName: String = ""

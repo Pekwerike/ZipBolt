@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
+import com.salesground.zipbolt.utils.getVideoDuration
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -61,7 +62,7 @@ class ZipBoltVideoRepositoryTest {
     fun insertVideoIntoMediaStore() {
         runBlocking {
             val videoToInsertIntoMediaStore =
-                zipBoltVideoRepository.getVideosOnDevice().first()
+                zipBoltVideoRepository.getVideosOnDevice().first() as DataToTransfer.DeviceVideo
 
             // write the video file into the gateway file
             context.contentResolver.openInputStream(videoToInsertIntoMediaStore.dataUri)?.let {
@@ -114,7 +115,8 @@ class ZipBoltVideoRepositoryTest {
                             assertEquals(null, dataUri)
                         }
                     }
-                }
+                },
+                videoDuration = videoToInsertIntoMediaStore.videoDuration
             )
         }
     }
@@ -128,6 +130,16 @@ class ZipBoltVideoRepositoryTest {
                     Log.i("VideosReceived", it.dataDisplayName)
                 }
             }
+        }
+    }
+
+    @Test
+    fun getVideoDuration() {
+        runBlocking {
+            val videoToGetDuration =
+                zipBoltVideoRepository.getVideosOnDevice()[1] as DataToTransfer.DeviceVideo
+            val videoDuration = videoToGetDuration.dataUri.getVideoDuration(context)
+            assertEquals(videoToGetDuration.videoDuration, videoDuration)
         }
     }
 }

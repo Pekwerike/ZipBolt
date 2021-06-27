@@ -1,5 +1,9 @@
 package com.salesground.zipbolt.utils
 
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,9 +40,25 @@ fun Long.formatVideoDurationToString(): String {
 
     return if (remainingSeconds > 0 && durationInMinutes > 0) {
         "${durationInMinutes}min ${remainingSeconds}sec"
-    } else if(durationInMinutes == 0L) {
+    } else if (durationInMinutes == 0L) {
         "${durationInSeconds}sec"
-    }else{
+    } else {
         "${durationInMinutes}min"
     }
+}
+
+fun Uri.getVideoDuration(context: Context): Long {
+    var videoDuration : Long = 0L
+    context.contentResolver.query(
+        this,
+        arrayOf(MediaStore.Video.Media.DURATION),
+        null,
+        null,
+        null
+    )?.let { cursor: Cursor ->
+        cursor.moveToFirst()
+        videoDuration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DURATION))
+    }
+
+    return videoDuration
 }

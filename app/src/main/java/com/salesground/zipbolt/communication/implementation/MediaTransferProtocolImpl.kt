@@ -8,6 +8,7 @@ import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
+import com.salesground.zipbolt.service.DataTransferService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -54,7 +55,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     }
     private var mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
     private var ongoingTransfer = AtomicBoolean(false)
-    private val buffer = ByteArray(1024 * 1024)
+    private val buffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private var dataToTransfer: DataToTransfer? = null
 
     // data receive variables
@@ -88,7 +89,12 @@ open class MediaTransferProtocolImpl @Inject constructor(
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
                 || dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
             ) {
-                context.contentResolver.openInputStream(dataToTransfer.dataUri)
+                try {
+                    context.contentResolver.openInputStream(dataToTransfer.dataUri)
+                }catch (noSuchFile: FileNotFoundException){
+                    dataOutputStream.writeInt(MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value)
+                    return
+                }
             } else {
                 dataToTransfer as DataToTransfer.DeviceApplication
                 FileInputStream(dataToTransfer.apkPath)
