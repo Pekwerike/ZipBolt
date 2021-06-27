@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.communication.MediaTransferProtocol
@@ -22,7 +23,10 @@ import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
+
+@Suppress("BlockingMethodInNonBlockingContext")
 @AndroidEntryPoint
 class DataTransferService : Service() {
     var isActive = false
@@ -31,7 +35,9 @@ class DataTransferService : Service() {
         const val IS_SERVER: String = "IsDeviceTheServer"
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
         const val SOCKET_PORT = 7091
+        val arrayOfPossiblePorts = arrayOf(8020, 7070, 4050, 5030, 6040)
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
+        const val BUFFER_SIZE = 1024 * (1024 + 512)
     }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
@@ -50,8 +56,10 @@ class DataTransferService : Service() {
 
     private val dataTransferServiceConnectionStateIntent = Intent()
 
-    @Inject
-    lateinit var localBroadcastManager: LocalBroadcastManager
+
+    private val localBroadcastManager: LocalBroadcastManager by lazy {
+        LocalBroadcastManager.getInstance(this)
+    }
 
     @Inject
     lateinit var mediaTransferProtocol: MediaTransferProtocol
@@ -227,12 +235,18 @@ class DataTransferService : Service() {
     private fun configureSenderSocketForOneDirectionalTransfer() {
         CoroutineScope(Dispatchers.IO).launch {
             val serverSocket = ServerSocket()
-            serverSocket.receiveBufferSize = 1024 * 1024
+            serverSocket.receiveBufferSize = BUFFER_SIZE
             serverSocket.reuseAddress = true
             serverSocket.bind(InetSocketAddress(SOCKET_PORT))
+            withContext(Dispatchers.Main) {
+                Toast.makeText(
+                    this@DataTransferService,
+                    "Created server socket", Toast.LENGTH_LONG
+                ).show()
+            }
             socket = serverSocket.accept()
-            socket.sendBufferSize = 1024 * 1024
-            socket.receiveBufferSize = 1024 * 1024
+            socket.sendBufferSize = BUFFER_SIZE
+            socket.receiveBufferSize = BUFFER_SIZE
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
 
             listenForMediaToTransfer(socketDOS)
@@ -242,12 +256,12 @@ class DataTransferService : Service() {
     private fun configureServerSocket() {
         CoroutineScope(Dispatchers.IO).launch {
             val serverSocket = ServerSocket()
-            serverSocket.receiveBufferSize = 1024 * 1024
+            serverSocket.receiveBufferSize = BUFFER_SIZE
             serverSocket.reuseAddress = true
             serverSocket.bind(InetSocketAddress(SOCKET_PORT))
             socket = serverSocket.accept()
-            socket.sendBufferSize = 1024 * 1024
-            socket.receiveBufferSize = 1024 * 1024
+            socket.sendBufferSize = BUFFER_SIZE
+            socket.receiveBufferSize = BUFFER_SIZE
             socketDOS =
                 DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
             socketDIS =
@@ -264,8 +278,8 @@ class DataTransferService : Service() {
         CoroutineScope(Dispatchers.IO).launch {
             delay(300)
             socket = Socket()
-            socket.sendBufferSize = 1024 * 1024
-            socket.receiveBufferSize = 1024 * 1024
+            socket.sendBufferSize = BUFFER_SIZE
+            socket.receiveBufferSize = BUFFER_SIZE
             socket.bind(null)
             try {
                 while (true) {
@@ -303,8 +317,8 @@ class DataTransferService : Service() {
     private fun configureClientSocket(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
-            socket.sendBufferSize = 1024 * 1024
-            socket.receiveBufferSize = 1024 * 1024
+            socket.sendBufferSize = BUFFER_SIZE
+            socket.receiveBufferSize = BUFFER_SIZE
             socket.bind(null)
             try {
                 socket.connect(
@@ -339,89 +353,89 @@ class DataTransferService : Service() {
 
 
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
-       // try {
-            while (true) {
-                when (mediaTransferProtocolMetaData) {
-                    MediaTransferProtocolMetaData.NO_DATA -> {
-                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+        // try {
+        while (true) {
+            when (mediaTransferProtocolMetaData) {
+                MediaTransferProtocolMetaData.NO_DATA -> {
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                }
+                MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
+                    // write the collection size to the peer
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                    dataOutputStream.writeInt(dataCollection.size)
+                    dataOutputStream.flush()
+                    for (dataToTransfer in dataCollection) {
+                        mediaTransferProtocol.transferMedia(
+                            dataToTransfer,
+                            dataOutputStream,
+                            mediaTransferProtocolDataTransferListener
+                        )
                     }
-                    MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
-                        // write the collection size to the peer
-                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
-                        dataOutputStream.writeInt(dataCollection.size)
-                        dataOutputStream.flush()
-                        for (dataToTransfer in dataCollection) {
-                            mediaTransferProtocol.transferMedia(
-                                dataToTransfer,
-                                dataOutputStream,
-                                mediaTransferProtocolDataTransferListener
-                            )
-                        }
-                        mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
-                    }
-                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
-                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
-                        mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
-                    }
-                    else -> {
+                    mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
+                }
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER -> {
+                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                    mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
+                }
+                else -> {
 
-                    }
                 }
             }
-       /* } catch (exception: Exception) {
-            Log.e("UnseenError", exception.stackTraceToString())
-            // send broadcast message to the main activity that we couldn't connect to peer.
-            // the main activity will use this message to determine how to update the ui
-            with(dataTransferServiceConnectionStateIntent) {
-                action =
-                    DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
+        }
+        /* } catch (exception: Exception) {
+             Log.e("UnseenError", exception.stackTraceToString())
+             // send broadcast message to the main activity that we couldn't connect to peer.
+             // the main activity will use this message to determine how to update the ui
+             with(dataTransferServiceConnectionStateIntent) {
+                 action =
+                     DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
 
-                localBroadcastManager.sendBroadcast(this)
-            }
-            stopForeground(true)
-            stopSelf()
-        }*/
+                 localBroadcastManager.sendBroadcast(this)
+             }
+             stopForeground(true)
+             stopSelf()
+         }*/
     }
 
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-      //  try {
-            while (true) {
-                when (dataInputStream.readInt()) {
-                    MediaTransferProtocolMetaData.NO_DATA.value -> continue
-                    MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
-                        delay(200)
-                        // read the number of files sent from the peer
-                        val filesCount = dataInputStream.readInt()
-                        for (i in 0 until filesCount) {
-                            mediaTransferProtocol.receiveMedia(
-                                dataInputStream,
-                                mediaTransferProtocolDataReceiveListener
-                            )
-                            delay(200)
-                        }
-                        dataFlowListener?.totalFileReceiveComplete()
-                    }
-                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
-                        mediaTransferProtocol.cancelCurrentTransfer(
-                            transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+        //  try {
+        while (true) {
+            when (dataInputStream.readInt()) {
+                MediaTransferProtocolMetaData.NO_DATA.value -> continue
+                MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
+                    delay(200)
+                    // read the number of files sent from the peer
+                    val filesCount = dataInputStream.readInt()
+                    for (i in 0 until filesCount) {
+                        mediaTransferProtocol.receiveMedia(
+                            dataInputStream,
+                            mediaTransferProtocolDataReceiveListener
                         )
+                        delay(200)
                     }
+                    dataFlowListener?.totalFileReceiveComplete()
+                }
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
+                    mediaTransferProtocol.cancelCurrentTransfer(
+                        transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+                    )
                 }
             }
-      /* } catch (exception: Exception) {
-            Log.e("UnseenError", exception.stackTraceToString())
-            // send broadcast message to the main activity that we couldn't connect to peer.
-            // the main activity will use this message to determine how to update the ui
-            with(dataTransferServiceConnectionStateIntent) {
-                action =
-                    DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
+        }
+        /* } catch (exception: Exception) {
+              Log.e("UnseenError", exception.stackTraceToString())
+              // send broadcast message to the main activity that we couldn't connect to peer.
+              // the main activity will use this message to determine how to update the ui
+              with(dataTransferServiceConnectionStateIntent) {
+                  action =
+                      DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
 
-                localBroadcastManager.sendBroadcast(this)
-            }
+                  localBroadcastManager.sendBroadcast(this)
+              }
 
-            stopForeground(true)
-            stopSelf()
-        }*/
+              stopForeground(true)
+              stopSelf()
+          }*/
     }
 
     override fun onDestroy() {
