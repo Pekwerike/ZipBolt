@@ -37,7 +37,7 @@ class DataTransferService : Service() {
         const val SOCKET_PORT = 7091
         val arrayOfPossiblePorts = arrayOf(8020, 7070, 4050, 5030, 6040)
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
-        const val BUFFER_SIZE = 1024 * 1024 * 3
+        const val BUFFER_SIZE = 1024 * 1024
     }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
