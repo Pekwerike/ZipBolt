@@ -197,32 +197,63 @@ class MainActivity : AppCompatActivity() {
                                     /*// hide the cancel transfer/receive image button
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
+                                    when(dataType){
+                                        DataToTransfer.MediaType.IMAGE.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(dataUri)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceImage(
+                                                            0L,
+                                                            dataUri!!,
+                                                            System.currentTimeMillis()
+                                                                .parseDate()
+                                                                .customizeDate(),
+                                                            dataDisplayName,
+                                                            "",
+                                                            dataSize,
+                                                            "ZipBolt Images"
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        }
+                                        DataToTransfer.MediaType.VIDEO.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(dataUri)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceVideo(
+                                                            0L,
+                                                            dataUri!!,
+                                                            dataDisplayName,
+
+                                                            3000,
+                                                            dataSize,
+                                                            "Video/*"
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        }
+                                        DataToTransfer.MediaType.APP.value -> {
+
+                                        }
+                                    }
                                     if (dataType == DataToTransfer.MediaType.IMAGE.value
                                         || dataType == DataToTransfer.MediaType.VIDEO.value
                                     ) {
-                                        Glide.with(ongoingDataReceiveLayoutImageView)
-                                            .load(dataUri)
-                                            .into(ongoingDataReceiveLayoutImageView)
-                                        mainActivityViewModel.run {
-                                            addDataToCurrentTransferHistory(
-                                                OngoingDataTransferUIState.DataItem(
-                                                    DataToTransfer.DeviceImage(
-                                                        0L,
-                                                        dataUri!!,
-                                                        System.currentTimeMillis()
-                                                            .parseDate()
-                                                            .customizeDate(),
-                                                        dataDisplayName,
-                                                        "",
-                                                        dataSize,
-                                                        "ZipBolt Images"
-                                                    ).apply {
-                                                        this.transferStatus =
-                                                            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                    }
-                                                )
-                                            )
-                                        }
+
                                     } else if (dataType == DataToTransfer.MediaType.APP.value) {
                                         val applicationIcon = try {
                                             dataUri?.path!!.let { path ->

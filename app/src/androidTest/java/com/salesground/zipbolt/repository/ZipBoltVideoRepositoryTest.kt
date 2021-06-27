@@ -61,7 +61,7 @@ class ZipBoltVideoRepositoryTest {
     fun insertVideoIntoMediaStore() {
         runBlocking {
             val videoToInsertIntoMediaStore =
-                zipBoltVideoRepository.getVideosOnDevice().first()
+                zipBoltVideoRepository.getVideosOnDevice().first() as DataToTransfer.DeviceVideo
 
             // write the video file into the gateway file
             context.contentResolver.openInputStream(videoToInsertIntoMediaStore.dataUri)?.let {
@@ -114,7 +114,8 @@ class ZipBoltVideoRepositoryTest {
                             assertEquals(null, dataUri)
                         }
                     }
-                }
+                },
+                videoDuration = videoToInsertIntoMediaStore.videoDuration
             )
         }
     }
@@ -128,6 +129,17 @@ class ZipBoltVideoRepositoryTest {
                     Log.i("VideosReceived", it.dataDisplayName)
                 }
             }
+        }
+    }
+
+    @Test
+    fun getVideoDuration() {
+        runBlocking {
+            val videoToGetDuration =
+                zipBoltVideoRepository.getVideosOnDevice()[1] as DataToTransfer.DeviceVideo
+            val videoDuration =
+                zipBoltVideoRepository.getVideoDuration(videoToGetDuration.dataUri)
+            assertEquals(videoToGetDuration.videoDuration, videoDuration)
         }
     }
 }

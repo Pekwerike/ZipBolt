@@ -79,7 +79,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 300
                             }
                             is DataToTransfer.DeviceVideo -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.VIDEO_RECEIVE_COMPLETE.value
                             }
                         }
                     }
@@ -114,6 +114,10 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
             }
 
             OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value -> {
+                VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.VIDEO_RECEIVE_COMPLETE.value -> {
                 VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
 

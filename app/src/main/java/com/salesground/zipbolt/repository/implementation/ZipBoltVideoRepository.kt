@@ -3,6 +3,7 @@ package com.salesground.zipbolt.repository.implementation
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -180,5 +181,22 @@ class ZipBoltVideoRepository @Inject constructor(
             }
         }
         return videosOnDevice
+    }
+
+   override suspend fun getVideoDuration(videoUri: Uri): Long {
+        var videoDuration: Long = 0L
+        val projection = arrayOf(MediaStore.Video.Media.DURATION)
+
+        context.contentResolver.query(
+            videoUri,
+            projection,
+            null,
+            null, null
+        )?.let { cursor: Cursor ->
+            cursor.moveToFirst()
+            videoDuration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.Media.DURATION))
+        }
+
+        return videoDuration
     }
 }
