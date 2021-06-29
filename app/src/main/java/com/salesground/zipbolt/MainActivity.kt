@@ -445,6 +445,7 @@ class MainActivity : AppCompatActivity() {
     private var isWaitingForReceiverBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
+    private val nearByDevices = mutableMapOf<String, String>()
 
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
@@ -770,7 +771,6 @@ class MainActivity : AppCompatActivity() {
                         ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
                         ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
 
-
                         with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED
@@ -835,10 +835,19 @@ class MainActivity : AppCompatActivity() {
                                 it.connectedDevice
                             )
                         }
+
                         // hide the searching for peers bottom
-                        searchingForPeersBottomSheetBehavior.isHideable = true
-                        searchingForPeersBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_HIDDEN
+                        if (isSearchingForPeersBottomSheetLayoutConfigured) {
+                            searchingForPeersBottomSheetBehavior.run {
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        } else if (isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            waitingForReceiverBottomSheetBehavior.run {
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        }
 
                         // show the send button
                         activityMainBinding.sendFileButton.animate().alpha(1f)
@@ -863,7 +872,6 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
                     }
-
                     is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                             it.connectedDevice
@@ -1264,10 +1272,6 @@ class MainActivity : AppCompatActivity() {
                 }
             })
     }
-
-
-    private
-    val nearByDevices = mutableMapOf<String, String>()
 
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
