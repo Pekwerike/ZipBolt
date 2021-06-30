@@ -43,8 +43,7 @@ class DataTransferService : Service() {
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
 
     // private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
-    private var mediaTransferProtocolMetaData =
-        MediaTransferProtocolMetaData.NO_DATA
+    private var mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
@@ -136,7 +135,6 @@ class DataTransferService : Service() {
         )
 
         fun totalFileReceiveComplete()
-
     }
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
@@ -185,15 +183,17 @@ class DataTransferService : Service() {
 
     }
 
-    fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
-        while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
-            // get stuck here
-            return
-        }
-        // when dataTransferUserEvent shows data is not available then assign the new data
-        dataCollection = dataCollectionSelected
-        mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
-    }
+   fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
+       CoroutineScope(Dispatchers.IO).launch {
+           while (true) {
+               if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA) break
+               // else get stuck in this loop waiting for the current transfer to complete
+           }
+           // when dataTransferUserEvent shows data is not available then assign the new data
+           dataCollection = dataCollectionSelected
+           mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
+       }
+   }
 
 
     override fun onBind(intent: Intent): IBinder {
