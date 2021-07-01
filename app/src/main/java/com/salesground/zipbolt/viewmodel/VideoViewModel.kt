@@ -21,7 +21,7 @@ class VideoViewModel @Inject constructor(
 
     private val _allVideosOnDevice = MutableLiveData<MutableList<DataToTransfer>>(mutableListOf())
     val allVideosOnDevice: LiveData<MutableList<DataToTransfer>>
-    get() = _allVideosOnDevice
+        get() = _allVideosOnDevice
 
     init {
         getAllVideosOnDevice()
@@ -29,9 +29,13 @@ class VideoViewModel @Inject constructor(
 
     private fun getAllVideosOnDevice() {
         viewModelScope.launch {
-           _allVideosOnDevice.value = withContext(Dispatchers.IO) {
+            _allVideosOnDevice.value = withContext(Dispatchers.IO) {
                 videoRepositoryI.getVideosOnDevice()
             }!!
         }
+    }
+
+    fun clearCollectionOfSelectedVideos() {
+        selectedVideosForTransfer.clear()
     }
 }

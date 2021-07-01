@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.ui.fragments
 
+import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,12 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.MainActivity
+import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentAppBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.ApplicationsViewModel
+import javax.inject.Inject
 
 
 class DeviceAppsFragment : Fragment() {
@@ -21,6 +26,19 @@ class DeviceAppsFragment : Fragment() {
     private lateinit var fragmentAppBinding: FragmentAppBinding
     private var spanCount: Int = 3
     private var mainActivity: MainActivity? = null
+
+    @Inject
+    lateinit var localBroadcastManager: LocalBroadcastManager
+
+    private val sendDataBroadcastReceiver = SendDataBroadcastReceiver(
+        object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun sendDataButtonClicked() {
+                applicationsViewModel.clearCollectionOfSelectedApps()
+                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
+            }
+        }
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,5 +107,19 @@ class DeviceAppsFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        localBroadcastManager.registerReceiver(sendDataBroadcastReceiver,
+            IntentFilter().apply {
+                addAction(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
+            }
+        )
+    }
+
+    override fun onStop() {
+        super.onStop()
+        localBroadcastManager.unregisterReceiver(sendDataBroadcastReceiver)
     }
 }
