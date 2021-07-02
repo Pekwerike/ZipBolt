@@ -22,6 +22,8 @@
     <string name="close_connection_content_description">Close connection</string>
     <string name="connected_label">Connected</string>
     <string name="you_can_transfer_and_receive_files_now">You can transfer and receive files now!</string>
+    <string name="you_can_transfer_files_now">You can now send files to %1$s</string>
+    <string name="you_can_receive_files_now">You can receive files from %1$s</string>
     <string name="device_connection_details">Device Details</string>
     <string name="connect_to">Connect to</string>
     <string name="no_item_label">No item</string>
