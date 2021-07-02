@@ -957,14 +957,15 @@ class MainActivity : AppCompatActivity() {
             // configure expanded connected to peer transfer ongoing layout
             with(expandedConnectedToPeerTransferOngoingLayout) {
                 with(expandedConnectedToPeerTransferOngoingToolbar) {
-                    this.expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
+                    expandedBottomSheetLayoutToolbarTitleTextView.text = getString(R.string.transfer_history)
+                    expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
                         // close the connection with the peer
                         dataTransferServiceIntent?.let {
                             unbindService(dataTransferServiceConnection)
                             stopService(dataTransferServiceIntent)
                         }
                     }
-                    this.expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
+                    expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
                         // collapse the connected to peer transfer ongoing bottom sheet
                         connectedToPeerTransferOngoingBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED

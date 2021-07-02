@@ -19,8 +19,10 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.VideoRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.VideoViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class VideosFragment : Fragment() {
     private lateinit var fragmentVideosBinding: FragmentVideosBinding
     private lateinit var videoFragmentRecyclerViewAdapter: VideoFragmentRecyclerViewAdapter

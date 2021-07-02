@@ -28,6 +28,7 @@
     <string name="completed_and_scheduled">Completed and Scheduled</string>
     <string name="sending">Sending</string>
     <string name="receiving">Receiving</string>
+    <string name="transfer_history">Transfer History</string>
     <string name="active_data_flow_label">Active data flow, swipe up to view details.</string>
     <string name="send_to_peer_connection_description">High-speed file transfer but you cannot receive from peer. Peer must choose Receive.</string>
     <string name="receive_connection_description">High-speed file receive but you cannot send file to peer. Peer must choose Send.</string>

@@ -17,9 +17,10 @@ import com.salesground.zipbolt.databinding.FragmentAppBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.ApplicationsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class DeviceAppsFragment : Fragment() {
     private val applicationsViewModel: ApplicationsViewModel by activityViewModels()
     private lateinit var applicationFragmentAppsDisplayRecyclerViewAdapter: ApplicationFragmentAppsDisplayRecyclerViewAdapter
