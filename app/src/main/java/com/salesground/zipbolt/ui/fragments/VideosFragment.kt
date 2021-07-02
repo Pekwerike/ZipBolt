@@ -37,8 +37,10 @@ class VideosFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                videoViewModel.clearCollectionOfSelectedVideos()
-                videoFragmentRecyclerViewAdapter.notifyDataSetChanged()
+                if(videoViewModel.selectedVideosForTransfer.isNotEmpty()) {
+                    videoViewModel.clearCollectionOfSelectedVideos()
+                    videoFragmentRecyclerViewAdapter.notifyDataSetChanged()
+                }
             }
         }
     )

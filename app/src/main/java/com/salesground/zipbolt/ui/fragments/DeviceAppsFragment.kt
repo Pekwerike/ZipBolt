@@ -35,8 +35,10 @@ class DeviceAppsFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                applicationsViewModel.clearCollectionOfSelectedApps()
-                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
+                if (applicationsViewModel.selectedApplications.isNotEmpty()) {
+                    applicationsViewModel.clearCollectionOfSelectedApps()
+                    applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
+                }
             }
         }
     )
