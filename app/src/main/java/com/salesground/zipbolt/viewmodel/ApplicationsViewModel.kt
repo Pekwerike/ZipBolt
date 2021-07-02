@@ -18,7 +18,7 @@ class ApplicationsViewModel @Inject constructor(
 ) : ViewModel() {
     // the view model is going to hold all clicked applications from the
     // ApplicationFragmentAppsDisplayRecyclerViewAdapter
-    val selectedApplications : MutableList<DataToTransfer> = mutableListOf()
+    val selectedApplications: MutableList<DataToTransfer> = mutableListOf()
 
     private var allNonSystemAppsOnDevice = listOf<DataToTransfer>()
     private val _allApplicationsOnDevice = MutableLiveData<List<DataToTransfer>>(
@@ -27,16 +27,20 @@ class ApplicationsViewModel @Inject constructor(
     val allApplicationsOnDevice: LiveData<List<DataToTransfer>>
         get() = _allApplicationsOnDevice
 
-    init{
+    init {
         getAllApplicationsOnDevice()
     }
 
     fun getAllApplicationsOnDevice() {
         viewModelScope.launch(Dispatchers.IO) {
-           allNonSystemAppsOnDevice = applicationsRepositoryInterface.getNonSystemAppsOnDevice()
-           withContext(Dispatchers.Main){
-               _allApplicationsOnDevice.value = allNonSystemAppsOnDevice
-           }
+            allNonSystemAppsOnDevice = applicationsRepositoryInterface.getNonSystemAppsOnDevice()
+            withContext(Dispatchers.Main) {
+                _allApplicationsOnDevice.value = allNonSystemAppsOnDevice
+            }
         }
+    }
+
+    fun clearCollectionOfSelectedApps() {
+        selectedApplications.clear()
     }
 }

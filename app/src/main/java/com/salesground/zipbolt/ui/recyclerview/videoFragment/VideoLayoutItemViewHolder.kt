@@ -1,7 +1,13 @@
 package com.salesground.zipbolt.ui.recyclerview.videoFragment
 
+import android.graphics.drawable.ColorDrawable
+import android.media.ThumbnailUtils
+import android.os.Build
+import android.provider.MediaStore.Images.Thumbnails.MINI_KIND
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -26,8 +32,10 @@ class VideoLayoutItemViewHolder(
             videoSize = dataToTransfer.videoSize
             videoName = dataToTransfer.videoDisplayName
 
+          
             Glide.with(videoLayoutItemVideoPreviewImageView)
                 .load(dataToTransfer.videoUri)
+                .thumbnail(Glide.with(root.context).load(dataToTransfer.videoUri))
                 .into(videoLayoutItemVideoPreviewImageView)
 
             videoLayoutItemSelectableConstraintLayout.run {

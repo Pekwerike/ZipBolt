@@ -55,17 +55,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
-import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInstaller
-import android.graphics.drawable.Drawable
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
-import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.salesground.zipbolt.utils.getVideoDuration
@@ -77,6 +71,13 @@ const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    enum class DeviceTransferRole(value: Int) {
+        SEND(1),
+        RECEIVE(2),
+        SEND_AND_RECEIVE(3),
+        NO_ROLE(4)
+    }
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
@@ -98,8 +99,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private var dataTransferServiceIntent: Intent? = null
-
-    private val turnOnWifiResultLauncher =
+    private var deviceTransferRole: DeviceTransferRole = DeviceTransferRole.NO_ROLE
+    val turnOnWifiResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // create wifi direct group only if this device wants to be a sender
@@ -957,14 +958,16 @@ class MainActivity : AppCompatActivity() {
             // configure expanded connected to peer transfer ongoing layout
             with(expandedConnectedToPeerTransferOngoingLayout) {
                 with(expandedConnectedToPeerTransferOngoingToolbar) {
-                    this.expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
+                    expandedBottomSheetLayoutToolbarTitleTextView.text =
+                        getString(R.string.transfer_history)
+                    expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
                         // close the connection with the peer
                         dataTransferServiceIntent?.let {
                             unbindService(dataTransferServiceConnection)
                             stopService(dataTransferServiceIntent)
                         }
                     }
-                    this.expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
+                    expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
                         // collapse the connected to peer transfer ongoing bottom sheet
                         connectedToPeerTransferOngoingBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
@@ -1044,8 +1047,8 @@ class MainActivity : AppCompatActivity() {
         connectedDevice: WifiP2pDevice
     ) {
         isConnectedToPeerNoActionBottomSheetLayoutConfigured = true
-        connectedToPeerNoActionBottomSheetLayoutBinding.apply {
-            collapsedConnectedToPeerNoActionLayout.apply {
+        connectedToPeerNoActionBottomSheetLayoutBinding.run {
+            collapsedConnectedToPeerNoActionLayout.run {
                 deviceConnectedTo =
                     "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
                 collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
@@ -1061,9 +1064,32 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.expandedConnectedToPeerNoAction()
                 }
             }
-            expandedConnectedToPeerNoActionLayout.apply {
+            expandedConnectedToPeerNoActionLayout.run {
                 deviceAddress = connectedDevice.deviceAddress
                 deviceName = connectedDevice.deviceName
+
+                expandedConnectedToPeerNoActionTransferActionLabel.text =
+                    when (deviceTransferRole) {
+                        DeviceTransferRole.SEND -> {
+                            getString(
+                                R.string.you_can_transfer_files_now,
+                                connectedDevice.deviceName
+                            )
+                        }
+                        DeviceTransferRole.RECEIVE -> {
+                            getString(
+                                R.string.you_can_receive_files_now,
+                                connectedDevice.deviceName
+                            )
+                        }
+                        DeviceTransferRole.SEND_AND_RECEIVE -> {
+                            getString(R.string.you_can_transfer_and_receive_files_now)
+                        }
+                        DeviceTransferRole.NO_ROLE -> {
+                            getString(R.string.you_can_transfer_and_receive_files_now)
+                        }
+                    }
+
                 collapseExpandedConnectedToPeerNoActionImageButton.setOnClickListener {
                     mainActivityViewModel.collapsedConnectedToPeerNoAction()
                 }
@@ -1157,6 +1183,7 @@ class MainActivity : AppCompatActivity() {
         modalBottomSheetDialog.setContentView(
             ZipBoltProConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater).apply {
                 zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
+                    deviceTransferRole = DeviceTransferRole.SEND
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -1171,6 +1198,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
+                    deviceTransferRole = DeviceTransferRole.RECEIVE
                     // Turn on device wifi
                     if (!wifiManager.isWifiEnabled) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -1187,7 +1215,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
-
+                    deviceTransferRole = DeviceTransferRole.SEND_AND_RECEIVE
                 }
             }.root
         )
