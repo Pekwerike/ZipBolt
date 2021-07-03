@@ -1,7 +1,9 @@
 package com.salesground.zipbolt.repository.implementation
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -29,9 +31,15 @@ class ZipBoltAudioRepository(
     }
 
     override suspend fun getAudioOnDevice(): MutableList<DataToTransfer> {
+        val deviceAudio = mutableListOf<DataToTransfer>()
+
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+
+        val audioAlbumCollection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
+            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
 
         val projection: Array<String> = arrayOf(
             MediaStore.Audio.Media._ID,
@@ -53,13 +61,26 @@ class ZipBoltAudioRepository(
                 cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME)
             val audioSizeColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.SIZE)
             val audioDurationColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)
-            val albumIdColumnINdex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+            val albumIdColumnIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
 
             while (cursor.moveToNext()) {
-                val audioId = cursor.getColumnIndex(MediaStore.Audio.Media._ID)
-                val audioDisplayName = cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME)
+                val audioId = cursor.getLong(audioIdColumnIndex)
+                val albumId = cursor.getLong(albumIdColumnIndex)
+
+
+                deviceAudio.add(
+                    DataToTransfer.DeviceAudio(
+                        audioUri = ContentUris.withAppendedId(collection, audioId),
+                        audioDisplayName = cursor.getString(audioDisplayNameColumnIndex),
+                        audioDuration = cursor.getLong(audioDurationColumnIndex),
+                        audioSize = cursor.getLong(audioSizeColumnIndex),
+                        audioArtPath = ContentUris.withAppendedId(audioAlbumCollection, albumId)
+                    )
+                )
+
             }
         }
-
+        return deviceAudio
     }
+
 }
