@@ -3,9 +3,7 @@ package com.salesground.zipbolt.broadcast
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.net.NetworkInfo
+import android.net.*
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pInfo
@@ -44,6 +42,7 @@ class UpgradedWifiDirectBroadcastReceiver(
                                     ?.let { wifiP2pGroup ->
                                         val connectedDevice: WifiP2pDevice =
                                             if (wifiP2pInfo.isGroupOwner) {
+                                                if (wifiP2pGroup.clientList.isEmpty()) return@let
                                                 wifiP2pGroup.clientList.first()
                                             } else {
                                                 wifiP2pGroup.owner
@@ -66,7 +65,7 @@ class UpgradedWifiDirectBroadcastReceiver(
     }
 
     private fun isConnectedToPeerNetwork(intent: Intent): Boolean {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
                 ?.let { networkCapabilities: NetworkCapabilities ->
                     return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) &&

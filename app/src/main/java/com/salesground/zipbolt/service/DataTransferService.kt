@@ -363,7 +363,7 @@ class DataTransferService : Service() {
                     // write the collection size to the peer
                     dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                     dataOutputStream.writeInt(dataCollection.size)
-                    dataOutputStream.flush()
+
                     for (dataToTransfer in dataCollection) {
                         mediaTransferProtocol.transferMedia(
                             dataToTransfer,

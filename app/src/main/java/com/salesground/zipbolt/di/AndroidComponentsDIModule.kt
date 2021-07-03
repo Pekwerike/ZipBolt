@@ -39,4 +39,5 @@ class AndroidComponentsDIModule {
     fun getWifiManager(@ApplicationContext context: Context): WifiManager {
         return context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     }
+
 }

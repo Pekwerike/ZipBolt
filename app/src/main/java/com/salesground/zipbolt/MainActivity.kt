@@ -57,11 +57,13 @@ import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.utils.getVideoDuration
 import kotlinx.coroutines.*
 
@@ -93,14 +95,18 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
 
+    private val connectivityManager: ConnectivityManager by lazy {
+        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
     private val sendDataClickedIntent =
         Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
+    private lateinit var upgradedWifiDirectBroadcastReceiver: UpgradedWifiDirectBroadcastReceiver
     private var dataTransferServiceIntent: Intent? = null
     private var deviceTransferRole: DeviceTransferRole = DeviceTransferRole.NO_ROLE
-    val turnOnWifiResultLauncher =
+    private val turnOnWifiResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // create wifi direct group only if this device wants to be a sender
@@ -1427,15 +1433,23 @@ class MainActivity : AppCompatActivity() {
 
             }
         // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
-        wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
-            wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
-                wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
-                wifiP2pManager = wifiP2pManager,
-                wifiP2pChannel = wifiP2pChannel
-            )
-        }
 
-        broadcastZipBoltFileTransferService()
+        upgradedWifiDirectBroadcastReceiver = UpgradedWifiDirectBroadcastReceiver(
+            wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
+            connectivityManager = connectivityManager,
+            wifiP2pManager = wifiP2pManager,
+            wifiP2pChannel = wifiP2pChannel
+        )
+        wifiP2pManager.removeGroup(wifiP2pChannel, object: WifiP2pManager.ActionListener{
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailure(reason: Int) {
+
+            }
+
+        })
     }
 
     @SuppressLint("MissingPermission")
@@ -1510,7 +1524,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
             IntentFilter().apply {
@@ -1524,7 +1538,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
-        unregisterReceiver(wifiDirectBroadcastReceiver)
+        unregisterReceiver(upgradedWifiDirectBroadcastReceiver)
         localBroadcastManager.unregisterReceiver(dataTransferServiceConnectionStateReceiver)
     }
 
@@ -1559,14 +1573,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-            override fun onSuccess() {
-
-            }
-
-            override fun onFailure(reason: Int) {
-
-            }
-        })
     }
 }
