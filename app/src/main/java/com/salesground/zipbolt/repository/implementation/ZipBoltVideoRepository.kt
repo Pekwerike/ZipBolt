@@ -22,9 +22,9 @@ class ZipBoltVideoRepository @Inject constructor(
     savedFilesRepository: SavedFilesRepository,
     @ApplicationContext val context: Context
 ) : VideoRepositoryI {
-    private val zipBoltVideosFolder: File =
+    private val zipBoltVideosFolder: File by lazy {
         savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.VIDEOS_BASE_DIRECTORY)
-
+    }
     private val contentValues = ContentValues()
 
     private fun checkIfVideoWithNameExistsInMediaStore(
@@ -122,7 +122,7 @@ class ZipBoltVideoRepository @Inject constructor(
                 context.contentResolver.update(videoUri, contentValues, null, null)
             }
 
-            // percentage of image read is 100% with the image uri
+            // percentage of bytes read is 100% with the image uri
             dataReceiveListener.onReceive(
                 videoName,
                 videoSize,
