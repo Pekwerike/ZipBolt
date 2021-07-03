@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol
+import com.salesground.zipbolt.communication.readStreamDataIntoFile
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.AudioRepositoryI
 import com.salesground.zipbolt.repository.SavedFilesRepository
@@ -49,8 +50,57 @@ class ZipBoltAudioRepository(
             put(MediaStore.Audio.Media.TITLE, audioFile.name)
             put(MediaStore.Audio.Media.SIZE, audioSize)
             put(MediaStore.Audio.Media.DURATION, audioDuration)
-            put(MediaStore.D)
+            put(MediaStore.Audio.Media.DATE_MODIFIED, currentTime / 1000)
+            put(MediaStore.Audio.Media.DATE_MODIFIED, currentTime / 1000)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.Video.Media.IS_PENDING, 1)
+            }
         }
+
+        // percentage of bytes read is 0%
+        dataReceiveListener.onReceive(
+            audioName,
+            audioSize,
+            0f,
+            DataToTransfer.MediaType.AUDIO.value,
+            null,
+            DataToTransfer.TransferStatus.RECEIVE_STARTED
+        )
+
+        if (!dataInputStream.readStreamDataIntoFile(
+                dataReceiveListener = dataReceiveListener,
+                dataDisplayName = audioName,
+                size = audioSize,
+                transferMetaDataUpdateListener = transferMetaDataUpdateListener,
+                receivingFile = audioFile,
+                dataType = DataToTransfer.MediaType.AUDIO
+            )
+        ) {
+            return
+        }
+
+        context.contentResolver.insert(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )?.let { audioUri: Uri ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                contentValues.clear()
+                contentValues.put(MediaStore.Audio.Media.IS_PENDING, 0)
+                context.contentResolver.update(audioUri, contentValues, null, null)
+            }
+
+
+            // percentage of bytes read is 100% with the image uri
+            dataReceiveListener.onReceive(
+                audioName,
+                audioSize,
+                100f,
+                DataToTransfer.MediaType.AUDIO.value,
+                audioUri,
+                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+            )
+        }
+
     }
 
     override suspend fun getAudioOnDevice(): MutableList<DataToTransfer> {

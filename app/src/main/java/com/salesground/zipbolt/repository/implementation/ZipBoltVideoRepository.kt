@@ -122,7 +122,7 @@ class ZipBoltVideoRepository @Inject constructor(
                 context.contentResolver.update(videoUri, contentValues, null, null)
             }
 
-            // percentage of image read is 100% with the image uri
+            // percentage of bytes read is 100% with the image uri
             dataReceiveListener.onReceive(
                 videoName,
                 videoSize,
