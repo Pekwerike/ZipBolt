@@ -59,7 +59,7 @@ sealed class DataToTransfer(
         val audioDisplayName: String,
         val audioSize: Long,
         val audioDuration: Long,
-        val audioArtPath: String
+        val audioArtPath: Uri
     ) : DataToTransfer(
         dataDisplayName = audioDisplayName,
         dataUri = audioUri,

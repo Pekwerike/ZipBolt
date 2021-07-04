@@ -11,6 +11,7 @@
         android:id="@+id/fragment_music_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/medium_margin"
         tools:listitem="@layout/video_layout_item" />
 
 </LinearLayout>

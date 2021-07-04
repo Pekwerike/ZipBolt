@@ -42,7 +42,7 @@ fun Long.formatVideoDurationToString(): String {
         if (remainingSeconds < 30) {
             "${durationInMinutes}min"
         } else {
-            "${durationInMinutes}min ${remainingSeconds}sec"
+            "${durationInMinutes + 1}min"
         }
     } else if (durationInMinutes == 0L) {
         "${durationInSeconds}sec"

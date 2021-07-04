@@ -15,8 +15,10 @@ import com.salesground.zipbolt.repository.SavedFilesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
 import java.io.File
+import javax.inject.Inject
 
-class ZipBoltAudioRepository(
+
+class ZipBoltAudioRepository @Inject constructor(
     savedFilesRepository: SavedFilesRepository,
     @ApplicationContext val context: Context
 ) : AudioRepositoryI {
@@ -148,7 +150,10 @@ class ZipBoltAudioRepository(
                         audioDisplayName = cursor.getString(audioDisplayNameColumnIndex),
                         audioDuration = cursor.getLong(audioDurationColumnIndex),
                         audioSize = cursor.getLong(audioSizeColumnIndex),
-                        audioArtPath = getAudioAlbumArt(albumId)
+                        audioArtPath = ContentUris.withAppendedId(
+                            Uri.parse("content://media/external/audio/albumart"),
+                            albumId
+                        )
                     )
                 )
 
@@ -183,26 +188,26 @@ class ZipBoltAudioRepository(
     }
 
     private fun getAudioAlbumArt(albumId: Long): String {
-        val collection : Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+        val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
 
         var audioAlbumArtPath = ""
-            context.contentResolver.query(
-               collection,
-                arrayOf(
-                    MediaStore.Audio.Albums._ID, MediaStore.Audio.AlbumColumns.ALBUM_ART
-                ),
-                "${MediaStore.Audio.Albums._ID}=?",
-                arrayOf(albumId.toString()),
-                null
-            )?.let {
-                if (it.moveToFirst()) {
-                    audioAlbumArtPath =
-                        it.getString(it.getColumnIndex(MediaStore.Audio.AlbumColumns.ALBUM_ART))
-                            ?: ""
-                }
+        context.contentResolver.query(
+            collection,
+            arrayOf(
+                MediaStore.Audio.Albums._ID, MediaStore.Audio.AlbumColumns.ALBUM_ART
+            ),
+            "${MediaStore.Audio.Albums._ID}=?",
+            arrayOf(albumId.toString()),
+            null
+        )?.let {
+            if (it.moveToFirst()) {
+                audioAlbumArtPath =
+                    it.getString(it.getColumnIndex(MediaStore.Audio.AlbumColumns.ALBUM_ART))
+                        ?: ""
             }
+        }
         return audioAlbumArtPath
     }
 }
