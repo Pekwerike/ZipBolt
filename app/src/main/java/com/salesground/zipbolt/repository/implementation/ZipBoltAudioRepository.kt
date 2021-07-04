@@ -20,6 +20,7 @@ class ZipBoltAudioRepository(
     savedFilesRepository: SavedFilesRepository,
     @ApplicationContext val context: Context
 ) : AudioRepositoryI {
+
     private val zipBoltAudioFolder: File by lazy {
         savedFilesRepository
             .getZipBoltMediaCategoryBaseDirectory(
