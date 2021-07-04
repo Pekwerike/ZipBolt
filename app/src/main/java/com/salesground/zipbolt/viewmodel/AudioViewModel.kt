@@ -10,9 +10,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @HiltViewModel
-class AudioViewModel(private val audioRepositoryI: AudioRepositoryI) : ViewModel() {
+class AudioViewModel @Inject constructor(private val audioRepositoryI: AudioRepositoryI) : ViewModel() {
+
+    val selectedAudioFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
 
     private val _deviceAudio = MutableLiveData<MutableList<DataToTransfer>>()
     val deviceAudio: LiveData<MutableList<DataToTransfer>>
@@ -31,5 +34,9 @@ class AudioViewModel(private val audioRepositoryI: AudioRepositoryI) : ViewModel
                 }
             }
         }
+    }
+
+    fun clearCollectionOfSelectedAudioFiles(){
+        selectedAudioFilesForTransfer.clear()
     }
 }

@@ -32,6 +32,7 @@ class AudioLayoutItemViewHolder(
 
             Glide.with(videoLayoutItemVideoPreviewImageView)
                 .load(dataToTransfer.audioArtPath)
+                .error(R.drawable.ic_baseline_music_note_24)
                 .into(videoLayoutItemVideoPreviewImageView)
 
 

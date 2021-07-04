@@ -18,7 +18,7 @@ class AllMediaOnDeviceViewPager2Adapter(fragmentManager: FragmentManager, lifecy
             0 -> DeviceAppsFragment()
             1 -> ImageFragment()
             2 -> VideosFragment()
-            3 -> MusicFragment()
+            3 -> AudioFragment()
             4 -> FilesFragment()
             else -> ImageFragment()
         }
