@@ -4,12 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.fragments.MusicFragment">
+    tools:context=".ui.fragments.AudioFragment">
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_music_recyclerview"
         android:layout_width="match_parent"
-        tools:listitem="@layout/video_layout_item"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:listitem="@layout/video_layout_item" />
 
 </LinearLayout>
