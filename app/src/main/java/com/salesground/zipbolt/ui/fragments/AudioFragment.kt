@@ -19,9 +19,10 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.audioFragment.AudioFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.AudioViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class AudioFragment : Fragment() {
     private lateinit var fragmentAudioBinding: FragmentAudioBinding
     private lateinit var audioFragmentRecyclerViewAdapter: AudioFragmentRecyclerViewAdapter
