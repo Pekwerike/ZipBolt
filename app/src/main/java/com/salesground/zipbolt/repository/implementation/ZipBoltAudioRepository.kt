@@ -148,7 +148,7 @@ class ZipBoltAudioRepository(
                         audioDisplayName = cursor.getString(audioDisplayNameColumnIndex),
                         audioDuration = cursor.getLong(audioDurationColumnIndex),
                         audioSize = cursor.getLong(audioSizeColumnIndex),
-                        audioArtPath = ContentUris.withAppendedId(audioAlbumCollection, albumId)
+                        audioArtPath = getAudioAlbumArt(albumId)
                     )
                 )
 
@@ -182,4 +182,27 @@ class ZipBoltAudioRepository(
         return false
     }
 
+    private fun getAudioAlbumArt(albumId: Long): String {
+        val collection : Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            MediaStore.Audio.Albums.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
+            MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
+
+        var audioAlbumArtPath = ""
+            context.contentResolver.query(
+               collection,
+                arrayOf(
+                    MediaStore.Audio.Albums._ID, MediaStore.Audio.AlbumColumns.ALBUM_ART
+                ),
+                "${MediaStore.Audio.Albums._ID}=?",
+                arrayOf(albumId.toString()),
+                null
+            )?.let {
+                if (it.moveToFirst()) {
+                    audioAlbumArtPath =
+                        it.getString(it.getColumnIndex(MediaStore.Audio.AlbumColumns.ALBUM_ART))
+                            ?: ""
+                }
+            }
+        return audioAlbumArtPath
+    }
 }
