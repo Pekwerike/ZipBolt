@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
+import com.bumptech.glide.Glide
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
@@ -140,6 +141,14 @@ class ZipBoltVideoRepositoryTest {
                 zipBoltVideoRepository.getVideosOnDevice()[1] as DataToTransfer.DeviceVideo
             val videoDuration = videoToGetDuration.dataUri.getVideoDuration(context)
             assertEquals(videoToGetDuration.videoDuration, videoDuration)
+        }
+    }
+
+    @Test
+    fun test_videoUriHoldsImage() {
+        runBlocking {
+            val video = zipBoltVideoRepository.getVideosOnDevice()[1]
+            assert(Glide.with(context).load(video.dataUri).submit().get() != null)
         }
     }
 }
