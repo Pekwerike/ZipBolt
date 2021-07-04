@@ -14,6 +14,8 @@ import kotlinx.coroutines.withContext
 @HiltViewModel
 class AudioViewModel(private val audioRepositoryI: AudioRepositoryI) : ViewModel() {
 
+    val selectedAudioFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
+
     private val _deviceAudio = MutableLiveData<MutableList<DataToTransfer>>()
     val deviceAudio: LiveData<MutableList<DataToTransfer>>
         get() = _deviceAudio
@@ -31,5 +33,9 @@ class AudioViewModel(private val audioRepositoryI: AudioRepositoryI) : ViewModel
                 }
             }
         }
+    }
+
+    fun clearCollectionOfSelectedAudioFiles(){
+        selectedAudioFilesForTransfer.clear()
     }
 }

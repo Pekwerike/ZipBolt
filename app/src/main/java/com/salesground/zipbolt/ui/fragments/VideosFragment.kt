@@ -12,11 +12,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
-import com.salesground.zipbolt.R
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentVideosBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
-import com.salesground.zipbolt.ui.recyclerview.VideoRecyclerViewCustomDivider
+import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.VideoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,7 +82,7 @@ class VideosFragment : Fragment() {
                 adapter = videoFragmentRecyclerViewAdapter
                 layoutManager = LinearLayoutManager(requireContext())
                 addItemDecoration(
-                    VideoRecyclerViewCustomDivider(
+                    HalfLineRecyclerViewCustomDivider(
                         requireContext(),
                         DividerItemDecoration.VERTICAL
                     )
