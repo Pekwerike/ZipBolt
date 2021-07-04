@@ -10,6 +10,10 @@ import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
+/** AudioLayoutItemViewHolder is the view holder for each audio item displayed in the
+ * AudioFragment Recyclerview. AudioLayoutItemViewHolder uses the R.layout.video_layout_item
+ * since it shares similar UI structure with R.layout.video_layout_item
+ * */
 class AudioLayoutItemViewHolder(
     private val audioLayoutItemBinding: VideoLayoutItemBinding,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
@@ -31,6 +35,51 @@ class AudioLayoutItemViewHolder(
                 .into(videoLayoutItemVideoPreviewImageView)
 
 
+            videoLayoutItemSelectableConstraintLayout.run {
+                videoLayoutItemVideoSelectedCheckBox.setOnClickListener {
+                    dataToTransferRecyclerViewItemClickListener.onClick(
+                        dataToTransfer
+                    )
+
+                    if (selectedAudios.contains(dataToTransfer)) {
+                        // user un-selected, so remove the video from the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        selectedAudios.remove(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(true)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        selectedAudios.add(dataToTransfer)
+                    }
+                }
+
+                setOnClickListener {
+                    dataToTransferRecyclerViewItemClickListener.onClick(
+                        dataToTransfer
+                    )
+
+                    if (selectedAudios.contains(dataToTransfer)) {
+                        // user un-selected, so remove the video from the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        selectedAudios.remove(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(true)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        selectedAudios.add(dataToTransfer)
+                    }
+                }
+
+                if (selectedAudios.contains(dataToTransfer)) {
+                    setIsViewSelected(true)
+                    videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                } else {
+                    setIsViewSelected(false)
+                    videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                }
+            }
 
             executePendingBindings()
         }
