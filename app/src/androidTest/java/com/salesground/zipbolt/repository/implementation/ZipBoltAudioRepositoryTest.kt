@@ -11,10 +11,17 @@ import org.junit.Assert.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import java.io.*
 
 class ZipBoltAudioRepositoryTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var zipBoltAudioRepository: ZipBoltAudioRepository
+
+    // the gateWay streams will try to recreate a socket connection for stream so that,
+    // we can test the insertVideoIntoMediaStore function
+    private lateinit var gateWayFile: File
+    private lateinit var gateWayInputStream: DataInputStream
+    private lateinit var gateWayOutputStream: DataOutputStream
 
     @Before
     fun setUp() {
@@ -22,14 +29,31 @@ class ZipBoltAudioRepositoryTest {
             savedFilesRepository = ZipBoltSavedFilesRepository(),
             context = context
         )
+        gateWayFile = File(context.getExternalFilesDir(null), "Gateway.txt")
+        gateWayOutputStream = DataOutputStream(
+            BufferedOutputStream(
+                FileOutputStream(gateWayFile)
+            )
+        )
+        gateWayInputStream = DataInputStream(
+            BufferedInputStream(
+                FileInputStream(gateWayFile)
+            )
+        )
     }
 
     @After
     fun tearDown() {
+        gateWayFile.delete()
     }
 
     @Test
     fun insertAudioIntoMediaStore() {
+        runBlocking{
+            val audioToInsertIntoMediaStore = zipBoltAudioRepository.getAudioOnDevice().first()
+
+            // write the audio file into the gatewat file
+        }
     }
 
     @Test

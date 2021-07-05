@@ -48,7 +48,6 @@ class ZipBoltVideoRepositoryTest {
                 FileInputStream(gateWayFile)
             )
         )
-
     }
 
     @After
