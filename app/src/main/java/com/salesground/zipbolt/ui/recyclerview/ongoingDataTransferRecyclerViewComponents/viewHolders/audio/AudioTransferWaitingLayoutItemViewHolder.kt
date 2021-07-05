@@ -1,0 +1,4 @@
+package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio
+
+class AudioTransferWaitingLayoutItemViewHolder {
+}
