@@ -186,7 +186,10 @@ class DataTransferService : Service() {
    fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
        CoroutineScope(Dispatchers.IO).launch {
            while (true) {
-               if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA) break
+               if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA){
+                   delay(300)
+                   break
+               }
                // else get stuck in this loop waiting for the current transfer to complete
            }
            // when dataTransferUserEvent shows data is not available then assign the new data
