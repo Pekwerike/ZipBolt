@@ -99,6 +99,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
         val fileInputStream: InputStream? =
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
                 || dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
+                || dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value
             ) {
                 try {
                     context.contentResolver.openInputStream(dataToTransfer.dataUri)
