@@ -52,7 +52,11 @@ class AudioFragment : Fragment() {
 
         audioFragmentRecyclerViewAdapter = AudioFragmentRecyclerViewAdapter(
             DataToTransferRecyclerViewItemClickListener {
-
+                if (audioViewModel.selectedAudioFilesForTransfer.contains(it)) {
+                    mainActivity?.removeFromDataToTransferList(it)
+                } else {
+                    mainActivity?.addToDataToTransferList(it)
+                }
             },
             audioViewModel.selectedAudioFilesForTransfer
         )

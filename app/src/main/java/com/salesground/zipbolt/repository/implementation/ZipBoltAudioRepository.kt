@@ -108,20 +108,16 @@ class ZipBoltAudioRepository @Inject constructor(
 
     override suspend fun getAudioOnDevice(): MutableList<DataToTransfer> {
         val deviceAudio = mutableListOf<DataToTransfer>()
-
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-
         val audioAlbumCollection: Uri = Uri.parse("content://media/external/audio/albumart")
-
         val projection: Array<String> = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.SIZE,
-            MediaStore.Audio.Media.ALBUM_ID
-        )
+            MediaStore.Audio.Media.ALBUM_ID)
         val sortOrder = "$${MediaStore.Audio.Media.DATE_MODIFIED} DESC"
 
         context.contentResolver.query(
@@ -163,7 +159,6 @@ class ZipBoltAudioRepository @Inject constructor(
         val collection: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY) else
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-
         val projection: Array<String> = arrayOf(MediaStore.Audio.Media.DISPLAY_NAME)
         val selection = "${MediaStore.Audio.Media.DISPLAY_NAME} = ?"
         val selectionArgs = arrayOf(audioName)
