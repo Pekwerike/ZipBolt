@@ -25,7 +25,10 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
         VIDEO_TRANSFER_COMPLETE(4),
         VIDEO_RECEIVE_COMPLETE(5),
         APP_TRANSFER_WAITING(6),
-        APP_TRANSFER_OR_RECEIVE_COMPLETE(7)
+        APP_TRANSFER_OR_RECEIVE_COMPLETE(7),
+        AUDIO_TRANSFER_WAITING(8),
+        AUDIO_TRANSFER_COMPLETE(9),
+        AUDIO_RECEIVE_COMPLETE(10)
     }
 
 
@@ -44,7 +47,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.APP_TRANSFER_WAITING.value
                             }
                             is DataToTransfer.DeviceAudio -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_WAITING.value
                             }
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_WAITING.value

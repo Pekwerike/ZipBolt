@@ -55,6 +55,9 @@ class ZipBoltAudioRepository @Inject constructor(
             put(MediaStore.Audio.Media.DURATION, audioDuration)
             put(MediaStore.Audio.Media.DATE_MODIFIED, currentTime / 1000)
             put(MediaStore.Audio.Media.DATE_MODIFIED, currentTime / 1000)
+            put(MediaStore.Audio.Media.DATA, audioFile.absolutePath)
+            put(MediaStore.Audio.Media.IS_MUSIC, true)
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Video.Media.IS_PENDING, 1)
             }
@@ -117,7 +120,8 @@ class ZipBoltAudioRepository @Inject constructor(
             MediaStore.Audio.Media.DURATION,
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.SIZE,
-            MediaStore.Audio.Media.ALBUM_ID)
+            MediaStore.Audio.Media.ALBUM_ID
+        )
         val sortOrder = "$${MediaStore.Audio.Media.DATE_MODIFIED} DESC"
 
         context.contentResolver.query(
