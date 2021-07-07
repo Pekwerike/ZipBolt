@@ -122,7 +122,7 @@ class ZipBoltAudioRepository @Inject constructor(
             MediaStore.Audio.Media.SIZE,
             MediaStore.Audio.Media.ALBUM_ID
         )
-        val sortOrder = "$${MediaStore.Audio.Media.DATE_MODIFIED} DESC"
+        val sortOrder = "${MediaStore.Audio.Media.DATE_MODIFIED} DESC"
 
         context.contentResolver.query(
             collection,

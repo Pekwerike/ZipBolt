@@ -232,26 +232,25 @@ class MainActivity : AppCompatActivity() {
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(R.drawable.ic_baseline_music_note_24)
                                                 .into(ongoingDataReceiveLayoutImageView)
-                                            lifecycleScope.launch {
-                                                val audioDuration = withContext(Dispatchers.IO) {
-                                                    dataUri!!.getAudioDuration(this@MainActivity)
-                                                }
-                                                mainActivityViewModel.run {
-                                                    addDataToCurrentTransferHistory(
-                                                        OngoingDataTransferUIState.DataItem(
-                                                            DataToTransfer.DeviceAudio(
-                                                                dataUri!!,
-                                                                dataDisplayName,
-                                                                dataSize,
-                                                                audioDuration,
-                                                                Uri.parse("")
-                                                            ).apply {
-                                                                this.transferStatus =
-                                                                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                            }
-                                                        )
+
+                                            val audioDuration = withContext(Dispatchers.IO) {
+                                                dataUri!!.getAudioDuration(this@MainActivity)
+                                            }
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceAudio(
+                                                            dataUri!!,
+                                                            dataDisplayName,
+                                                            dataSize,
+                                                            audioDuration,
+                                                            Uri.parse("")
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
                                                     )
-                                                }
+                                                )
                                             }
                                         }
                                         DataToTransfer.MediaType.VIDEO.value -> {
@@ -259,25 +258,26 @@ class MainActivity : AppCompatActivity() {
                                                 .load(dataUri)
                                                 .into(ongoingDataReceiveLayoutImageView)
                                             mainActivityViewModel.run {
-                                                lifecycleScope.launch {
-                                                    val videoDuration =
-                                                        dataUri!!.getVideoDuration(this@MainActivity)
-                                                    addDataToCurrentTransferHistory(
-                                                        OngoingDataTransferUIState.DataItem(
-                                                            DataToTransfer.DeviceVideo(
-                                                                0L,
-                                                                dataUri!!,
-                                                                dataDisplayName,
-                                                                videoDuration,
-                                                                dataSize,
-                                                                "Video/*"
-                                                            ).apply {
-                                                                this.transferStatus =
-                                                                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                            }
-                                                        )
-                                                    )
+                                                val videoDuration = withContext(Dispatchers.IO) {
+                                                    dataUri!!.getVideoDuration(this@MainActivity)
                                                 }
+                                                
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceVideo(
+                                                            0L,
+                                                            dataUri!!,
+                                                            dataDisplayName,
+                                                            videoDuration,
+                                                            dataSize,
+                                                            "Video/*"
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+
                                             }
                                         }
                                         DataToTransfer.MediaType.APP.value -> {
