@@ -47,9 +47,6 @@ import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformat
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
-import com.salesground.zipbolt.utils.customizeDate
-import com.salesground.zipbolt.utils.parseDate
-import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -64,7 +61,7 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
-import com.salesground.zipbolt.utils.getVideoDuration
+import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
 
 
@@ -229,6 +226,32 @@ class MainActivity : AppCompatActivity() {
                                                         }
                                                     )
                                                 )
+                                            }
+                                        }
+                                        DataToTransfer.MediaType.AUDIO.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(R.drawable.ic_baseline_music_note_24)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            lifecycleScope.launch {
+                                                val audioDuration = withContext(Dispatchers.IO) {
+                                                    dataUri!!.getAudioDuration(this@MainActivity)
+                                                }
+                                                mainActivityViewModel.run {
+                                                    addDataToCurrentTransferHistory(
+                                                        OngoingDataTransferUIState.DataItem(
+                                                            DataToTransfer.DeviceAudio(
+                                                                dataUri!!,
+                                                                dataDisplayName,
+                                                                dataSize,
+                                                                audioDuration,
+                                                                Uri.parse("")
+                                                            ).apply {
+                                                                this.transferStatus =
+                                                                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                            }
+                                                        )
+                                                    )
+                                                }
                                             }
                                         }
                                         DataToTransfer.MediaType.VIDEO.value -> {
@@ -1440,7 +1463,7 @@ class MainActivity : AppCompatActivity() {
             wifiP2pManager = wifiP2pManager,
             wifiP2pChannel = wifiP2pChannel
         )
-        wifiP2pManager.removeGroup(wifiP2pChannel, object: WifiP2pManager.ActionListener{
+        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
 
             }
