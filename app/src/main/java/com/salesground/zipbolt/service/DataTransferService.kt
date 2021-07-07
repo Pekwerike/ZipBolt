@@ -241,12 +241,6 @@ class DataTransferService : Service() {
             serverSocket.receiveBufferSize = BUFFER_SIZE
             serverSocket.reuseAddress = true
             serverSocket.bind(InetSocketAddress(SOCKET_PORT))
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    this@DataTransferService,
-                    "Created server socket", Toast.LENGTH_LONG
-                ).show()
-            }
             socket = serverSocket.accept()
             socket.sendBufferSize = BUFFER_SIZE
             socket.receiveBufferSize = BUFFER_SIZE
