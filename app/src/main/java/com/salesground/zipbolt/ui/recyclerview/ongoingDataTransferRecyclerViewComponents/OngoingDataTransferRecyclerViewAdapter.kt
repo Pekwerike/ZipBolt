@@ -11,6 +11,8 @@ import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewCo
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOngoingViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOrReceiveCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
@@ -124,6 +126,18 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
 
+            OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_WAITING.value -> {
+                AudioTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value -> {
+                AudioTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value -> {
+                AudioTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
             else -> {
                 ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
@@ -148,6 +162,12 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is VideoTransferCompleteLayoutItemViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is AudioTransferCompleteLayoutItemViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is AudioTransferWaitingLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
         }
