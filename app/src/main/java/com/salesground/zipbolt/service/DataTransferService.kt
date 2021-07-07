@@ -290,8 +290,7 @@ class DataTransferService : Service() {
                         InetSocketAddress(
                             serverIpAddress,
                             SOCKET_PORT
-                        ),
-                        1000
+                        )
                     )
                     if (socket.isConnected) break
                 }

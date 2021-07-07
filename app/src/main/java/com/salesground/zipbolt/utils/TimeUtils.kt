@@ -66,3 +66,16 @@ fun Uri.getVideoDuration(context: Context): Long {
 
     return videoDuration
 }
+
+fun Uri.getAudioDuration(context: Context): Long {
+    var audioDuration = 0L
+    context.contentResolver.query(
+        this,
+        arrayOf(MediaStore.Audio.Media.DURATION),
+        null, null, null
+    )?.let { cursor: Cursor ->
+        cursor.moveToFirst()
+        audioDuration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+    }
+    return audioDuration
+}
