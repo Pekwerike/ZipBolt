@@ -298,11 +298,11 @@ class DataTransferService : Service() {
             try {
                 socketDIS =
                     DataInputStream(BufferedInputStream(socket.getInputStream()))
-            }catch (connectionException: SocketException){
+                delay(400)
+                listenForMediaToReceive(socketDIS)
+            } catch (connectionException: Exception) {
                 configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
             }
-            delay(400)
-            listenForMediaToReceive(socketDIS)
         }
     }
 
