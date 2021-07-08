@@ -63,6 +63,8 @@ import androidx.core.content.ContextCompat
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -75,6 +77,9 @@ class MainActivity : AppCompatActivity() {
         SEND(1),
         RECEIVE(2),
         SEND_AND_RECEIVE(3),
+        SEND_AND_RECEIVE_BUT_DISCOVERING(7),
+        SEND_BUT_DISCOVERING_PEER(5),
+        RECEIVE_BUT_DISCOVERING_PEER(6),
         NO_ROLE(4)
     }
 
@@ -261,7 +266,7 @@ class MainActivity : AppCompatActivity() {
                                                 val videoDuration = withContext(Dispatchers.IO) {
                                                     dataUri!!.getVideoDuration(this@MainActivity)
                                                 }
-                                                
+
                                                 addDataToCurrentTransferHistory(
                                                     OngoingDataTransferUIState.DataItem(
                                                         DataToTransfer.DeviceVideo(
@@ -374,7 +379,12 @@ class MainActivity : AppCompatActivity() {
                                                 dataToTransfer.applicationIcon
                                             )
                                             .into(ongoingDataTransferDataCategoryImageView)
-                                    } else {
+                                    } else if(dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value) {
+                                        dataToTransfer as DataToTransfer.DeviceAudio
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(dataToTransfer.audioArtPath)
+                                            .error(R.drawable.ic_baseline_music_note_24)
+                                            .into(ongoingDataTransferDataCategoryImageView)
 
                                     }
                                 }
@@ -391,6 +401,8 @@ class MainActivity : AppCompatActivity() {
                             ) {
                                 dataSize =
                                     dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
+                                dataTransferPercentAsString = "100%"
+                                dataTransferPercent = 100
                             }
 
                             mainActivityViewModel.currentTransferHistory.find {
@@ -567,11 +579,16 @@ class MainActivity : AppCompatActivity() {
 
     private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
-
+            if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER) {
+                createWifiDirectGroup()
+            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
+                || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
+            ) {
+                beginPeerDiscovery()
+            }
         }
 
         override fun wifiOff() {
-
         }
 
         override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
@@ -583,6 +600,24 @@ class MainActivity : AppCompatActivity() {
             peeredDevice: WifiP2pDevice
         ) {
             startPeerDiscovery = false
+            deviceTransferRole = when (deviceTransferRole) {
+                DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
+                    DeviceTransferRole.SEND
+                }
+                DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
+                    DeviceTransferRole.RECEIVE
+                }
+                DeviceTransferRole.NO_ROLE -> {
+                    DeviceTransferRole.NO_ROLE
+                }
+                DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
+                    DeviceTransferRole.SEND_AND_RECEIVE
+                }
+                else -> {
+                    deviceTransferRole
+                }
+            }
+
             // update the ui to show that this device is connected to peer
             mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
             if (dataTransferService?.isActive == true) {
@@ -1117,6 +1152,7 @@ class MainActivity : AppCompatActivity() {
                         DeviceTransferRole.NO_ROLE -> {
                             getString(R.string.you_can_transfer_and_receive_files_now)
                         }
+                        else -> ""
                     }
 
                 collapseExpandedConnectedToPeerNoActionImageButton.setOnClickListener {
@@ -1206,45 +1242,55 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.STATE_COLLAPSED
     }
 
-
     private fun configureConnectionOptionsModalBottomSheetLayout() {
         modalBottomSheetDialog = BottomSheetDialog(this)
         modalBottomSheetDialog.setContentView(
             ZipBoltProConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater).apply {
                 zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
-                    deviceTransferRole = DeviceTransferRole.SEND
+                    deviceTransferRole = DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
-                            wifiManager.isWifiEnabled = true
+                            if (wifiManager.setWifiEnabled(true)) {
+                                // Show the user that searching for peers has started
+                                mainActivityViewModel.expandedWaitingForReceiver()
+                            } else {
+                                displayToast("Turn off your hotspot")
+                            }
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                        modalBottomSheetDialog.hide()
                         createWifiDirectGroup()
                     }
+                    modalBottomSheetDialog.hide()
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
-                    deviceTransferRole = DeviceTransferRole.RECEIVE
+                    deviceTransferRole = DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
                     // Turn on device wifi
                     if (!wifiManager.isWifiEnabled) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
-                            wifiManager.isWifiEnabled = true
+                            if (wifiManager.setWifiEnabled(true)) {
+                                // Show the user that searching for peers has started
+                                mainActivityViewModel.expandedSearchingForPeers()
+                            } else {
+                                displayToast("Turn off your hotspot")
+                            }
                         }
                     } else {
-                        // Create Wifi p2p group, if wifi is enabled
+                        // Show the user that searching for peers has started
+                        mainActivityViewModel.expandedSearchingForPeers()
                         // begin peer discovery
-                        modalBottomSheetDialog.hide()
                         beginPeerDiscovery()
                     }
+                    modalBottomSheetDialog.hide()
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
-                    deviceTransferRole = DeviceTransferRole.SEND_AND_RECEIVE
+                    deviceTransferRole = DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
                 }
             }.root
         )
@@ -1359,9 +1405,11 @@ class MainActivity : AppCompatActivity() {
                         srcDevice.deviceName =
                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
                         if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
+                            if(deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER){
                             mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
                                 srcDevice
                             )
+                            }
                     }
                 }
 
@@ -1381,23 +1429,38 @@ class MainActivity : AppCompatActivity() {
                                         wifiP2pChannel,
                                         object : WifiP2pManager.ActionListener {
                                             override fun onSuccess() {
-
+                                                Timer(
+                                                    "Restart service discovery",
+                                                    false
+                                                ).schedule(
+                                                    2500
+                                                ) {
+                                                    if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                                        beginPeerDiscovery()
+                                                    }
+                                                }
                                             }
 
                                             override fun onFailure(reason: Int) {
-
+                                                if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                                    beginPeerDiscovery()
+                                                }
                                             }
                                         })
                                 }
 
                                 override fun onFailure(reason: Int) {
-
+                                    if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                        beginPeerDiscovery()
+                                    }
                                 }
                             })
                     }
 
                     override fun onFailure(reason: Int) {
-
+                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                            beginPeerDiscovery()
+                        }
                     }
                 })
 
@@ -1438,11 +1501,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun createSystemBroadcastIntentFilter(): IntentFilter {
         return IntentFilter().apply {
-            addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-            addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-            addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
-            addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION)
+            addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
         }
     }
 
@@ -1596,5 +1656,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+       /* wifiP2pManager.clearLocalServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailure(reason: Int) {
+            }
+        })*/
     }
 }

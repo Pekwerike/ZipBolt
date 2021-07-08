@@ -18,10 +18,7 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification.Comp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.*
-import java.net.ConnectException
-import java.net.InetSocketAddress
-import java.net.ServerSocket
-import java.net.Socket
+import java.net.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -183,20 +180,20 @@ class DataTransferService : Service() {
 
     }
 
-   fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
-       CoroutineScope(Dispatchers.IO).launch {
-           while (true) {
-               if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA){
-                   delay(300)
-                   break
-               }
-               // else get stuck in this loop waiting for the current transfer to complete
-           }
-           // when dataTransferUserEvent shows data is not available then assign the new data
-           dataCollection = dataCollectionSelected
-           mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
-       }
-   }
+    fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA) {
+                    delay(300)
+                    break
+                }
+                // else get stuck in this loop waiting for the current transfer to complete
+            }
+            // when dataTransferUserEvent shows data is not available then assign the new data
+            dataCollection = dataCollectionSelected
+            mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
+        }
+    }
 
 
     override fun onBind(intent: Intent): IBinder {
@@ -273,21 +270,18 @@ class DataTransferService : Service() {
 
     private fun configureReceiverSocketForOneDirectionalReceive(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            delay(300)
             socket = Socket()
             socket.sendBufferSize = BUFFER_SIZE
             socket.receiveBufferSize = BUFFER_SIZE
             socket.bind(null)
             try {
-                while (true) {
-                    socket.connect(
-                        InetSocketAddress(
-                            serverIpAddress,
-                            SOCKET_PORT
-                        )
-                    )
-                    if (socket.isConnected) break
-                }
+                socket.connect(
+                    InetSocketAddress(
+                        serverIpAddress,
+                        SOCKET_PORT
+                    ), 0
+                )
+
             } catch (exception: IOException) {
                 Log.e("UnseenError", exception.stackTraceToString())
                 // send broadcast message to the main activity that we couldn't connect to peer.
@@ -301,12 +295,14 @@ class DataTransferService : Service() {
                 stopForeground(true)
                 stopSelf()
             }
-
-            socketDIS =
-                DataInputStream(BufferedInputStream(socket.getInputStream()))
-
-            delay(300)
-            listenForMediaToReceive(socketDIS)
+            try {
+                socketDIS =
+                    DataInputStream(BufferedInputStream(socket.getInputStream()))
+                delay(400)
+                listenForMediaToReceive(socketDIS)
+            } catch (connectionException: Exception) {
+                configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
+            }
         }
     }
 

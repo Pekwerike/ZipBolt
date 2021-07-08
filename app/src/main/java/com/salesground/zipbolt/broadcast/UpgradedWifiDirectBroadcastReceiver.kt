@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.*
+import android.net.wifi.WifiManager
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pGroup
 import android.net.wifi.p2p.WifiP2pInfo
@@ -34,6 +35,22 @@ class UpgradedWifiDirectBroadcastReceiver(
     override fun onReceive(context: Context?, intent: Intent?) {
         intent?.let {
             when (intent.action) {
+                WifiManager.WIFI_STATE_CHANGED_ACTION -> {
+                    val previousWifiState =
+                        intent.getIntExtra(WifiManager.EXTRA_PREVIOUS_WIFI_STATE, -11)
+                    val currentWifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -11)
+
+                    if (previousWifiState == WifiManager.WIFI_STATE_ENABLING
+                        && currentWifiState == WifiManager.WIFI_STATE_ENABLED
+                    ) {
+                        wifiDirectBroadcastReceiverCallback.wifiOn()
+                    }else if (previousWifiState == WifiManager.WIFI_STATE_DISABLING && currentWifiState
+                        == WifiManager.WIFI_STATE_DISABLED
+                    ) {
+                        wifiDirectBroadcastReceiverCallback.wifiOff()
+                    }
+
+                }
                 WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                     if (isConnectedToPeerNetwork(intent)) {
                         wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
