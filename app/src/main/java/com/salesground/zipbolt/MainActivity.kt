@@ -383,6 +383,7 @@ class MainActivity : AppCompatActivity() {
                                         dataToTransfer as DataToTransfer.DeviceAudio
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(dataToTransfer.audioArtPath)
+                                            .error(R.drawable.ic_baseline_music_note_24)
                                             .into(ongoingDataTransferDataCategoryImageView)
 
                                     }
