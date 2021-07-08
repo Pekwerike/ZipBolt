@@ -155,7 +155,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 }
 
                 dataOutputStream.write(buffer, 0, lengthRead)
-
                 dataTransferListener.onTransfer(
                     this.dataToTransfer!!,
                     ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,

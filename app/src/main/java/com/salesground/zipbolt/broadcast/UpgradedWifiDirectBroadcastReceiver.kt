@@ -44,12 +44,12 @@ class UpgradedWifiDirectBroadcastReceiver(
                         && currentWifiState == WifiManager.WIFI_STATE_ENABLED
                     ) {
                         wifiDirectBroadcastReceiverCallback.wifiOn()
-                    }
-                    if (previousWifiState == WifiManager.WIFI_STATE_DISABLING && currentWifiState
+                    }else if (previousWifiState == WifiManager.WIFI_STATE_DISABLING && currentWifiState
                         == WifiManager.WIFI_STATE_DISABLED
                     ) {
                         wifiDirectBroadcastReceiverCallback.wifiOff()
                     }
+
                 }
                 WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
                     if (isConnectedToPeerNetwork(intent)) {
