@@ -382,7 +382,7 @@ class MainActivity : AppCompatActivity() {
                                     } else if(dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value) {
                                         dataToTransfer as DataToTransfer.DeviceAudio
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(dataToTransfer.albumArtPath)
+                                            .load(dataToTransfer.audioArtPath)
                                             .into(ongoingDataTransferDataCategoryImageView)
 
                                     }
