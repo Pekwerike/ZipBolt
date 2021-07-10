@@ -286,14 +286,14 @@ class DataTransferService : Service() {
                 Log.e("UnseenError", exception.stackTraceToString())
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
-                with(dataTransferServiceConnectionStateIntent) {
+               /* with(dataTransferServiceConnectionStateIntent) {
                     action =
                         DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
 
                     localBroadcastManager.sendBroadcast(this)
                 }
                 stopForeground(true)
-                stopSelf()
+                stopSelf()*/
             }
             try {
                 socketDIS =
