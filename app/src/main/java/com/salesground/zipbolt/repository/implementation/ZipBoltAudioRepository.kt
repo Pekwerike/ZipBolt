@@ -10,7 +10,7 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.readStreamDataIntoFile
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.AudioRepositoryI
+import com.salesground.zipbolt.repository.AudioRepository
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.DataInputStream
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class ZipBoltAudioRepository @Inject constructor(
     savedFilesRepository: SavedFilesRepository,
     @ApplicationContext val context: Context
-) : AudioRepositoryI {
+) : AudioRepository {
 
     private val zipBoltAudioFolder: File by lazy {
         savedFilesRepository

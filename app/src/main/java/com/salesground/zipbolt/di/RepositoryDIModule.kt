@@ -32,5 +32,5 @@ abstract class RepositoryDIModule {
 
     @Singleton
     @Binds
-    abstract fun getZipBoltAudioRepository(zipBoltAudioRepository: ZipBoltAudioRepository): AudioRepositoryI
+    abstract fun getZipBoltAudioRepository(zipBoltAudioRepository: ZipBoltAudioRepository): AudioRepository
 }

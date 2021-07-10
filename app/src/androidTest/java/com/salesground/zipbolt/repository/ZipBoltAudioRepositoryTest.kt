@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.repository.implementation
+package com.salesground.zipbolt.repository
 
 import android.content.Context
 import android.net.Uri
@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
+import com.salesground.zipbolt.repository.implementation.ZipBoltAudioRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 
