@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.AudioRepositoryI
+import com.salesground.zipbolt.repository.AudioRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class AudioViewModel @Inject constructor(private val audioRepositoryI: AudioRepositoryI) : ViewModel() {
+class AudioViewModel @Inject constructor(private val audioRepository: AudioRepository) : ViewModel() {
 
     val selectedAudioFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
 
@@ -28,7 +28,7 @@ class AudioViewModel @Inject constructor(private val audioRepositoryI: AudioRepo
     private fun getDeviceAudio() {
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val deviceAudio = audioRepositoryI.getAudioOnDevice()
+                val deviceAudio = audioRepository.getAudioOnDevice()
                 withContext(Dispatchers.Main) {
                     _deviceAudio.value = deviceAudio
                 }

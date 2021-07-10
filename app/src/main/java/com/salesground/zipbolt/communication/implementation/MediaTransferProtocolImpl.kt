@@ -45,7 +45,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
         )
     }
 
-    private val audioRepository: AudioRepositoryI by lazy {
+    private val mAudioRepository: AudioRepository by lazy {
         ZipBoltAudioRepository(
             savedFilesRepository,
             context
@@ -229,7 +229,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
             }
 
             DataToTransfer.MediaType.AUDIO.value -> {
-                audioRepository.insertAudioIntoMediaStore(
+                mAudioRepository.insertAudioIntoMediaStore(
                     audioName = mediaName,
                     audioSize = mediaSize,
                     audioDuration = dataInputStream.readLong(),
