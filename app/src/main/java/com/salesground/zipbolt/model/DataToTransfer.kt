@@ -4,6 +4,7 @@ import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.core.net.toUri
+import java.io.File
 
 sealed class DataToTransfer(
     var dataDisplayName: String,
@@ -106,6 +107,15 @@ sealed class DataToTransfer(
         dataUri = apkPath.toUri(),
         dataSize = appSize,
         dataType = MediaType.APP.value
+    )
+
+    data class DeviceFile(
+        val file: File,
+    ): DataToTransfer(
+        dataDisplayName = file.name,
+        dataUri = Uri.fromFile(file),
+        dataSize = file.length(),
+        dataType = MediaType.FILE.value
     )
 }
 
