@@ -54,6 +54,9 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_WAITING.value
                             }
+                            is DataToTransfer.DeviceFile -> {
+                                300
+                            }
                         }
                     }
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
@@ -70,6 +73,9 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value
                             }
+                            is DataToTransfer.DeviceFile -> {
+                                300
+                            }
                         }
                     }
                     DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
@@ -85,6 +91,9 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                             }
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_RECEIVE_COMPLETE.value
+                            }
+                            is DataToTransfer.DeviceFile -> {
+                                300
                             }
                         }
                     }
