@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class FilesViewModel(
+class FileViewModel(
     private val filesRepository: FileRepository
 ) : ViewModel() {
 
