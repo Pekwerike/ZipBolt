@@ -11,8 +11,8 @@ import dagger.hilt.components.SingletonComponent
 
 @InstallIn(ServiceComponent::class)
 @Module
-abstract class CommunicationDIModule {
-
+abstract class
+CommunicationDIModule {
 
     @Binds
     abstract fun getMediaTransferProtocol(
