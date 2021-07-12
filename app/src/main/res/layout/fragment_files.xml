@@ -6,7 +6,8 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.FilesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <FrameLayout
+        android:id="@+id/fragment_files_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/standard_margin" />
