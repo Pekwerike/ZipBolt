@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="fileName"
+            type="String" />
+    </data>
+
+    <LinearLayout
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/view_group_standard_padding">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/folder_layout_item_folder_icon_image_view"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/ic_baseline_folder_open_24" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/folder_layout_item_folder_name_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="@dimen/medium_margin"
+            android:padding="@dimen/standard_text_view_padding"
+            android:text="@{fileName}"
+            app:style="@style/TextAppearance.MaterialComponents.Body1" />
+    </LinearLayout>
+</layout>
