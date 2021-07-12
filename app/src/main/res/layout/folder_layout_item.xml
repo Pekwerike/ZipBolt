@@ -5,7 +5,7 @@
     <data>
 
         <variable
-            name="fileName"
+            name="folderName"
             type="String" />
     </data>
 
@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/medium_margin"
             android:padding="@dimen/standard_text_view_padding"
-            android:text="@{fileName}"
+            android:text="@{folderName}"
             app:style="@style/TextAppearance.MaterialComponents.Body1" />
     </LinearLayout>
 </layout>

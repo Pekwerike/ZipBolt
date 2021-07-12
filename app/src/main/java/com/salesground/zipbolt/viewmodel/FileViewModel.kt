@@ -21,10 +21,16 @@ class FileViewModel @Inject constructor(
     val directoryChildren: LiveData<Array<File>>
         get() = _directoryChildren
 
+    private val _rootDirectory = MutableLiveData<File>(null)
+    val rootDirectory: LiveData<File>
+        get() = _rootDirectory
+
 
     fun getRootDirectory() {
         viewModelScope.launch {
-
+            _rootDirectory.value = withContext(Dispatchers.IO) {
+                filesRepository.getRootDirectory()
+            }!!
         }
     }
 
