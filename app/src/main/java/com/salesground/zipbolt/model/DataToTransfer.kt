@@ -1,10 +1,15 @@
 package com.salesground.zipbolt.model
 
+import android.content.ContentResolver
+import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.webkit.MimeTypeMap
+import androidx.compose.ui.text.toLowerCase
 import androidx.core.net.toUri
 import java.io.File
+import java.util.*
 
 sealed class DataToTransfer(
     var dataDisplayName: String,
@@ -111,11 +116,55 @@ sealed class DataToTransfer(
 
     data class DeviceFile(
         val file: File,
-    ): DataToTransfer(
+    ) : DataToTransfer(
         dataDisplayName = file.name,
         dataUri = Uri.fromFile(file),
         dataSize = file.length(),
         dataType = MediaType.FILE.value
     )
+
+    fun getFileType(context: Context): MediaType {
+        if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
+        ) {
+            context.contentResolver.run {
+                getType(dataUri)?.let {
+                    return getMediaType(it)
+                }
+            }
+        } else {
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
+                dataUri.toString()
+            )
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                fileExtension.lowercase(Locale.getDefault())
+            )?.let {
+                return getMediaType(it)
+            }
+        }
+        return MediaType.FILE
+    }
+
+    private fun getMediaType(mimeType: String): MediaType {
+        return when {
+            mimeType.contains("image") -> {
+                MediaType.IMAGE
+            }
+            mimeType.contains("video") -> {
+                MediaType.VIDEO
+            }
+            mimeType.contains("file") -> {
+                MediaType.FILE
+            }
+            mimeType.contains("app") -> {
+                MediaType.APP
+            }
+            mimeType.contains("audio") -> {
+                MediaType.AUDIO
+            }
+            else -> {
+                MediaType.FILE
+            }
+        }
+    }
 }
 
