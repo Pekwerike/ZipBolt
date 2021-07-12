@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.repository.FileRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import javax.inject.Inject
 
-class FileViewModel(
+@HiltViewModel
+class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
 
@@ -18,10 +21,16 @@ class FileViewModel(
     val directoryChildren: LiveData<Array<File>>
         get() = _directoryChildren
 
+    private val _rootDirectory = MutableLiveData<File>(null)
+    val rootDirectory: LiveData<File>
+        get() = _rootDirectory
+
 
     fun getRootDirectory() {
         viewModelScope.launch {
-
+            _rootDirectory.value = withContext(Dispatchers.IO) {
+                filesRepository.getRootDirectory()
+            }!!
         }
     }
 
