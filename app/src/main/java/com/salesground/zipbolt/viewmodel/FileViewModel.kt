@@ -35,7 +35,7 @@ class FileViewModel @Inject constructor(
         }
     }
 
-    fun getFolderChildren(directoryPath: String) {
+    fun getDirectoryChildren(directoryPath: String) {
         viewModelScope.launch {
             _directoryChildren.value = withContext(Dispatchers.IO) {
                 filesRepository.getDirectoryChildren(
@@ -46,6 +46,6 @@ class FileViewModel @Inject constructor(
     }
 
     fun clearCurrentFolderChildren() {
-
+        _directoryChildren.value = listOf()
     }
 }

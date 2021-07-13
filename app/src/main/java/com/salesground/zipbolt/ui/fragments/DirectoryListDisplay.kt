@@ -6,15 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.salesground.zipbolt.R
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.databinding.FragmentDirectoryListDisplayBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.FileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val DIRECTORY_PATH_ARG = "DirectoryPath"
 
+@AndroidEntryPoint
 class DirectoryListDisplay : Fragment() {
     private lateinit var fragmentDirectoryListDisplayBinding: FragmentDirectoryListDisplayBinding
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
@@ -50,7 +52,8 @@ class DirectoryListDisplay : Fragment() {
         arguments?.let {
             directoryPath = it.getString(DIRECTORY_PATH_ARG) ?: ""
             if (directoryPath.isNotEmpty()) {
-                fileViewModel.getFolderChildren(directoryPath)
+                fileViewModel.clearCurrentFolderChildren()
+                fileViewModel.getDirectoryChildren(directoryPath)
             }
         }
     }
@@ -64,16 +67,22 @@ class DirectoryListDisplay : Fragment() {
             container,
             false
         )
+        observeViewModelLiveData()
         // Inflate the layout for this fragment
         return fragmentDirectoryListDisplayBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        fragmentDirectoryListDisplayBinding.run {
+            fragmentDirectoryListDisplayRecyclerview.run {
+                adapter = directoryListDisplayRecyclerViewAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            }
+        }
     }
 
     private fun observeViewModelLiveData() {
-        fileViewModel.directoryChildren.observe(this) {
+        fileViewModel.directoryChildren.observe(viewLifecycleOwner) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
             }

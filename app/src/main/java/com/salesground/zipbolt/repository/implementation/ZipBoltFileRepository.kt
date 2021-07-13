@@ -4,8 +4,9 @@ import android.os.Environment
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.FileRepository
 import java.io.File
+import javax.inject.Inject
 
-class ZipBoltFileRepository : FileRepository {
+class ZipBoltFileRepository @Inject constructor() : FileRepository {
 
     override suspend fun getRootDirectory(): File {
         return Environment.getExternalStorageDirectory()
