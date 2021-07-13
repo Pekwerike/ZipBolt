@@ -5,11 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentDirectoryListDisplayBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.viewmodel.FileViewModel
 
 private const val DIRECTORY_PATH_ARG = "DirectoryPath"
 
@@ -17,7 +19,7 @@ class DirectoryListDisplay : Fragment() {
     private lateinit var fragmentDirectoryListDisplayBinding: FragmentDirectoryListDisplayBinding
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
     private var filesFragment: FilesFragment? = null
-
+    private val fileViewModel: FileViewModel by activityViewModels()
     private var directoryPath = ""
 
     companion object {
@@ -47,6 +49,9 @@ class DirectoryListDisplay : Fragment() {
         )
         arguments?.let {
             directoryPath = it.getString(DIRECTORY_PATH_ARG) ?: ""
+            if (directoryPath.isNotEmpty()) {
+                fileViewModel.getFolderChildren(directoryPath)
+            }
         }
     }
 
@@ -65,5 +70,13 @@ class DirectoryListDisplay : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+    }
+
+    private fun observeViewModelLiveData() {
+        fileViewModel.directoryChildren.observe(this) {
+            it?.let {
+                directoryListDisplayRecyclerViewAdapter.submitList(it)
+            }
+        }
     }
 }
