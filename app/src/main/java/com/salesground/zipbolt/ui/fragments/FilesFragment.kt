@@ -26,4 +26,8 @@ class FilesFragment : Fragment() {
         return filesFragmentLayout.root
 
     }
+
+    fun onDirectoryClicked(directoryPath: String){
+
+    }
 }
