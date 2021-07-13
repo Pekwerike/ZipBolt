@@ -52,6 +52,7 @@ class DirectoryListDisplay : Fragment() {
         arguments?.let {
             directoryPath = it.getString(DIRECTORY_PATH_ARG) ?: ""
         }
+        observeViewModelLiveData()
     }
 
     override fun onCreateView(
@@ -67,7 +68,6 @@ class DirectoryListDisplay : Fragment() {
             fileViewModel.clearCurrentFolderChildren()
             fileViewModel.getDirectoryChildren(directoryPath)
         }
-        observeViewModelLiveData()
         // Inflate the layout for this fragment
         return fragmentDirectoryListDisplayBinding.root
     }
@@ -82,7 +82,7 @@ class DirectoryListDisplay : Fragment() {
     }
 
     private fun observeViewModelLiveData() {
-        fileViewModel.directoryChildren.observe(viewLifecycleOwner) {
+        fileViewModel.directoryChildren.observe(this) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
             }
