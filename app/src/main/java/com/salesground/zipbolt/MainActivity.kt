@@ -61,6 +61,7 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -72,6 +73,15 @@ const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    interface PopBackStackListener {
+        fun popStack()
+    }
+
+    private var popBackStackListener: PopBackStackListener? = null
+
+    fun setBackButtonPressedClickListener(popBackStackListener: PopBackStackListener) {
+        this.popBackStackListener = popBackStackListener
+    }
 
     enum class DeviceTransferRole(value: Int) {
         SEND(1),
@@ -379,7 +389,7 @@ class MainActivity : AppCompatActivity() {
                                                 dataToTransfer.applicationIcon
                                             )
                                             .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if(dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value) {
+                                    } else if (dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value) {
                                         dataToTransfer as DataToTransfer.DeviceAudio
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(dataToTransfer.audioArtPath)
@@ -1405,10 +1415,10 @@ class MainActivity : AppCompatActivity() {
                         srcDevice.deviceName =
                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
                         if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
-                            if(deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER){
-                            mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
-                                srcDevice
-                            )
+                            if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
+                                    srcDevice
+                                )
                             }
                     }
                 }
@@ -1656,13 +1666,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-       /* wifiP2pManager.clearLocalServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-            override fun onSuccess() {
+        /* wifiP2pManager.clearLocalServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+             override fun onSuccess() {
 
-            }
+             }
 
-            override fun onFailure(reason: Int) {
-            }
-        })*/
+             override fun onFailure(reason: Int) {
+             }
+         })*/
     }
+
+    override fun onBackPressed() {
+        if(FilesFragment.backStackCount > 0){
+            popBackStackListener?.popStack()
+            FilesFragment.backStackCount--
+        }else super.onBackPressed()
+    }
+
+
 }

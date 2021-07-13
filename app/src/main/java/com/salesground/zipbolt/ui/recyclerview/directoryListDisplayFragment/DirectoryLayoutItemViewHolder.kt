@@ -17,6 +17,12 @@ class DirectoryLayoutItemViewHolder(
     fun bindData(dataToTransfer: DataToTransfer) {
         folderLayoutItemBinding.run {
             folderName = dataToTransfer.dataDisplayName
+
+            folderLayoutItemViewGroup.setOnClickListener {
+                dataToTransferRecyclerViewItemClickListener.onClick(
+                    dataToTransfer
+                )
+            }
         }
     }
 

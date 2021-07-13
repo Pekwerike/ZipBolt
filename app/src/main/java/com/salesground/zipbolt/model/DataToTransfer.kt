@@ -137,7 +137,7 @@ sealed class DataToTransfer(
                 dataUri.toString()
             )
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                fileExtension.lowercase(Locale.getDefault())
+                fileExtension.toLowerCase(Locale.ROOT)
             )?.let {
                 return getMediaType(it)
             }
