@@ -51,10 +51,6 @@ class DirectoryListDisplay : Fragment() {
         )
         arguments?.let {
             directoryPath = it.getString(DIRECTORY_PATH_ARG) ?: ""
-            if (directoryPath.isNotEmpty()) {
-                fileViewModel.clearCurrentFolderChildren()
-                fileViewModel.getDirectoryChildren(directoryPath)
-            }
         }
     }
 
@@ -67,6 +63,10 @@ class DirectoryListDisplay : Fragment() {
             container,
             false
         )
+        if (directoryPath.isNotEmpty()) {
+            fileViewModel.clearCurrentFolderChildren()
+            fileViewModel.getDirectoryChildren(directoryPath)
+        }
         observeViewModelLiveData()
         // Inflate the layout for this fragment
         return fragmentDirectoryListDisplayBinding.root
