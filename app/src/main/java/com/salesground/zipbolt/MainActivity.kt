@@ -74,7 +74,7 @@ const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     interface PopBackStackListener {
-        fun popStack()
+        fun popStack(): Boolean
     }
 
     private var popBackStackListener: PopBackStackListener? = null
@@ -1678,8 +1678,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if(FilesFragment.backStackCount > 0){
-            popBackStackListener?.popStack()
-            FilesFragment.backStackCount--
+            if(popBackStackListener?.popStack()) {
+                FilesFragment.backStackCount--
+            }else {
+                super.onBackPressed()
+            }
         }else super.onBackPressed()
     }
 

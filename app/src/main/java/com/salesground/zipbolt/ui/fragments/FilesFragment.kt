@@ -12,6 +12,7 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.IllegalStateException
 
 
 @AndroidEntryPoint
@@ -30,8 +31,13 @@ class FilesFragment : Fragment() {
             mainActivity = it as MainActivity
             mainActivity?.setBackButtonPressedClickListener(object :
                 MainActivity.PopBackStackListener {
-                override fun popStack() {
-                    childFragmentManager.popBackStack()
+                override fun popStack(): Boolean {
+                    return try {
+                        childFragmentManager.popBackStack()
+                        true
+                    } catch (illegalStateException: IllegalStateException) {
+                        false
+                    }
                 }
             })
         }
