@@ -1,6 +1,5 @@
 package com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment
 
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -10,7 +9,7 @@ import com.salesground.zipbolt.databinding.FolderLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
-class FolderLayoutItemViewHolder(
+class DirectoryLayoutItemViewHolder(
     private val folderLayoutItemBinding: FolderLayoutItemBinding,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
 ) : RecyclerView.ViewHolder(folderLayoutItemBinding.root) {
@@ -25,15 +24,14 @@ class FolderLayoutItemViewHolder(
         fun createViewHolder(
             parent: ViewGroup,
             dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
-        ): FolderLayoutItemViewHolder {
-            val layoutItemBinding = DataBindingUtil.inflate<
-                    FolderLayoutItemBinding>(
+        ): DirectoryLayoutItemViewHolder {
+            val layoutItemBinding = DataBindingUtil.inflate<FolderLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.folder_layout_item,
                 parent,
                 false
             )
-            return FolderLayoutItemViewHolder(
+            return DirectoryLayoutItemViewHolder(
                 layoutItemBinding,
                 dataToTransferRecyclerViewItemClickListener
             )

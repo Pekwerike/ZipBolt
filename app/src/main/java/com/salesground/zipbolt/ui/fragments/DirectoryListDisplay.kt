@@ -5,28 +5,56 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.salesground.zipbolt.R
+import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.salesground.zipbolt.databinding.FragmentDirectoryListDisplayBinding
+import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.viewmodel.FileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val DIRECTORY_PATH_ARG = "DirectoryPath"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DirectoryListDisplay.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class DirectoryListDisplay : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var fragmentDirectoryListDisplayBinding: FragmentDirectoryListDisplayBinding
+    private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
+    private var filesFragment: FilesFragment? = null
+    private val fileViewModel: FileViewModel by activityViewModels()
+    private var directoryPath = ""
+
+    companion object {
+        @JvmStatic
+        fun createNewInstance(directoryPath: String): DirectoryListDisplay {
+            return DirectoryListDisplay().apply {
+                arguments = Bundle().apply {
+                    putString(DIRECTORY_PATH_ARG, directoryPath)
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        parentFragment?.let {
+            filesFragment = it as FilesFragment
+        }
+        directoryListDisplayRecyclerViewAdapter = DirectoryListDisplayRecyclerViewAdapter(
+            requireContext(),
+            DataToTransferRecyclerViewItemClickListener {
+                it as DataToTransfer.DeviceFile
+                if (it.file.isDirectory) {
+                    filesFragment?.onDirectoryClicked(it.file.path)
+                }
+            }
+        )
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            directoryPath = it.getString(DIRECTORY_PATH_ARG) ?: ""
+            if (directoryPath.isNotEmpty()) {
+                fileViewModel.clearCurrentFolderChildren()
+                fileViewModel.getDirectoryChildren(directoryPath)
+            }
         }
     }
 
@@ -34,27 +62,30 @@ class DirectoryListDisplay : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        fragmentDirectoryListDisplayBinding = FragmentDirectoryListDisplayBinding.inflate(
+            inflater,
+            container,
+            false
+        )
+        observeViewModelLiveData()
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_directory_list_display, container, false)
+        return fragmentDirectoryListDisplayBinding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DirectoryListDisplay.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DirectoryListDisplay().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fragmentDirectoryListDisplayBinding.run {
+            fragmentDirectoryListDisplayRecyclerview.run {
+                adapter = directoryListDisplayRecyclerViewAdapter
+                layoutManager = LinearLayoutManager(requireContext())
             }
+        }
+    }
+
+    private fun observeViewModelLiveData() {
+        fileViewModel.directoryChildren.observe(viewLifecycleOwner) {
+            it?.let {
+                directoryListDisplayRecyclerViewAdapter.submitList(it)
+            }
+        }
     }
 }

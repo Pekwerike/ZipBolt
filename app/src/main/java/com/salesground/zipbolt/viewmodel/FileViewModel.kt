@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.FileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +18,8 @@ class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
 
-    private val _directoryChildren = MutableLiveData<Array<File>>(null)
-    val directoryChildren: LiveData<Array<File>>
+    private val _directoryChildren = MutableLiveData<List<DataToTransfer>>(null)
+    val directoryChildren: LiveData<List<DataToTransfer>>
         get() = _directoryChildren
 
     private val _rootDirectory = MutableLiveData<File>(null)
@@ -34,7 +35,7 @@ class FileViewModel @Inject constructor(
         }
     }
 
-    fun getFolderChildren(directoryPath: String) {
+    fun getDirectoryChildren(directoryPath: String) {
         viewModelScope.launch {
             _directoryChildren.value = withContext(Dispatchers.IO) {
                 filesRepository.getDirectoryChildren(
@@ -45,6 +46,6 @@ class FileViewModel @Inject constructor(
     }
 
     fun clearCurrentFolderChildren() {
-
+        _directoryChildren.value = listOf()
     }
 }
