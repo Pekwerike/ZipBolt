@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.commit
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
 
@@ -27,7 +28,14 @@ class FilesFragment : Fragment() {
 
     }
 
-    fun onDirectoryClicked(directoryPath: String){
+    fun onDirectoryClicked(directoryPath: String) {
+        requireActivity().supportFragmentManager.run {
+            commit {
+                replace(R.id.fragment_files_fragment_container,
+                DirectoryListDisplay.createNewInstance(directoryPath))
+                addToBackStack("kiki")
+            }
+        }
 
     }
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentDirectoryListDisplayBinding
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
 
@@ -38,7 +39,10 @@ class DirectoryListDisplay : Fragment() {
         directoryListDisplayRecyclerViewAdapter = DirectoryListDisplayRecyclerViewAdapter(
             requireContext(),
             DataToTransferRecyclerViewItemClickListener {
-
+                it as DataToTransfer.DeviceFile
+                if (it.file.isDirectory) {
+                    filesFragment?.onDirectoryClicked(it.file.path)
+                }
             }
         )
         arguments?.let {
