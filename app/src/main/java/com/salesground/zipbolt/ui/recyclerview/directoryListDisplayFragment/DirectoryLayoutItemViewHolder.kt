@@ -25,8 +25,7 @@ class DirectoryLayoutItemViewHolder(
             parent: ViewGroup,
             dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
         ): DirectoryLayoutItemViewHolder {
-            val layoutItemBinding = DataBindingUtil.inflate<
-                    FolderLayoutItemBinding>(
+            val layoutItemBinding = DataBindingUtil.inflate<FolderLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.folder_layout_item,
                 parent,

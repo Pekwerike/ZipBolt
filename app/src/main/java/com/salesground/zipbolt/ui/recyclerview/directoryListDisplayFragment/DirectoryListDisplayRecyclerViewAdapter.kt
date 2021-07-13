@@ -15,14 +15,6 @@ class DirectoryListDisplayRecyclerViewAdapter(
 ) : ListAdapter<DataToTransfer,
         RecyclerView.ViewHolder>(DataToTransferDiffUtill()) {
 
-    enum class DirectoryListMediaItemType(val value: Int) {
-        DIRECTORY(1),
-        IMAGE(2),
-        VIDEO(3),
-        AUDIO(4),
-        APP(5),
-        DOCUMENT(6)
-    }
 
     override fun getItemViewType(position: Int): Int {
         return when (val documentType = getItem(position).getFileType(context)) {
