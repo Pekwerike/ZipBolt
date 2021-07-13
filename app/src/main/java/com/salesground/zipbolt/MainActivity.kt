@@ -1678,7 +1678,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if(FilesFragment.backStackCount > 0){
-            if(popBackStackListener?.popStack()) {
+            if(popBackStackListener?.popStack() == true ) {
                 FilesFragment.backStackCount--
             }else {
                 super.onBackPressed()
