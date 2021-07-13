@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.webkit.MimeTypeMap
 import androidx.compose.ui.text.toLowerCase
 import androidx.core.net.toUri
@@ -123,7 +124,7 @@ sealed class DataToTransfer(
         dataType = MediaType.FILE.value
     )
 
-    fun getFileType(context: Context): MediaType {
+    fun getFileType(context: Context): DocumentType {
         if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
         ) {
             context.contentResolver.run {
@@ -141,28 +142,34 @@ sealed class DataToTransfer(
                 return getMediaType(it)
             }
         }
-        return MediaType.FILE
+        return DocumentType.Document.UnknownDocument
     }
 
-    private fun getMediaType(mimeType: String): MediaType {
+    private fun getMediaType(mimeType: String): DocumentType {
         return when {
-            mimeType.contains("image") -> {
-                MediaType.IMAGE
+            mimeType.contains("image", ignoreCase = true) -> {
+                DocumentType.Image
             }
-            mimeType.contains("video") -> {
-                MediaType.VIDEO
+            mimeType.contains("video", ignoreCase = true) -> {
+                DocumentType.Video
             }
-            mimeType.contains("file") -> {
-                MediaType.FILE
+            mimeType.contains("Pdf", ignoreCase = true) -> {
+                DocumentType.Document.Pdf
             }
-            mimeType.contains("app") -> {
-                MediaType.APP
+            mimeType.contains("app", ignoreCase = true) -> {
+                DocumentType.App
             }
-            mimeType.contains("audio") -> {
-                MediaType.AUDIO
+            mimeType.contains("audio", ignoreCase = true) -> {
+                DocumentType.Audio
+            }
+            mimeType.contains("word", ignoreCase = true) -> {
+                DocumentType.Document.WordDocument
+            }
+            mimeType.contains(DocumentsContract.Document.MIME_TYPE_DIR, ignoreCase = true) -> {
+                DocumentType.Directory
             }
             else -> {
-                MediaType.FILE
+                DocumentType.Document.UnknownDocument
             }
         }
     }
