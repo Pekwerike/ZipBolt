@@ -19,6 +19,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/folder_layout_item_folder_icon_image_view"
             android:layout_width="35dp"
+            app:tint="@color/background_color"
             android:layout_height="35dp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/ic_baseline_folder_open_24" />
@@ -26,11 +27,26 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/folder_layout_item_folder_name_text_view"
             style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/medium_margin"
             android:padding="@dimen/standard_text_view_padding"
             android:text="@{folderName}" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/folder_layout_item_folder_selected_check_box"
+            style="@style/CustomCheckBoxAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barrier5"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </LinearLayout>
 </layout>

@@ -1328,41 +1328,26 @@ class MainActivity : AppCompatActivity() {
             deviceAddress = wifiManager.connectionInfo.macAddress
             wps.setup = WpsInfo.PBC
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        /* group created successfully, update the device UI, that we are now
-                        * waiting for a receiver*/
-                        mainActivityViewModel.expandedWaitingForReceiver()
-                    }
+        wifiP2pManager.createGroup(wifiP2pChannel,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    /* group created successfully, update the device UI, that we are now
+                    * waiting for a receiver*/
+                    mainActivityViewModel.expandedWaitingForReceiver()
+                    /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
+                           it?.let {
+                               Toast.makeText(
+                                   this@MainActivity, "Password is " +
+                                           it.passphrase, Toast.LENGTH_LONG
+                               ).show()
+                           }
+                       }*/
+                }
 
-                    override fun onFailure(p0: Int) {
-                        displayToast("Group creation failed")
-                    }
-                })
-        } else {
-            wifiP2pManager.createGroup(wifiP2pChannel,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        /* group created successfully, update the device UI, that we are now
-                        * waiting for a receiver*/
-                        mainActivityViewModel.expandedWaitingForReceiver()
-                        /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
-                               it?.let {
-                                   Toast.makeText(
-                                       this@MainActivity, "Password is " +
-                                               it.passphrase, Toast.LENGTH_LONG
-                                   ).show()
-                               }
-                           }*/
-                    }
-
-                    override fun onFailure(p0: Int) {
-                        displayToast("Group creation failed")
-                    }
-                })
-        }
+                override fun onFailure(p0: Int) {
+                    displayToast("Group creation failed")
+                }
+            })
     }
 
     @SuppressLint("MissingPermission")
@@ -1677,13 +1662,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(FilesFragment.backStackCount > 0){
-            if(popBackStackListener?.popStack() == true ) {
+        if (FilesFragment.backStackCount > 0) {
+            if (popBackStackListener?.popStack() == true) {
                 FilesFragment.backStackCount--
-            }else {
+            } else {
                 super.onBackPressed()
             }
-        }else super.onBackPressed()
+        } else super.onBackPressed()
     }
 
 
