@@ -19,7 +19,6 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/folder_layout_item_folder_icon_image_view"
             android:layout_width="35dp"
-            app:tint="@color/background_color"
             android:layout_height="35dp"
             android:layout_gravity="center"
             app:srcCompat="@drawable/ic_baseline_folder_open_24" />
@@ -29,9 +28,9 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/medium_margin"
+            android:layout_weight="1"
             android:padding="@dimen/standard_text_view_padding"
             android:text="@{folderName}" />
 
