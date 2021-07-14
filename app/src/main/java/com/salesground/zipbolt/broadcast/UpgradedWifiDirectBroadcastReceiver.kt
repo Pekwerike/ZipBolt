@@ -83,12 +83,7 @@ class UpgradedWifiDirectBroadcastReceiver(
 
     private fun isConnectedToPeerNetwork(intent: Intent): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-                ?.let { networkCapabilities: NetworkCapabilities ->
-                    return networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) &&
-                            networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_WIFI_P2P)
-                }
-
+            return true
         } else {
             intent.getParcelableExtra<NetworkInfo>(WifiP2pManager.EXTRA_NETWORK_INFO)
                 ?.let { networkInfo: NetworkInfo ->
