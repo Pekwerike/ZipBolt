@@ -22,12 +22,15 @@
     <string name="close_connection_content_description">Close connection</string>
     <string name="connected_label">Connected</string>
     <string name="you_can_transfer_and_receive_files_now">You can transfer and receive files now!</string>
+    <string name="you_can_transfer_files_now">You can now send files to %1$s</string>
+    <string name="you_can_receive_files_now">You can receive files from %1$s</string>
     <string name="device_connection_details">Device Details</string>
     <string name="connect_to">Connect to</string>
     <string name="no_item_label">No item</string>
     <string name="completed_and_scheduled">Completed and Scheduled</string>
     <string name="sending">Sending</string>
     <string name="receiving">Receiving</string>
+    <string name="transfer_history">Transfer History</string>
     <string name="active_data_flow_label">Active data flow, swipe up to view details.</string>
     <string name="send_to_peer_connection_description">High-speed file transfer but you cannot receive from peer. Peer must choose Receive.</string>
     <string name="receive_connection_description">High-speed file receive but you cannot send file to peer. Peer must choose Send.</string>

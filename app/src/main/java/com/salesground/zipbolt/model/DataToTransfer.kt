@@ -1,9 +1,16 @@
 package com.salesground.zipbolt.model
 
+import android.content.ContentResolver
+import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.provider.DocumentsContract
+import android.webkit.MimeTypeMap
+import androidx.compose.ui.text.toLowerCase
 import androidx.core.net.toUri
+import java.io.File
+import java.util.*
 
 sealed class DataToTransfer(
     var dataDisplayName: String,
@@ -56,14 +63,10 @@ sealed class DataToTransfer(
 
     data class DeviceAudio(
         val audioUri: Uri,
-        val audioTitle: String,
         val audioDisplayName: String,
         val audioSize: Long,
         val audioDuration: Long,
-        val audioMimeType: String,
-        val musicArtPath: String,
-        val musicArtist: String
-
+        val audioArtPath: Uri
     ) : DataToTransfer(
         dataDisplayName = audioDisplayName,
         dataUri = audioUri,
@@ -111,5 +114,64 @@ sealed class DataToTransfer(
         dataSize = appSize,
         dataType = MediaType.APP.value
     )
+
+    data class DeviceFile(
+        val file: File,
+    ) : DataToTransfer(
+        dataDisplayName = file.name,
+        dataUri = Uri.fromFile(file),
+        dataSize = file.length(),
+        dataType = MediaType.FILE.value
+    )
+
+    fun getFileType(context: Context): DocumentType {
+        if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
+        ) {
+            context.contentResolver.run {
+                getType(dataUri)?.let {
+                    return getMediaType(it)
+                }
+            }
+        } else {
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
+                dataUri.toString()
+            )
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                fileExtension.toLowerCase(Locale.ROOT)
+            )?.let {
+                return getMediaType(it)
+            }
+        }
+        return DocumentType.Document.UnknownDocument
+    }
+
+    private fun getMediaType(mimeType: String): DocumentType {
+        return when {
+            mimeType.contains("image", ignoreCase = true) -> {
+                DocumentType.Image
+            }
+            mimeType.contains("video", ignoreCase = true) -> {
+                DocumentType.Video
+            }
+            mimeType.contains("Pdf", ignoreCase = true) -> {
+                DocumentType.Document.Pdf
+            }
+            mimeType.contains("app", ignoreCase = true) -> {
+                DocumentType.App
+            }
+            mimeType.contains("audio", ignoreCase = true) -> {
+                DocumentType.Audio
+            }
+            mimeType.contains("word", ignoreCase = true) -> {
+                DocumentType.Document.WordDocument
+            }
+            mimeType.contains(DocumentsContract.Document.MIME_TYPE_DIR, ignoreCase = true) -> {
+                DocumentType.Directory
+            }
+            else -> {
+                DocumentType.Document.UnknownDocument
+            }
+        }
+    }
 }
 

@@ -1,13 +1,7 @@
-package com.salesground.zipbolt.ui.recyclerview.videoFragment
+package com.salesground.zipbolt.ui.recyclerview.audioFragment
 
-import android.graphics.drawable.ColorDrawable
-import android.media.ThumbnailUtils
-import android.os.Build
-import android.provider.MediaStore.Images.Thumbnails.MINI_KIND
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,27 +10,31 @@ import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
-class VideoLayoutItemViewHolder(
-    private val videoLayoutItemBinding: VideoLayoutItemBinding,
+/** AudioLayoutItemViewHolder is the view holder for each audio item displayed in the
+ * AudioFragment Recyclerview. AudioLayoutItemViewHolder uses the R.layout.video_layout_item
+ * since it shares similar UI structure with R.layout.video_layout_item
+ * */
+class AudioLayoutItemViewHolder(
+    private val audioLayoutItemBinding: VideoLayoutItemBinding,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
-) : RecyclerView.ViewHolder(videoLayoutItemBinding.root) {
+) : RecyclerView.ViewHolder(audioLayoutItemBinding.root) {
 
-    fun bindVideoData(
+    fun bindData(
         dataToTransfer: DataToTransfer,
-        selectedVideos: MutableList<DataToTransfer>
+        selectedAudios: MutableList<DataToTransfer>
     ) {
-        dataToTransfer as DataToTransfer.DeviceVideo
+        dataToTransfer as DataToTransfer.DeviceAudio
 
-        videoLayoutItemBinding.run {
-            videoDuration = dataToTransfer.videoDuration
-            videoSize = dataToTransfer.videoSize
-            videoName = dataToTransfer.videoDisplayName
+        audioLayoutItemBinding.run {
+            videoName = dataToTransfer.audioDisplayName
+            videoSize = dataToTransfer.audioSize
+            videoDuration = dataToTransfer.audioDuration
 
-          
             Glide.with(videoLayoutItemVideoPreviewImageView)
-                .load(dataToTransfer.videoUri)
-                .thumbnail(Glide.with(root.context).load(dataToTransfer.videoUri))
+                .load(dataToTransfer.audioArtPath)
+                .error(R.drawable.ic_baseline_music_note_24)
                 .into(videoLayoutItemVideoPreviewImageView)
+
 
             videoLayoutItemSelectableConstraintLayout.run {
                 videoLayoutItemVideoSelectedCheckBox.setOnClickListener {
@@ -44,16 +42,16 @@ class VideoLayoutItemViewHolder(
                         dataToTransfer
                     )
 
-                    if (selectedVideos.contains(dataToTransfer)) {
+                    if (selectedAudios.contains(dataToTransfer)) {
                         // user un-selected, so remove the video from the collection of selected videos
                         setIsViewSelected(false)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = false
-                        selectedVideos.remove(dataToTransfer)
+                        selectedAudios.remove(dataToTransfer)
                     } else {
                         // user selects, so add the application to the collection of selected videos
                         setIsViewSelected(true)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = true
-                        selectedVideos.add(dataToTransfer)
+                        selectedAudios.add(dataToTransfer)
                     }
                 }
 
@@ -62,20 +60,20 @@ class VideoLayoutItemViewHolder(
                         dataToTransfer
                     )
 
-                    if (selectedVideos.contains(dataToTransfer)) {
+                    if (selectedAudios.contains(dataToTransfer)) {
                         // user un-selected, so remove the video from the collection of selected videos
                         setIsViewSelected(false)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = false
-                        selectedVideos.remove(dataToTransfer)
+                        selectedAudios.remove(dataToTransfer)
                     } else {
                         // user selects, so add the application to the collection of selected videos
                         setIsViewSelected(true)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = true
-                        selectedVideos.add(dataToTransfer)
+                        selectedAudios.add(dataToTransfer)
                     }
                 }
 
-                if (selectedVideos.contains(dataToTransfer)) {
+                if (selectedAudios.contains(dataToTransfer)) {
                     setIsViewSelected(true)
                     videoLayoutItemVideoSelectedCheckBox.isChecked = true
                 } else {
@@ -83,6 +81,7 @@ class VideoLayoutItemViewHolder(
                     videoLayoutItemVideoSelectedCheckBox.isChecked = false
                 }
             }
+
             executePendingBindings()
         }
     }
@@ -91,14 +90,15 @@ class VideoLayoutItemViewHolder(
         fun createViewHolder(
             parent: ViewGroup,
             dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
-        ): VideoLayoutItemViewHolder {
+        ): AudioLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.video_layout_item,
                 parent,
                 false
             )
-            return VideoLayoutItemViewHolder(
+
+            return AudioLayoutItemViewHolder(
                 layoutBinding,
                 dataToTransferRecyclerViewItemClickListener
             )

@@ -12,22 +12,22 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
+import com.salesground.zipbolt.R
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
-import com.salesground.zipbolt.databinding.FragmentVideosBinding
+import com.salesground.zipbolt.databinding.FragmentAudioBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
-import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
-import com.salesground.zipbolt.viewmodel.VideoViewModel
+import com.salesground.zipbolt.ui.recyclerview.audioFragment.AudioFragmentRecyclerViewAdapter
+import com.salesground.zipbolt.viewmodel.AudioViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VideosFragment : Fragment() {
-    private lateinit var fragmentVideosBinding: FragmentVideosBinding
-    private lateinit var videoFragmentRecyclerViewAdapter: VideoFragmentRecyclerViewAdapter
+class AudioFragment : Fragment() {
+    private lateinit var fragmentAudioBinding: FragmentAudioBinding
+    private lateinit var audioFragmentRecyclerViewAdapter: AudioFragmentRecyclerViewAdapter
     private var mainActivity: MainActivity? = null
-
-    private val videoViewModel: VideoViewModel by activityViewModels()
+    private val audioViewModel: AudioViewModel by activityViewModels()
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -36,9 +36,9 @@ class VideosFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                if(videoViewModel.selectedVideosForTransfer.isNotEmpty()) {
-                    videoViewModel.clearCollectionOfSelectedVideos()
-                    videoFragmentRecyclerViewAdapter.notifyDataSetChanged()
+                if (audioViewModel.selectedAudioFilesForTransfer.isNotEmpty()) {
+                    audioViewModel.clearCollectionOfSelectedAudioFiles()
+                    audioFragmentRecyclerViewAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -46,40 +46,39 @@ class VideosFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         activity?.let {
             mainActivity = it as MainActivity
         }
 
-        videoFragmentRecyclerViewAdapter = VideoFragmentRecyclerViewAdapter(
+        audioFragmentRecyclerViewAdapter = AudioFragmentRecyclerViewAdapter(
             DataToTransferRecyclerViewItemClickListener {
-                if (videoViewModel.selectedVideosForTransfer.contains(it)) {
+                if (audioViewModel.selectedAudioFilesForTransfer.contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
                     mainActivity?.addToDataToTransferList(it)
                 }
             },
-            videoViewModel.selectedVideosForTransfer
+            audioViewModel.selectedAudioFilesForTransfer
         )
-
-        observeVideoViewModelLiveData()
-
+        observeAudioViewModelLiveData()
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        fragmentVideosBinding = FragmentVideosBinding.inflate(inflater, container, false)
-        return fragmentVideosBinding.root
+        fragmentAudioBinding = FragmentAudioBinding.inflate(inflater, container, false)
+        return fragmentAudioBinding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentVideosBinding.run {
-            fragmentVideosRecyclerview.run {
-                adapter = videoFragmentRecyclerViewAdapter
+        fragmentAudioBinding.run {
+            fragmentMusicRecyclerview.run {
+                adapter = audioFragmentRecyclerViewAdapter
                 layoutManager = LinearLayoutManager(requireContext())
                 addItemDecoration(
                     HalfLineRecyclerViewCustomDivider(
@@ -91,15 +90,16 @@ class VideosFragment : Fragment() {
         }
     }
 
-    private fun observeVideoViewModelLiveData() {
-        videoViewModel.allVideosOnDevice.observe(this) {
-            videoFragmentRecyclerViewAdapter.submitList(it)
+    private fun observeAudioViewModelLiveData() {
+        audioViewModel.deviceAudio.observe(this) {
+            audioFragmentRecyclerViewAdapter.submitList(it)
         }
     }
 
     override fun onStart() {
         super.onStart()
-        localBroadcastManager.registerReceiver(sendDataBroadcastReceiver,
+        localBroadcastManager.registerReceiver(
+            sendDataBroadcastReceiver,
             IntentFilter().apply {
                 addAction(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
             }

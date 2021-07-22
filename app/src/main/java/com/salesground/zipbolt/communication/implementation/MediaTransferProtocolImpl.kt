@@ -7,6 +7,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
 import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
+import com.salesground.zipbolt.repository.implementation.ZipBoltAudioRepository
 import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
 import com.salesground.zipbolt.service.DataTransferService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,6 +44,14 @@ open class MediaTransferProtocolImpl @Inject constructor(
             context
         )
     }
+
+    private val mAudioRepository: AudioRepository by lazy {
+        ZipBoltAudioRepository(
+            savedFilesRepository,
+            context
+        )
+    }
+
 
     private val transferMetaDataUpdateListener: TransferMetaDataUpdateListener by lazy {
         object : TransferMetaDataUpdateListener {
@@ -83,15 +92,18 @@ open class MediaTransferProtocolImpl @Inject constructor(
         // write the video duration if dataToTransfer is a video
         if (dataToTransfer is DataToTransfer.DeviceVideo) {
             dataOutputStream.writeLong(dataToTransfer.videoDuration)
+        } else if (dataToTransfer is DataToTransfer.DeviceAudio) {
+            dataOutputStream.writeLong(dataToTransfer.audioDuration)
         }
 
         val fileInputStream: InputStream? =
             if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
                 || dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
+                || dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value
             ) {
                 try {
                     context.contentResolver.openInputStream(dataToTransfer.dataUri)
-                }catch (noSuchFile: FileNotFoundException){
+                } catch (noSuchFile: FileNotFoundException) {
                     dataOutputStream.writeInt(MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value)
                     return
                 }
@@ -143,7 +155,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 }
 
                 dataOutputStream.write(buffer, 0, lengthRead)
-
                 dataTransferListener.onTransfer(
                     this.dataToTransfer!!,
                     ((dataToTransfer.dataSize - lengthUnread) / dataToTransfer.dataSize.toFloat()) * 100f,
@@ -211,6 +222,17 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     videoName = mediaName,
                     videoSize = mediaSize,
                     videoDuration = dataInputStream.readLong(),
+                    dataInputStream = dataInputStream,
+                    transferMetaDataUpdateListener = transferMetaDataUpdateListener,
+                    dataReceiveListener = dataReceiveListener
+                )
+            }
+
+            DataToTransfer.MediaType.AUDIO.value -> {
+                mAudioRepository.insertAudioIntoMediaStore(
+                    audioName = mediaName,
+                    audioSize = mediaSize,
+                    audioDuration = dataInputStream.readLong(),
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                     dataReceiveListener = dataReceiveListener

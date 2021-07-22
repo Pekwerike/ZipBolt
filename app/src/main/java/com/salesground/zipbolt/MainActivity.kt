@@ -47,29 +47,25 @@ import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformat
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
-import com.salesground.zipbolt.utils.customizeDate
-import com.salesground.zipbolt.utils.parseDate
-import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
-import androidx.core.app.ActivityCompat.startActivityForResult
 
 import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInstaller
-import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
-import android.net.wifi.p2p.nsd.WifiP2pServiceInfo
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import com.salesground.zipbolt.utils.getVideoDuration
+import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.ui.fragments.FilesFragment
+import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
@@ -77,6 +73,25 @@ const val OPEN_MAIN_ACTIVITY_PENDING_INTENT_REQUEST_CODE = 1010
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    interface PopBackStackListener {
+        fun popStack(): Boolean
+    }
+
+    private var popBackStackListener: PopBackStackListener? = null
+
+    fun setBackButtonPressedClickListener(popBackStackListener: PopBackStackListener) {
+        this.popBackStackListener = popBackStackListener
+    }
+
+    enum class DeviceTransferRole(value: Int) {
+        SEND(1),
+        RECEIVE(2),
+        SEND_AND_RECEIVE(3),
+        SEND_AND_RECEIVE_BUT_DISCOVERING(7),
+        SEND_BUT_DISCOVERING_PEER(5),
+        RECEIVE_BUT_DISCOVERING_PEER(6),
+        NO_ROLE(4)
+    }
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
@@ -92,13 +107,17 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
 
+    private val connectivityManager: ConnectivityManager by lazy {
+        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
     private val sendDataClickedIntent =
         Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
+    private lateinit var upgradedWifiDirectBroadcastReceiver: UpgradedWifiDirectBroadcastReceiver
     private var dataTransferServiceIntent: Intent? = null
-
+    private var deviceTransferRole: DeviceTransferRole = DeviceTransferRole.NO_ROLE
     private val turnOnWifiResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -224,30 +243,56 @@ class MainActivity : AppCompatActivity() {
                                                 )
                                             }
                                         }
+                                        DataToTransfer.MediaType.AUDIO.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(R.drawable.ic_baseline_music_note_24)
+                                                .into(ongoingDataReceiveLayoutImageView)
+
+                                            val audioDuration = withContext(Dispatchers.IO) {
+                                                dataUri!!.getAudioDuration(this@MainActivity)
+                                            }
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceAudio(
+                                                            dataUri!!,
+                                                            dataDisplayName,
+                                                            dataSize,
+                                                            audioDuration,
+                                                            Uri.parse("")
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        }
                                         DataToTransfer.MediaType.VIDEO.value -> {
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(dataUri)
                                                 .into(ongoingDataReceiveLayoutImageView)
                                             mainActivityViewModel.run {
-                                                lifecycleScope.launch {
-                                                    val videoDuration =
-                                                        dataUri!!.getVideoDuration(this@MainActivity)
-                                                    addDataToCurrentTransferHistory(
-                                                        OngoingDataTransferUIState.DataItem(
-                                                            DataToTransfer.DeviceVideo(
-                                                                0L,
-                                                                dataUri!!,
-                                                                dataDisplayName,
-                                                                videoDuration,
-                                                                dataSize,
-                                                                "Video/*"
-                                                            ).apply {
-                                                                this.transferStatus =
-                                                                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                            }
-                                                        )
-                                                    )
+                                                val videoDuration = withContext(Dispatchers.IO) {
+                                                    dataUri!!.getVideoDuration(this@MainActivity)
                                                 }
+
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceVideo(
+                                                            0L,
+                                                            dataUri!!,
+                                                            dataDisplayName,
+                                                            videoDuration,
+                                                            dataSize,
+                                                            "Video/*"
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+
                                             }
                                         }
                                         DataToTransfer.MediaType.APP.value -> {
@@ -344,7 +389,12 @@ class MainActivity : AppCompatActivity() {
                                                 dataToTransfer.applicationIcon
                                             )
                                             .into(ongoingDataTransferDataCategoryImageView)
-                                    } else {
+                                    } else if (dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value) {
+                                        dataToTransfer as DataToTransfer.DeviceAudio
+                                        Glide.with(ongoingDataTransferDataCategoryImageView)
+                                            .load(dataToTransfer.audioArtPath)
+                                            .error(R.drawable.ic_baseline_music_note_24)
+                                            .into(ongoingDataTransferDataCategoryImageView)
 
                                     }
                                 }
@@ -361,6 +411,8 @@ class MainActivity : AppCompatActivity() {
                             ) {
                                 dataSize =
                                     dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
+                                dataTransferPercentAsString = "100%"
+                                dataTransferPercent = 100
                             }
 
                             mainActivityViewModel.currentTransferHistory.find {
@@ -445,6 +497,7 @@ class MainActivity : AppCompatActivity() {
     private var isWaitingForReceiverBottomSheetLayoutConfigured: Boolean = false
     private var shouldStopPeerDiscovery: Boolean = false
     private var startPeerDiscovery: Boolean = false
+    private val nearByDevices = mutableMapOf<String, String>()
 
     private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
         DiscoveredPeersRecyclerViewAdapter(
@@ -536,11 +589,16 @@ class MainActivity : AppCompatActivity() {
 
     private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
-
+            if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER) {
+                createWifiDirectGroup()
+            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
+                || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
+            ) {
+                beginPeerDiscovery()
+            }
         }
 
         override fun wifiOff() {
-
         }
 
         override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
@@ -552,6 +610,24 @@ class MainActivity : AppCompatActivity() {
             peeredDevice: WifiP2pDevice
         ) {
             startPeerDiscovery = false
+            deviceTransferRole = when (deviceTransferRole) {
+                DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
+                    DeviceTransferRole.SEND
+                }
+                DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
+                    DeviceTransferRole.RECEIVE
+                }
+                DeviceTransferRole.NO_ROLE -> {
+                    DeviceTransferRole.NO_ROLE
+                }
+                DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
+                    DeviceTransferRole.SEND_AND_RECEIVE
+                }
+                else -> {
+                    deviceTransferRole
+                }
+            }
+
             // update the ui to show that this device is connected to peer
             mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
             if (dataTransferService?.isActive == true) {
@@ -770,7 +846,6 @@ class MainActivity : AppCompatActivity() {
                         ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
                         ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
 
-
                         with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED
@@ -835,10 +910,19 @@ class MainActivity : AppCompatActivity() {
                                 it.connectedDevice
                             )
                         }
+
                         // hide the searching for peers bottom
-                        searchingForPeersBottomSheetBehavior.isHideable = true
-                        searchingForPeersBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_HIDDEN
+                        if (isSearchingForPeersBottomSheetLayoutConfigured) {
+                            searchingForPeersBottomSheetBehavior.run {
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        } else if (isWaitingForReceiverBottomSheetLayoutConfigured) {
+                            waitingForReceiverBottomSheetBehavior.run {
+                                isHideable = true
+                                state = BottomSheetBehavior.STATE_HIDDEN
+                            }
+                        }
 
                         // show the send button
                         activityMainBinding.sendFileButton.animate().alpha(1f)
@@ -863,7 +947,6 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
                     }
-
                     is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                             it.connectedDevice
@@ -949,14 +1032,16 @@ class MainActivity : AppCompatActivity() {
             // configure expanded connected to peer transfer ongoing layout
             with(expandedConnectedToPeerTransferOngoingLayout) {
                 with(expandedConnectedToPeerTransferOngoingToolbar) {
-                    this.expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
+                    expandedBottomSheetLayoutToolbarTitleTextView.text =
+                        getString(R.string.transfer_history)
+                    expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
                         // close the connection with the peer
                         dataTransferServiceIntent?.let {
                             unbindService(dataTransferServiceConnection)
                             stopService(dataTransferServiceIntent)
                         }
                     }
-                    this.expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
+                    expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
                         // collapse the connected to peer transfer ongoing bottom sheet
                         connectedToPeerTransferOngoingBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_COLLAPSED
@@ -1036,8 +1121,8 @@ class MainActivity : AppCompatActivity() {
         connectedDevice: WifiP2pDevice
     ) {
         isConnectedToPeerNoActionBottomSheetLayoutConfigured = true
-        connectedToPeerNoActionBottomSheetLayoutBinding.apply {
-            collapsedConnectedToPeerNoActionLayout.apply {
+        connectedToPeerNoActionBottomSheetLayoutBinding.run {
+            collapsedConnectedToPeerNoActionLayout.run {
                 deviceConnectedTo =
                     "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
                 collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
@@ -1053,9 +1138,33 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.expandedConnectedToPeerNoAction()
                 }
             }
-            expandedConnectedToPeerNoActionLayout.apply {
+            expandedConnectedToPeerNoActionLayout.run {
                 deviceAddress = connectedDevice.deviceAddress
                 deviceName = connectedDevice.deviceName
+
+                expandedConnectedToPeerNoActionTransferActionLabel.text =
+                    when (deviceTransferRole) {
+                        DeviceTransferRole.SEND -> {
+                            getString(
+                                R.string.you_can_transfer_files_now,
+                                connectedDevice.deviceName
+                            )
+                        }
+                        DeviceTransferRole.RECEIVE -> {
+                            getString(
+                                R.string.you_can_receive_files_now,
+                                connectedDevice.deviceName
+                            )
+                        }
+                        DeviceTransferRole.SEND_AND_RECEIVE -> {
+                            getString(R.string.you_can_transfer_and_receive_files_now)
+                        }
+                        DeviceTransferRole.NO_ROLE -> {
+                            getString(R.string.you_can_transfer_and_receive_files_now)
+                        }
+                        else -> ""
+                    }
+
                 collapseExpandedConnectedToPeerNoActionImageButton.setOnClickListener {
                     mainActivityViewModel.collapsedConnectedToPeerNoAction()
                 }
@@ -1143,43 +1252,55 @@ class MainActivity : AppCompatActivity() {
             BottomSheetBehavior.STATE_COLLAPSED
     }
 
-
     private fun configureConnectionOptionsModalBottomSheetLayout() {
         modalBottomSheetDialog = BottomSheetDialog(this)
         modalBottomSheetDialog.setContentView(
             ZipBoltProConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater).apply {
                 zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
+                    deviceTransferRole = DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
-                            wifiManager.isWifiEnabled = true
+                            if (wifiManager.setWifiEnabled(true)) {
+                                // Show the user that searching for peers has started
+                                mainActivityViewModel.expandedWaitingForReceiver()
+                            } else {
+                                displayToast("Turn off your hotspot")
+                            }
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                        modalBottomSheetDialog.hide()
                         createWifiDirectGroup()
                     }
+                    modalBottomSheetDialog.hide()
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
+                    deviceTransferRole = DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
                     // Turn on device wifi
                     if (!wifiManager.isWifiEnabled) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
-                            wifiManager.isWifiEnabled = true
+                            if (wifiManager.setWifiEnabled(true)) {
+                                // Show the user that searching for peers has started
+                                mainActivityViewModel.expandedSearchingForPeers()
+                            } else {
+                                displayToast("Turn off your hotspot")
+                            }
                         }
                     } else {
-                        // Create Wifi p2p group, if wifi is enabled
+                        // Show the user that searching for peers has started
+                        mainActivityViewModel.expandedSearchingForPeers()
                         // begin peer discovery
-                        modalBottomSheetDialog.hide()
                         beginPeerDiscovery()
                     }
+                    modalBottomSheetDialog.hide()
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
-
+                    deviceTransferRole = DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
                 }
             }.root
         )
@@ -1202,46 +1323,64 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission", "HardwareIds")
     private fun createWifiDirectGroup() {
-        broadcastZipBoltFileTransferService()
-        val wifiP2pConfig = WifiP2pConfig().apply {
-            deviceAddress = wifiManager.connectionInfo.macAddress
-            wps.setup = WpsInfo.PBC
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            wifiP2pManager.createGroup(wifiP2pChannel, wifiP2pConfig,
+        val record: Map<String, String> = mapOf(
+            "peerName" to "",
+            //  "listeningPort" to listeningPort.toString()
+        )
+
+        val serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(
+            getString(R.string.zip_bolt_file_transfer_service),
+            "_presence._tcp",
+            record
+        )
+
+        if (isLocationPermissionGranted()) {
+            wifiP2pManager.clearLocalServices(
+                wifiP2pChannel,
                 object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
-                        /* group created successfully, update the device UI, that we are now
-                        * waiting for a receiver*/
-                        mainActivityViewModel.expandedWaitingForReceiver()
+                        wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
+                            object : WifiP2pManager.ActionListener {
+                                override fun onSuccess() {
+                                    // local service addition was successfully sent to the android framework
+                                    wifiP2pManager.createGroup(wifiP2pChannel,
+                                        object : WifiP2pManager.ActionListener {
+                                            override fun onSuccess() {
+                                                /* group created successfully, update the device UI, that we are now
+                                                * waiting for a receiver*/
+                                                mainActivityViewModel.expandedWaitingForReceiver()
+                                                /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
+                                                       it?.let {
+                                                           Toast.makeText(
+                                                               this@MainActivity, "Password is " +
+                                                                       it.passphrase, Toast.LENGTH_LONG
+                                                           ).show()
+                                                       }
+                                                   }*/
+                                            }
+
+                                            override fun onFailure(p0: Int) {
+                                                createWifiDirectGroup()
+                                                displayToast("Group creation failed")
+                                            }
+                                        })
+                                }
+
+                                override fun onFailure(reason: Int) {
+                                    // local service addition was not successfully sent to the android framework
+                                }
+                            })
                     }
 
-                    override fun onFailure(p0: Int) {
-                        displayToast("Group creation failed")
+                    override fun onFailure(reason: Int) {
+
                     }
                 })
+
         } else {
-            wifiP2pManager.createGroup(wifiP2pChannel,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        /* group created successfully, update the device UI, that we are now
-                        * waiting for a receiver*/
-                        mainActivityViewModel.expandedWaitingForReceiver()
-                        /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
-                               it?.let {
-                                   Toast.makeText(
-                                       this@MainActivity, "Password is " +
-                                               it.passphrase, Toast.LENGTH_LONG
-                                   ).show()
-                               }
-                           }*/
-                    }
-
-                    override fun onFailure(p0: Int) {
-                        displayToast("Group creation failed")
-                    }
-                })
+            //TODO request location permission and addLocalService again
         }
+
     }
 
     @SuppressLint("MissingPermission")
@@ -1264,10 +1403,6 @@ class MainActivity : AppCompatActivity() {
                 }
             })
     }
-
-
-    private
-    val nearByDevices = mutableMapOf<String, String>()
 
     @SuppressLint("MissingPermission")
     private fun beginPeerDiscovery() {
@@ -1298,9 +1433,11 @@ class MainActivity : AppCompatActivity() {
                         srcDevice.deviceName =
                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
                         if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
-                            mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
-                                srcDevice
-                            )
+                            if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
+                                    srcDevice
+                                )
+                            }
                     }
                 }
 
@@ -1320,23 +1457,47 @@ class MainActivity : AppCompatActivity() {
                                         wifiP2pChannel,
                                         object : WifiP2pManager.ActionListener {
                                             override fun onSuccess() {
-
+                                                lifecycleScope.launch (Dispatchers.Main) {
+                                                    delay(1000)
+                                                    Timer(
+                                                        "Restart service discovery",
+                                                        false
+                                                    ).schedule(
+                                                        2000
+                                                    ) {
+                                                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                                            beginPeerDiscovery()
+                                                        }
+                                                    }
+                                                }
                                             }
 
                                             override fun onFailure(reason: Int) {
-
+                                                if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                                    lifecycleScope.launch {
+                                                        beginPeerDiscovery()
+                                                    }
+                                                }
                                             }
                                         })
                                 }
 
                                 override fun onFailure(reason: Int) {
-
+                                    if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                        lifecycleScope.launch {
+                                            beginPeerDiscovery()
+                                        }
+                                    }
                                 }
                             })
                     }
 
                     override fun onFailure(reason: Int) {
-
+                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                            lifecycleScope.launch {
+                                beginPeerDiscovery()
+                            }
+                        }
                     }
                 })
 
@@ -1377,11 +1538,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun createSystemBroadcastIntentFilter(): IntentFilter {
         return IntentFilter().apply {
-            addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION)
             addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)
-            addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION)
-            addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
-            addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION)
+            addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
         }
     }
 
@@ -1395,15 +1553,23 @@ class MainActivity : AppCompatActivity() {
 
             }
         // use the activity, wifiP2pManager and wifiP2pChannel to initialize the wifiDiectBroadcastReceiver
-        wifiP2pChannel.also { channel: WifiP2pManager.Channel ->
-            wifiDirectBroadcastReceiver = WifiDirectBroadcastReceiver(
-                wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
-                wifiP2pManager = wifiP2pManager,
-                wifiP2pChannel = wifiP2pChannel
-            )
-        }
 
-        broadcastZipBoltFileTransferService()
+        upgradedWifiDirectBroadcastReceiver = UpgradedWifiDirectBroadcastReceiver(
+            wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
+            connectivityManager = connectivityManager,
+            wifiP2pManager = wifiP2pManager,
+            wifiP2pChannel = wifiP2pChannel
+        )
+        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+
+            }
+
+            override fun onFailure(reason: Int) {
+
+            }
+
+        })
     }
 
     @SuppressLint("MissingPermission")
@@ -1478,7 +1644,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        registerReceiver(wifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
         localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
             IntentFilter().apply {
@@ -1492,7 +1658,7 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
-        unregisterReceiver(wifiDirectBroadcastReceiver)
+        unregisterReceiver(upgradedWifiDirectBroadcastReceiver)
         localBroadcastManager.unregisterReceiver(dataTransferServiceConnectionStateReceiver)
     }
 
@@ -1527,14 +1693,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-            override fun onSuccess() {
+        /* wifiP2pManager.clearLocalServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+             override fun onSuccess() {
 
-            }
+             }
 
-            override fun onFailure(reason: Int) {
-
-            }
-        })
+             override fun onFailure(reason: Int) {
+             }
+         })*/
     }
+
+    override fun onBackPressed() {
+        if (FilesFragment.backStackCount > 0) {
+            if (popBackStackListener?.popStack() == true) {
+                FilesFragment.backStackCount--
+            } else {
+                super.onBackPressed()
+            }
+        } else super.onBackPressed()
+    }
+
+
 }

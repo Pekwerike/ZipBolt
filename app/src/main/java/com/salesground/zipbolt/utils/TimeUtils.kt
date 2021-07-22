@@ -39,7 +39,11 @@ fun Long.formatVideoDurationToString(): String {
     val remainingSeconds = durationInSeconds % 60
 
     return if (remainingSeconds > 0 && durationInMinutes > 0) {
-        "${durationInMinutes}min ${remainingSeconds}sec"
+        if (remainingSeconds < 30) {
+            "${durationInMinutes}min"
+        } else {
+            "${durationInMinutes + 1}min"
+        }
     } else if (durationInMinutes == 0L) {
         "${durationInSeconds}sec"
     } else {
@@ -48,7 +52,7 @@ fun Long.formatVideoDurationToString(): String {
 }
 
 fun Uri.getVideoDuration(context: Context): Long {
-    var videoDuration : Long = 0L
+    var videoDuration = 0L
     context.contentResolver.query(
         this,
         arrayOf(MediaStore.Video.Media.DURATION),
@@ -61,4 +65,17 @@ fun Uri.getVideoDuration(context: Context): Long {
     }
 
     return videoDuration
+}
+
+fun Uri.getAudioDuration(context: Context): Long {
+    var audioDuration = 0L
+    context.contentResolver.query(
+        this,
+        arrayOf(MediaStore.Audio.Media.DURATION),
+        null, null, null
+    )?.let { cursor: Cursor ->
+        cursor.moveToFirst()
+        audioDuration = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+    }
+    return audioDuration
 }

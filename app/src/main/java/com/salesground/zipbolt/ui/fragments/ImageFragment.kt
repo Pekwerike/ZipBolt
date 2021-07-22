@@ -45,8 +45,10 @@ class ImageFragment : Fragment() {
             override fun sendDataButtonClicked() {
                 // tell the view model to clear the collection of clicked images and notify
                 // the recycler that all clicked images have been sent
-                imagesViewModel.clearCollectionOfClickedImages()
-                dAdapter.notifyDataSetChanged()
+                if(imagesViewModel.collectionOfClickedImages.isNotEmpty()) {
+                    imagesViewModel.clearCollectionOfClickedImages()
+                    dAdapter.notifyDataSetChanged()
+                }
             }
         }
     )

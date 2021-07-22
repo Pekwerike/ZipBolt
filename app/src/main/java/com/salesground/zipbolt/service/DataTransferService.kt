@@ -18,10 +18,7 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification.Comp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.*
-import java.net.ConnectException
-import java.net.InetSocketAddress
-import java.net.ServerSocket
-import java.net.Socket
+import java.net.*
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -43,8 +40,7 @@ class DataTransferService : Service() {
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
 
     // private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
-    private var mediaTransferProtocolMetaData =
-        MediaTransferProtocolMetaData.NO_DATA
+    private var mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
@@ -136,7 +132,6 @@ class DataTransferService : Service() {
         )
 
         fun totalFileReceiveComplete()
-
     }
 
     private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
@@ -186,13 +181,18 @@ class DataTransferService : Service() {
     }
 
     fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
-        while (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.DATA_AVAILABLE) {
-            // get stuck here
-            return
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA) {
+                    delay(300)
+                    break
+                }
+                // else get stuck in this loop waiting for the current transfer to complete
+            }
+            // when dataTransferUserEvent shows data is not available then assign the new data
+            dataCollection = dataCollectionSelected
+            mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
         }
-        // when dataTransferUserEvent shows data is not available then assign the new data
-        dataCollection = dataCollectionSelected
-        mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
     }
 
 
@@ -238,12 +238,6 @@ class DataTransferService : Service() {
             serverSocket.receiveBufferSize = BUFFER_SIZE
             serverSocket.reuseAddress = true
             serverSocket.bind(InetSocketAddress(SOCKET_PORT))
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    this@DataTransferService,
-                    "Created server socket", Toast.LENGTH_LONG
-                ).show()
-            }
             socket = serverSocket.accept()
             socket.sendBufferSize = BUFFER_SIZE
             socket.receiveBufferSize = BUFFER_SIZE
@@ -276,41 +270,39 @@ class DataTransferService : Service() {
 
     private fun configureReceiverSocketForOneDirectionalReceive(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            delay(300)
             socket = Socket()
             socket.sendBufferSize = BUFFER_SIZE
             socket.receiveBufferSize = BUFFER_SIZE
             socket.bind(null)
             try {
-                while (true) {
-                    socket.connect(
-                        InetSocketAddress(
-                            serverIpAddress,
-                            SOCKET_PORT
-                        ),
-                        1000
-                    )
-                    if (socket.isConnected) break
-                }
+                socket.connect(
+                    InetSocketAddress(
+                        serverIpAddress,
+                        SOCKET_PORT
+                    ), 0
+                )
+
             } catch (exception: IOException) {
                 Log.e("UnseenError", exception.stackTraceToString())
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
-                with(dataTransferServiceConnectionStateIntent) {
+               /* with(dataTransferServiceConnectionStateIntent) {
                     action =
                         DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
 
                     localBroadcastManager.sendBroadcast(this)
                 }
                 stopForeground(true)
-                stopSelf()
+                stopSelf()*/
             }
-
-            socketDIS =
-                DataInputStream(BufferedInputStream(socket.getInputStream()))
-
-            delay(300)
-            listenForMediaToReceive(socketDIS)
+            try {
+                socketDIS =
+                    DataInputStream(BufferedInputStream(socket.getInputStream()))
+                delay(400)
+                listenForMediaToReceive(socketDIS)
+            } catch (connectionException: Exception) {
+                configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
+            }
         }
     }
 
@@ -363,7 +355,7 @@ class DataTransferService : Service() {
                     // write the collection size to the peer
                     dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                     dataOutputStream.writeInt(dataCollection.size)
-                    dataOutputStream.flush()
+
                     for (dataToTransfer in dataCollection) {
                         mediaTransferProtocol.transferMedia(
                             dataToTransfer,

@@ -2,27 +2,23 @@ package com.salesground.zipbolt.repository
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.test.core.app.ApplicationProvider
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
-import com.salesground.zipbolt.utils.getVideoDuration
-import dagger.hilt.android.testing.HiltAndroidTest
+import com.salesground.zipbolt.repository.implementation.ZipBoltAudioRepository
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert.*
-import org.junit.Before
 
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import java.io.*
 import kotlin.math.min
 
-@HiltAndroidTest
-class ZipBoltVideoRepositoryTest {
+class ZipBoltAudioRepositoryTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private lateinit var zipBoltVideoRepository: ZipBoltVideoRepository
+    private lateinit var zipBoltAudioRepository: ZipBoltAudioRepository
 
     // the gateWay streams will try to recreate a socket connection for stream so that,
     // we can test the insertVideoIntoMediaStore function
@@ -32,11 +28,10 @@ class ZipBoltVideoRepositoryTest {
 
     @Before
     fun setUp() {
-        zipBoltVideoRepository = ZipBoltVideoRepository(
-            ZipBoltSavedFilesRepository(),
-            context
+        zipBoltAudioRepository = ZipBoltAudioRepository(
+            savedFilesRepository = ZipBoltSavedFilesRepository(),
+            context = context
         )
-
         gateWayFile = File(context.getExternalFilesDir(null), "Gateway.txt")
         gateWayOutputStream = DataOutputStream(
             BufferedOutputStream(
@@ -51,52 +46,40 @@ class ZipBoltVideoRepositoryTest {
     }
 
     @After
-    fun shutDown() {
-        //gateWayInputStream.close()
-        //gateWayOutputStream.close()
+    fun tearDown() {
         gateWayFile.delete()
     }
 
-
     @Test
-    fun insertVideoIntoMediaStore() {
-        runBlocking {
-            val videoToInsertIntoMediaStore =
-                zipBoltVideoRepository.getVideosOnDevice().first() as DataToTransfer.DeviceVideo
-
-            // write the video file into the gateway file
-            context.contentResolver.openInputStream(videoToInsertIntoMediaStore.dataUri)?.let {
+    fun insertAudioIntoMediaStore() {
+        runBlocking{
+            val audioToInsertIntoMediaStore = zipBoltAudioRepository.getAudioOnDevice().first() as DataToTransfer.DeviceAudio
+            // write the audio file into the gatewat file
+            context.contentResolver.openInputStream(audioToInsertIntoMediaStore.dataUri)?.let{
                 val fileDataInputStream = DataInputStream(BufferedInputStream(it))
-
                 val buffer = ByteArray(1024 * 1024)
-                var dataSize = videoToInsertIntoMediaStore.dataSize
+                var dataSize = audioToInsertIntoMediaStore.dataSize
 
-                while (dataSize > 0) {
-                    // write to the gate way output stream that the receiver can continue receiving
+                while(dataSize > 0){
                     gateWayOutputStream.writeInt(MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING.value)
 
                     val currentReadSize = min(buffer.size.toLong(), dataSize).toInt()
-                    // read out the video bytes from the video file input stream
                     fileDataInputStream.readFully(buffer, 0, currentReadSize)
-
-                    // write out the video bytes to the gateWay output stream
                     gateWayOutputStream.write(buffer, 0, currentReadSize)
                     dataSize -= currentReadSize
+
                 }
             }
-
-
-            zipBoltVideoRepository.insertVideoIntoMediaStore(
-                videoName = videoToInsertIntoMediaStore.dataDisplayName,
-                videoSize = videoToInsertIntoMediaStore.dataSize,
+            zipBoltAudioRepository.insertAudioIntoMediaStore(
+                audioName = audioToInsertIntoMediaStore.dataDisplayName,
+                audioSize = audioToInsertIntoMediaStore.dataSize,
                 dataInputStream = gateWayInputStream,
-                transferMetaDataUpdateListener = object :
-                    MediaTransferProtocol.TransferMetaDataUpdateListener {
+                transferMetaDataUpdateListener = object: MediaTransferProtocol.TransferMetaDataUpdateListener{
                     override fun onMetaTransferDataUpdate(mediaTransferProtocolMetaData: MediaTransferProtocol.MediaTransferProtocolMetaData) {
 
                     }
                 },
-                dataReceiveListener = object : MediaTransferProtocol.DataReceiveListener {
+                dataReceiveListener = object: MediaTransferProtocol.DataReceiveListener{
                     override fun onReceive(
                         dataDisplayName: String,
                         dataSize: Long,
@@ -105,8 +88,8 @@ class ZipBoltVideoRepositoryTest {
                         dataUri: Uri?,
                         dataTransferStatus: DataToTransfer.TransferStatus
                     ) {
-                        assertEquals(DataToTransfer.MediaType.VIDEO.value, dataType)
-                        if (dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_COMPLETE) {
+                        assertEquals(DataToTransfer.MediaType.AUDIO.value, dataType)
+                        if(dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_COMPLETE){
                             assertEquals(100f, percentageOfDataRead)
                             assert(dataUri != null)
                         } else if (dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_ONGOING ||
@@ -115,39 +98,23 @@ class ZipBoltVideoRepositoryTest {
                             assertEquals(null, dataUri)
                         }
                     }
+
                 },
-                videoDuration = videoToInsertIntoMediaStore.videoDuration
+                audioDuration = audioToInsertIntoMediaStore.audioDuration
             )
         }
     }
 
     @Test
-    fun getVideosOnDevice() {
-        runBlocking {
-            zipBoltVideoRepository.getVideosOnDevice().let {
-                assert(it.isNotEmpty())
-                it.forEach {
-                    Log.i("VideosReceived", it.dataDisplayName)
-                }
-            }
-        }
+    fun getAudioOnDevice() {
     }
 
     @Test
-    fun getVideoDuration() {
+    fun checkThat_audioAlbumUriHoldsAnImage() {
         runBlocking {
-            val videoToGetDuration =
-                zipBoltVideoRepository.getVideosOnDevice()[1] as DataToTransfer.DeviceVideo
-            val videoDuration = videoToGetDuration.dataUri.getVideoDuration(context)
-            assertEquals(videoToGetDuration.videoDuration, videoDuration)
-        }
-    }
-
-    @Test
-    fun test_videoUriHoldsImage() {
-        runBlocking {
-            val video = zipBoltVideoRepository.getVideosOnDevice()[1]
-            assert(Glide.with(context).load(video.dataUri).submit().get() != null)
+            val audioFile =
+                zipBoltAudioRepository.getAudioOnDevice()[0] as DataToTransfer.DeviceAudio
+            assert(Glide.with(context).load(audioFile.audioUri).submit().get() != null)
         }
     }
 }

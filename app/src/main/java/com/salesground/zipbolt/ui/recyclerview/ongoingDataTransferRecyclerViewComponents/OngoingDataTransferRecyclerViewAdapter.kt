@@ -11,6 +11,8 @@ import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewCo
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOngoingViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferOrReceiveCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
@@ -25,7 +27,10 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
         VIDEO_TRANSFER_COMPLETE(4),
         VIDEO_RECEIVE_COMPLETE(5),
         APP_TRANSFER_WAITING(6),
-        APP_TRANSFER_OR_RECEIVE_COMPLETE(7)
+        APP_TRANSFER_OR_RECEIVE_COMPLETE(7),
+        AUDIO_TRANSFER_WAITING(8),
+        AUDIO_TRANSFER_COMPLETE(9),
+        AUDIO_RECEIVE_COMPLETE(10)
     }
 
 
@@ -44,10 +49,13 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.APP_TRANSFER_WAITING.value
                             }
                             is DataToTransfer.DeviceAudio -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_WAITING.value
                             }
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_WAITING.value
+                            }
+                            is DataToTransfer.DeviceFile -> {
+                                300
                             }
                         }
                     }
@@ -60,10 +68,13 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.APP_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceAudio -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value
                             }
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value
+                            }
+                            is DataToTransfer.DeviceFile -> {
+                                300
                             }
                         }
                     }
@@ -76,10 +87,13 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                                 OngoingDataTransferAdapterViewTypes.APP_TRANSFER_OR_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceAudio -> {
-                                300
+                                OngoingDataTransferAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value
                             }
                             is DataToTransfer.DeviceVideo -> {
                                 OngoingDataTransferAdapterViewTypes.VIDEO_RECEIVE_COMPLETE.value
+                            }
+                            is DataToTransfer.DeviceFile -> {
+                                300
                             }
                         }
                     }
@@ -121,6 +135,18 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
 
+            OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_WAITING.value -> {
+                AudioTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value -> {
+                AudioTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
+            OngoingDataTransferAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value -> {
+                AudioTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
             else -> {
                 ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
@@ -145,6 +171,12 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is VideoTransferCompleteLayoutItemViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is AudioTransferCompleteLayoutItemViewHolder -> {
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
+            }
+            is AudioTransferWaitingLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
         }

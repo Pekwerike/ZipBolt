@@ -1,9 +1,11 @@
 package com.salesground.zipbolt.repository
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider
+import com.bumptech.glide.Glide
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.implementation.ZipBoltImageRepository
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -51,5 +53,14 @@ class ZipBoltImageRepositoryTest {
         assert(firstImage.imageMimeType.contains("image"))
         assert(firstImage.imageSize > 10)
         assert(firstImage.imageDisplayName != "")
+    }
+
+    @Test
+    fun test_imageUriHoldsADrawable() = runBlocking {
+        var firstImage = zipBoltImageRepository.getImagesOnDevice().first()
+        firstImage =
+            zipBoltImageRepository.getMetaDataOfImage(firstImage as DataToTransfer.DeviceImage) as DataToTransfer.DeviceImage
+
+        assert(Glide.with(context).load(firstImage.imageUri).submit().get() != null)
     }
 }

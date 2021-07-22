@@ -1,9 +1,7 @@
 package com.salesground.zipbolt.di
 
 import com.salesground.zipbolt.repository.*
-import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
-import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
-import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
+import com.salesground.zipbolt.repository.implementation.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -28,4 +26,12 @@ abstract class RepositoryDIModule {
     @Singleton
     @Binds
     abstract fun getZipBoltVideoRepository(zipBoltVideoRepository: ZipBoltVideoRepository): VideoRepositoryI
+
+    @Singleton
+    @Binds
+    abstract fun getZipBoltAudioRepository(zipBoltAudioRepository: ZipBoltAudioRepository): AudioRepository
+
+    @Singleton
+    @Binds
+    abstract fun getZipBoltFileRepository(zipBoltFileRepository: ZipBoltFileRepository): FileRepository
 }
