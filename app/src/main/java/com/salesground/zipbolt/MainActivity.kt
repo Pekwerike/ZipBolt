@@ -1457,14 +1457,9 @@ class MainActivity : AppCompatActivity() {
                                         wifiP2pChannel,
                                         object : WifiP2pManager.ActionListener {
                                             override fun onSuccess() {
-                                                lifecycleScope.launch (Dispatchers.Main) {
-                                                    delay(1000)
-                                                    Timer(
-                                                        "Restart service discovery",
-                                                        false
-                                                    ).schedule(
-                                                        2000
-                                                    ) {
+                                                lifecycleScope.launch(Dispatchers.IO) {
+                                                    delay(3000)
+                                                    withContext(Dispatchers.Main) {
                                                         if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
                                                             beginPeerDiscovery()
                                                         }
