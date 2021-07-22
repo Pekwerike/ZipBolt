@@ -96,4 +96,5 @@
     <style name="Theme.SpeedForce.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.SpeedForce.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="FileNameTextStyle" parent="Material"></style>
 </resources>

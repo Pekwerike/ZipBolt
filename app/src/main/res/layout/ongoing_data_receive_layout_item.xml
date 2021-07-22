@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:background="@color/background_color"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -40,7 +40,7 @@
                 android:id="@+id/ongoing_data_receive__layout_image_view"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_startup_outline_"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/folder_image_layout_item_image_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/folder_image_layout_item_image_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/folder_layout_item_folder_selected_check_box"
+            style="@style/CustomCheckBoxAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
+            android:minWidth="0dp"
+            android:minHeight="0dp" />
+
+    </LinearLayout>
+</layout>
