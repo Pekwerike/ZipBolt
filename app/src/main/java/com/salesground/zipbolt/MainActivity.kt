@@ -1272,7 +1272,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                        createWifiDirectGroup()
+                       broadcastZipBoltFileTransferService()
                     }
                     modalBottomSheetDialog.hide()
                 }
@@ -1374,12 +1374,9 @@ class MainActivity : AppCompatActivity() {
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    delay(1500)
-                    withContext(Dispatchers.Main) {
-                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
-                            discoverServices()
-                        }
+                Timer().schedule(2000){
+                    if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                        discoverServices()
                     }
                 }
             }
@@ -1559,7 +1556,7 @@ class MainActivity : AppCompatActivity() {
                             object : WifiP2pManager.ActionListener {
                                 override fun onSuccess() {
                                     // local service addition was successfully sent to the android framework
-
+                                    createWifiDirectGroup()
                                 }
 
                                 override fun onFailure(reason: Int) {
