@@ -23,6 +23,7 @@
             android:layout_gravity="center"
             app:srcCompat="@drawable/ic_baseline_folder_open_24" />
 
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/folder_layout_item_folder_name_text_view"
             style="@style/TextAppearance.MaterialComponents.Body1"
