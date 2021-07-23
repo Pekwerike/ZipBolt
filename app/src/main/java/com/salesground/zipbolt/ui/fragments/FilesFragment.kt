@@ -24,8 +24,10 @@ class FilesFragment : Fragment() {
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
     private lateinit var fragmentFilesBinding: FragmentFilesBinding
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
-    private var backStackCount: Int = 0
 
+    companion object {
+        var backStackCount: Int = 0
+    }
 
     private val fileViewModel: FileViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +84,7 @@ class FilesFragment : Fragment() {
         fileViewModel.directoryChildren.observe(this) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
+                recyclerViewLayoutManager.scrollToPosition(fileViewModel.getDirectoryFirstVisibleItemPosition())
             }
         }
     }

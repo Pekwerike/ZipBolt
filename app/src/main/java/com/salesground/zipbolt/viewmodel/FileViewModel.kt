@@ -24,19 +24,31 @@ class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
     private val directoryStack: Deque<DirectoryEntry> = ArrayDeque()
-    private lateinit var currentDirectoryPath: String
+    private lateinit var currentDirectoryEntry: DirectoryEntry
 
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()
         previousDirectoryEntry?.let {
+            currentDirectoryEntry = it
             getDirectoryChildren(it.directoryPath)
         }
     }
 
+    fun getDirectoryFirstVisibleItemPosition(): Int {
+        return currentDirectoryEntry.firstVisibleFilePosition
+    }
+
     fun moveToDirectory(path: String, positionOfClickedDirectory: Int) {
-        directoryStack.push(DirectoryEntry(currentDirectoryPath, positionOfClickedDirectory))
+        // push previous directory with it's last visible item position into the directory stack
+        directoryStack.push(
+            DirectoryEntry(
+                currentDirectoryEntry.directoryPath,
+                positionOfClickedDirectory
+            )
+        )
+        // change the current directory to point at the new path
+        currentDirectoryEntry = DirectoryEntry(path, 0)
         getDirectoryChildren(path)
-        currentDirectoryPath = path
     }
 
     private val _directoryChildren = MutableLiveData<List<DataToTransfer>>(null)
@@ -46,8 +58,8 @@ class FileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            currentDirectoryPath = filesRepository.getRootDirectory().path
-            getDirectoryChildren(currentDirectoryPath)
+            currentDirectoryEntry = DirectoryEntry(filesRepository.getRootDirectory().path, 0)
+            getDirectoryChildren(currentDirectoryEntry.directoryPath)
         }
     }
 
