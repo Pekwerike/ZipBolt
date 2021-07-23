@@ -21,7 +21,7 @@ private fun String.splitDate(): List<String> {
 fun String.customizeDate(): String {
     var day: String = this
     val splitDate = splitDate()
-    val presentDate = System.currentTimeMillis().parseDate().splitDate()
+    val presentDate = dateFormat.format(System.currentTimeMillis()).splitDate()
     // check if the month and year is the same
     if (splitDate[1] == presentDate[1] && splitDate[2] == presentDate[2]) {
         when (presentDate[0].toInt() - splitDate[0].toInt()) {

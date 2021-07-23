@@ -99,7 +99,7 @@ fun TextView.setFileLastModifiedDateAndSize(fileLastModified: Long?, fileSize: L
     if (fileLastModified != null && fileSize != null) {
         text = context.getString(
             R.string.comma_separated_strings,
-            fileLastModified.transformDataSizeToMeasuredUnit(),
+            fileSize.transformDataSizeToMeasuredUnit(),
             fileLastModified.parseDate()
         )
     }
