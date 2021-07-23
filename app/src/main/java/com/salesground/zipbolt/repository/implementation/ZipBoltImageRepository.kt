@@ -78,7 +78,6 @@ open class ZipBoltImageRepository @Inject constructor(
                             imageId = imageId,
                             imageUri = ContentUris.withAppendedId(collection, imageId),
                             imageDateModified = (imageDateModified * 1000).parseDate()
-                                .customizeDate(),
                             imageBucketName = imageBucketDisplayName
                         )
                     )

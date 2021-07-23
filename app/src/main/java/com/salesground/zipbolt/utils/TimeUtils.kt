@@ -11,7 +11,7 @@ import java.util.*
 val dateFormat = SimpleDateFormat("d MMMM, yyyy", Locale.UK)
 
 fun Long.parseDate(): String {
-    return dateFormat.format(this)
+    return dateFormat.format(this).customizeDate()
 }
 
 private fun String.splitDate(): List<String> {

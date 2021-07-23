@@ -11,6 +11,7 @@
     </data>
 
     <LinearLayout
+        android:padding="@dimen/view_group_standard_padding"
         android:id="@+id/folder_image_layout_item_layout_view_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,17 +21,36 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/folder_image_layout_item_image_view"
             android:layout_width="50dp"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"/>
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/folder_image_layout_item_image_name_text_view"
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="2"
-            app:setFileName="@{imageFile.name}"
-            app:setFileSize="@{imageFile.length()}" />
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{imageFile.name}"
+                android:maxLines="1"
+                android:ellipsize="end"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:padding="@dimen/standard_text_view_padding"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/standard_text_view_padding"
+                android:maxLines="1"
+                app:setFileSize="@{imageFile.length()}"
+                app:setFileLastModified="@{imageFile.lastModified()}"
+                android:ellipsize="end"
+                style="@style/TextAppearance.MaterialComponents.Caption" />
+        </LinearLayout>
+
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/folder_image_layout_item_folder_selected_check_box"

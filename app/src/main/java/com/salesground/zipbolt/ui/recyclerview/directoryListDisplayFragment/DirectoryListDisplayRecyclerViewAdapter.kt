@@ -28,6 +28,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Document.WordDocument -> documentType.value
             DocumentType.Image -> documentType.value
             DocumentType.Video -> documentType.value
+            else -> documentType.value
         }
     }
 
