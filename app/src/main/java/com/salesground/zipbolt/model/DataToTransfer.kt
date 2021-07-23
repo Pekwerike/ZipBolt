@@ -125,6 +125,12 @@ sealed class DataToTransfer(
     )
 
     fun getFileType(context: Context): DocumentType {
+        // check if file is an image
+        if(dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
+            || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")){
+            return DocumentType.Image
+        }
+        // if file is not an image go further processing
         if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
         ) {
             context.contentResolver.run {
@@ -136,6 +142,7 @@ sealed class DataToTransfer(
             val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
                 dataUri.toString()
             )
+
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                 fileExtension.toLowerCase(Locale.ROOT)
             )?.let {
@@ -147,7 +154,7 @@ sealed class DataToTransfer(
 
     private fun getMediaType(mimeType: String): DocumentType {
         return when {
-            mimeType.contains("image", ignoreCase = true) -> {
+            mimeType.contains("image", ignoreCase = true)  -> {
                 DocumentType.Image
             }
             mimeType.contains("video", ignoreCase = true) -> {

@@ -1,24 +1,16 @@
 package com.salesground.zipbolt.ui.bindingadapters
 
 import android.graphics.Typeface.BOLD
-import android.graphics.Typeface.ITALIC
-import android.os.Build
-import android.text.Html
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.text.style.TextAppearanceSpan
-import android.text.style.TypefaceSpan
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
-import com.google.android.material.textview.MaterialTextView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.utils.formatVideoDurationToString
+import com.salesground.zipbolt.utils.parseDate
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 @BindingAdapter("addGreenHighLightToText")
@@ -96,33 +88,19 @@ fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: Strin
 fun TextView.setVideoDurationAndSize(videoDuration: Long?, videoSize: Long?) {
     if (videoDuration != null && videoSize != null) {
         text = context.getString(
-            R.string.video_duration_and_size, videoDuration.formatVideoDurationToString(),
+            R.string.middle_round_dot_text_separation, videoDuration.formatVideoDurationToString(),
             videoSize.transformDataSizeToMeasuredUnit()
         )
     }
 }
 
-@BindingAdapter("setFileName", "setFileSize", requireAll = true)
-fun TextView.setFileNameAndSize(fileName: String?, fileSize: String?) {
-    if (fileName != null && fileSize != null) {
-        val spannableString = SpannableString(
-            fileName + "\n" + fileSize
+@BindingAdapter("setFileLastModified", "setFileSize", requireAll = true)
+fun TextView.setFileLastModifiedDateAndSize(fileLastModified: Long?, fileSize: Long?) {
+    if (fileLastModified != null && fileSize != null) {
+        text = context.getString(
+            R.string.comma_separated_strings,
+            fileSize.transformDataSizeToMeasuredUnit(),
+            fileLastModified.parseDate()
         )
-        spannableString.apply {
-            setSpan(
-                TextAppearanceSpan(
-                    rootView.context,
-                    R.style.TextAppearance_MaterialComponents_Body2
-                ),
-                0, fileName.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
-            )
-            setSpan(
-                TextAppearanceSpan(
-                    rootView.context,
-                    R.style.TextAppearance_MaterialComponents_Caption
-                ), fileName.length + 1, fileSize.length, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
-            )
-        }
-        text = spannableString
     }
 }

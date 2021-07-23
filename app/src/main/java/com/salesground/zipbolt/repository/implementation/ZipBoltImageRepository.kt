@@ -77,8 +77,7 @@ open class ZipBoltImageRepository @Inject constructor(
                         DataToTransfer.DeviceImage(
                             imageId = imageId,
                             imageUri = ContentUris.withAppendedId(collection, imageId),
-                            imageDateModified = (imageDateModified * 1000).parseDate()
-                                .customizeDate(),
+                            imageDateModified = (imageDateModified * 1000).parseDate(),
                             imageBucketName = imageBucketDisplayName
                         )
                     )
