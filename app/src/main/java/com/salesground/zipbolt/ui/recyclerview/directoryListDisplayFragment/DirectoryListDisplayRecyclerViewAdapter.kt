@@ -8,6 +8,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryImageLayoutItemViewHolder
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
@@ -38,6 +39,11 @@ class DirectoryListDisplayRecyclerViewAdapter(
                     dataToTransferRecyclerViewItemClickListener
                 )
             }
+            DocumentType.Image.value -> {
+                DirectoryImageLayoutItemViewHolder.createViewHolder(
+                    parent
+                )
+            }
             else -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
@@ -50,6 +56,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DirectoryLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryImageLayoutItemViewHolder -> holder.bindData(getItem(position))
         }
     }
 }
