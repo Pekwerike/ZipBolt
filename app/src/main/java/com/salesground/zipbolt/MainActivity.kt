@@ -60,7 +60,9 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.commit
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.ui.fragments.DirectoryListDisplay
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -1667,7 +1669,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (FilesFragment.backStackCount > 0) {
             if (popBackStackListener?.popStack() == true) {
-                FilesFragment.backStackCount--
+
             } else {
                 super.onBackPressed()
             }

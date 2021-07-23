@@ -11,29 +11,46 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.*
 import javax.inject.Inject
+
+data class DirectoryEntry(
+    val directoryPath: String,
+    val firstVisibleFilePosition: Int
+)
 
 @HiltViewModel
 class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
+    private val directoryStack: Deque<DirectoryEntry> = ArrayDeque()
+    private lateinit var currentDirectoryPath: String
+
+    fun moveToPreviousDirectory() {
+        val previousDirectoryEntry = directoryStack.pop()
+        previousDirectoryEntry?.let {
+            getDirectoryChildren(it.directoryPath)
+        }
+    }
+
+    fun moveToDirectory(path: String, positionOfClickedDirectory: Int) {
+        directoryStack.push(DirectoryEntry(currentDirectoryPath, positionOfClickedDirectory))
+        getDirectoryChildren(path)
+        currentDirectoryPath = path
+    }
 
     private val _directoryChildren = MutableLiveData<List<DataToTransfer>>(null)
     val directoryChildren: LiveData<List<DataToTransfer>>
         get() = _directoryChildren
 
-    private val _rootDirectory = MutableLiveData<File>(null)
-    val rootDirectory: LiveData<File>
-        get() = _rootDirectory
 
-
-    fun getRootDirectory() {
+    init {
         viewModelScope.launch {
-            _rootDirectory.value = withContext(Dispatchers.IO) {
-                filesRepository.getRootDirectory()
-            }!!
+            currentDirectoryPath = filesRepository.getRootDirectory().path
+            getDirectoryChildren(currentDirectoryPath)
         }
     }
+
 
     fun getDirectoryChildren(directoryPath: String) {
         viewModelScope.launch {
