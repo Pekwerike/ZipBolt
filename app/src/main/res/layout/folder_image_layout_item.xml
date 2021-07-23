@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <variable
+            name="imageFile"
+            type="java.io.File" />
 
     </data>
 
     <LinearLayout
+        android:id="@+id/folder_image_layout_item_layout_view_group"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -19,10 +26,14 @@
             android:id="@+id/folder_image_layout_item_image_name_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            app:setFileName="@{imageFile.name}"
+            app:setFileSize="@{imageFile.length()}" />
 
         <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/folder_layout_item_folder_selected_check_box"
+            android:id="@+id/folder_image_layout_item_folder_selected_check_box"
             style="@style/CustomCheckBoxAppearance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

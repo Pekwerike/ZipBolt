@@ -103,7 +103,7 @@ fun TextView.setVideoDurationAndSize(videoDuration: Long?, videoSize: Long?) {
 }
 
 @BindingAdapter("setFileName", "setFileSize", requireAll = true)
-fun TextView.setFileNameAndSize(fileName: String?, fileSize: String?) {
+fun TextView.setFileNameAndSize(fileName: String?, fileSize: Long?) {
     if (fileName != null && fileSize != null) {
         val spannableString = SpannableString(
             fileName + "\n" + fileSize
@@ -112,7 +112,7 @@ fun TextView.setFileNameAndSize(fileName: String?, fileSize: String?) {
             setSpan(
                 TextAppearanceSpan(
                     rootView.context,
-                    R.style.TextAppearance_MaterialComponents_Body2
+                    R.style.TextAppearance_MaterialComponents_Body1
                 ),
                 0, fileName.length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
             )
@@ -120,7 +120,7 @@ fun TextView.setFileNameAndSize(fileName: String?, fileSize: String?) {
                 TextAppearanceSpan(
                     rootView.context,
                     R.style.TextAppearance_MaterialComponents_Caption
-                ), fileName.length + 1, fileSize.length, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
+                ), fileName.length + 1, fileSize.toString().length, SpannableString.SPAN_EXCLUSIVE_INCLUSIVE
             )
         }
         text = spannableString
