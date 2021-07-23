@@ -43,5 +43,5 @@
     <string name="waiting_for_peers_description">Tell your friend to open the ZipBolt app, click on "Connect" and then
     click on "Receive" to discover your device</string>
     <string name="middle_round_dot_text_separation">%1$s \u2022 %2$s</string>
-    <string name="comma_separated_strings">%1$s \u2022 %2$s</string>
+    <string name="comma_separated_strings">%1$s \u25E6 %2$s</string>
 </resources>
