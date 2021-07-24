@@ -782,16 +782,16 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager,
                     lifecycle
                 )
-                TabLayoutMediator(
+              val tabLayoutMediator =  TabLayoutMediator(
                     allMediaOnDeviceTabLayout,
-                    allMediaOnDeviceViewPager,
+                    allMediaOnDeviceViewPager/*,
                     true,
                     true,
-                    object : TabLayoutMediator.TabConfigurationStrategy{
+                    object : TabLayoutMediator.TabConfigurationStrategy {
                         override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
 
                         }
-                    }
+                    }*/
                 ) { tab, position ->
                     when (position) {
                         0 -> tab.text = "Apps"
@@ -800,7 +800,8 @@ class MainActivity : AppCompatActivity() {
                         3 -> tab.text = "Music"
                         4 -> tab.text = "Files"
                     }
-                }.attach()
+                }
+
             }
             setContentView(root)
         }
@@ -1274,8 +1275,8 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
                                 // Show the user that searching for peers has started
-                               /**Listen for wifi on via the broadcast receiver
-                                * and then call createWifiDirectGroup**/
+                                /**Listen for wifi on via the broadcast receiver
+                                 * and then call createWifiDirectGroup**/
 
                             } else {
                                 displayToast("Turn off your hotspot")
@@ -1348,8 +1349,8 @@ class MainActivity : AppCompatActivity() {
                                ).show()
                            }
                        }*/
-                   mainActivityViewModel.expandedWaitingForReceiver()
-                   broadcastZipBoltFileTransferService()
+                    mainActivityViewModel.expandedWaitingForReceiver()
+                    broadcastZipBoltFileTransferService()
                 }
 
                 override fun onFailure(p0: Int) {
@@ -1394,7 +1395,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(reason: Int) {
-                if(reason == WifiP2pManager.ERROR || reason == WifiP2pManager.BUSY) {
+                if (reason == WifiP2pManager.ERROR || reason == WifiP2pManager.BUSY) {
                     discoverServices()
                 }
             }
@@ -1571,7 +1572,7 @@ class MainActivity : AppCompatActivity() {
                             object : WifiP2pManager.ActionListener {
                                 override fun onSuccess() {
                                     // local service addition was successfully sent to the android framework
-                                  //  createWifiDirectGroup()
+                                    //  createWifiDirectGroup()
                                 }
 
                                 override fun onFailure(reason: Int) {
