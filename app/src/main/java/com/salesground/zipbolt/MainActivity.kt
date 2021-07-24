@@ -1267,14 +1267,16 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
                                 // Show the user that searching for peers has started
-                                mainActivityViewModel.expandedWaitingForReceiver()
+                               /**Listen for wifi on via the broadcast receiver
+                                * and then call createWifiDirectGroup**/
+
                             } else {
                                 displayToast("Turn off your hotspot")
                             }
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                       broadcastZipBoltFileTransferService()
+                        createWifiDirectGroup()
                     }
                     modalBottomSheetDialog.hide()
                 }
@@ -1339,14 +1341,13 @@ class MainActivity : AppCompatActivity() {
                                ).show()
                            }
                        }*/
-
-                    mainActivityViewModel.expandedWaitingForReceiver()
-                    broadcastZipBoltFileTransferService()
+                   mainActivityViewModel.expandedWaitingForReceiver()
+                   broadcastZipBoltFileTransferService()
                 }
 
                 override fun onFailure(p0: Int) {
                     displayToast("Group creation failed")
-
+                    broadcastZipBoltFileTransferService()
                 }
             })
     }
@@ -1377,7 +1378,7 @@ class MainActivity : AppCompatActivity() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
                 Timer().schedule(2000) {
-                    lifecycleScope.launch {
+                    lifecycleScope.launch(Dispatchers.Main) {
                         if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
                             discoverServices()
                         }
@@ -1442,7 +1443,9 @@ class MainActivity : AppCompatActivity() {
                             WifiP2pDnsSdServiceRequest.newInstance(),
                             object : WifiP2pManager.ActionListener {
                                 override fun onSuccess() {
-                                    discoverServices()
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        discoverServices()
+                                    }
                                 }
 
                                 override fun onFailure(reason: Int) {
@@ -1466,6 +1469,7 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             checkFineLocationPermission()
+            displayToast("Cannot discover service. Missing permission")
         }
     }
 
@@ -1560,7 +1564,7 @@ class MainActivity : AppCompatActivity() {
                             object : WifiP2pManager.ActionListener {
                                 override fun onSuccess() {
                                     // local service addition was successfully sent to the android framework
-                                    createWifiDirectGroup()
+                                  //  createWifiDirectGroup()
                                 }
 
                                 override fun onFailure(reason: Int) {
@@ -1577,6 +1581,7 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             //TODO request location permission and addLocalService again
+            displayToast("Cannot advertise service. Missing location permission")
         }
     }
 
