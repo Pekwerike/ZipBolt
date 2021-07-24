@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
@@ -16,7 +18,11 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 @AndroidEntryPoint
@@ -37,7 +43,7 @@ class FilesFragment : Fragment() {
             it.setBackButtonPressedClickListener(object :
                 MainActivity.PopBackStackListener {
                 override fun popStack(): Boolean {
-                    backStackCount -= 1
+                    backStackCount--
                     fileViewModel.moveToPreviousDirectory()
                     return true
                 }
@@ -49,7 +55,8 @@ class FilesFragment : Fragment() {
                 DataToTransferRecyclerViewItemClickListener {
                     it as DataToTransfer.DeviceFile
                     if (it.file.isDirectory) {
-                        backStackCount += 1
+                        backStackCount++
+                        fileViewModel.clearCurrentFolderChildren()
                         fileViewModel.moveToDirectory(
                             it.file.path,
                             recyclerViewLayoutManager.findFirstVisibleItemPosition()
@@ -84,7 +91,11 @@ class FilesFragment : Fragment() {
         fileViewModel.directoryChildren.observe(this) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
-                recyclerViewLayoutManager.scrollToPosition(fileViewModel.getDirectoryFirstVisibleItemPosition())
+                Timer().schedule(100) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        recyclerViewLayoutManager.scrollToPosition(fileViewModel.getDirectoryFirstVisibleItemPosition())
+                    }
+                }
             }
         }
     }

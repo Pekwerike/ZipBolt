@@ -39,6 +39,7 @@ class FileViewModel @Inject constructor(
     }
 
     fun moveToDirectory(path: String, positionOfClickedDirectory: Int) {
+
         // push previous directory with it's last visible item position into the directory stack
         directoryStack.push(
             DirectoryEntry(
