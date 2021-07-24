@@ -30,7 +30,7 @@
             android:layout_height="50dp"
             android:layout_margin="@dimen/medium_margin"
             android:scaleType="centerCrop"
-            app:cornerRadius="12dp"
+            app:cornerRadius="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -784,7 +784,14 @@ class MainActivity : AppCompatActivity() {
                 )
                 TabLayoutMediator(
                     allMediaOnDeviceTabLayout,
-                    allMediaOnDeviceViewPager
+                    allMediaOnDeviceViewPager,
+                    true,
+                    true,
+                    object : TabLayoutMediator.TabConfigurationStrategy{
+                        override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
+
+                        }
+                    }
                 ) { tab, position ->
                     when (position) {
                         0 -> tab.text = "Apps"
