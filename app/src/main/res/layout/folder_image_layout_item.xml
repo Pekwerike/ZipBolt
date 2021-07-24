@@ -11,44 +11,45 @@
     </data>
 
     <LinearLayout
-        android:padding="@dimen/view_group_standard_padding"
         android:id="@+id/folder_image_layout_item_layout_view_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="@dimen/view_group_standard_padding">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/folder_image_layout_item_image_view"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_height="wrap_content">
+            android:gravity="center"
+            android:layout_margin="@dimen/medium_margin"
+            android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{imageFile.name}"
-                android:maxLines="1"
-                android:ellipsize="end"
                 style="@style/TextAppearance.MaterialComponents.Body1"
-                android:padding="@dimen/standard_text_view_padding"/>
-
-            <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/standard_text_view_padding"
-                android:maxLines="1"
-                app:setFileSize="@{imageFile.length()}"
-                app:setFileLastModified="@{imageFile.lastModified()}"
                 android:ellipsize="end"
-                style="@style/TextAppearance.MaterialComponents.Caption" />
+                android:maxLines="1"
+                android:padding="@dimen/standard_text_view_padding"
+                android:text="@{imageFile.name}" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/TextAppearance.MaterialComponents.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/standard_text_view_padding"
+                app:setFileLastModified="@{imageFile.lastModified()}"
+                app:setFileSize="@{imageFile.length()}" />
         </LinearLayout>
 
 

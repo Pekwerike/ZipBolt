@@ -7,17 +7,29 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
+import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 @AndroidEntryPoint
 class FilesFragment : Fragment() {
-    private var mainActivity: MainActivity? = null
+    private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
+    private lateinit var fragmentFilesBinding: FragmentFilesBinding
+    private lateinit var recyclerViewLayoutManager: LinearLayoutManager
 
     companion object {
         var backStackCount: Int = 0
@@ -26,21 +38,32 @@ class FilesFragment : Fragment() {
     private val fileViewModel: FileViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        observeViewModelLiveData()
         activity?.let {
-            mainActivity = it as MainActivity
-            mainActivity?.setBackButtonPressedClickListener(object :
+            it as MainActivity
+            it.setBackButtonPressedClickListener(object :
                 MainActivity.PopBackStackListener {
                 override fun popStack(): Boolean {
-                    return try {
-                        childFragmentManager.popBackStack()
-                        true
-                    } catch (illegalStateException: IllegalStateException) {
-                        false
-                    }
+                    backStackCount--
+                    fileViewModel.moveToPreviousDirectory()
+                    return true
                 }
             })
         }
+
+        directoryListDisplayRecyclerViewAdapter =
+            DirectoryListDisplayRecyclerViewAdapter(requireContext(),
+                DataToTransferRecyclerViewItemClickListener {
+                    it as DataToTransfer.DeviceFile
+                    if (it.file.isDirectory) {
+                        backStackCount++
+                        fileViewModel.clearCurrentFolderChildren()
+                        fileViewModel.moveToDirectory(
+                            it.file.path,
+                            recyclerViewLayoutManager.findFirstVisibleItemPosition()
+                        )
+                    }
+                })
+        observeViewModelLiveData()
     }
 
     override fun onCreateView(
@@ -48,34 +71,29 @@ class FilesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val filesFragmentLayout = FragmentFilesBinding.inflate(inflater, container, false)
-        fileViewModel.getRootDirectory()
-        return filesFragmentLayout.root
+        fragmentFilesBinding = FragmentFilesBinding.inflate(inflater, container, false)
+        return fragmentFilesBinding.root
     }
 
-    fun onDirectoryClicked(directoryPath: String) {
-        backStackCount++
-        childFragmentManager.run {
-            commit {
-                replace(
-                    R.id.fragment_files_fragment_container,
-                    DirectoryListDisplay.createNewInstance(directoryPath)
-                )
-                addToBackStack("kiki")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragmentFilesBinding.run {
+            filesFragmentRecyclerView.run {
+                recyclerViewLayoutManager = LinearLayoutManager(requireContext())
+                layoutManager = recyclerViewLayoutManager
+                adapter = directoryListDisplayRecyclerViewAdapter
             }
         }
     }
 
+
     private fun observeViewModelLiveData() {
-        fileViewModel.rootDirectory.observe(this) {
+        fileViewModel.directoryChildren.observe(this) {
             it?.let {
-                childFragmentManager.run {
-                    commit {
-                        replace(
-                            R.id.fragment_files_fragment_container,
-                            DirectoryListDisplay.createNewInstance(it.path)
-                        )
-                        addToBackStack("kiki")
+                directoryListDisplayRecyclerViewAdapter.submitList(it)
+                Timer().schedule(100) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        recyclerViewLayoutManager.scrollToPosition(fileViewModel.getDirectoryFirstVisibleItemPosition())
                     }
                 }
             }
