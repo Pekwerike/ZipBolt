@@ -230,9 +230,7 @@ class MainActivity : AppCompatActivity() {
                                                         DataToTransfer.DeviceImage(
                                                             0L,
                                                             dataUri!!,
-                                                            System.currentTimeMillis()
-                                                                .parseDate()
-                                                                .customizeDate(),
+                                                            System.currentTimeMillis().parseDate(),
                                                             dataDisplayName,
                                                             "",
                                                             dataSize,
@@ -782,16 +780,9 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager,
                     lifecycle
                 )
-              val tabLayoutMediator =  TabLayoutMediator(
+            TabLayoutMediator(
                     allMediaOnDeviceTabLayout,
-                    allMediaOnDeviceViewPager/*,
-                    true,
-                    true,
-                    object : TabLayoutMediator.TabConfigurationStrategy {
-                        override fun onConfigureTab(tab: TabLayout.Tab, position: Int) {
-
-                        }
-                    }*/
+                    allMediaOnDeviceViewPager
                 ) { tab, position ->
                     when (position) {
                         0 -> tab.text = "Apps"
@@ -800,7 +791,7 @@ class MainActivity : AppCompatActivity() {
                         3 -> tab.text = "Music"
                         4 -> tab.text = "Files"
                     }
-                }
+                }.attach()
 
             }
             setContentView(root)

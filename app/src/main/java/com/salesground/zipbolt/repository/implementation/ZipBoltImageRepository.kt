@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.repository.*
-import com.salesground.zipbolt.utils.customizeDate
 import com.salesground.zipbolt.utils.parseDate
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*

@@ -15,11 +15,15 @@ class CurvedImageView @JvmOverloads constructor(
 
     private var roundRectPath = Path()
     private var cornerRadius: Float = 0f
+    private var mPaddingLeft: Float = 0f
+    private var mPaddingRight: Float = 0f
+    private var mPaddingTop: Float = 0f
+    private var mPaddingBottom: Float = 0f
 
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CurvedImageView) {
-            cornerRadius = getDimension(R.styleable.CurvedImageView_cornerRadius, 0f)
+            cornerRadius = getDimension(R.styleable.CurvedImageView_curvedImageViewCornerRadius, 0f)
         }
     }
 
@@ -36,17 +40,39 @@ class CurvedImageView @JvmOverloads constructor(
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-
+        mPaddingBottom = paddingBottom.toFloat()
+        mPaddingLeft = paddingLeft.toFloat()
+        mPaddingRight = paddingRight.toFloat()
+        mPaddingTop = paddingTop.toFloat()
         roundRectPath = Path().apply {
-            addRoundRect(
-                paddingLeft.toFloat(),
-                paddingTop.toFloat(),
-                w.toFloat() - paddingRight.toFloat(),
-                h.toFloat() - paddingBottom.toFloat(),
-                cornerRadius,
-                cornerRadius,
-                Path.Direction.CW
+            moveTo(mPaddingLeft, (h - mPaddingBottom) * (1 - cornerRadius))
+            lineTo(mPaddingLeft, (h - mPaddingTop) * cornerRadius)
+            quadTo(
+                mPaddingLeft, mPaddingTop, (w * cornerRadius) + mPaddingLeft,
+                mPaddingTop
+            )
+            lineTo((w * 1 - cornerRadius) - mPaddingRight, mPaddingTop)
+
+            quadTo(
+                w - mPaddingRight,
+                mPaddingTop,
+                w - mPaddingRight,
+                (h * cornerRadius) - mPaddingTop
+            )
+
+            lineTo(w - mPaddingRight, (h * (1 - cornerRadius)) - mPaddingRight)
+
+            quadTo(
+                w - mPaddingRight, h - mPaddingBottom,
+                (w * 1 - cornerRadius) - mPaddingRight, h - mPaddingBottom
+            )
+
+            lineTo((w * cornerRadius) + mPaddingLeft, h - mPaddingBottom)
+            quadTo(
+                mPaddingLeft, h - mPaddingBottom,
+                mPaddingLeft, (h * (1 - cornerRadius)) - mPaddingBottom
             )
         }
+
     }
 }

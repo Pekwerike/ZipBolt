@@ -9,6 +9,6 @@
     </declare-styleable>
 
     <declare-styleable name="CurvedImageView">
-        <attr name="cornerRadius" format="dimension"/>
+        <attr name="curvedImageViewCornerRadius" format="float"/>
     </declare-styleable>
 </resources>

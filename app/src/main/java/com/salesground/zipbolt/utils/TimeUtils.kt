@@ -18,7 +18,7 @@ private fun String.splitDate(): List<String> {
     return split(" ", ignoreCase = true)
 }
 
-fun String.customizeDate(): String {
+private fun String.customizeDate(): String {
     var day: String = this
     val splitDate = splitDate()
     val presentDate = dateFormat.format(System.currentTimeMillis()).splitDate()
