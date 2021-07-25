@@ -60,8 +60,13 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.commit
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.DirectoryListDisplay
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.utils.*
@@ -230,9 +235,7 @@ class MainActivity : AppCompatActivity() {
                                                         DataToTransfer.DeviceImage(
                                                             0L,
                                                             dataUri!!,
-                                                            System.currentTimeMillis()
-                                                                .parseDate()
-                                                                .customizeDate(),
+                                                            System.currentTimeMillis().parseDate(),
                                                             dataDisplayName,
                                                             "",
                                                             dataSize,
@@ -778,7 +781,17 @@ class MainActivity : AppCompatActivity() {
                     TabLayout.MODE_SCROLLABLE
                 } else TabLayout.MODE_FIXED
 
-                allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
+                tabLayoutViewPagerConfiguration(
+                    allMediaOnDeviceTabLayout,
+                    allMediaOnDeviceViewPager,
+                    AllMediaOnDeviceViewPagerAdapter(supportFragmentManager),
+                    "Apps",
+                    "Images",
+                    "Videos",
+                    "Music",
+                    "Files"
+                )
+               /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
                     supportFragmentManager,
                     lifecycle
                 )
@@ -793,7 +806,8 @@ class MainActivity : AppCompatActivity() {
                         3 -> tab.text = "Music"
                         4 -> tab.text = "Files"
                     }
-                }.attach()
+                }.attach()*/
+
             }
             setContentView(root)
         }
@@ -806,6 +820,39 @@ class MainActivity : AppCompatActivity() {
         Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
+    }
+
+    private fun tabLayoutViewPagerConfiguration(
+        tabLayout: TabLayout, viewPager: ViewPager,
+        viewPagerAdapter: FragmentStatePagerAdapter,
+        vararg tabNames: String
+    ) {
+        for (tabName in tabNames) {
+            tabLayout.addTab(tabLayout.newTab().setText(tabName))
+        }
+
+        viewPager.adapter = viewPagerAdapter
+        viewPager.addOnPageChangeListener(
+            TabLayout.TabLayoutOnPageChangeListener(tabLayout)
+        )
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    viewPager.currentItem = tab.position
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    viewPager.currentItem = tab.position
+                }
+            }
+        })
     }
 
     private fun observeViewModelLiveData() {
@@ -1267,14 +1314,16 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
                                 // Show the user that searching for peers has started
-                                mainActivityViewModel.expandedWaitingForReceiver()
+                                /**Listen for wifi on via the broadcast receiver
+                                 * and then call createWifiDirectGroup**/
+
                             } else {
                                 displayToast("Turn off your hotspot")
                             }
                         }
                     } else {
                         // Create Wifi p2p group, if wifi is enabled
-                       broadcastZipBoltFileTransferService()
+                        createWifiDirectGroup()
                     }
                     modalBottomSheetDialog.hide()
                 }
@@ -1339,14 +1388,13 @@ class MainActivity : AppCompatActivity() {
                                ).show()
                            }
                        }*/
-
                     mainActivityViewModel.expandedWaitingForReceiver()
                     broadcastZipBoltFileTransferService()
                 }
 
                 override fun onFailure(p0: Int) {
                     displayToast("Group creation failed")
-
+                    broadcastZipBoltFileTransferService()
                 }
             })
     }
@@ -1376,15 +1424,17 @@ class MainActivity : AppCompatActivity() {
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                Timer().schedule(2000){
-                    if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
-                        discoverServices()
+                Timer().schedule(2000) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                            discoverServices()
+                        }
                     }
                 }
             }
 
             override fun onFailure(reason: Int) {
-                if(reason == WifiP2pManager.ERROR || reason == WifiP2pManager.BUSY) {
+                if (reason == WifiP2pManager.ERROR || reason == WifiP2pManager.BUSY) {
                     discoverServices()
                 }
             }
@@ -1440,7 +1490,9 @@ class MainActivity : AppCompatActivity() {
                             WifiP2pDnsSdServiceRequest.newInstance(),
                             object : WifiP2pManager.ActionListener {
                                 override fun onSuccess() {
-                                    discoverServices()
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        discoverServices()
+                                    }
                                 }
 
                                 override fun onFailure(reason: Int) {
@@ -1464,6 +1516,7 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             checkFineLocationPermission()
+            displayToast("Cannot discover service. Missing permission")
         }
     }
 
@@ -1558,7 +1611,7 @@ class MainActivity : AppCompatActivity() {
                             object : WifiP2pManager.ActionListener {
                                 override fun onSuccess() {
                                     // local service addition was successfully sent to the android framework
-                                    createWifiDirectGroup()
+                                    //  createWifiDirectGroup()
                                 }
 
                                 override fun onFailure(reason: Int) {
@@ -1575,6 +1628,7 @@ class MainActivity : AppCompatActivity() {
 
         } else {
             //TODO request location permission and addLocalService again
+            displayToast("Cannot advertise service. Missing location permission")
         }
     }
 

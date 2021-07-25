@@ -58,9 +58,7 @@ class FilesFragment : Fragment() {
                         backStackCount++
                         fileViewModel.clearCurrentFolderChildren()
                         fileViewModel.moveToDirectory(
-                            it.file.path,
-                            recyclerViewLayoutManager.findFirstVisibleItemPosition()
-                        )
+                            it.file.path)
                     }
                 })
         observeViewModelLiveData()
@@ -91,11 +89,6 @@ class FilesFragment : Fragment() {
         fileViewModel.directoryChildren.observe(this) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
-                Timer().schedule(100) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        recyclerViewLayoutManager.scrollToPosition(fileViewModel.getDirectoryFirstVisibleItemPosition())
-                    }
-                }
             }
         }
     }

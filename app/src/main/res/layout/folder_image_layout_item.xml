@@ -18,22 +18,23 @@
         android:orientation="horizontal"
         android:padding="@dimen/view_group_standard_padding">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.salesground.zipbolt.ui.customviews.CurvedImageView
             android:id="@+id/folder_image_layout_item_image_view"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:curvedImageViewCornerRadius="0.18" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
             android:layout_weight="1"
             android:gravity="center"
-            android:layout_margin="@dimen/medium_margin"
             android:orientation="vertical">
 
             <com.google.android.material.textview.MaterialTextView
-                style="@style/TextAppearance.MaterialComponents.Body1"
+                style="@style/TextAppearance.MaterialComponents.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"

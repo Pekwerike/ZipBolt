@@ -24,12 +24,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_margin">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <com.salesground.zipbolt.ui.customviews.CurvedImageView
             android:id="@+id/video_layout_item_video_preview_image_view"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
             android:layout_margin="@dimen/medium_margin"
             android:scaleType="centerCrop"
+            app:curvedImageViewCornerRadius="0.18"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

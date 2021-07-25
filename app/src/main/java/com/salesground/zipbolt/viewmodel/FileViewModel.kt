@@ -14,41 +14,30 @@ import java.io.File
 import java.util.*
 import javax.inject.Inject
 
-data class DirectoryEntry(
-    val directoryPath: String,
-    val firstVisibleFilePosition: Int
-)
 
 @HiltViewModel
 class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
-    private val directoryStack: Deque<DirectoryEntry> = ArrayDeque()
-    private lateinit var currentDirectoryEntry: DirectoryEntry
+    private val directoryStack: Deque<String> = ArrayDeque()
+    private lateinit var currentDirectoryEntry: String
 
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()
         previousDirectoryEntry?.let {
             currentDirectoryEntry = it
-            getDirectoryChildren(it.directoryPath)
+            getDirectoryChildren(it)
         }
     }
 
-    fun getDirectoryFirstVisibleItemPosition(): Int {
-        return currentDirectoryEntry.firstVisibleFilePosition
-    }
 
-    fun moveToDirectory(path: String, positionOfClickedDirectory: Int) {
-
+    fun moveToDirectory(path: String) {
         // push previous directory with it's last visible item position into the directory stack
         directoryStack.push(
-            DirectoryEntry(
-                currentDirectoryEntry.directoryPath,
-                positionOfClickedDirectory
-            )
+            currentDirectoryEntry
         )
         // change the current directory to point at the new path
-        currentDirectoryEntry = DirectoryEntry(path, 0)
+        currentDirectoryEntry = path
         getDirectoryChildren(path)
     }
 
@@ -59,8 +48,8 @@ class FileViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            currentDirectoryEntry = DirectoryEntry(filesRepository.getRootDirectory().path, 0)
-            getDirectoryChildren(currentDirectoryEntry.directoryPath)
+            currentDirectoryEntry = filesRepository.getRootDirectory().path
+            getDirectoryChildren(currentDirectoryEntry)
         }
     }
 

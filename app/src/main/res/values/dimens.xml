@@ -8,4 +8,5 @@
     <dimen name="small_margin">4dp</dimen>
     <dimen name="image_button_size">48dp</dimen>
     <dimen name="view_group_standard_padding">8dp</dimen>
+    <dimen name="curved_image_view_padding">4dp</dimen>
 </resources>
