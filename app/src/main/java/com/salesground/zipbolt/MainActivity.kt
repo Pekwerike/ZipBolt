@@ -60,8 +60,13 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.fragment.app.commit
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.DirectoryListDisplay
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.utils.*
@@ -776,11 +781,21 @@ class MainActivity : AppCompatActivity() {
                     TabLayout.MODE_SCROLLABLE
                 } else TabLayout.MODE_FIXED
 
-                allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
+                tabLayoutViewPagerConfiguration(
+                    allMediaOnDeviceTabLayout,
+                    allMediaOnDeviceViewPager,
+                    AllMediaOnDeviceViewPagerAdapter(supportFragmentManager),
+                    "Apps",
+                    "Images",
+                    "Videos",
+                    "Music",
+                    "Files"
+                )
+               /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
                     supportFragmentManager,
                     lifecycle
                 )
-            TabLayoutMediator(
+                TabLayoutMediator(
                     allMediaOnDeviceTabLayout,
                     allMediaOnDeviceViewPager
                 ) { tab, position ->
@@ -791,7 +806,7 @@ class MainActivity : AppCompatActivity() {
                         3 -> tab.text = "Music"
                         4 -> tab.text = "Files"
                     }
-                }.attach()
+                }.attach()*/
 
             }
             setContentView(root)
@@ -805,6 +820,39 @@ class MainActivity : AppCompatActivity() {
         Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
+    }
+
+    private fun tabLayoutViewPagerConfiguration(
+        tabLayout: TabLayout, viewPager: ViewPager,
+        viewPagerAdapter: FragmentStatePagerAdapter,
+        vararg tabNames: String
+    ) {
+        for (tabName in tabNames) {
+            tabLayout.addTab(tabLayout.newTab().setText(tabName))
+        }
+
+        viewPager.adapter = viewPagerAdapter
+        viewPager.addOnPageChangeListener(
+            TabLayout.TabLayoutOnPageChangeListener(tabLayout)
+        )
+
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    viewPager.currentItem = tab.position
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    viewPager.currentItem = tab.position
+                }
+            }
+        })
     }
 
     private fun observeViewModelLiveData() {

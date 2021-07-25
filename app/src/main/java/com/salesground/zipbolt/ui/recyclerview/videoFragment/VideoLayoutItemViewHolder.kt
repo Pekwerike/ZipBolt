@@ -11,6 +11,7 @@ import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
@@ -35,6 +36,7 @@ class VideoLayoutItemViewHolder(
           
             Glide.with(videoLayoutItemVideoPreviewImageView)
                 .load(dataToTransfer.videoUri)
+                .transform(RoundedCorners(30))
                 .thumbnail(Glide.with(root.context).load(dataToTransfer.videoUri))
                 .into(videoLayoutItemVideoPreviewImageView)
 

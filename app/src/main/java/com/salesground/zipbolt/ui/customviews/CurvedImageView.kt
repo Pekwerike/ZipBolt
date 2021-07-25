@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.toBitmap
+import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 
 
@@ -19,15 +20,19 @@ class CurvedImageView @JvmOverloads constructor(
     private var mPaddingRight: Float = 0f
     private var mPaddingTop: Float = 0f
     private var mPaddingBottom: Float = 0f
+    private val surfaceColor: Int = ContextCompat.getColor(context, R.color.surface_color)
 
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CurvedImageView) {
-            cornerRadius = getDimension(R.styleable.CurvedImageView_curvedImageViewCornerRadius, 0f)
+            cornerRadius = getFloat(R.styleable.CurvedImageView_curvedImageViewCornerRadius, 0f)
         }
     }
 
     override fun onDraw(canvas: Canvas?) {
+        canvas?.let {
+            canvas.drawColor(surfaceColor)
+        }
         curveDrawingSurface(canvas)
         super.onDraw(canvas)
     }
@@ -45,26 +50,26 @@ class CurvedImageView @JvmOverloads constructor(
         mPaddingRight = paddingRight.toFloat()
         mPaddingTop = paddingTop.toFloat()
         roundRectPath = Path().apply {
-            moveTo(mPaddingLeft, (h - mPaddingBottom) * (1 - cornerRadius))
-            lineTo(mPaddingLeft, (h - mPaddingTop) * cornerRadius)
+            moveTo(mPaddingLeft, (h * (1 - cornerRadius)) - mPaddingBottom)
+            lineTo(mPaddingLeft, (h * cornerRadius) + mPaddingTop)
             quadTo(
                 mPaddingLeft, mPaddingTop, (w * cornerRadius) + mPaddingLeft,
                 mPaddingTop
             )
-            lineTo((w * 1 - cornerRadius) - mPaddingRight, mPaddingTop)
+            lineTo((w * (1 - cornerRadius)) - mPaddingRight, mPaddingTop)
 
             quadTo(
                 w - mPaddingRight,
                 mPaddingTop,
                 w - mPaddingRight,
-                (h * cornerRadius) - mPaddingTop
+                (h * cornerRadius) + mPaddingTop
             )
 
             lineTo(w - mPaddingRight, (h * (1 - cornerRadius)) - mPaddingRight)
 
             quadTo(
                 w - mPaddingRight, h - mPaddingBottom,
-                (w * 1 - cornerRadius) - mPaddingRight, h - mPaddingBottom
+                (w * (1 - cornerRadius)) - mPaddingRight, h - mPaddingBottom
             )
 
             lineTo((w * cornerRadius) + mPaddingLeft, h - mPaddingBottom)

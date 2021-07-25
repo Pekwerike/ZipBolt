@@ -30,7 +30,7 @@
             android:layout_height="54dp"
             android:layout_margin="@dimen/medium_margin"
             android:scaleType="centerCrop"
-            app:curvedImageViewCornerRadius="0.15"
+            app:curvedImageViewCornerRadius="0.18"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

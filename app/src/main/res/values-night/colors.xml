@@ -3,5 +3,5 @@
     <color name="material_color_surface_dark">#FF121212</color>
     <color name="background_color">#FFFFFFFF</color>
     <color name="onBackgroundColor">#616161</color>
-
+    <color name="surface_color">#616161</color>
 </resources>
