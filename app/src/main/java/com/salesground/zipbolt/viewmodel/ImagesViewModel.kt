@@ -38,15 +38,13 @@ class ImagesViewModel @Inject constructor(
 
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
             filterDeviceImages()
-            launch(Dispatchers.IO) {
-                val imageBucketNames = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
-                withContext(Dispatchers.Main) {
-                    _deviceImagesBucketNames.value = imageBucketNames
-                }
+            val imageBucketNames = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
+            withContext(Dispatchers.Main) {
+                _deviceImagesBucketNames.value = imageBucketNames
             }
         }
     }
@@ -72,25 +70,28 @@ class ImagesViewModel @Inject constructor(
     }
 
 
-    fun filterDeviceImages(bucketName: String = "All") {
+    suspend fun filterDeviceImages(bucketName: String = "All") {
         if (bucketName != "All" && bucketName == _chosenBucket.value) return
-        _chosenBucket.value = bucketName
 
-        viewModelScope.launch {
-            if (bucketName == "All") {
-                // don't filter
-                _deviceImagesGroupedByDateModified.value =
-                    withContext(Dispatchers.IO) {
-                        allDeviceImagesToImagesDisplayModel(allImagesOnDevice = allImagesOnDeviceRaw)
-                    }!!
-            } else {
-                // filter
-                _deviceImagesGroupedByDateModified.value = withContext(Dispatchers.IO) {
-                    filterDeviceImagesByBucketName(
-                        allImagesOnDevice = allImagesOnDeviceRaw,
-                        bucketName = bucketName
-                    )
-                }!!
+        withContext(Dispatchers.Main) {
+            _chosenBucket.value = bucketName
+        }
+        if (bucketName == "All") {
+            // don't filter
+            val allImages =
+                allDeviceImagesToImagesDisplayModel(allImagesOnDevice = allImagesOnDeviceRaw)
+            withContext(Dispatchers.Main) {
+                _deviceImagesGroupedByDateModified.value = allImages
+            }
+
+        } else {
+            // filter
+            val filteredImages = filterDeviceImagesByBucketName(
+                allImagesOnDevice = allImagesOnDeviceRaw,
+                bucketName = bucketName
+            )
+            withContext(Dispatchers.Main) {
+                _deviceImagesGroupedByDateModified.value = filteredImages
             }
         }
     }
@@ -138,7 +139,7 @@ class ImagesViewModel @Inject constructor(
 
 
     fun onImageClicked(imageClicked: ImagesDisplayModel) {
-        viewModelScope.launch (Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             imageClicked as ImagesDisplayModel.DeviceImageDisplay
             if (collectionOfClickedImages.containsKey(imageClicked)) {
                 // un clicked
@@ -150,7 +151,8 @@ class ImagesViewModel @Inject constructor(
             }
         }
     }
-    fun clearCollectionOfClickedImages(){
+
+    fun clearCollectionOfClickedImages() {
         collectionOfClickedImages.clear()
     }
 }

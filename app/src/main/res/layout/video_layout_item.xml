@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -18,75 +17,76 @@
             type="Long" />
     </data>
 
-    <com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout
-        android:id="@+id/video_layout_item_selectable_constraint_layout"
+    <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
+        android:id="@+id/video_layout_item_selectable_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/medium_margin">
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <com.salesground.zipbolt.ui.customviews.CurvedImageView
-            android:id="@+id/video_layout_item_video_preview_image_view"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:layout_margin="@dimen/medium_margin"
-            android:scaleType="centerCrop"
-            app:curvedImageViewCornerRadius="0.17"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/small_margin">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/video_layout_item_video_name_text_view"
+            <com.salesground.zipbolt.ui.customviews.CurvedImageView
+                android:id="@+id/video_layout_item_video_preview_image_view"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                app:curvedImageViewCornerRadius="0.17" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="@dimen/small_margin"
+                android:background="@color/black_20_percent"
+                android:padding="1dp"
+                app:srcCompat="@drawable/ic_baseline_play_circle_outline_24" />
+        </FrameLayout>
+
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/medium_margin"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:padding="@dimen/standard_text_view_padding"
-            android:text="@{videoName}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintBottom_toTopOf="@+id/video_layout_item_video_duration_and_size_text_view"
-            app:layout_constraintEnd_toStartOf="@id/barrier5"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@id/video_layout_item_video_preview_image_view"
-            app:layout_constraintTop_toTopOf="@+id/video_layout_item_video_preview_image_view"
-            app:layout_constraintVertical_chainStyle="packed" />
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/view_group_standard_padding">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/video_layout_item_video_duration_and_size_text_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/standard_text_view_padding"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintBottom_toBottomOf="@+id/video_layout_item_video_preview_image_view"
-            app:layout_constraintEnd_toEndOf="@id/video_layout_item_video_name_text_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/video_layout_item_video_name_text_view"
-            app:layout_constraintTop_toBottomOf="@+id/video_layout_item_video_name_text_view"
-            app:setVideoDuration="@{videoDuration}"
-            app:setVideoSize="@{videoSize}" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_layout_item_video_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:padding="@dimen/standard_text_view_padding"
+                android:text="@{videoName}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/video_layout_item_video_duration_and_size_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/standard_text_view_padding"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:setVideoDuration="@{videoDuration}"
+                app:setVideoSize="@{videoSize}" />
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/video_layout_item_video_selected_check_box"
             style="@style/CustomCheckBoxAppearance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            android:minWidth="0dp"
-            android:minHeight="0dp"
+            android:layout_marginStart="@dimen/small_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/barrier5"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.Barrier
-            android:id="@+id/barrier5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:barrierDirection="start"
-            app:constraint_referenced_ids="video_layout_item_video_selected_check_box"
-            tools:layout_editor_absoluteX="411dp" />
-
-    </com.salesground.zipbolt.ui.customviews.SelectableConstraintLayout>
+    </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
 
 </layout>

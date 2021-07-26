@@ -10,6 +10,7 @@
     <color name="orange_300">#FFFF6859</color>
     <color name="green_500">#54E369</color>
     <color name="black">#FF000000</color>
+    <color name="black_20_percent">#15000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="material_color_surface_dark">#FF121212</color>
     <color name="onBackgroundColor">#616161</color>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -31,11 +30,13 @@
                 app:curvedImageViewCornerRadius="0.17" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_gravity="top|end"
-                android:layout_margin="@dimen/small_margin"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/ic_baseline_play_circle_outline_24"/>
+                android:layout_gravity="top|end"
+                android:layout_margin="@dimen/small_margin"
+                android:background="@color/black_20_percent"
+                android:padding="1dp"
+                app:srcCompat="@drawable/ic_baseline_play_circle_outline_24" />
         </FrameLayout>
 
         <LinearLayout
@@ -70,9 +71,10 @@
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/folder_video_layout_item_folder_selected_check_box"
             style="@style/CustomCheckBoxAppearance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="@dimen/small_margin"
+            android:gravity="center"
             android:minWidth="0dp"
             android:minHeight="0dp" />
 

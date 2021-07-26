@@ -130,6 +130,10 @@ sealed class DataToTransfer(
             || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")){
             return DocumentType.Image
         }
+        // check if file is a video
+        if(dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp")){
+            return DocumentType.Video 
+        }
         // if file is not an image go further processing
         if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
         ) {

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
@@ -25,6 +26,8 @@ import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplay
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -45,7 +48,7 @@ class ImageFragment : Fragment() {
             override fun sendDataButtonClicked() {
                 // tell the view model to clear the collection of clicked images and notify
                 // the recycler that all clicked images have been sent
-                if(imagesViewModel.collectionOfClickedImages.isNotEmpty()) {
+                if (imagesViewModel.collectionOfClickedImages.isNotEmpty()) {
                     imagesViewModel.clearCollectionOfClickedImages()
                     dAdapter.notifyDataSetChanged()
                 }
@@ -159,10 +162,11 @@ class ImageFragment : Fragment() {
                         }
                     }
                     chip.setOnClickListener {
-
                         chip.isChecked = true
                         if (bucketName != imagesViewModel.chosenBucket.value) {
-                            imagesViewModel.filterDeviceImages(bucketName = bucketName)
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                imagesViewModel.filterDeviceImages(bucketName = bucketName)
+                            }
                             try {
                                 val indexOfLastSelectedBucket =
                                     bucketNames.indexOf(selectedCategory)

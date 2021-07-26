@@ -6,7 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
-import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
+import com.salesground.zipbolt.databinding.AudioLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
@@ -15,7 +15,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
  * since it shares similar UI structure with R.layout.video_layout_item
  * */
 class AudioLayoutItemViewHolder(
-    private val audioLayoutItemBinding: VideoLayoutItemBinding,
+    private val audioLayoutItemBinding: AudioLayoutItemBinding,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
 ) : RecyclerView.ViewHolder(audioLayoutItemBinding.root) {
 
@@ -26,18 +26,18 @@ class AudioLayoutItemViewHolder(
         dataToTransfer as DataToTransfer.DeviceAudio
 
         audioLayoutItemBinding.run {
-            videoName = dataToTransfer.audioDisplayName
-            videoSize = dataToTransfer.audioSize
-            videoDuration = dataToTransfer.audioDuration
+            audioName = dataToTransfer.audioDisplayName
+            audioSize = dataToTransfer.audioSize
+            audioDuration = dataToTransfer.audioDuration
 
-            Glide.with(videoLayoutItemVideoPreviewImageView)
+            Glide.with(audioLayoutItemVideoPreviewImageView)
                 .load(dataToTransfer.audioArtPath)
                 .error(R.drawable.ic_baseline_music_note_24)
-                .into(videoLayoutItemVideoPreviewImageView)
+                .into(audioLayoutItemVideoPreviewImageView)
 
 
-            videoLayoutItemSelectableConstraintLayout.run {
-                videoLayoutItemVideoSelectedCheckBox.setOnClickListener {
+            audioLayoutItemSelectableLinearLayout.run {
+                audioLayoutItemVideoSelectedCheckBox.setOnClickListener {
                     dataToTransferRecyclerViewItemClickListener.onClick(
                         dataToTransfer
                     )
@@ -45,12 +45,12 @@ class AudioLayoutItemViewHolder(
                     if (selectedAudios.contains(dataToTransfer)) {
                         // user un-selected, so remove the video from the collection of selected videos
                         setIsViewSelected(false)
-                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        audioLayoutItemVideoSelectedCheckBox.isChecked = false
                         selectedAudios.remove(dataToTransfer)
                     } else {
                         // user selects, so add the application to the collection of selected videos
                         setIsViewSelected(true)
-                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        audioLayoutItemVideoSelectedCheckBox.isChecked = true
                         selectedAudios.add(dataToTransfer)
                     }
                 }
@@ -63,22 +63,22 @@ class AudioLayoutItemViewHolder(
                     if (selectedAudios.contains(dataToTransfer)) {
                         // user un-selected, so remove the video from the collection of selected videos
                         setIsViewSelected(false)
-                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                        audioLayoutItemVideoSelectedCheckBox.isChecked = false
                         selectedAudios.remove(dataToTransfer)
                     } else {
                         // user selects, so add the application to the collection of selected videos
                         setIsViewSelected(true)
-                        videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                        audioLayoutItemVideoSelectedCheckBox.isChecked = true
                         selectedAudios.add(dataToTransfer)
                     }
                 }
 
                 if (selectedAudios.contains(dataToTransfer)) {
                     setIsViewSelected(true)
-                    videoLayoutItemVideoSelectedCheckBox.isChecked = true
+                    audioLayoutItemVideoSelectedCheckBox.isChecked = true
                 } else {
                     setIsViewSelected(false)
-                    videoLayoutItemVideoSelectedCheckBox.isChecked = false
+                    audioLayoutItemVideoSelectedCheckBox.isChecked = false
                 }
             }
 
@@ -91,9 +91,9 @@ class AudioLayoutItemViewHolder(
             parent: ViewGroup,
             dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
         ): AudioLayoutItemViewHolder {
-            val layoutBinding = DataBindingUtil.inflate<VideoLayoutItemBinding>(
+            val layoutBinding = DataBindingUtil.inflate<AudioLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.video_layout_item,
+                R.layout.audio_layout_item,
                 parent,
                 false
             )

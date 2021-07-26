@@ -10,6 +10,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryImageLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryVideoLayoutItemViewHolder
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
@@ -46,6 +47,9 @@ class DirectoryListDisplayRecyclerViewAdapter(
                     parent
                 )
             }
+            DocumentType.Video.value -> {
+                DirectoryVideoLayoutItemViewHolder.createViewHolder(parent)
+            }
             else -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
@@ -59,6 +63,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
         when (holder) {
             is DirectoryLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryImageLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryVideoLayoutItemViewHolder -> holder.bindData(getItem(position))
         }
     }
 }
