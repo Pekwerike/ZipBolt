@@ -9,6 +9,7 @@ import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryImageLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryLayoutItemViewHolder
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
