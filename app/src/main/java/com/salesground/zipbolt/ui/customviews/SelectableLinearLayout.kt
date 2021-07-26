@@ -39,8 +39,8 @@ class SelectableLinearLayout @JvmOverloads constructor(
         cornerRect.apply {
             left = 0f
             top = 0f
-            right = measuredWidth.toFloat()
-            bottom = measuredHeight.toFloat()
+            right = w.toFloat()
+            bottom = h.toFloat()
         }
     }
 

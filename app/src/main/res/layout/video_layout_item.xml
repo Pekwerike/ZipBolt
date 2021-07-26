@@ -26,8 +26,8 @@
 
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/small_margin">
+            android:layout_margin="@dimen/small_margin"
+            android:layout_height="wrap_content">
 
             <com.salesground.zipbolt.ui.customviews.CurvedImageView
                 android:id="@+id/video_layout_item_video_preview_image_view"

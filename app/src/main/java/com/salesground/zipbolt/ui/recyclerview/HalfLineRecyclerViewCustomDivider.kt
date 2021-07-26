@@ -47,11 +47,12 @@ class HalfLineRecyclerViewCustomDivider(private val context: Context, orientatio
         this.drawable = drawable
     }
 
+
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         if (parent.layoutManager == null || drawable == null) {
             return
         }
-            drawVertical(c, parent)
+        drawVertical(c, parent)
     }
 
     private fun drawVertical(canvas: Canvas, parent: RecyclerView) {
@@ -59,7 +60,7 @@ class HalfLineRecyclerViewCustomDivider(private val context: Context, orientatio
         val left: Int
         val right: Int
         if (parent.clipToPadding) {
-            left = parent.paddingLeft + (82 * context.resources.displayMetrics.density).roundToInt()
+            left = parent.paddingLeft + (74 * context.resources.displayMetrics.density).roundToInt()
             right = parent.width - parent.paddingRight
             canvas.clipRect(
                 left, parent.paddingTop, right,
@@ -73,7 +74,7 @@ class HalfLineRecyclerViewCustomDivider(private val context: Context, orientatio
         for (i in 0 until childCount) {
             val child = parent.getChildAt(i)
             parent.getDecoratedBoundsWithMargins(child, mBounds)
-            val bottom = mBounds.bottom + Math.round(child.translationY)
+            val bottom = mBounds.bottom + child.translationY.roundToInt()
             val top = bottom - drawable!!.intrinsicHeight
             drawable!!.setBounds(left, top, right, bottom)
             drawable!!.draw(canvas)
@@ -82,7 +83,7 @@ class HalfLineRecyclerViewCustomDivider(private val context: Context, orientatio
     }
 
 
-    override fun getItemOffsets(
+   /* override fun getItemOffsets(
         outRect: Rect, view: View, parent: RecyclerView,
         state: RecyclerView.State
     ) {
@@ -95,7 +96,7 @@ class HalfLineRecyclerViewCustomDivider(private val context: Context, orientatio
         } else {
             outRect[0, 0, drawable!!.intrinsicWidth] = 0
         }
-    }
+    }*/
 
     companion object {
         const val HORIZONTAL = LinearLayout.HORIZONTAL
