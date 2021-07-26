@@ -8,6 +8,7 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.toBitmap
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
+import kotlin.math.roundToInt
 
 
 class CurvedImageView @JvmOverloads constructor(
@@ -21,7 +22,16 @@ class CurvedImageView @JvmOverloads constructor(
     private var mPaddingTop: Float = 0f
     private var mPaddingBottom: Float = 0f
     private val surfaceColor: Int = ContextCompat.getColor(context, R.color.surface_color)
-
+    private val basePaint : Paint = Paint().apply {
+        color = surfaceColor
+        isAntiAlias = true
+        isDither = true
+        pathEffect = CornerPathEffect(2 * context.resources.displayMetrics.density)
+        strokeWidth = 2 * context.resources.displayMetrics.density
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+        style = Paint.Style.STROKE
+    }
 
     init {
         context.withStyledAttributes(attrs, R.styleable.CurvedImageView) {
@@ -30,11 +40,9 @@ class CurvedImageView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas?) {
-        canvas?.let {
-            canvas.drawColor(surfaceColor)
-        }
         curveDrawingSurface(canvas)
         super.onDraw(canvas)
+        canvas?.drawPath(roundRectPath, basePaint)
     }
 
     private fun curveDrawingSurface(canvas: Canvas?) {
