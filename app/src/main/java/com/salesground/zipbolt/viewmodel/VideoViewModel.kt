@@ -28,10 +28,11 @@ class VideoViewModel @Inject constructor(
     }
 
     private fun getAllVideosOnDevice() {
-        viewModelScope.launch {
-            _allVideosOnDevice.value = withContext(Dispatchers.IO) {
-                videoRepositoryI.getVideosOnDevice()
-            }!!
+        viewModelScope.launch(Dispatchers.IO) {
+            val videosOnDevice = videoRepositoryI.getVideosOnDevice()
+            withContext(Dispatchers.Main) {
+                _allVideosOnDevice.value = videosOnDevice
+            }
         }
     }
 

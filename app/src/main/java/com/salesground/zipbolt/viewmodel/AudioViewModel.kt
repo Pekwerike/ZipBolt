@@ -26,13 +26,11 @@ class AudioViewModel @Inject constructor(private val audioRepository: AudioRepos
     }
 
     private fun getDeviceAudio() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+        viewModelScope.launch (Dispatchers.IO){
                 val deviceAudio = audioRepository.getAudioOnDevice()
                 withContext(Dispatchers.Main) {
                     _deviceAudio.value = deviceAudio
                 }
-            }
         }
     }
 

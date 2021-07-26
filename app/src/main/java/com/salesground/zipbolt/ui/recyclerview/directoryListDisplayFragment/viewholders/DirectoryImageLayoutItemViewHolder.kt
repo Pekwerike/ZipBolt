@@ -16,7 +16,7 @@ class DirectoryImageLayoutItemViewHolder(
     fun bindData(dataToTransfer: DataToTransfer) {
         dataToTransfer as DataToTransfer.DeviceFile
         folderImageLayoutItemBinding.apply {
-            this.imageFile = dataToTransfer.file
+            imageFile = dataToTransfer.file
 
             Glide.with(root.context)
                 .load(dataToTransfer.file)

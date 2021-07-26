@@ -18,24 +18,11 @@ class SelectableLinearLayout @JvmOverloads constructor(
 ) : LinearLayoutCompat(context, attrs) {
     private var isViewSelected = false
     private val cornerRect = RectF()
-    private val cornerRectRadius = 4 * resources.displayMetrics.density
-    private val cornerRectStrokePaint = Paint().apply {
-        style = Paint.Style.STROKE
-        isAntiAlias = true
-        isDither = true
-        color = ContextCompat.getColor(context, R.color.blue_415)
-        strokeWidth = 4 * resources.displayMetrics.density
-        pathEffect = CornerPathEffect(cornerRectRadius)
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
-    }
-
     private val cornerRectFillPaint = Paint().apply {
         style = Paint.Style.FILL
         isAntiAlias = true
         isDither = true
         color = ContextCompat.getColor(context, R.color.blue_415_15_percent_alpha)
-
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
@@ -43,7 +30,6 @@ class SelectableLinearLayout @JvmOverloads constructor(
         if (isViewSelected) {
             canvas?.let {
                 drawScrim(it)
-                drawRoundedCorners(it)
             }
         }
     }
@@ -53,8 +39,8 @@ class SelectableLinearLayout @JvmOverloads constructor(
         cornerRect.apply {
             left = 0f
             top = 0f
-            right = measuredWidth.toFloat()
-            bottom = measuredHeight.toFloat()
+            right = w.toFloat()
+            bottom = h.toFloat()
         }
     }
 
@@ -65,12 +51,6 @@ class SelectableLinearLayout @JvmOverloads constructor(
         )
     }
 
-    private fun drawRoundedCorners(canvas: Canvas) {
-        canvas.drawRect(
-            cornerRect,
-            cornerRectStrokePaint
-        )
-    }
 
     fun setIsViewSelected(selected: Boolean) {
         if (isViewSelected && !selected) {

@@ -1,59 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
-            name="audioTitle"
+            name="audioName"
             type="String" />
 
         <variable
-            name="artistName"
-            type="String" />
+            name="audioSize"
+            type="Long" />
+
+        <variable
+            name="audioDuration"
+            type="Long" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
+        android:id="@+id/audio_layout_item_selectable_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp">
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.salesground.zipbolt.ui.customviews.CurvedImageView
+            android:id="@+id/audio_layout_item_video_preview_image_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="@dimen/small_margin"
+            android:scaleType="centerCrop"
+            app:curvedImageViewCornerRadius="0.17" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_margin="1dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_weight="1"
             android:gravity="center"
-            android:layout_height="wrap_content">
+            android:orientation="vertical"
+            android:padding="@dimen/view_group_standard_padding">
 
-            <ImageView
-                android:id="@+id/audio_art_image_view"
-                android:layout_width="50dp"
-                android:layout_gravity="center"
-                android:layout_height="50dp" />
-
-            <LinearLayout
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/audio_layout_item_video_name_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_margin="5dp"
-                android:orientation="vertical">
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:padding="@dimen/standard_text_view_padding"
+                android:text="@{audioName}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
 
-                <TextView
-                    android:id="@+id/audio_title_text_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{audioTitle}"
-                    android:maxLines="2"
-                    android:textSize="14sp" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/audio_layout_item_video_duration_and_size_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/standard_text_view_padding"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:setVideoDuration="@{audioDuration}"
+                app:setVideoSize="@{audioSize}" />
 
-                <TextView
-                    android:id="@+id/audio_artist_name_text_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:alpha="0.5"
-                    android:text="@{artistName}"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/audio_layout_item_video_selected_check_box"
+            style="@style/CustomCheckBoxAppearance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/small_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
+
 </layout>

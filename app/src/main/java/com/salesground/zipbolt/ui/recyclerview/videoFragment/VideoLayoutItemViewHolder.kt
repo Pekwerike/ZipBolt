@@ -40,7 +40,7 @@ class VideoLayoutItemViewHolder(
                 .thumbnail(Glide.with(root.context).load(dataToTransfer.videoUri))
                 .into(videoLayoutItemVideoPreviewImageView)
 
-            videoLayoutItemSelectableConstraintLayout.run {
+            videoLayoutItemSelectableLinearLayout.run {
                 videoLayoutItemVideoSelectedCheckBox.setOnClickListener {
                     dataToTransferRecyclerViewItemClickListener.onClick(
                         dataToTransfer
