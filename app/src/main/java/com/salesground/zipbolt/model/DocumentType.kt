@@ -12,6 +12,7 @@ sealed class DocumentType(val value: Int) {
         object ExcelDocument : Document(8)
         object UnknownDocument : Document(9)
         object PowerPointDocument : Document(10)
+        object ZipDocument: Document(11)
     }
 
 }

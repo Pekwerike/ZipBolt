@@ -150,6 +150,10 @@ sealed class DataToTransfer(
                 documentType = DocumentType.Document.PowerPointDocument
                 return documentType
             }
+            dataDisplayName.endsWith("zip") -> {
+                documentType = DocumentType.Document.ZipDocument
+                return documentType
+            }
         }
         // if file is not an image go further processing
         if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
