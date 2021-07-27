@@ -26,6 +26,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Document.Pdf -> documentType.value
             DocumentType.Document.UnknownDocument -> documentType.value
             DocumentType.Document.WordDocument -> documentType.value
+            DocumentType.Document.ZipDocument -> documentType.value
             DocumentType.Image -> documentType.value
             DocumentType.Video -> documentType.value
             else -> documentType.value
@@ -61,6 +62,9 @@ class DirectoryListDisplayRecyclerViewAdapter(
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
             }
             DocumentType.Document.ExcelDocument.value -> {
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+            }
+            DocumentType.Document.ZipDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
             }
             else -> {
