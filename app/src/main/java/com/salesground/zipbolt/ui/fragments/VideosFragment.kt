@@ -61,9 +61,7 @@ class VideosFragment : Fragment() {
             },
             videoViewModel.selectedVideosForTransfer
         )
-
         observeVideoViewModelLiveData()
-
     }
 
     override fun onCreateView(

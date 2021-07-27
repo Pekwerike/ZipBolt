@@ -17,7 +17,7 @@ class DirectoryVideoLayoutItemViewHolder(
     fun bindData(dataToTransfer: DataToTransfer) {
         dataToTransfer as DataToTransfer.DeviceFile
         folderVideoLayoutItemBinding.apply {
-            imageFile = dataToTransfer.file
+            videoFile = dataToTransfer.file
 
             Glide.with(root.context)
                 .load(dataToTransfer.file)
