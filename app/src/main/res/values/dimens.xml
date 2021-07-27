@@ -9,4 +9,9 @@
     <dimen name="image_button_size">48dp</dimen>
     <dimen name="view_group_standard_padding">8dp</dimen>
     <dimen name="curved_image_view_padding">4dp</dimen>
+    <dimen name="small_padding">2dp</dimen>
+    <dimen name="medium_padding">4dp</dimen>
+    <dimen name="large_padding">8dp</dimen>
+    <dimen name="standard_corner_radius">8dp</dimen>
+    <dimen name="small_corner_radius">4dp</dimen>
 </resources>
