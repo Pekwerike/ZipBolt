@@ -8,10 +8,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
-import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryAudioLayoutItemViewHolder
-import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryImageLayoutItemViewHolder
-import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryLayoutItemViewHolder
-import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryVideoLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.*
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
@@ -25,7 +22,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.App -> documentType.value
             DocumentType.Audio -> documentType.value
             DocumentType.Directory -> documentType.value
-            DocumentType.Document.ExcelFile -> documentType.value
+            DocumentType.Document.ExcelDocument -> documentType.value
             DocumentType.Document.Pdf -> documentType.value
             DocumentType.Document.UnknownDocument -> documentType.value
             DocumentType.Document.WordDocument -> documentType.value
@@ -54,6 +51,18 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Audio.value -> {
                 DirectoryAudioLayoutItemViewHolder.createViewHolder(parent)
             }
+            DocumentType.Document.PowerPointDocument.value-> {
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+            }
+            DocumentType.Document.WordDocument.value -> {
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+            }
+            DocumentType.Document.Pdf.value -> {
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+            }
+            DocumentType.Document.ExcelDocument.value -> {
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+            }
             else -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
@@ -69,6 +78,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             is DirectoryImageLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryVideoLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryAudioLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryDocumentLayoutItemViewHolder -> holder.bindData(getItem(position))
         }
     }
 }

@@ -98,7 +98,7 @@ fun TextView.setVideoDurationAndSize(videoDuration: Long?, videoSize: Long?) {
 fun TextView.setFileLastModifiedDateAndSize(fileLastModified: Long?, fileSize: Long?) {
     if (fileLastModified != null && fileSize != null) {
         text = context.getString(
-            R.string.comma_separated_strings,
+            R.string.middle_round_dot_text_separation,
             fileSize.transformDataSizeToMeasuredUnit(),
             fileLastModified.parseDate()
         )

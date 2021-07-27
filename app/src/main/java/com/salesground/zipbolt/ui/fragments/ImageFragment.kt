@@ -127,31 +127,39 @@ class ImageFragment : Fragment() {
     }
 
     private fun observeViewModelLiveData() {
-        imagesViewModel.deviceImagesGroupedByDateModified.observe(this) {
-            dAdapter.submitList(it)
-        }
-        imagesViewModel.deviceImagesBucketName.observe(this) { it ->
-            it?.let {
-                it.forEach { bucketNameAndSize ->
-                    asyncLayoutInflater.inflate(
-                        R.layout.category_chip,
-                        imageCategoryChipGroup
-                    ) { view, resid, parent ->
-                        view as Chip
-                        view.text = bucketNameAndSize.bucketName
-                        view.setOnClickListener {
-                            it as Chip
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                imagesViewModel.filterDeviceImages(it.text.toString())
+        imagesViewModel.run {
+            deviceImagesGroupedByDateModified.observe(this@ImageFragment) {
+                dAdapter.submitList(it)
+            }
+            deviceImagesBucketName.observe(this@ImageFragment) { it ->
+                it?.let {
+                    it.forEach { bucketNameAndSize ->
+                        asyncLayoutInflater.inflate(
+                            R.layout.category_chip,
+                            imageCategoryChipGroup
+                        ) { view, resid, parent ->
+                            view as Chip
+                            view.text = bucketNameAndSize.bucketName
+                            view.setOnClickListener { chip ->
+                                chip as Chip
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    imagesViewModel.filterDeviceImages(
+                                        chip.text.toString(),
+                                        chip.id
+                                    )
+                                }
+                            }
+                            imageCategoryChipGroup.addView(view)
+                            if(chosenBucket.first == view.text){
+                                imageCategoryChipGroup.check(view.id)
                             }
                         }
-                        imageCategoryChipGroup.addView(view)
                     }
-
                 }
             }
         }
     }
+
 
     override fun onStart() {
         super.onStart()

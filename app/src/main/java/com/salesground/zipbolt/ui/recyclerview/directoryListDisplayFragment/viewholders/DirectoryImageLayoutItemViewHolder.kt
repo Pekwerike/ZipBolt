@@ -30,6 +30,7 @@ class DirectoryImageLayoutItemViewHolder(
                 // select image for transfer
 
             }
+            executePendingBindings()
         }
     }
 

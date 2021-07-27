@@ -46,7 +46,6 @@ class VideosFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         activity?.let {
             mainActivity = it as MainActivity
         }

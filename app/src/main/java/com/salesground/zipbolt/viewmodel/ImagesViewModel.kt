@@ -33,21 +33,23 @@ class ImagesViewModel @Inject constructor(
     val deviceImagesGroupedByDateModified: LiveData<MutableList<ImagesDisplayModel>> =
         _deviceImagesGroupedByDateModified
 
-    private var _chosenBucket = MutableLiveData<String>()
-    val chosenBucket: LiveData<String> = _chosenBucket
+    private var _chosenBucket: Pair<String, Int> = Pair("All", 1)
+    val chosenBucket: Pair<String, Int>
+        get() = _chosenBucket
 
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
-            filterDeviceImages()
+            filterDeviceImages(chipId = 1)
             val imageBucketNames = getDeviceImagesBucketNames(allImagesOnDeviceRaw)
             withContext(Dispatchers.Main) {
                 _deviceImagesBucketNames.value = imageBucketNames
             }
         }
     }
+
 
     private fun getDeviceImagesBucketNames(allImagesOnDevice: MutableList<DataToTransfer.DeviceImage>)
             : MutableList<BucketNameAndSize> {
@@ -70,11 +72,14 @@ class ImagesViewModel @Inject constructor(
     }
 
 
-    suspend fun filterDeviceImages(bucketName: String = "All") {
-        if (bucketName != "All" && bucketName == _chosenBucket.value) return
+    suspend fun filterDeviceImages(
+        bucketName: String = "All",
+        chipId: Int
+    ) {
+        if (bucketName != "All" && bucketName == _chosenBucket.first) return
 
         withContext(Dispatchers.Main) {
-            _chosenBucket.value = bucketName
+            _chosenBucket = Pair(bucketName, chipId)
         }
         if (bucketName == "All") {
             // don't filter
