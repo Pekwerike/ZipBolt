@@ -142,9 +142,7 @@ class ImageFragment : Fragment() {
                 selectedCategory = imagesViewModel.chosenBucket.value ?: selectedCategory
 
                 it.forEach { bucketNameAndSize ->
-                    asyncLayoutInflater.inflate(
-                        R.layout.category_chip, imageCategoryChipGroup
-                    ) { view, resid, parent ->
+                    asyncLayoutInflater.inflate(R.layout.category_chip, imageCategoryChipGroup) { view, resid, parent ->
                         view as Chip
                         view.text = bucketNameAndSize.bucketName
                         view.setOnClickListener {
@@ -152,8 +150,8 @@ class ImageFragment : Fragment() {
                             lifecycleScope.launch(Dispatchers.IO) {
                                 imagesViewModel.filterDeviceImages(it.text.toString())
                             }
-                            imageCategoryChipGroup.addView(view)
                         }
+                        imageCategoryChipGroup.addView(view)
                     }
 
                 }
