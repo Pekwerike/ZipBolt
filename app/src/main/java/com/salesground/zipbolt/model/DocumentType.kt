@@ -9,8 +9,9 @@ sealed class DocumentType(val value: Int) {
     sealed class Document(private val documentValue: Int) : DocumentType(documentValue) {
         object Pdf : Document(6)
         object WordDocument : Document(7)
-        object ExcelFile : Document(8)
+        object ExcelDocument : Document(8)
         object UnknownDocument : Document(9)
+        object PowerPointDocument : Document(10)
     }
 
 }

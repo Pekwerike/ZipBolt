@@ -12,8 +12,12 @@ class DirectoryDocumentLayoutItemViewHolder(
     private val folderDocumentLayoutItemBinding: FolderDocumentLayoutItemBinding
 ) : RecyclerView.ViewHolder(folderDocumentLayoutItemBinding.root) {
 
-    fun bindData(dataToTransfer: DataToTransfer){
-
+    fun bindData(dataToTransfer: DataToTransfer) {
+        dataToTransfer as DataToTransfer.DeviceFile
+        folderDocumentLayoutItemBinding.run {
+            document = dataToTransfer
+            executePendingBindings()
+        }
     }
 
     companion object {

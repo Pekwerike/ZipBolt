@@ -5,9 +5,8 @@
     <data>
 
         <variable
-            name="documentFile"
-            type="java.io.File" />
-
+            name="document"
+            type="com.salesground.zipbolt.model.DataToTransfer.DeviceFile" />
     </data>
 
     <LinearLayout
@@ -18,11 +17,12 @@
         android:orientation="horizontal"
         android:padding="@dimen/view_group_standard_padding">
 
-        <com.salesground.zipbolt.ui.customviews.CurvedImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/folder_document_layout_item_image_view"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:scaleType="centerCrop"
+            android:padding="@dimen/medium_padding"
+            app:bindImageForDocument="@{document}"
             app:curvedImageViewCornerRadius="0.17" />
 
         <LinearLayout
@@ -41,7 +41,7 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:padding="@dimen/standard_text_view_padding"
-                android:text="@{documentFile.name}" />
+                android:text="@{document.file.name}" />
 
             <com.google.android.material.textview.MaterialTextView
                 style="@style/TextAppearance.MaterialComponents.Caption"
@@ -50,8 +50,8 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingHorizontal="@dimen/standard_text_view_padding"
-                app:setFileLastModified="@{documentFile.lastModified()}"
-                app:setFileSize="@{documentFile.length()}" />
+                app:setFileLastModified="@{document.file.lastModified()}"
+                app:setFileSize="@{document.file.length()}" />
         </LinearLayout>
 
 

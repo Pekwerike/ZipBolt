@@ -21,7 +21,7 @@
             android:id="@+id/folder_layout_item_folder_icon_image_view"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:padding="@dimen/small_padding"
+            android:padding="@dimen/medium_padding"
             app:srcCompat="@drawable/ic_baseline_folder_open_24" />
 
 

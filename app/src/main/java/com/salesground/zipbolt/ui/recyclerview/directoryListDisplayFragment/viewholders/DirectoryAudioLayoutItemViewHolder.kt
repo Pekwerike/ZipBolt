@@ -22,6 +22,7 @@ class DirectoryAudioLayoutItemViewHolder(
             folderAudioLayoutItemFolderSelectedCheckBox.setOnClickListener {
 
             }
+            executePendingBindings()
         }
     }
 

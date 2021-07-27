@@ -29,6 +29,7 @@ class DirectoryVideoLayoutItemViewHolder(
             folderVideoLayoutItemFolderSelectedCheckBox.setOnClickListener {
 
             }
+            executePendingBindings()
         }
     }
 

@@ -2,12 +2,10 @@ package com.salesground.zipbolt.model
 
 import android.content.ContentResolver
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.webkit.MimeTypeMap
-import androidx.compose.ui.text.toLowerCase
 import androidx.core.net.toUri
 import java.io.File
 import java.util.*
@@ -18,7 +16,8 @@ sealed class DataToTransfer(
     var dataSize: Long,
     var dataType: Int,
     var percentTransferred: Float = 0f,
-    var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING
+    var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING,
+    var documentType: DocumentType = DocumentType.Directory
 ) {
     enum class TransferStatus(val value: Int) {
         NO_ACTION(9),
@@ -125,21 +124,40 @@ sealed class DataToTransfer(
     )
 
     fun getFileType(context: Context): DocumentType {
-        // check if file is an image
-        if(dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
-            || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")){
-            return DocumentType.Image
-        }
-        // check if file is a video
-        if(dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp")){
-            return DocumentType.Video 
+        when {
+            dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
+                    || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif") -> {
+                documentType = DocumentType.Image
+                return documentType
+            }
+            dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp") -> {
+                documentType = DocumentType.Video
+                return documentType
+            }
+            dataDisplayName.endsWith("pdf") -> {
+                documentType = DocumentType.Document.Pdf
+                return documentType
+            }
+            dataDisplayName.endsWith("docx") || dataDisplayName.endsWith("doc") -> {
+                documentType = DocumentType.Document.WordDocument
+                return documentType
+            }
+            dataDisplayName.endsWith("xlsx") -> {
+                documentType = DocumentType.Document.ExcelDocument
+                return documentType
+            }
+            dataDisplayName.endsWith("ppt") || dataDisplayName.endsWith("pptx") -> {
+                documentType = DocumentType.Document.PowerPointDocument
+                return documentType
+            }
         }
         // if file is not an image go further processing
         if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
         ) {
             context.contentResolver.run {
                 getType(dataUri)?.let {
-                    return getMediaType(it)
+                    documentType = getMediaType(it)
+                    return documentType
                 }
             }
         } else {
@@ -150,15 +168,17 @@ sealed class DataToTransfer(
             MimeTypeMap.getSingleton().getMimeTypeFromExtension(
                 fileExtension.toLowerCase(Locale.ROOT)
             )?.let {
-                return getMediaType(it)
+                documentType = getMediaType(it)
+                return documentType
             }
         }
-        return DocumentType.Document.UnknownDocument
+        documentType = DocumentType.Document.UnknownDocument
+        return documentType
     }
 
     private fun getMediaType(mimeType: String): DocumentType {
         return when {
-            mimeType.contains("image", ignoreCase = true)  -> {
+            mimeType.contains("image", ignoreCase = true) -> {
                 DocumentType.Image
             }
             mimeType.contains("video", ignoreCase = true) -> {

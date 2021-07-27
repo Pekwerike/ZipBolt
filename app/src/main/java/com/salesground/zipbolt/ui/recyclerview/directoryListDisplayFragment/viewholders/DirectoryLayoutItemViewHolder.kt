@@ -23,6 +23,7 @@ class DirectoryLayoutItemViewHolder(
                     dataToTransfer
                 )
             }
+            executePendingBindings()
         }
     }
 
