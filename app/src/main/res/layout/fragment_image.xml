@@ -14,20 +14,20 @@
         app:elevation="0dp">
 
         <HorizontalScrollView
-            android:scrollbars="none"
-            app:layout_scrollFlags="scroll|enterAlways"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/images_category_chips_group"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/medium_padding"
-            app:chipSpacingHorizontal="@dimen/medium_margin"
-            app:singleLine="true"
-            app:selectionRequired="true"
-            app:singleSelection="true" />
+            android:scrollbars="none"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/images_category_chips_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/medium_padding"
+                app:chipSpacingHorizontal="@dimen/medium_padding"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true"/>
         </HorizontalScrollView>
 
     </com.google.android.material.appbar.AppBarLayout>
