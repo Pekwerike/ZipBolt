@@ -3,13 +3,11 @@ package com.salesground.zipbolt.ui.fragments
 import android.annotation.SuppressLint
 import android.content.IntentFilter
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -21,9 +19,7 @@ import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentImageBinding
-import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
-import com.salesground.zipbolt.ui.customviews.ChipsLayout
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
@@ -36,12 +32,10 @@ import javax.inject.Inject
 class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
-    private lateinit var chipsLayout: ChipsLayout
-    private var selectedCategory: String = "All"
-    private val bucketNames = mutableListOf<String>()
     private var mainActivity: MainActivity? = null
     private lateinit var imageCategoryChipGroup: ChipGroup
     private lateinit var imageFragmentImageBinding: FragmentImageBinding
+    private lateinit var asyncLayoutInflater: AsyncLayoutInflater
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -80,6 +74,7 @@ class ImageFragment : Fragment() {
             },
             imagesClicked = imagesViewModel.collectionOfClickedImages
         )
+        asyncLayoutInflater = AsyncLayoutInflater(requireContext())
         observeViewModelLiveData()
     }
 
@@ -137,12 +132,11 @@ class ImageFragment : Fragment() {
         }
         imagesViewModel.deviceImagesBucketName.observe(this) { it ->
             it?.let {
-
-                val asyncLayoutInflater = AsyncLayoutInflater(requireContext())
-                selectedCategory = imagesViewModel.chosenBucket.value ?: selectedCategory
-
                 it.forEach { bucketNameAndSize ->
-                    asyncLayoutInflater.inflate(R.layout.category_chip, imageCategoryChipGroup) { view, resid, parent ->
+                    asyncLayoutInflater.inflate(
+                        R.layout.category_chip,
+                        imageCategoryChipGroup
+                    ) { view, resid, parent ->
                         view as Chip
                         view.text = bucketNameAndSize.bucketName
                         view.setOnClickListener {
