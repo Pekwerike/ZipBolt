@@ -8,6 +8,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryAudioLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryImageLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.DirectoryVideoLayoutItemViewHolder
@@ -50,6 +51,9 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Video.value -> {
                 DirectoryVideoLayoutItemViewHolder.createViewHolder(parent)
             }
+            DocumentType.Audio.value -> {
+                DirectoryAudioLayoutItemViewHolder.createViewHolder(parent)
+            }
             else -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
@@ -64,6 +68,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             is DirectoryLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryImageLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryVideoLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryAudioLayoutItemViewHolder -> holder.bindData(getItem(position))
         }
     }
 }

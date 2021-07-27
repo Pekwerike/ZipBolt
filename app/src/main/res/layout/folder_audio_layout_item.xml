@@ -23,7 +23,7 @@
             android:id="@+id/folder_audio_layout_item_image_view"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:padding="@dimen/view_group_standard_padding"
+            android:padding="@dimen/medium_padding"
             app:curvedImageViewCornerRadius="0.17"
             app:srcCompat="@drawable/ic_baseline_music_note_24" />
 

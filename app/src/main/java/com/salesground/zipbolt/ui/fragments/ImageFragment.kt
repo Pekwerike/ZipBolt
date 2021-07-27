@@ -10,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
@@ -38,6 +40,8 @@ class ImageFragment : Fragment() {
     private var selectedCategory: String = "All"
     private val bucketNames = mutableListOf<String>()
     private var mainActivity: MainActivity? = null
+    private lateinit var imageCategoryChipGroup: ChipGroup
+    private lateinit var imageFragmentImageBinding: FragmentImageBinding
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -83,12 +87,12 @@ class ImageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val rootView = FragmentImageBinding.inflate(
-            inflater, container,
-            false
+        imageFragmentImageBinding = FragmentImageBinding.inflate(
+            inflater, null, false
         )
-        rootView.apply {
-            chipsLayout = imagesCategoryChipsLayout
+        imageCategoryChipGroup = imageFragmentImageBinding.imagesCategoryChipsGroup
+
+        imageFragmentImageBinding.apply {
             fragmentImageRecyclerview.apply {
                 setHasFixedSize(true)
 
@@ -123,7 +127,7 @@ class ImageFragment : Fragment() {
                 adapter = dAdapter
                 layoutManager = gridLayoutManager
             }
-            return rootView.root
+            return imageFragmentImageBinding.root
         }
     }
 
@@ -131,57 +135,27 @@ class ImageFragment : Fragment() {
         imagesViewModel.deviceImagesGroupedByDateModified.observe(this) {
             dAdapter.submitList(it)
         }
-        imagesViewModel.deviceImagesBucketName.observe(this) {
-            it?.let { it ->
+        imagesViewModel.deviceImagesBucketName.observe(this) { it ->
+            it?.let {
 
+                val asyncLayoutInflater = AsyncLayoutInflater(requireContext())
                 selectedCategory = imagesViewModel.chosenBucket.value ?: selectedCategory
 
-                val buckets =
-                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        it.take(14)
-                    } else it.take(25)
-
-
-                buckets.forEach { bucket ->
-                    bucketNames.add(bucket.bucketName)
-                }
-
-                bucketNames.forEach { bucketName ->
-                    val layout =
-                        layoutInflater.inflate(R.layout.category_chip, chipsLayout, false)
-                    val chip = layout.findViewById<Chip>(R.id.category_chip)
-                    chip.text = when {
-                        bucketName.length > 13 -> {
-                            "${bucketName.take(10)}..."
-                        }
-                        bucketName.length < 4 -> {
-                            " $bucketName "
-                        }
-                        else -> {
-                            bucketName
-                        }
-                    }
-                    chip.setOnClickListener {
-                        chip.isChecked = true
-                        if (bucketName != imagesViewModel.chosenBucket.value) {
+                it.forEach { bucketNameAndSize ->
+                    asyncLayoutInflater.inflate(
+                        R.layout.category_chip, imageCategoryChipGroup
+                    ) { view, resid, parent ->
+                        view as Chip
+                        view.text = bucketNameAndSize.bucketName
+                        view.setOnClickListener {
+                            it as Chip
                             lifecycleScope.launch(Dispatchers.IO) {
-                                imagesViewModel.filterDeviceImages(bucketName = bucketName)
+                                imagesViewModel.filterDeviceImages(it.text.toString())
                             }
-                            try {
-                                val indexOfLastSelectedBucket =
-                                    bucketNames.indexOf(selectedCategory)
-                                chipsLayout.refresh(indexOfLastSelectedBucket)
-                            } catch (noSuchElementException: Exception) {
-
-                            }
-                            selectedCategory =
-                                imagesViewModel.chosenBucket.value ?: selectedCategory
+                            imageCategoryChipGroup.addView(view)
                         }
                     }
-                    if (bucketName == imagesViewModel.chosenBucket.value) {
-                        chip.isChecked = true
-                    }
-                    chipsLayout.addView(chip)
+
                 }
             }
         }
