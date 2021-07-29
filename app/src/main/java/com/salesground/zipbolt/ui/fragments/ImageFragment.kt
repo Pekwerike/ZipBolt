@@ -134,11 +134,6 @@ class ImageFragment : Fragment() {
         imagesViewModel.run {
             deviceImagesGroupedByDateModified.observe(this@ImageFragment) {
                 dAdapter.submitList(it)
-                imageFragmentImageBinding.run {
-                    fragmentImageRecyclerview.post {
-                        fragmentImageRecyclerview.smoothScrollToPosition(0)
-                    }
-                }
             }
             deviceImagesBucketName.observe(this@ImageFragment) { it ->
                 it?.let {

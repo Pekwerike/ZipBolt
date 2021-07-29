@@ -20,7 +20,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/medium_padding"
-            android:visibility="invisible"
             app:srcCompat="@drawable/navigate_next" />
 
         <com.google.android.material.textview.MaterialTextView

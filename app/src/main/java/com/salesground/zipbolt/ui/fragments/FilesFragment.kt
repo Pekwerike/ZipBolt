@@ -21,6 +21,7 @@ import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import java.lang.IllegalStateException
 import java.util.*
 import kotlin.concurrent.schedule
@@ -88,8 +89,8 @@ class FilesFragment : Fragment() {
                 adapter = directoryListDisplayRecyclerViewAdapter
             }
             filesFragmentDirectoryNavigationRecyclerview.run {
-                layoutManager = directoryNavigationRecyclerViewLayoutMananger
                 adapter = directoryNavigationListAdapter
+                layoutManager = directoryNavigationRecyclerViewLayoutMananger
             }
         }
     }
@@ -103,16 +104,10 @@ class FilesFragment : Fragment() {
         }
         fileViewModel.directoryNavigationList.observe(this) {
             it?.let {
-                if (it.size > directoryNavigationListAdapter.itemCount) {
-                    directoryNavigationListAdapter.submitList(it)
-                    directoryNavigationListAdapter.notifyItemInserted(it.size)
-                } else {
-                    directoryNavigationListAdapter.submitList(it)
-                    directoryNavigationListAdapter.notifyItemRemoved(it.size + 1)
-                }
+                directoryNavigationListAdapter.submitList(it.map {filePath -> File(filePath) })
                 fragmentFilesBinding.run {
                     filesFragmentDirectoryNavigationRecyclerview.post {
-                        filesFragmentDirectoryNavigationRecyclerview.smoothScrollToPosition(it.size)
+                        filesFragmentDirectoryNavigationRecyclerview.smoothScrollToPosition(it.size+1)
                     }
                 }
             }

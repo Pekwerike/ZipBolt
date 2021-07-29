@@ -6,10 +6,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.navigationviewholders.DirectoryNavigationHeaderViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.navigationviewholders.DirectoryNavigationLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.navigationviewholders.DirectoryNavigationTailViewHolder
+import java.io.File
 
-class DirectoryNavigationListAdapter : ListAdapter<String, RecyclerView.ViewHolder>(
-    DirectoryNavigationListDiffUtil()
-) {
+class DirectoryNavigationListAdapter : ListAdapter<File, RecyclerView.ViewHolder>(
+    DirectoryNavigationListDiffUtil()) {
     companion object {
         const val ROOT_HEADER = 1
         const val NORMAL_HEADER = 2
@@ -17,8 +18,12 @@ class DirectoryNavigationListAdapter : ListAdapter<String, RecyclerView.ViewHold
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) {
+        return if (position == 0 && itemCount - 1 == 0) {
+            ENDING_HEADER
+        } else if (position == 0) {
             ROOT_HEADER
+        } else if (position == itemCount - 1) {
+            ENDING_HEADER
         } else {
             NORMAL_HEADER
         }
@@ -28,6 +33,7 @@ class DirectoryNavigationListAdapter : ListAdapter<String, RecyclerView.ViewHold
         return when (viewType) {
             ROOT_HEADER -> DirectoryNavigationHeaderViewHolder.createViewHolder(parent)
             NORMAL_HEADER -> DirectoryNavigationLayoutItemViewHolder.createViewHolder(parent)
+            ENDING_HEADER -> DirectoryNavigationTailViewHolder.createViewHolder(parent)
             else -> DirectoryNavigationLayoutItemViewHolder.createViewHolder(parent)
         }
     }
@@ -35,23 +41,25 @@ class DirectoryNavigationListAdapter : ListAdapter<String, RecyclerView.ViewHold
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is DirectoryNavigationLayoutItemViewHolder -> {
-                holder.bindData(getItem(position))
+                holder.bindData(getItem(position).name)
             }
             is DirectoryNavigationHeaderViewHolder -> {
-                holder.binDirectoryName(getItem(position))
+                holder.bindData(getItem(position).name)
+            }
+            is DirectoryNavigationTailViewHolder -> {
+                holder.bindData(getItem(position).name)
             }
         }
     }
 }
 
 
-class DirectoryNavigationListDiffUtil : DiffUtil.ItemCallback<String>() {
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-        return oldItem == newItem
+class DirectoryNavigationListDiffUtil : DiffUtil.ItemCallback<File>() {
+    override fun areItemsTheSame(oldItem: File, newItem: File): Boolean {
+        return oldItem.absolutePath == newItem.absolutePath
     }
 
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+    override fun areContentsTheSame(oldItem: File, newItem: File): Boolean {
         return oldItem == newItem
     }
-
 }

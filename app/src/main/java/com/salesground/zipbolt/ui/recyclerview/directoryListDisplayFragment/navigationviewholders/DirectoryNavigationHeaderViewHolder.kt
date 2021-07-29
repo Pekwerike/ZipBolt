@@ -12,9 +12,10 @@ class DirectoryNavigationHeaderViewHolder(
     private val directoryNavigationHeaderLayoutBinding: DirectoryNavigationHeaderLayoutBinding
 ) : RecyclerView.ViewHolder(directoryNavigationHeaderLayoutBinding.root) {
 
-    fun binDirectoryName(directoryName: String) {
+    fun bindData(directoryName: String) {
         directoryNavigationHeaderLayoutBinding.run {
-            this.directoryName = File(directoryName).name
+            this.directoryName = directoryName
+            executePendingBindings()
         }
     }
 

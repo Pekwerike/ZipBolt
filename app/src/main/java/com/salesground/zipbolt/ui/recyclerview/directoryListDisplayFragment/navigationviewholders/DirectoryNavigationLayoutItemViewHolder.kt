@@ -13,7 +13,8 @@ class DirectoryNavigationLayoutItemViewHolder(
 ) : RecyclerView.ViewHolder(directoryNavigationLayoutItemBinding.root) {
     fun bindData(directoryName: String) {
         directoryNavigationLayoutItemBinding.run {
-            this.directoryName = File(directoryName).name
+            this.directoryName = directoryName
+            executePendingBindings()
         }
     }
 
