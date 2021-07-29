@@ -7,9 +7,10 @@
     tools:context=".ui.fragments.FilesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/files_fragment_directory_navigation_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        android:padding="@dimen/medium_padding"
+        android:layout_height="wrap_content" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/files_fragment_recycler_view"

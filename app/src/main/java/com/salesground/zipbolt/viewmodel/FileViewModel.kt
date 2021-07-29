@@ -22,12 +22,23 @@ class FileViewModel @Inject constructor(
     private val directoryStack: Deque<String> = ArrayDeque()
     private lateinit var currentDirectoryEntry: String
 
+    private val _directoryChildren = MutableLiveData<List<DataToTransfer>>(null)
+    val directoryChildren: LiveData<List<DataToTransfer>>
+        get() = _directoryChildren
+
+    private val _directoryNavigationList = MutableLiveData<List<String>>()
+    val directoryNavigationList: LiveData<List<String>>
+        get() = _directoryNavigationList
+    private val directoryList: MutableList<String> = mutableListOf()
+
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()
         previousDirectoryEntry?.let {
             currentDirectoryEntry = it
             getDirectoryChildren(it)
         }
+        directoryList.removeLast()
+        _directoryNavigationList.value = directoryList
     }
 
 
@@ -39,28 +50,32 @@ class FileViewModel @Inject constructor(
         // change the current directory to point at the new path
         currentDirectoryEntry = path
         getDirectoryChildren(path)
+        directoryList.add(path)
+        _directoryNavigationList.value = directoryList
     }
 
-    private val _directoryChildren = MutableLiveData<List<DataToTransfer>>(null)
-    val directoryChildren: LiveData<List<DataToTransfer>>
-        get() = _directoryChildren
 
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             currentDirectoryEntry = filesRepository.getRootDirectory().path
             getDirectoryChildren(currentDirectoryEntry)
+            directoryList.add(currentDirectoryEntry)
+            withContext(Dispatchers.Main) {
+                _directoryNavigationList.value = directoryList
+            }
         }
     }
 
 
     fun getDirectoryChildren(directoryPath: String) {
-        viewModelScope.launch {
-            _directoryChildren.value = withContext(Dispatchers.IO) {
-                filesRepository.getDirectoryChildren(
-                    directoryPath
-                )
-            }!!
+        viewModelScope.launch(Dispatchers.IO) {
+            val directoryChildren = filesRepository.getDirectoryChildren(
+                directoryPath
+            )
+            withContext(Dispatchers.Main) {
+                _directoryChildren.value = directoryChildren
+            }
         }
     }
 

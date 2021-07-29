@@ -16,6 +16,7 @@ import com.salesground.zipbolt.databinding.FragmentFilesBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryNavigationListAdapter
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,8 @@ class FilesFragment : Fragment() {
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
     private lateinit var fragmentFilesBinding: FragmentFilesBinding
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
+    private lateinit var directoryNavigationRecyclerViewLayoutMananger: LinearLayoutManager
+    private lateinit var directoryNavigationListAdapter: DirectoryNavigationListAdapter
 
     companion object {
         var backStackCount: Int = 0
@@ -58,9 +61,13 @@ class FilesFragment : Fragment() {
                         backStackCount++
                         fileViewModel.clearCurrentFolderChildren()
                         fileViewModel.moveToDirectory(
-                            it.file.path)
+                            it.file.path
+                        )
                     }
                 })
+        directoryNavigationListAdapter = DirectoryNavigationListAdapter()
+        directoryNavigationRecyclerViewLayoutMananger = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeViewModelLiveData()
     }
 
@@ -77,9 +84,12 @@ class FilesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fragmentFilesBinding.run {
             filesFragmentRecyclerView.run {
-                recyclerViewLayoutManager = LinearLayoutManager(requireContext())
                 layoutManager = recyclerViewLayoutManager
                 adapter = directoryListDisplayRecyclerViewAdapter
+            }
+            filesFragmentDirectoryNavigationRecyclerview.run {
+                layoutManager = directoryNavigationRecyclerViewLayoutMananger
+                adapter = directoryNavigationListAdapter
             }
         }
     }
@@ -89,6 +99,22 @@ class FilesFragment : Fragment() {
         fileViewModel.directoryChildren.observe(this) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
+            }
+        }
+        fileViewModel.directoryNavigationList.observe(this) {
+            it?.let {
+                if (it.size > directoryNavigationListAdapter.itemCount) {
+                    directoryNavigationListAdapter.submitList(it)
+                    directoryNavigationListAdapter.notifyItemInserted(it.size)
+                } else {
+                    directoryNavigationListAdapter.submitList(it)
+                    directoryNavigationListAdapter.notifyItemRemoved(it.size + 1)
+                }
+                fragmentFilesBinding.run {
+                    filesFragmentDirectoryNavigationRecyclerview.post {
+                        filesFragmentDirectoryNavigationRecyclerview.smoothScrollToPosition(it.size)
+                    }
+                }
             }
         }
     }

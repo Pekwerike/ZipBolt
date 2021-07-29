@@ -66,7 +66,7 @@ class ApplicationLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
         ): ApplicationLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<ApplicationLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
