@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.*
 
@@ -14,7 +14,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : ListAdapter<DataToTransfer,
-        RecyclerView.ViewHolder>(DataToTransferDiffUtil()) {
+        RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
 
 
     override fun getItemViewType(position: Int): Int {

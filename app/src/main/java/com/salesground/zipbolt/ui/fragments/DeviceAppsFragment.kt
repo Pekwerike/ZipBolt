@@ -77,7 +77,7 @@ class DeviceAppsFragment : Fragment() {
                 }
             }
         }
-
+        observeViewModelLiveData()
     }
 
     override fun onCreateView(
@@ -99,12 +99,11 @@ class DeviceAppsFragment : Fragment() {
                 spanCount
             )
         }
-        observeViewModelLiveData()
     }
 
     private fun observeViewModelLiveData() {
         with(applicationsViewModel) {
-            allApplicationsOnDevice.observe(viewLifecycleOwner) {
+            allApplicationsOnDevice.observe(this@DeviceAppsFragment) {
                 it?.let {
                     applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
                 }

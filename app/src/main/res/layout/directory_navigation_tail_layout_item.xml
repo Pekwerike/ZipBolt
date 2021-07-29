@@ -12,20 +12,25 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
-        android:layout_marginTop="@dimen/medium_margin"
         android:gravity="center"
         android:orientation="horizontal">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="@dimen/medium_padding"
+            app:srcCompat="@drawable/navigate_next" />
+
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/directory_navigation_layout_item_directory_text_view"
+            android:id="@+id/directory_navigation_tail_layout_item_directory_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/medium_margin"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center"
             android:padding="@dimen/medium_padding"
             android:text="@{directoryName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            />
+            android:textColor="@color/blue_415"
+            android:textStyle="bold" />
     </LinearLayout>
 </layout>

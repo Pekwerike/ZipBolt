@@ -6,19 +6,28 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.DirectoryNavigationLayoutItemBinding
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import java.io.File
 
 class DirectoryNavigationLayoutItemViewHolder(
-    private val directoryNavigationLayoutItemBinding: DirectoryNavigationLayoutItemBinding
+    private val directoryNavigationLayoutItemBinding: DirectoryNavigationLayoutItemBinding,
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<String>
 ) : RecyclerView.ViewHolder(directoryNavigationLayoutItemBinding.root) {
     fun bindData(directoryName: String) {
         directoryNavigationLayoutItemBinding.run {
-            this.directoryName = File(directoryName).name
+            this.directoryName = directoryName
+            directoryNavigationLayoutItemDirectoryTextView.setOnClickListener {
+                dataToTransferRecyclerViewItemClickListener.onClick(directoryName)
+            }
+            executePendingBindings()
         }
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): DirectoryNavigationLayoutItemViewHolder {
+        fun createViewHolder(
+            parent: ViewGroup,
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<String>
+        ): DirectoryNavigationLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<DirectoryNavigationLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.directory_navigation_layout_item,
@@ -26,7 +35,7 @@ class DirectoryNavigationLayoutItemViewHolder(
                 false
             )
 
-            return DirectoryNavigationLayoutItemViewHolder(layoutBinding)
+            return DirectoryNavigationLayoutItemViewHolder(layoutBinding, dataToTransferRecyclerViewItemClickListener)
         }
     }
 }

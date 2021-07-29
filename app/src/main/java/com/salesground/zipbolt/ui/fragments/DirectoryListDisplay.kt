@@ -58,7 +58,6 @@ class DirectoryListDisplay : Fragment() {
         arguments?.let {
             directoryPath = it.getString(DIRECTORY_PATH_ARG) ?: ""
         }
-        observeViewModelLiveData()
     }
 
     override fun onCreateView(
@@ -85,6 +84,8 @@ class DirectoryListDisplay : Fragment() {
                 layoutManager = LinearLayoutManager(requireContext())
             }
         }
+
+        observeViewModelLiveData()
     }
 
     private fun observeViewModelLiveData() {

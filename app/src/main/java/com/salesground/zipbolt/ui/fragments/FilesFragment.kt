@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
@@ -16,10 +17,12 @@ import com.salesground.zipbolt.databinding.FragmentFilesBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryNavigationListAdapter
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import java.lang.IllegalStateException
 import java.util.*
 import kotlin.concurrent.schedule
@@ -30,6 +33,8 @@ class FilesFragment : Fragment() {
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
     private lateinit var fragmentFilesBinding: FragmentFilesBinding
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
+    private lateinit var directoryNavigationRecyclerViewLayoutMananger: LinearLayoutManager
+    private lateinit var directoryNavigationListAdapter: DirectoryNavigationListAdapter
 
     companion object {
         var backStackCount: Int = 0
@@ -58,9 +63,16 @@ class FilesFragment : Fragment() {
                         backStackCount++
                         fileViewModel.clearCurrentFolderChildren()
                         fileViewModel.moveToDirectory(
-                            it.file.path)
+                            it.file.path
+                        )
                     }
                 })
+        directoryNavigationListAdapter = DirectoryNavigationListAdapter(
+            DataToTransferRecyclerViewItemClickListener {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        })
+        directoryNavigationRecyclerViewLayoutMananger = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeViewModelLiveData()
     }
 
@@ -77,9 +89,12 @@ class FilesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fragmentFilesBinding.run {
             filesFragmentRecyclerView.run {
-                recyclerViewLayoutManager = LinearLayoutManager(requireContext())
                 layoutManager = recyclerViewLayoutManager
                 adapter = directoryListDisplayRecyclerViewAdapter
+            }
+            filesFragmentDirectoryNavigationRecyclerview.run {
+                adapter = directoryNavigationListAdapter
+                layoutManager = directoryNavigationRecyclerViewLayoutMananger
             }
         }
     }
@@ -89,6 +104,12 @@ class FilesFragment : Fragment() {
         fileViewModel.directoryChildren.observe(this) {
             it?.let {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
+            }
+        }
+        fileViewModel.directoryNavigationList.observe(this) {
+            it?.let {
+                directoryNavigationListAdapter.submitList(it.map {filePath -> File(filePath) })
+
             }
         }
     }

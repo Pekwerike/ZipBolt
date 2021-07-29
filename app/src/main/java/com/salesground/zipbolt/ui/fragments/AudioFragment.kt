@@ -71,7 +71,6 @@ class AudioFragment : Fragment() {
         // Inflate the layout for this fragment
         fragmentAudioBinding = FragmentAudioBinding.inflate(inflater, container, false)
         return fragmentAudioBinding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

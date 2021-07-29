@@ -3,7 +3,7 @@ package com.salesground.zipbolt.ui.recyclerview
 import androidx.recyclerview.widget.DiffUtil
 import com.salesground.zipbolt.model.DataToTransfer
 
-class DataToTransferDiffUtil : DiffUtil.ItemCallback<DataToTransfer>() {
+class DataToTransferRecyclerViewDiffUtil : DiffUtil.ItemCallback<DataToTransfer>() {
     override fun areItemsTheSame(
         oldItem: DataToTransfer,
         newItem: DataToTransfer

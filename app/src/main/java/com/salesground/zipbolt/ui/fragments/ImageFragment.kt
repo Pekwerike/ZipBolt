@@ -85,10 +85,15 @@ class ImageFragment : Fragment() {
         imageFragmentImageBinding = FragmentImageBinding.inflate(
             inflater, null, false
         )
+        return imageFragmentImageBinding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         imageCategoryChipGroup = imageFragmentImageBinding.imagesCategoryChipsGroup
 
-        imageFragmentImageBinding.apply {
-            fragmentImageRecyclerview.apply {
+        imageFragmentImageBinding.run {
+            fragmentImageRecyclerview.run {
                 setHasFixedSize(true)
 
                 val spanCount: Int = when (resources.configuration.orientation) {
@@ -122,7 +127,6 @@ class ImageFragment : Fragment() {
                 adapter = dAdapter
                 layoutManager = gridLayoutManager
             }
-            return imageFragmentImageBinding.root
         }
     }
 
@@ -150,7 +154,7 @@ class ImageFragment : Fragment() {
                                 }
                             }
                             imageCategoryChipGroup.addView(view)
-                            if(chosenBucket.first == view.text){
+                            if (chosenBucket.first == view.text) {
                                 imageCategoryChipGroup.check(view.id)
                             }
                         }
