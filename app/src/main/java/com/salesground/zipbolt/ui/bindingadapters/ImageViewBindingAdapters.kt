@@ -45,7 +45,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
         }
         DocumentType.Document.ZipDocument -> {
             Glide.with(context)
-                .load(R.drawable.ic_zip)
+                .load(R.drawable.zip_file)
                 .into(this)
         }
         DocumentType.Image -> {
