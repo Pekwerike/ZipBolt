@@ -24,6 +24,8 @@ class DirectoryNavigationLayoutItemViewHolder(
                 parent,
                 false
             )
+
+            return DirectoryNavigationLayoutItemViewHolder(layoutBinding)
         }
     }
 }

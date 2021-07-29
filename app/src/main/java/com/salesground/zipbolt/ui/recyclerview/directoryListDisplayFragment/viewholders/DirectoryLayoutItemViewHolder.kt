@@ -11,7 +11,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 
 class DirectoryLayoutItemViewHolder(
     private val folderLayoutItemBinding: FolderLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(folderLayoutItemBinding.root) {
 
     fun bindData(dataToTransfer: DataToTransfer) {
@@ -30,7 +30,7 @@ class DirectoryLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
         ): DirectoryLayoutItemViewHolder {
             val layoutItemBinding = DataBindingUtil.inflate<FolderLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
