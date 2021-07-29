@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.DirectoryNavigationHeaderLayoutBinding
+import java.io.File
 
 class DirectoryNavigationHeaderViewHolder(
     private val directoryNavigationHeaderLayoutBinding: DirectoryNavigationHeaderLayoutBinding
@@ -13,7 +14,7 @@ class DirectoryNavigationHeaderViewHolder(
 
     fun binDirectoryName(directoryName: String) {
         directoryNavigationHeaderLayoutBinding.run {
-            this.directoryName = directoryName
+            this.directoryName = File(directoryName).name
         }
     }
 

@@ -6,13 +6,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.DirectoryNavigationLayoutItemBinding
+import java.io.File
 
 class DirectoryNavigationLayoutItemViewHolder(
     private val directoryNavigationLayoutItemBinding: DirectoryNavigationLayoutItemBinding
 ) : RecyclerView.ViewHolder(directoryNavigationLayoutItemBinding.root) {
     fun bindData(directoryName: String) {
         directoryNavigationLayoutItemBinding.run {
-            this.directoryName = directoryName
+            this.directoryName = File(directoryName).name
         }
     }
 
