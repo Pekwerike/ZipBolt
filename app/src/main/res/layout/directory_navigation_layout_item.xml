@@ -17,8 +17,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/directory_navigation_layout_item_navigate_next_image_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:padding="@dimen/medium_padding"
             app:srcCompat="@drawable/navigate_next" />
 
@@ -26,7 +26,7 @@
             android:id="@+id/directory_navigation_layout_item_directory_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
+            android:layout_margin="@dimen/medium_margin"
             android:padding="@dimen/medium_padding"
             android:text="@{directoryName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />

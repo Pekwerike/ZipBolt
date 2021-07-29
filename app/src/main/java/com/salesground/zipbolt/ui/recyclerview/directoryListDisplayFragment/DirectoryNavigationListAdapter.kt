@@ -4,12 +4,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.navigationviewholders.DirectoryNavigationHeaderViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.navigationviewholders.DirectoryNavigationLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.navigationviewholders.DirectoryNavigationTailViewHolder
 import java.io.File
 
-class DirectoryNavigationListAdapter : ListAdapter<File, RecyclerView.ViewHolder>(
+class DirectoryNavigationListAdapter(
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<String>
+) : ListAdapter<File, RecyclerView.ViewHolder>(
     DirectoryNavigationListDiffUtil()) {
     companion object {
         const val ROOT_HEADER = 1
@@ -21,7 +24,7 @@ class DirectoryNavigationListAdapter : ListAdapter<File, RecyclerView.ViewHolder
         return if (position == 0 && itemCount - 1 == 0) {
             ENDING_HEADER
         } else if (position == 0) {
-            ROOT_HEADER
+            NORMAL_HEADER
         } else if (position == itemCount - 1) {
             ENDING_HEADER
         } else {
@@ -31,10 +34,9 @@ class DirectoryNavigationListAdapter : ListAdapter<File, RecyclerView.ViewHolder
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            ROOT_HEADER -> DirectoryNavigationHeaderViewHolder.createViewHolder(parent)
-            NORMAL_HEADER -> DirectoryNavigationLayoutItemViewHolder.createViewHolder(parent)
+            NORMAL_HEADER -> DirectoryNavigationLayoutItemViewHolder.createViewHolder(parent, dataToTransferRecyclerViewItemClickListener)
             ENDING_HEADER -> DirectoryNavigationTailViewHolder.createViewHolder(parent)
-            else -> DirectoryNavigationLayoutItemViewHolder.createViewHolder(parent)
+            else -> DirectoryNavigationLayoutItemViewHolder.createViewHolder(parent, dataToTransferRecyclerViewItemClickListener)
         }
     }
 
