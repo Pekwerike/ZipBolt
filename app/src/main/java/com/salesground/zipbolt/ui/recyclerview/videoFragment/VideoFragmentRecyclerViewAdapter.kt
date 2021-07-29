@@ -1,18 +1,17 @@
 package com.salesground.zipbolt.ui.recyclerview.videoFragment
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
 class VideoFragmentRecyclerViewAdapter(
     private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener,
+    DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
     private val selectedVideos: MutableList<DataToTransfer>
-) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(DataToTransferDiffUtill()) {
+) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(DataToTransferDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return VideoLayoutItemViewHolder.createViewHolder(
             parent,

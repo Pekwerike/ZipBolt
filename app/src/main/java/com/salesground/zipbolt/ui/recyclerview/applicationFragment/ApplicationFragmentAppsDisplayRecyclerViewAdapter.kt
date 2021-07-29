@@ -1,19 +1,18 @@
 package com.salesground.zipbolt.ui.recyclerview.applicationFragment
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtill
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
 class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
     private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener,
+    DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
     private val selectedApplications: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
-    DataToTransferDiffUtill()
+    DataToTransferDiffUtil()
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -33,21 +32,5 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
         }
     }
 
-    /*object ApplicationFragmentAppsDisplayRecyclerViewAdapterDiffUtil :
-        DiffUtil.ItemCallback<DataToTransfer>() {
-        override fun areItemsTheSame(
-            oldItem: DataToTransfer,
-            newItem: DataToTransfer
-        ): Boolean {
-            return oldItem.dataUri == newItem.dataUri
-        }
-
-        override fun areContentsTheSame(
-            oldItem: DataToTransfer,
-            newItem: DataToTransfer
-        ): Boolean {
-            return oldItem == newItem
-        }
-    }*/
 }
 

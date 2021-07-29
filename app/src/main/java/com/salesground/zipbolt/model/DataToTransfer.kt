@@ -130,7 +130,8 @@ sealed class DataToTransfer(
                 documentType = DocumentType.Image
                 return documentType
             }
-            dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp") -> {
+            dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp") ||
+            dataDisplayName.endsWith("webm")-> {
                 documentType = DocumentType.Video
                 return documentType
             }

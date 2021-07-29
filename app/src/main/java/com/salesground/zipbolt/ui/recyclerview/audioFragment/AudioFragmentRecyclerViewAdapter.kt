@@ -9,7 +9,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 
 class AudioFragmentRecyclerViewAdapter(
     private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener,
+    DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
     private val selectedAudios: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(DataToTransferDiffUtill()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

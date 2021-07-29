@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
  * */
 class AudioLayoutItemViewHolder(
     private val audioLayoutItemBinding: AudioLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(audioLayoutItemBinding.root) {
 
     fun bindData(
@@ -101,7 +101,7 @@ class AudioLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
         ): AudioLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<AudioLayoutItemBinding>(
                 LayoutInflater.from(parent.context),

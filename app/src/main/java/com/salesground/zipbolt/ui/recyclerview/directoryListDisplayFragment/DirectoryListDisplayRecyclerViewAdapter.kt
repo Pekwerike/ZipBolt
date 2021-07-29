@@ -12,9 +12,9 @@ import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.view
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : ListAdapter<DataToTransfer,
-        RecyclerView.ViewHolder>(DataToTransferDiffUtill()) {
+        RecyclerView.ViewHolder>(DataToTransferDiffUtil()) {
 
 
     override fun getItemViewType(position: Int): Int {

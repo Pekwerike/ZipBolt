@@ -19,7 +19,8 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 
 class VideoLayoutItemViewHolder(
     private val videoLayoutItemBinding: VideoLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+    private val dataToTransferRecyclerViewItemClickListener:
+    DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(videoLayoutItemBinding.root) {
 
     fun bindVideoData(
@@ -33,7 +34,7 @@ class VideoLayoutItemViewHolder(
             videoSize = dataToTransfer.videoSize
             videoName = dataToTransfer.videoDisplayName
 
-          
+
             Glide.with(videoLayoutItemVideoPreviewImageView)
                 .load(dataToTransfer.videoUri)
                 .transform(RoundedCorners(30))
@@ -92,7 +93,7 @@ class VideoLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
         ): VideoLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoLayoutItemBinding>(
                 LayoutInflater.from(parent.context),

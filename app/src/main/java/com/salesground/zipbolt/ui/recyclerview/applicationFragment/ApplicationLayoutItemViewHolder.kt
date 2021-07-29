@@ -13,7 +13,7 @@ import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 class ApplicationLayoutItemViewHolder(
     private val applicationLayoutItemBinding: ApplicationLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(applicationLayoutItemBinding.root) {
 
     fun bindApplicationDetails(

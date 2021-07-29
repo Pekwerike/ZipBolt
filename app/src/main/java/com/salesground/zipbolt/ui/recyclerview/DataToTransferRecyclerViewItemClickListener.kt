@@ -1,11 +1,11 @@
 package com.salesground.zipbolt.ui.recyclerview
 
-import com.salesground.zipbolt.model.DataToTransfer
 
-class DataToTransferRecyclerViewItemClickListener(
-    private val clicked: (DataToTransfer) -> Unit
+class DataToTransferRecyclerViewItemClickListener<T>(
+    private val clicked: (T) -> Unit
 ) {
-    fun onClick(dataToTransfer: DataToTransfer) {
-        return clicked(dataToTransfer)
+    fun onClick(clickedItem : T) {
+        return clicked(clickedItem)
     }
 }
+
