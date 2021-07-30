@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import java.io.File
 
 class DirectoryImageLayoutItemViewHolder(
-    private val folderImageLayoutItemBinding: com.salesground.zipbolt.databinding.FolderImageLayoutItemBinding
-) : RecyclerView.ViewHolder(folderImageLayoutItemBinding.root) {
+    private val folderImageLayoutItemBinding: com.salesground.zipbolt.databinding.FolderImageLayoutItemBinding,
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    ) : RecyclerView.ViewHolder(folderImageLayoutItemBinding.root) {
 
     fun bindData(dataToTransfer: DataToTransfer) {
         dataToTransfer as DataToTransfer.DeviceFile
@@ -35,7 +37,8 @@ class DirectoryImageLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): DirectoryImageLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup,
+                             dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>): DirectoryImageLayoutItemViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<com.salesground.zipbolt.databinding.FolderImageLayoutItemBinding>(
                     LayoutInflater.from(parent.context),
@@ -44,7 +47,7 @@ class DirectoryImageLayoutItemViewHolder(
                     false
                 )
 
-            return DirectoryImageLayoutItemViewHolder(layoutBinding)
+            return DirectoryImageLayoutItemViewHolder(layoutBinding, dataToTransferRecyclerViewItemClickListener)
         }
     }
 }

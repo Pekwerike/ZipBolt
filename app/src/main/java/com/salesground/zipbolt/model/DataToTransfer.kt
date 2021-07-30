@@ -126,12 +126,13 @@ sealed class DataToTransfer(
     fun getFileType(context: Context): DocumentType {
         when {
             dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
-                    || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif") -> {
+                    || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")
+                    || dataDisplayName.endsWith("webp") -> {
                 documentType = DocumentType.Image
                 return documentType
             }
             dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp") ||
-            dataDisplayName.endsWith("webm")-> {
+                    dataDisplayName.endsWith("webm") -> {
                 documentType = DocumentType.Video
                 return documentType
             }
