@@ -20,9 +20,6 @@ class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
 
-    private var _navigationHeaderText = ""
-    val navigationHeaderText: String
-        get() = _navigationHeaderText
 
     companion object {
         const val ADDED_DIRECTORY = 1
@@ -41,6 +38,12 @@ class FileViewModel @Inject constructor(
     private val _navigatedDirectory = MutableLiveData<Pair<String, Int>>(null)
     val navigatedDirectory: LiveData<Pair<String, Int>>
         get() = _navigatedDirectory
+
+    private var _navigationHeaderText = ""
+    val navigationHeaderText: String
+        get() = _navigationHeaderText
+
+    val selectedFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
 
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()

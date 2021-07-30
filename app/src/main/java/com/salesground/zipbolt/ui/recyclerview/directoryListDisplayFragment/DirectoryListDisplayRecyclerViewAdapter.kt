@@ -8,11 +8,13 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.FolderClickedListener
 import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.*
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
+    private val folderClickedListener: FolderClickedListener
 ) : ListAdapter<DataToTransfer,
         RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
 
@@ -43,7 +45,8 @@ class DirectoryListDisplayRecyclerViewAdapter(
             }
             DocumentType.Image.value -> {
                 DirectoryImageLayoutItemViewHolder.createViewHolder(
-                    parent
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
                 )
             }
             DocumentType.Video.value -> {
@@ -52,7 +55,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Audio.value -> {
                 DirectoryAudioLayoutItemViewHolder.createViewHolder(parent)
             }
-            DocumentType.Document.PowerPointDocument.value-> {
+            DocumentType.Document.PowerPointDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
             }
             DocumentType.Document.WordDocument.value -> {
