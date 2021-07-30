@@ -6,7 +6,6 @@
     <string name="fileTransferServiceNotificationContentText">
         ZipBolt is processing files
     </string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="connect">Connect</string>
     <string name="send_label">Send</string>
@@ -44,4 +43,5 @@
     click on "Receive" to discover your device</string>
     <string name="middle_round_dot_text_separation">%1$s \u2022 %2$s</string>
     <string name="comma_separated_strings">%1$s \u25E6 %2$s</string>
+    <string name="directory_navigation_header_text">%1$s \u27A9 %2$s</string>
 </resources>

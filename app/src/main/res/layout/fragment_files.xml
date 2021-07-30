@@ -6,15 +6,26 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.FilesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/files_fragment_directory_navigation_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <HorizontalScrollView
+        android:id="@+id/fragment_files_navigation_header_scroll_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/medium_padding"
+        android:scrollbars="none">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/files_fragment_directory_navigation_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:padding="@dimen/medium_padding" />
+
+    </HorizontalScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/files_fragment_recycler_view"
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="0dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
 </LinearLayout>

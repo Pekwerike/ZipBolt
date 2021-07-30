@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
@@ -22,10 +20,7 @@ import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
-import java.lang.IllegalStateException
-import java.util.*
-import kotlin.concurrent.schedule
+import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
@@ -69,9 +64,10 @@ class FilesFragment : Fragment() {
                 })
         directoryNavigationListAdapter = DirectoryNavigationListAdapter(
             DataToTransferRecyclerViewItemClickListener {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-        })
-        directoryNavigationRecyclerViewLayoutMananger = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            })
+        directoryNavigationRecyclerViewLayoutMananger =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeViewModelLiveData()
     }
@@ -92,10 +88,11 @@ class FilesFragment : Fragment() {
                 layoutManager = recyclerViewLayoutManager
                 adapter = directoryListDisplayRecyclerViewAdapter
             }
-            filesFragmentDirectoryNavigationRecyclerview.run {
-                adapter = directoryNavigationListAdapter
-                layoutManager = directoryNavigationRecyclerViewLayoutMananger
-            }
+            filesFragmentDirectoryNavigationHeader.text = fileViewModel.navigationHeaderText
+            /*  filesFragmentDirectoryNavigationRecyclerview.run {
+                  adapter = directoryNavigationListAdapter
+                  layoutManager = directoryNavigationRecyclerViewLayoutMananger
+              }*/
         }
     }
 
@@ -106,11 +103,51 @@ class FilesFragment : Fragment() {
                 directoryListDisplayRecyclerViewAdapter.submitList(it)
             }
         }
-        fileViewModel.directoryNavigationList.observe(this) {
+        fileViewModel.navigatedDirectory.observe(this) {
             it?.let {
-                directoryNavigationListAdapter.submitList(it.map {filePath -> File(filePath) })
+                fragmentFilesBinding.run {
+                    filesFragmentDirectoryNavigationHeader.run {
+                        var currentHeaderText = fileViewModel.navigationHeaderText
+                        when (it.second) {
+                            FileViewModel.ADDED_DIRECTORY -> {
+                                fileViewModel.navigationResponded(
+                                    getString(
+                                        R.string.directory_navigation_header_text,
+                                        currentHeaderText, it.first
+                                    )
+                                )
 
+                                text = fileViewModel.navigationHeaderText
+                                fragmentFilesNavigationHeaderScrollView.post {
+                                    fragmentFilesNavigationHeaderScrollView.smoothScrollTo(
+                                        fragmentFilesNavigationHeaderScrollView
+                                            .getChildAt(0).width, 0
+                                    )
+                                }
+
+                            }
+                            FileViewModel.COMPLETED -> {
+                                // do nothing
+                            }
+                            else -> {
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    currentHeaderText =
+                                        currentHeaderText.removeRange(
+                                            currentHeaderText.length - (it.first.length + 3),
+                                            currentHeaderText.length
+                                        )
+                                    withContext(Dispatchers.Main) {
+                                        fileViewModel.navigationResponded(currentHeaderText)
+                                        text = currentHeaderText
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
+
 }

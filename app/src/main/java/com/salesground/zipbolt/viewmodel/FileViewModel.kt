@@ -19,6 +19,17 @@ import javax.inject.Inject
 class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
+
+    private var _navigationHeaderText = ""
+    val navigationHeaderText: String
+        get() = _navigationHeaderText
+
+    companion object {
+        const val ADDED_DIRECTORY = 1
+        const val REMOVED_DIRECTORY = 2
+        const val COMPLETED = 3
+    }
+
     private val directoryStack: Deque<String> = ArrayDeque()
     private lateinit var currentDirectoryEntry: String
 
@@ -26,19 +37,19 @@ class FileViewModel @Inject constructor(
     val directoryChildren: LiveData<List<DataToTransfer>>
         get() = _directoryChildren
 
-    private val _directoryNavigationList = MutableLiveData<List<String>>()
-    val directoryNavigationList: LiveData<List<String>>
-        get() = _directoryNavigationList
-    private val directoryList: MutableList<String> = mutableListOf()
+
+    private val _navigatedDirectory = MutableLiveData<Pair<String, Int>>(null)
+    val navigatedDirectory: LiveData<Pair<String, Int>>
+        get() = _navigatedDirectory
 
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()
+        val navigatedDirectoryName = File(currentDirectoryEntry).name
         previousDirectoryEntry?.let {
             currentDirectoryEntry = it
             getDirectoryChildren(it)
         }
-        directoryList.removeLast()
-        _directoryNavigationList.value = directoryList
+        _navigatedDirectory.value = Pair(navigatedDirectoryName, REMOVED_DIRECTORY)
     }
 
 
@@ -50,19 +61,17 @@ class FileViewModel @Inject constructor(
         // change the current directory to point at the new path
         currentDirectoryEntry = path
         getDirectoryChildren(path)
-        directoryList.add(path)
-        _directoryNavigationList.value = directoryList
-    }
 
+        _navigatedDirectory.value = Pair(File(path).name, ADDED_DIRECTORY)
+    }
 
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             currentDirectoryEntry = filesRepository.getRootDirectory().path
             getDirectoryChildren(currentDirectoryEntry)
-            directoryList.add(currentDirectoryEntry)
             withContext(Dispatchers.Main) {
-                _directoryNavigationList.value = directoryList
+                _navigatedDirectory.value = Pair(File(currentDirectoryEntry).name, ADDED_DIRECTORY)
             }
         }
     }
@@ -81,5 +90,10 @@ class FileViewModel @Inject constructor(
 
     fun clearCurrentFolderChildren() {
         _directoryChildren.value = listOf()
+    }
+
+    fun navigationResponded(modifiedPath: String) {
+        _navigationHeaderText = modifiedPath
+        _navigatedDirectory.value = Pair(_navigatedDirectory.value!!.first, COMPLETED)
     }
 }
