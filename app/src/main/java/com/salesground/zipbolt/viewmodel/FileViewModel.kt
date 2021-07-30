@@ -20,10 +20,14 @@ class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
 
-    var navigationHeaderText = ""
+    private var _navigationHeaderText = ""
+    val navigationHeaderText: String
+        get() = _navigationHeaderText
+
     companion object {
         const val ADDED_DIRECTORY = 1
         const val REMOVED_DIRECTORY = 2
+        const val COMPLETED = 3
     }
 
     private val directoryStack: Deque<String> = ArrayDeque()
@@ -86,5 +90,10 @@ class FileViewModel @Inject constructor(
 
     fun clearCurrentFolderChildren() {
         _directoryChildren.value = listOf()
+    }
+
+    fun navigationResponded(modifiedPath: String) {
+        _navigationHeaderText = modifiedPath
+        _navigatedDirectory.value = Pair(_navigatedDirectory.value!!.first, COMPLETED)
     }
 }

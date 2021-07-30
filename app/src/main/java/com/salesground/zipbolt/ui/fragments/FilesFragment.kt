@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
@@ -23,10 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.lang.IllegalStateException
-import java.util.*
-import kotlin.concurrent.schedule
 
 
 @AndroidEntryPoint
@@ -116,10 +110,13 @@ class FilesFragment : Fragment() {
                         var currentHeaderText = fileViewModel.navigationHeaderText
                         when (it.second) {
                             FileViewModel.ADDED_DIRECTORY -> {
-                                fileViewModel.navigationHeaderText = getString(
-                                    R.string.directory_navigation_header_text,
-                                    currentHeaderText, it.first
+                                fileViewModel.navigationResponded(
+                                    getString(
+                                        R.string.directory_navigation_header_text,
+                                        currentHeaderText, it.first
+                                    )
                                 )
+
                                 text = fileViewModel.navigationHeaderText
                                 fragmentFilesNavigationHeaderScrollView.post {
                                     fragmentFilesNavigationHeaderScrollView.smoothScrollTo(
@@ -127,6 +124,10 @@ class FilesFragment : Fragment() {
                                             .getChildAt(0).width, 0
                                     )
                                 }
+
+                            }
+                            FileViewModel.COMPLETED -> {
+                                // do nothing
                             }
                             else -> {
                                 lifecycleScope.launch(Dispatchers.IO) {
@@ -136,7 +137,7 @@ class FilesFragment : Fragment() {
                                             currentHeaderText.length
                                         )
                                     withContext(Dispatchers.Main) {
-                                        fileViewModel.navigationHeaderText = currentHeaderText
+                                        fileViewModel.navigationResponded(currentHeaderText)
                                         text = currentHeaderText
                                     }
                                 }
@@ -147,4 +148,6 @@ class FilesFragment : Fragment() {
             }
         }
     }
+
+
 }
