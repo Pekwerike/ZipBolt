@@ -36,13 +36,13 @@ class DirectoryImageLayoutItemViewHolder(
                 folderImageLayoutItemLayoutViewGroup.setIsViewSelected(false)
             }
 
-            val isSelected = filesSelectedForTransfer.contains(dataToTransfer)
+
 
             folderImageLayoutItemLayoutViewGroup.setOnClickListener {
                 isItemSelected(
                     folderImageLayoutItemLayoutViewGroup,
                     folderImageLayoutItemFolderSelectedCheckBox,
-                    !isSelected
+                    !filesSelectedForTransfer.contains(dataToTransfer)
                 )
                 dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
             }
@@ -51,7 +51,7 @@ class DirectoryImageLayoutItemViewHolder(
                 isItemSelected(
                     folderImageLayoutItemLayoutViewGroup,
                     folderImageLayoutItemFolderSelectedCheckBox,
-                    !isSelected
+                    !filesSelectedForTransfer.contains(dataToTransfer)
                 )
                 dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
             }
