@@ -9,7 +9,7 @@
             type="String" />
     </data>
 
-    <LinearLayout
+    <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
         android:id="@+id/folder_layout_item_view_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,5 +43,5 @@
             android:minWidth="48dp"
             android:minHeight="48dp" />
 
-    </LinearLayout>
+    </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
 </layout>

@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders
+package com.salesground.zipbolt.ui.recyclerview.filesFragment.viewholders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

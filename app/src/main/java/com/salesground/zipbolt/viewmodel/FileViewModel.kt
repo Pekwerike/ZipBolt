@@ -20,9 +20,6 @@ class FileViewModel @Inject constructor(
     private val filesRepository: FileRepository
 ) : ViewModel() {
 
-    private var _navigationHeaderText = ""
-    val navigationHeaderText: String
-        get() = _navigationHeaderText
 
     companion object {
         const val ADDED_DIRECTORY = 1
@@ -42,6 +39,12 @@ class FileViewModel @Inject constructor(
     val navigatedDirectory: LiveData<Pair<String, Int>>
         get() = _navigatedDirectory
 
+    private var _navigationHeaderText = ""
+    val navigationHeaderText: String
+        get() = _navigationHeaderText
+
+    val selectedFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
+
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()
         val navigatedDirectoryName = File(currentDirectoryEntry).name
@@ -54,6 +57,7 @@ class FileViewModel @Inject constructor(
 
 
     fun moveToDirectory(path: String) {
+        clearCurrentFolderChildren()
         // push previous directory with it's last visible item position into the directory stack
         directoryStack.push(
             currentDirectoryEntry

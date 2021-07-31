@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment
+package com.salesground.zipbolt.ui.recyclerview.filesFragment
 
 import android.content.Context
 import android.view.ViewGroup
@@ -8,11 +8,13 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
-import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders.*
+import com.salesground.zipbolt.ui.recyclerview.filesFragment.viewholders.*
 
 class DirectoryListDisplayRecyclerViewAdapter(
     private val context: Context,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
+    private val folderClickedListener: DataToTransferRecyclerViewItemClickListener<String>,
+    private val filesSelectedForTransfer: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer,
         RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
 
@@ -38,12 +40,14 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Directory.value -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    dataToTransferRecyclerViewItemClickListener,
+                    folderClickedListener
                 )
             }
             DocumentType.Image.value -> {
                 DirectoryImageLayoutItemViewHolder.createViewHolder(
-                    parent
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
                 )
             }
             DocumentType.Video.value -> {
@@ -52,7 +56,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
             DocumentType.Audio.value -> {
                 DirectoryAudioLayoutItemViewHolder.createViewHolder(parent)
             }
-            DocumentType.Document.PowerPointDocument.value-> {
+            DocumentType.Document.PowerPointDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
             }
             DocumentType.Document.WordDocument.value -> {
@@ -70,7 +74,8 @@ class DirectoryListDisplayRecyclerViewAdapter(
             else -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    dataToTransferRecyclerViewItemClickListener,
+                    folderClickedListener
                 )
             }
         }
@@ -78,8 +83,14 @@ class DirectoryListDisplayRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is DirectoryLayoutItemViewHolder -> holder.bindData(getItem(position))
-            is DirectoryImageLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
+            is DirectoryImageLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
             is DirectoryVideoLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryAudioLayoutItemViewHolder -> holder.bindData(getItem(position))
             is DirectoryDocumentLayoutItemViewHolder -> holder.bindData(getItem(position))

@@ -39,26 +39,6 @@ sealed class DataToTransfer(
         FILE(213)
     }
 
-    override fun equals(other: Any?): Boolean {
-        return when (other) {
-            this -> true
-            !is DataToTransfer -> false
-            else -> {
-                (other.dataUri == this.dataUri && other.dataDisplayName == this.dataDisplayName
-                        && other.dataSize == this.dataSize && other.dataType == this.dataType)
-            }
-        }
-    }
-
-    override fun hashCode(): Int {
-        val prime = 7
-        var result = 5
-        result = prime * result + dataUri.toString().hashCode()
-        result = prime * result + (dataSize xor (dataSize ushr 32)).toInt()
-        result = prime * result + dataDisplayName.hashCode()
-        result = prime * result + dataType.hashCode()
-        return result
-    }
 
     data class DeviceAudio(
         val audioUri: Uri,
@@ -126,12 +106,13 @@ sealed class DataToTransfer(
     fun getFileType(context: Context): DocumentType {
         when {
             dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
-                    || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif") -> {
+                    || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")
+                    || dataDisplayName.endsWith("webp") -> {
                 documentType = DocumentType.Image
                 return documentType
             }
             dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp") ||
-            dataDisplayName.endsWith("webm")-> {
+                    dataDisplayName.endsWith("webm") -> {
                 documentType = DocumentType.Video
                 return documentType
             }
@@ -208,6 +189,32 @@ sealed class DataToTransfer(
                 DocumentType.Document.UnknownDocument
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DataToTransfer) return false
+
+        if (dataDisplayName != other.dataDisplayName) return false
+        if (dataUri != other.dataUri) return false
+        if (dataSize != other.dataSize) return false
+        if (dataType != other.dataType) return false
+        if (percentTransferred != other.percentTransferred) return false
+        if (transferStatus != other.transferStatus) return false
+        if (documentType != other.documentType) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = dataDisplayName.hashCode()
+        result = 31 * result + dataUri.hashCode()
+        result = 31 * result + dataSize.hashCode()
+        result = 31 * result + dataType
+        result = 31 * result + percentTransferred.hashCode()
+        result = 31 * result + transferStatus.hashCode()
+        result = 31 * result + documentType.hashCode()
+        return result
     }
 }
 
