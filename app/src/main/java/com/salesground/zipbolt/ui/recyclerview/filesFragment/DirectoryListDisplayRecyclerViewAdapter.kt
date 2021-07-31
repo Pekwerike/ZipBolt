@@ -83,7 +83,10 @@ class DirectoryListDisplayRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is DirectoryLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
             is DirectoryImageLayoutItemViewHolder -> holder.bindData(
                 getItem(position),
                 filesSelectedForTransfer
