@@ -26,6 +26,7 @@ class FilesFragment : Fragment() {
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
     private lateinit var fragmentFilesBinding: FragmentFilesBinding
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
+    private var mainActivity: MainActivity? = null
 
     companion object {
         var backStackCount: Int = 0
@@ -35,8 +36,8 @@ class FilesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let {
-            it as MainActivity
-            it.setBackButtonPressedClickListener(object :
+            mainActivity = it as MainActivity
+            mainActivity?.setBackButtonPressedClickListener(object :
                 MainActivity.PopBackStackListener {
                 override fun popStack(): Boolean {
                     backStackCount--
@@ -49,11 +50,12 @@ class FilesFragment : Fragment() {
         directoryListDisplayRecyclerViewAdapter =
             DirectoryListDisplayRecyclerViewAdapter(requireContext(),
                 DataToTransferRecyclerViewItemClickListener {
-                    it as DataToTransfer.DeviceFile
                     if (fileViewModel.selectedFilesForTransfer.contains(it)) {
                         fileViewModel.selectedFilesForTransfer.remove(it)
+                        mainActivity?.removeFromDataToTransferList(it)
                     } else {
                         fileViewModel.selectedFilesForTransfer.add(it)
+                        mainActivity?.addToDataToTransferList(it)
                     }
                 }, DataToTransferRecyclerViewItemClickListener {
                     backStackCount++
