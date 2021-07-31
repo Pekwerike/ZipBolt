@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.viewholders
+package com.salesground.zipbolt.ui.recyclerview.filesFragment.viewholders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,6 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
-import java.io.File
 
 class DirectoryImageLayoutItemViewHolder(
     private val folderImageLayoutItemBinding: com.salesground.zipbolt.databinding.FolderImageLayoutItemBinding,
@@ -22,7 +21,7 @@ class DirectoryImageLayoutItemViewHolder(
         filesSelectedForTransfer: MutableList<DataToTransfer>
     ) {
         dataToTransfer as DataToTransfer.DeviceFile
-        folderImageLayoutItemBinding.apply {
+        folderImageLayoutItemBinding.run {
             imageFile = dataToTransfer.file
 
             Glide.with(root.context)
@@ -30,15 +29,20 @@ class DirectoryImageLayoutItemViewHolder(
                 .into(folderImageLayoutItemImageView)
 
             if (filesSelectedForTransfer.contains(dataToTransfer)) {
+                folderImageLayoutItemFolderSelectedCheckBox.isChecked = true
                 folderImageLayoutItemLayoutViewGroup.setIsViewSelected(true)
+            } else {
+                folderImageLayoutItemFolderSelectedCheckBox.isChecked = false
+                folderImageLayoutItemLayoutViewGroup.setIsViewSelected(false)
             }
+
+            val isSelected = filesSelectedForTransfer.contains(dataToTransfer)
 
             folderImageLayoutItemLayoutViewGroup.setOnClickListener {
                 isItemSelected(
                     folderImageLayoutItemLayoutViewGroup,
-                    dataToTransfer,
-                    filesSelectedForTransfer,
-                    folderImageLayoutItemFolderSelectedCheckBox
+                    folderImageLayoutItemFolderSelectedCheckBox,
+                    !isSelected
                 )
                 dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
             }
@@ -46,9 +50,8 @@ class DirectoryImageLayoutItemViewHolder(
             folderImageLayoutItemFolderSelectedCheckBox.setOnClickListener {
                 isItemSelected(
                     folderImageLayoutItemLayoutViewGroup,
-                    dataToTransfer,
-                    filesSelectedForTransfer,
-                    folderImageLayoutItemFolderSelectedCheckBox
+                    folderImageLayoutItemFolderSelectedCheckBox,
+                    !isSelected
                 )
                 dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
             }
@@ -58,21 +61,12 @@ class DirectoryImageLayoutItemViewHolder(
 
     private fun isItemSelected(
         viewGroup: SelectableLinearLayout,
-        selectedData: DataToTransfer,
-        filesSelectedForTransfer: MutableList<DataToTransfer>,
-        selectedCheckBox: CheckBox
+        selectedCheckBox: CheckBox,
+        isSelected: Boolean
     ) {
-        if (filesSelectedForTransfer.contains(selectedData)) {
-            viewGroup.setIsViewSelected(false)
-            selectedCheckBox.isSelected = false
-            filesSelectedForTransfer.remove(selectedData)
-        } else {
-            selectedCheckBox.isSelected = true
-            viewGroup.setIsViewSelected(true)
-            filesSelectedForTransfer.add(selectedData)
-        }
+        viewGroup.setIsViewSelected(isSelected)
+        selectedCheckBox.isChecked = isSelected
     }
-
 
     companion object {
         fun createViewHolder(

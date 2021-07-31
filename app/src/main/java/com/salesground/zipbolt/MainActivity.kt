@@ -67,7 +67,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
-import com.salesground.zipbolt.ui.fragments.DirectoryListDisplay
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -121,7 +120,6 @@ class MainActivity : AppCompatActivity() {
         Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
-    private lateinit var wifiDirectBroadcastReceiver: WifiDirectBroadcastReceiver
     private lateinit var upgradedWifiDirectBroadcastReceiver: UpgradedWifiDirectBroadcastReceiver
     private var dataTransferServiceIntent: Intent? = null
     private var deviceTransferRole: DeviceTransferRole = DeviceTransferRole.NO_ROLE

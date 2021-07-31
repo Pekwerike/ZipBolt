@@ -13,7 +13,7 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
-import com.salesground.zipbolt.ui.recyclerview.directoryListDisplayFragment.DirectoryListDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.ui.recyclerview.filesFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,6 @@ class FilesFragment : Fragment() {
     private lateinit var directoryListDisplayRecyclerViewAdapter: DirectoryListDisplayRecyclerViewAdapter
     private lateinit var fragmentFilesBinding: FragmentFilesBinding
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
-    private lateinit var directoryNavigationRecyclerViewLayoutMananger: LinearLayoutManager
 
     companion object {
         var backStackCount: Int = 0
@@ -51,16 +50,16 @@ class FilesFragment : Fragment() {
             DirectoryListDisplayRecyclerViewAdapter(requireContext(),
                 DataToTransferRecyclerViewItemClickListener {
                     it as DataToTransfer.DeviceFile
-                    if (it.file.isDirectory) {
-                        backStackCount++
-                        fileViewModel.clearCurrentFolderChildren()
-                        fileViewModel.moveToDirectory(
-                            it.file.path
-                        )
+                    if (fileViewModel.selectedFilesForTransfer.contains(it)) {
+                        fileViewModel.selectedFilesForTransfer.remove(it)
+                    } else {
+                        fileViewModel.selectedFilesForTransfer.add(it)
                     }
-                })
-        directoryNavigationRecyclerViewLayoutMananger =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                }, DataToTransferRecyclerViewItemClickListener {
+                    backStackCount++
+                    fileViewModel.moveToDirectory(it)
+                }, fileViewModel.selectedFilesForTransfer
+            )
         recyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeViewModelLiveData()
     }
@@ -82,10 +81,6 @@ class FilesFragment : Fragment() {
                 adapter = directoryListDisplayRecyclerViewAdapter
             }
             filesFragmentDirectoryNavigationHeader.text = fileViewModel.navigationHeaderText
-            /*  filesFragmentDirectoryNavigationRecyclerview.run {
-                  adapter = directoryNavigationListAdapter
-                  layoutManager = directoryNavigationRecyclerViewLayoutMananger
-              }*/
         }
     }
 

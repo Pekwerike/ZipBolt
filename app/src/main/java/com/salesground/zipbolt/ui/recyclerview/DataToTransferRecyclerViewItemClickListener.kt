@@ -9,11 +9,5 @@ class DataToTransferRecyclerViewItemClickListener<T>(
     }
 }
 
-class FolderClickedListener(
-    private val clicked: (String) -> Unit
-) {
-    fun onClick(folderPath: String) {
-        return clicked(folderPath)
-    }
-}
+
 
