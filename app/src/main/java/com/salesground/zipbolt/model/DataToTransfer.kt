@@ -139,7 +139,6 @@ sealed class DataToTransfer(
                 context.contentResolver.run {
                     getType(dataUri)?.let {
                         return getMediaType(it)
-
                     }
                 }
             } else {

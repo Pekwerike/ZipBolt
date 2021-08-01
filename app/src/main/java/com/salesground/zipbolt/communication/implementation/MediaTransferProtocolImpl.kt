@@ -50,10 +50,11 @@ open class MediaTransferProtocolImpl @Inject constructor(
         )
     }
 
-    private val filesRepository: FileRepository by lazy {
-        ZipBoltFileRepository()
+    private val directoryMediaTransferProtocol: DirectoryMediaTransferProtocol by lazy {
+        DirectoryMediaTransferProtocol(
+            savedFilesRepository
+        )
     }
-
 
     private val transferMetaDataUpdateListener: TransferMetaDataUpdateListener by lazy {
         object : TransferMetaDataUpdateListener {
@@ -87,6 +88,16 @@ open class MediaTransferProtocolImpl @Inject constructor(
     ) {
         ongoingTransfer.set(true)
         this.dataToTransfer = dataToTransfer
+        if (dataToTransfer is DataToTransfer.DeviceFile) {
+            if (dataToTransfer.getFileType(context) == MediaType.File.Directory.value) {
+                directoryMediaTransferProtocol.transferMedia(
+                    dataToTransfer,
+                    dataOutputStream,
+                    dataTransferListener
+                )
+                return
+            }
+        }
         dataOutputStream.writeInt(dataToTransfer.dataType)
         dataOutputStream.writeUTF(dataToTransfer.dataDisplayName)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
@@ -237,6 +248,12 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataInputStream = dataInputStream,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                     dataReceiveListener = dataReceiveListener
+                )
+            }
+            MediaType.File.Directory.value -> {
+                directoryMediaTransferProtocol.receiveMedia(
+                    dataInputStream,
+                    dataReceiveListener
                 )
             }
         }
