@@ -3,9 +3,8 @@ package com.salesground.zipbolt.repository.implementation
 import android.os.Environment
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.DocumentType
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.FileRepository
-import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.service.DataTransferService
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -39,7 +38,7 @@ class ZipBoltFileRepository  @Inject constructor(
         for (i in 0 until directoryChildrenCount) {
             // read child type
             val childType = dataInputStream.readInt()
-            if (childType == DocumentType.Directory.value) {
+            if (childType == MediaType.Directory.value) {
                 // nested directory
                 insertDirectory(
                     originalTransferDirectoryName,
@@ -90,7 +89,7 @@ class ZipBoltFileRepository  @Inject constructor(
                         originalTransferDirectoryName,
                         directorySize,
                         ((directorySize - sizeOfDataReadFromDirectoryTransfer) / directorySize.toFloat()) * 100f,
-                        DocumentType.Directory.value,
+                        MediaType.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING
                     )

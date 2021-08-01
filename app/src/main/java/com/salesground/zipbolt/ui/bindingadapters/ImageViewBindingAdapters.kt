@@ -5,53 +5,53 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.DocumentType
+import com.salesground.zipbolt.model.MediaType
 
 @BindingAdapter("bindImageForDocument")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
 
-    when (dataToTransfer.documentType) {
-        DocumentType.App -> {
+    when (dataToTransfer.mediaType) {
+        MediaType.App -> {
 
         }
-        DocumentType.Audio -> {
+        MediaType.Audio -> {
 
         }
-        DocumentType.Directory -> {
+        MediaType.Directory -> {
 
         }
-        DocumentType.Document.ExcelDocument -> {
+        MediaType.DocumentMedia.ExcelMedia -> {
             Glide.with(context)
                 .load(R.drawable.sheets)
                 .into(this)
         }
-        DocumentType.Document.Pdf -> {
+        MediaType.DocumentMedia.Pdf -> {
             Glide.with(context)
                 .load(R.drawable.pdf)
                 .into(this)
         }
-        DocumentType.Document.PowerPointDocument -> {
+        MediaType.DocumentMedia.PowerPointMedia -> {
             Glide.with(context)
                 .load(R.drawable.slides)
                 .into(this)
         }
-        DocumentType.Document.UnknownDocument -> {
+        MediaType.DocumentMedia.UnknownMedia -> {
 
         }
-        DocumentType.Document.WordDocument -> {
+        MediaType.DocumentMedia.WordMedia -> {
             Glide.with(context)
                 .load(R.drawable.docs)
                 .into(this)
         }
-        DocumentType.Document.ZipDocument -> {
+        MediaType.DocumentMedia.ZipMedia -> {
             Glide.with(context)
                 .load(R.drawable.zip_file)
                 .into(this)
         }
-        DocumentType.Image -> {
+        MediaType.Image -> {
 
         }
-        DocumentType.Video -> {
+        MediaType.Video -> {
 
         }
     }

@@ -2,7 +2,7 @@ package com.salesground.zipbolt.communication.implementation
 
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.DocumentType
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.service.DataTransferService
 import java.io.*
@@ -33,6 +33,7 @@ class DirectoryMediaTransferProtocol(
         dataToTransfer.dataSize = dataToTransfer.file.getDirectorySize()
 
         // send directory name and directory siz e
+        dataOutputStream.writeInt(dataToTransfer.dataType)
         dataOutputStream.writeUTF(dataToTransfer.file.name)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
@@ -41,7 +42,7 @@ class DirectoryMediaTransferProtocol(
             dataOutputStream.writeInt(directoryChildren.size)
             it.forEach { directoryChild ->
                 if (directoryChild.isDirectory) {
-                    dataOutputStream.writeInt(DocumentType.Directory.value)
+                    dataOutputStream.writeInt(MediaType.Directory.value)
                     transferDirectory(
                         dataOutputStream,
                         dataToTransfer,
@@ -101,7 +102,7 @@ class DirectoryMediaTransferProtocol(
             dataOutputStream.writeInt(directoryChildren.size)
             it.forEach { directoryChild ->
                 if (directoryChild.isDirectory) {
-                    dataOutputStream.writeInt(DocumentType.Directory.value)
+                    dataOutputStream.writeInt(MediaType.Directory.value)
                     transferDirectory(
                         dataOutputStream,
                         originalDataToTransfer,
@@ -163,7 +164,7 @@ class DirectoryMediaTransferProtocol(
         for (i in 0 until directoryChildrenCount) {
             // read child type
             val childType = dataInputStream.readInt()
-            if (childType == DocumentType.Directory.value) {
+            if (childType == MediaType.Directory.value) {
                 receiveDirectory(
                     dataInputStream,
                     dataReceiveListener,
@@ -203,7 +204,7 @@ class DirectoryMediaTransferProtocol(
                         initialDirectoryName,
                         initialDirectorySize,
                         (initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat(),
-                        DocumentType.Directory.value,
+                        MediaType.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
                     )
@@ -228,7 +229,7 @@ class DirectoryMediaTransferProtocol(
         for (i in 0 until directoryChildCount) {
             // read child type
             val directoryChildType = dataInputStream.readInt()
-            if (directoryChildType == DocumentType.Directory.value) {
+            if (directoryChildType == MediaType.Directory.value) {
                 receiveDirectory(
                     dataInputStream,
                     dataReceiveListener,
@@ -268,7 +269,7 @@ class DirectoryMediaTransferProtocol(
                         initialDirectoryName,
                         initialDirectorySize,
                         ((initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat()) * 100f,
-                        DocumentType.Directory.value,
+                        MediaType.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING
                     )
