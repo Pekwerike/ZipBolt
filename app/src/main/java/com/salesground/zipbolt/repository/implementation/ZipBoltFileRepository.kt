@@ -5,6 +5,7 @@ import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.repository.FileRepository
+import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.service.DataTransferService
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -13,7 +14,8 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.math.min
 
-class ZipBoltFileRepository @Inject constructor() : FileRepository {
+class ZipBoltFileRepository  @Inject constructor(
+) : FileRepository {
     private val dataBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private var sizeOfDataReadFromDirectoryTransfer: Long = 0L
     override suspend fun getRootDirectory(): File {
