@@ -4,14 +4,13 @@ import android.content.Context
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.DocumentType
 import com.salesground.zipbolt.repository.*
-import com.salesground.zipbolt.repository.implementation.AdvanceImageRepository
-import com.salesground.zipbolt.repository.implementation.DeviceApplicationsRepository
-import com.salesground.zipbolt.repository.implementation.ZipBoltAudioRepository
-import com.salesground.zipbolt.repository.implementation.ZipBoltVideoRepository
+import com.salesground.zipbolt.repository.implementation.*
 import com.salesground.zipbolt.service.DataTransferService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.*
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.math.min
@@ -50,6 +49,10 @@ open class MediaTransferProtocolImpl @Inject constructor(
             savedFilesRepository,
             context
         )
+    }
+
+    private val filesRepository: FileRepository by lazy {
+        ZipBoltFileRepository()
     }
 
 
@@ -186,6 +189,90 @@ open class MediaTransferProtocolImpl @Inject constructor(
         }
     }
 
+    private var sizeOfDataSentFromDirectory: Long = 0L
+    private var directorySize: Long = 0L
+    private fun transferDirectory(
+        directory: File, dataOutputStream: DataOutputStream,
+        dataTransferListener: DataTransferListener
+    ) {
+        // write directory name
+        dataOutputStream.writeUTF(directory.name)
+        val directoryChildren = directory.listFiles()
+        // write directory children size
+        directoryChildren?.let {
+            dataOutputStream.writeInt(directoryChildren.size)
+            for (directoryChild in directoryChildren) {
+                if (directoryChild.isDirectory) {
+                    dataOutputStream.writeInt(DocumentType.Directory.value)
+                    transferDirectory(directory, dataOutputStream, dataTransferListener)
+                } else {
+                    dataOutputStream.writeInt(DataToTransfer.MediaType.FILE.value)
+                    dataOutputStream.writeUTF(directoryChild.name)
+                    var fileLength = directoryChild.length()
+                    dataOutputStream.writeLong(fileLength)
+                    val fileDataInputStream = DataInputStream(
+                        BufferedInputStream(
+                            FileInputStream(directoryChild)
+                        )
+                    )
+                    dataTransferListener.onTransfer(
+                        this.dataToTransfer!!,
+                        0f,
+                        DataToTransfer.TransferStatus.TRANSFER_STARTED
+                    )
+                    var lengthRead: Int = 0
+
+                    while (fileLength > 0) {
+                        fileDataInputStream.readFully(
+                            buffer, 0, min(
+                                fileLength,
+                                buffer.size.toLong()
+                            ).toInt()
+                        ).also {
+                            lengthRead = min(
+                                fileLength,
+                                buffer.size.toLong()
+                            ).toInt()
+                            fileLength -= lengthRead
+                        }
+                        dataOutputStream.writeInt(mTransferMetaData.value)
+                        if (mTransferMetaData == MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
+                            break
+                        } else if (mTransferMetaData == MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
+                            mTransferMetaData = MediaTransferProtocolMetaData.KEEP_RECEIVING
+                        }
+                        dataOutputStream.write(buffer, 0, lengthRead)
+                        sizeOfDataSentFromDirectory += lengthRead
+                        dataTransferListener.onTransfer(
+                            this.dataToTransfer!!,
+                            ((directorySize - sizeOfDataSentFromDirectory) / directorySize) * 100f,
+                            DataToTransfer.TransferStatus.TRANSFER_ONGOING
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun File.getDirectorySize(): Long {
+        var directorySize: Long = 0L
+        val directoryStack: Deque<File> = ArrayDeque()
+        directoryStack.push(this)
+        var directory: File
+
+        while (directoryStack.isNotEmpty()) {
+            directory = directoryStack.pop()
+            directory.listFiles()?.forEach {
+                if (it.isDirectory) {
+                    directoryStack.add(it)
+                } else {
+                    directorySize += it.length()
+                }
+            }
+        }
+        return directorySize
+    }
+
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun receiveMedia(
         dataInputStream: DataInputStream,
@@ -194,7 +281,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
         mediaType = dataInputStream.readInt()
         mediaName = dataInputStream.readUTF()
         mediaSize = dataInputStream.readLong()
-
 
 
         when (mediaType) {

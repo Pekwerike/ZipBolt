@@ -32,6 +32,7 @@ class DataTransferService : Service() {
         const val IS_SERVER: String = "IsDeviceTheServer"
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
         const val SOCKET_PORT = 7091
+        const val SOCKET_PORT2 = 7063
         val arrayOfPossiblePorts = arrayOf(8020, 7070, 4050, 5030, 6040)
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
         const val BUFFER_SIZE = 1024 * 1024
@@ -42,6 +43,7 @@ class DataTransferService : Service() {
     // private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
     private var mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
     private lateinit var socket: Socket
+    private lateinit var socketTwo: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
     private var dataTransferListener: ((
@@ -211,6 +213,7 @@ class DataTransferService : Service() {
             val isOneDirectionalTransfer =
                 intent.getBooleanExtra(IS_ONE_DIRECTIONAL_TRANSFER, false)
             val serverIpAddress = intent.getStringExtra(SERVER_IP_ADDRESS)
+
             when {
                 isServer && isOneDirectionalTransfer -> {
                     configureSenderSocketForOneDirectionalTransfer()
@@ -231,6 +234,7 @@ class DataTransferService : Service() {
         }
         return START_NOT_STICKY
     }
+
 
     private fun configureSenderSocketForOneDirectionalTransfer() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -286,14 +290,14 @@ class DataTransferService : Service() {
                 Log.e("UnseenError", exception.stackTraceToString())
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
-               /* with(dataTransferServiceConnectionStateIntent) {
-                    action =
-                        DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
+                /* with(dataTransferServiceConnectionStateIntent) {
+                     action =
+                         DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
 
-                    localBroadcastManager.sendBroadcast(this)
-                }
-                stopForeground(true)
-                stopSelf()*/
+                     localBroadcastManager.sendBroadcast(this)
+                 }
+                 stopForeground(true)
+                 stopSelf()*/
             }
             try {
                 socketDIS =
@@ -374,19 +378,6 @@ class DataTransferService : Service() {
                 }
             }
         }
-        /* } catch (exception: Exception) {
-             Log.e("UnseenError", exception.stackTraceToString())
-             // send broadcast message to the main activity that we couldn't connect to peer.
-             // the main activity will use this message to determine how to update the ui
-             with(dataTransferServiceConnectionStateIntent) {
-                 action =
-                     DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
-
-                 localBroadcastManager.sendBroadcast(this)
-             }
-             stopForeground(true)
-             stopSelf()
-         }*/
     }
 
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
@@ -414,20 +405,6 @@ class DataTransferService : Service() {
                 }
             }
         }
-        /* } catch (exception: Exception) {
-              Log.e("UnseenError", exception.stackTraceToString())
-              // send broadcast message to the main activity that we couldn't connect to peer.
-              // the main activity will use this message to determine how to update the ui
-              with(dataTransferServiceConnectionStateIntent) {
-                  action =
-                      DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER
-
-                  localBroadcastManager.sendBroadcast(this)
-              }
-
-              stopForeground(true)
-              stopSelf()
-          }*/
     }
 
     override fun onDestroy() {

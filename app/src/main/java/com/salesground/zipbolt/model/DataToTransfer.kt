@@ -36,7 +36,7 @@ sealed class DataToTransfer(
         VIDEO(210),
         AUDIO(211),
         APP(212),
-        FILE(213)
+        FILE(213),
     }
 
 
