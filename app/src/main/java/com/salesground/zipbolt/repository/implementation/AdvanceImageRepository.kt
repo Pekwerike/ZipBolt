@@ -7,6 +7,7 @@ import android.os.Build
 import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.service.DataTransferService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -67,7 +68,7 @@ class AdvanceImageRepository @Inject constructor(
             displayName,
             size,
             0f,
-            DataToTransfer.MediaType.IMAGE.value,
+            MediaType.Image.value,
             null,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
@@ -105,7 +106,7 @@ class AdvanceImageRepository @Inject constructor(
                 displayName,
                 size,
                 ((size - mediaSize) / size.toFloat()) * 100f,
-                DataToTransfer.MediaType.IMAGE.value,
+               MediaType.Image.value,
                 null,
                 DataToTransfer.TransferStatus.RECEIVE_ONGOING
             )
@@ -135,7 +136,7 @@ class AdvanceImageRepository @Inject constructor(
                 displayName,
                 size,
                 100f,
-                DataToTransfer.MediaType.IMAGE.value,
+                MediaType.Image.value,
                 imageUri,
                 DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             )

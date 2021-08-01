@@ -9,6 +9,7 @@ import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.readStreamDataIntoFile
 import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.ApplicationsRepositoryInterface
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -66,7 +67,7 @@ class DeviceApplicationsRepository @Inject constructor(
             appFileName,
             appSize,
             0f,
-            DataToTransfer.MediaType.APP.value,
+            MediaType.App.value,
             applicationFileUri,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
@@ -77,7 +78,7 @@ class DeviceApplicationsRepository @Inject constructor(
                 appSize,
                 transferMetaDataUpdateListener,
                 applicationFile,
-                DataToTransfer.MediaType.APP
+               MediaType.App
             )
         ) {
             // application receive was cancelled
@@ -87,7 +88,7 @@ class DeviceApplicationsRepository @Inject constructor(
         dataReceiveListener.onReceive(
             appFileName,
             appSize, 100f,
-            DataToTransfer.MediaType.APP.value,
+            MediaType.App.value,
             applicationFileUri,
             DataToTransfer.TransferStatus.RECEIVE_COMPLETE
         )

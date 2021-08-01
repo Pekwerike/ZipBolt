@@ -10,48 +10,48 @@ import com.salesground.zipbolt.model.MediaType
 @BindingAdapter("bindImageForDocument")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
 
-    when (dataToTransfer.mediaType) {
-        MediaType.App -> {
+    when (dataToTransfer.dataType) {
+        MediaType.App.value -> {
 
         }
-        MediaType.Audio -> {
+        MediaType.Audio.value -> {
 
         }
-        MediaType.Directory -> {
+        MediaType.File.Directory.value -> {
 
         }
-        MediaType.DocumentMedia.ExcelMedia -> {
+        MediaType.File.Document.ExcelDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.sheets)
                 .into(this)
         }
-        MediaType.DocumentMedia.Pdf -> {
+        MediaType.File.Document.PdfDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.pdf)
                 .into(this)
         }
-        MediaType.DocumentMedia.PowerPointMedia -> {
+        MediaType.File.Document.PowerPointDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.slides)
                 .into(this)
         }
-        MediaType.DocumentMedia.UnknownMedia -> {
+        MediaType.File.Document.UnknownDocument.value -> {
 
         }
-        MediaType.DocumentMedia.WordMedia -> {
+        MediaType.File.Document.WordDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.docs)
                 .into(this)
         }
-        MediaType.DocumentMedia.ZipMedia -> {
+        MediaType.File.Document.ZipDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.zip_file)
                 .into(this)
         }
-        MediaType.Image -> {
+        MediaType.Image.value -> {
 
         }
-        MediaType.Video -> {
+        MediaType.Video.value -> {
 
         }
     }

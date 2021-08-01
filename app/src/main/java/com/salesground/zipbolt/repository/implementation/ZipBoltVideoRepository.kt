@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.readStreamDataIntoFile
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.VideoRepositoryI
 import com.salesground.zipbolt.repository.ZIP_BOLT_MAIN_DIRECTORY
@@ -94,7 +95,7 @@ class ZipBoltVideoRepository @Inject constructor(
             videoName,
             videoSize,
             0f,
-            DataToTransfer.MediaType.VIDEO.value,
+            MediaType.Video.value,
             null,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
@@ -105,7 +106,7 @@ class ZipBoltVideoRepository @Inject constructor(
                 size = videoSize,
                 transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                 receivingFile = videoFile,
-                dataType = DataToTransfer.MediaType.VIDEO
+                dataType = MediaType.Video
             )
         ) {
             // video receive was cancelled
@@ -127,7 +128,7 @@ class ZipBoltVideoRepository @Inject constructor(
                 videoName,
                 videoSize,
                 100f,
-                DataToTransfer.MediaType.VIDEO.value,
+                MediaType.Video.value,
                 videoUri,
                 DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             )

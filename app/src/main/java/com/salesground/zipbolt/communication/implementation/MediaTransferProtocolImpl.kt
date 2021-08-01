@@ -253,7 +253,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
             MediaType.File.Directory.value -> {
                 directoryMediaTransferProtocol.receiveMedia(
                     dataInputStream,
-                    dataReceiveListener
+                    dataReceiveListener,
+                    mediaName,
+                    mediaSize
                 )
             }
         }

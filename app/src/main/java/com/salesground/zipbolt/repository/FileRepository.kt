@@ -9,14 +9,6 @@ interface FileRepository {
     suspend fun getRootDirectory(): File
     suspend fun getDirectoryChildren(directoryPath: String): List<DataToTransfer>
 
-    // TODO Build out the API for this two functions
-    suspend fun insertDirectory(
-        originalTransferDirectoryName: String,
-        baseDirectory: File,
-        dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
-        directorySize: Long,
-        dataReceiveListener: MediaTransferProtocol.DataReceiveListener
-    )
+    // TODO Build out the API for this functions
     suspend fun insertFile()
 }
