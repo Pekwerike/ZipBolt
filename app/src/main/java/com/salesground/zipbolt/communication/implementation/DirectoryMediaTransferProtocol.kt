@@ -2,16 +2,17 @@ package com.salesground.zipbolt.communication.implementation
 
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.DocumentType
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.service.DataTransferService
+import com.salesground.zipbolt.utils.getDirectorySize
 import java.io.*
 import java.util.*
 import kotlin.math.min
 
 class DirectoryMediaTransferProtocol(
     private val savedFilesRepository: SavedFilesRepository
-) : MediaTransferProtocol {
+) {
     private val transferBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private val receiveBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private var dataSizeTransferredFromDirectory: Long = 0L
@@ -20,11 +21,11 @@ class DirectoryMediaTransferProtocol(
         savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.FOLDERS_BASE_DIRECTORY)
     }
 
-    override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.MediaTransferProtocolMetaData) {
+    fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.MediaTransferProtocolMetaData) {
 
     }
 
-    override suspend fun transferMedia(
+    fun transferMedia(
         dataToTransfer: DataToTransfer,
         dataOutputStream: DataOutputStream,
         dataTransferListener: MediaTransferProtocol.DataTransferListener
@@ -32,16 +33,17 @@ class DirectoryMediaTransferProtocol(
         dataToTransfer as DataToTransfer.DeviceFile
         dataToTransfer.dataSize = dataToTransfer.file.getDirectorySize()
 
-        // send directory name and directory siz e
+        // send directory name, size, and type
+        dataOutputStream.writeInt(MediaType.File.Directory.value)
         dataOutputStream.writeUTF(dataToTransfer.file.name)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
 
         val directoryChildren = dataToTransfer.file.listFiles()
         directoryChildren?.let {
-            dataOutputStream.writeInt(directoryChildren.size)
+            dataOutputStream.writeInt(it.size)
             it.forEach { directoryChild ->
                 if (directoryChild.isDirectory) {
-                    dataOutputStream.writeInt(DocumentType.Directory.value)
+                    dataOutputStream.writeInt(MediaType.File.Directory.value)
                     transferDirectory(
                         dataOutputStream,
                         dataToTransfer,
@@ -49,7 +51,7 @@ class DirectoryMediaTransferProtocol(
                         dataTransferListener
                     )
                 } else {
-                    dataOutputStream.writeInt(DataToTransfer.MediaType.FILE.value)
+                    dataOutputStream.writeInt(MediaType.File.Document.UnknownDocument.value)
                     dataOutputStream.writeUTF(directoryChild.name)
                     var directoryChildFileLength = directoryChild.length()
                     dataOutputStream.writeLong(directoryChildFileLength)
@@ -98,10 +100,10 @@ class DirectoryMediaTransferProtocol(
         dataOutputStream.writeUTF(directory.name)
         val directoryChildren = directory.listFiles()
         directoryChildren?.let {
-            dataOutputStream.writeInt(directoryChildren.size)
+            dataOutputStream.writeInt(it.size)
             it.forEach { directoryChild ->
                 if (directoryChild.isDirectory) {
-                    dataOutputStream.writeInt(DocumentType.Directory.value)
+                    dataOutputStream.writeInt(MediaType.File.Directory.value)
                     transferDirectory(
                         dataOutputStream,
                         originalDataToTransfer,
@@ -109,7 +111,7 @@ class DirectoryMediaTransferProtocol(
                         dataTransferListener
                     )
                 } else {
-                    dataOutputStream.writeInt(DataToTransfer.MediaType.FILE.value)
+                    dataOutputStream.writeInt(MediaType.File.Document.UnknownDocument.value)
                     dataOutputStream.writeUTF(directoryChild.name)
                     var directoryChildFileLength = directoryChild.length()
                     dataOutputStream.writeLong(directoryChildFileLength)
@@ -149,21 +151,22 @@ class DirectoryMediaTransferProtocol(
         }
     }
 
-    override suspend fun receiveMedia(
+   fun receiveMedia(
         dataInputStream: DataInputStream,
-        dataReceiveListener: MediaTransferProtocol.DataReceiveListener
+        dataReceiveListener: MediaTransferProtocol.DataReceiveListener,
+        initialDirectoryName: String,
+        initialDirectorySize: Long
     ) {
-        // read the directory name and size
-        val initialDirectoryName = dataInputStream.readUTF()
-        val initialDirectorySize = dataInputStream.readLong()
+
         // create directory file in base folders directory
         val directoryFile = File(zipBoltBaseFolderDirectory, initialDirectoryName)
+        directoryFile.mkdirs()
         val directoryChildrenCount = dataInputStream.readInt()
 
         for (i in 0 until directoryChildrenCount) {
             // read child type
             val childType = dataInputStream.readInt()
-            if (childType == DocumentType.Directory.value) {
+            if (childType == MediaType.File.Directory.value) {
                 receiveDirectory(
                     dataInputStream,
                     dataReceiveListener,
@@ -203,7 +206,7 @@ class DirectoryMediaTransferProtocol(
                         initialDirectoryName,
                         initialDirectorySize,
                         (initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat(),
-                        DocumentType.Directory.value,
+                        MediaType.File.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
                     )
@@ -224,15 +227,16 @@ class DirectoryMediaTransferProtocol(
         val directoryName = dataInputStream.readUTF()
         val directoryChildCount = dataInputStream.readInt()
         val directoryFile = File(parentDirectory, directoryName)
+        directoryFile.mkdirs()
 
         for (i in 0 until directoryChildCount) {
             // read child type
             val directoryChildType = dataInputStream.readInt()
-            if (directoryChildType == DocumentType.Directory.value) {
+            if (directoryChildType == MediaType.File.Directory.value) {
                 receiveDirectory(
                     dataInputStream,
                     dataReceiveListener,
-                    parentDirectory,
+                    directoryFile,
                     initialDirectoryName,
                     initialDirectorySize
                 )
@@ -268,7 +272,7 @@ class DirectoryMediaTransferProtocol(
                         initialDirectoryName,
                         initialDirectorySize,
                         ((initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat()) * 100f,
-                        DocumentType.Directory.value,
+                        MediaType.File.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING
                     )
@@ -278,22 +282,4 @@ class DirectoryMediaTransferProtocol(
         }
     }
 
-    private fun File.getDirectorySize(): Long {
-        var directorySize = 0L
-        val directoryStack: Deque<File> = ArrayDeque()
-        directoryStack.push(this)
-        var directory: File
-
-        while (directoryStack.isNotEmpty()) {
-            directory = directoryStack.pop()
-            directory.listFiles()?.forEach {
-                if (it.isDirectory) {
-                    directoryStack.add(it)
-                } else {
-                    directorySize += it.length()
-                }
-            }
-        }
-        return directorySize
-    }
 }

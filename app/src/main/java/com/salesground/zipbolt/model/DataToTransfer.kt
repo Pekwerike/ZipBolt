@@ -14,11 +14,11 @@ sealed class DataToTransfer(
     var dataDisplayName: String,
     val dataUri: Uri,
     var dataSize: Long,
-    var dataType: Int,
     var percentTransferred: Float = 0f,
-    var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING,
-    var documentType: DocumentType = DocumentType.Directory
+    var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING
 ) {
+    abstract val dataType: Int
+
     enum class TransferStatus(val value: Int) {
         NO_ACTION(9),
         TRANSFER_STARTED(16),
@@ -31,15 +31,6 @@ sealed class DataToTransfer(
         TRANSFER_CANCELLED(19)
     }
 
-    enum class MediaType(val value: Int) {
-        IMAGE(209),
-        VIDEO(210),
-        AUDIO(211),
-        APP(212),
-        FILE(213),
-    }
-
-
     data class DeviceAudio(
         val audioUri: Uri,
         val audioDisplayName: String,
@@ -50,8 +41,9 @@ sealed class DataToTransfer(
         dataDisplayName = audioDisplayName,
         dataUri = audioUri,
         dataSize = audioSize,
-        dataType = MediaType.AUDIO.value
-    )
+    ) {
+        override val dataType: Int = MediaType.Audio.value
+    }
 
     data class DeviceImage(
         val imageId: Long,
@@ -64,9 +56,10 @@ sealed class DataToTransfer(
     ) : DataToTransfer(
         dataDisplayName = imageDisplayName,
         dataUri = imageUri,
-        dataSize = imageSize,
-        dataType = MediaType.IMAGE.value
-    )
+        dataSize = imageSize
+    ) {
+        override val dataType: Int = MediaType.Image.value
+    }
 
     data class DeviceVideo(
         val videoId: Long,
@@ -78,9 +71,10 @@ sealed class DataToTransfer(
     ) : DataToTransfer(
         dataDisplayName = videoDisplayName,
         dataUri = videoUri,
-        dataSize = videoSize,
-        dataType = MediaType.VIDEO.value
-    )
+        dataSize = videoSize
+    ) {
+        override val dataType: Int = MediaType.Video.value
+    }
 
     data class DeviceApplication(
         val applicationName: String?,
@@ -90,131 +84,105 @@ sealed class DataToTransfer(
     ) : DataToTransfer(
         dataDisplayName = applicationName ?: "Unknown App",
         dataUri = apkPath.toUri(),
-        dataSize = appSize,
-        dataType = MediaType.APP.value
-    )
+        dataSize = appSize
+    ) {
+        override val dataType: Int
+            get() = MediaType.App.value
+    }
+
 
     data class DeviceFile(
         val file: File,
     ) : DataToTransfer(
         dataDisplayName = file.name,
         dataUri = Uri.fromFile(file),
-        dataSize = file.length(),
-        dataType = MediaType.FILE.value
-    )
-
-    fun getFileType(context: Context): DocumentType {
-        when {
+        dataSize = file.length()
+    ) {
+        override val dataType: Int = when {
             dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
                     || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")
                     || dataDisplayName.endsWith("webp") -> {
-                documentType = DocumentType.Image
-                return documentType
+                MediaType.File.ImageFile.value
             }
             dataDisplayName.endsWith("mp4") || dataDisplayName.endsWith("3gp") ||
                     dataDisplayName.endsWith("webm") -> {
-                documentType = DocumentType.Video
-                return documentType
+                MediaType.File.VideoFile.value
+            }
+            dataDisplayName.endsWith("mp3") -> {
+                MediaType.File.AudioFile.value
+            }
+            dataDisplayName.endsWith("apk") -> {
+                MediaType.File.AppFile.value
             }
             dataDisplayName.endsWith("pdf") -> {
-                documentType = DocumentType.Document.Pdf
-                return documentType
+                MediaType.File.Document.PdfDocument.value
             }
             dataDisplayName.endsWith("docx") || dataDisplayName.endsWith("doc") -> {
-                documentType = DocumentType.Document.WordDocument
-                return documentType
+                MediaType.File.Document.WordDocument.value
             }
-            dataDisplayName.endsWith("xlsx") -> {
-                documentType = DocumentType.Document.ExcelDocument
-                return documentType
+            dataDisplayName.endsWith("xlsx") || dataDisplayName.endsWith("xls") -> {
+                MediaType.File.Document.ExcelDocument.value
             }
             dataDisplayName.endsWith("ppt") || dataDisplayName.endsWith("pptx") -> {
-                documentType = DocumentType.Document.PowerPointDocument
-                return documentType
+                MediaType.File.Document.PowerPointDocument.value
             }
             dataDisplayName.endsWith("zip") -> {
-                documentType = DocumentType.Document.ZipDocument
-                return documentType
+                MediaType.File.Document.ZipDocument.value
             }
+            else -> MediaType.File.Document.UnknownDocument.value
         }
-        // if file is not an image go further processing
-        if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
-        ) {
-            context.contentResolver.run {
-                getType(dataUri)?.let {
-                    documentType = getMediaType(it)
-                    return documentType
+
+        fun getFileType(context: Context): Int {
+            // if file is not an image go further processing
+            if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
+            ) {
+                context.contentResolver.run {
+                    getType(dataUri)?.let {
+                        return getMediaType(it)
+                    }
+                }
+            } else {
+                val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
+                    dataUri.toString()
+                )
+
+                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase(Locale.ROOT)
+                )?.let {
+                    return getMediaType(it)
                 }
             }
-        } else {
-            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
-                dataUri.toString()
-            )
+            return MediaType.File.Document.UnknownDocument.value
+        }
 
-            MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                fileExtension.toLowerCase(Locale.ROOT)
-            )?.let {
-                documentType = getMediaType(it)
-                return documentType
+        private fun getMediaType(mimeType: String): Int {
+            return when {
+                mimeType.contains("image", ignoreCase = true) -> {
+                    MediaType.File.ImageFile.value
+                }
+                mimeType.contains("video", ignoreCase = true) -> {
+                    MediaType.File.VideoFile.value
+                }
+                mimeType.contains("Pdf", ignoreCase = true) -> {
+                    MediaType.File.Document.PdfDocument.value
+                }
+                mimeType.contains("app", ignoreCase = true) -> {
+                    MediaType.File.AppFile.value
+                }
+                mimeType.contains("audio", ignoreCase = true) -> {
+                    MediaType.File.AudioFile.value
+                }
+                mimeType.contains("word", ignoreCase = true) -> {
+                    MediaType.File.Document.WordDocument.value
+                }
+                mimeType.contains(DocumentsContract.Document.MIME_TYPE_DIR, ignoreCase = true) -> {
+                    MediaType.File.Directory.value
+                }
+                else -> {
+                    MediaType.File.Document.UnknownDocument.value
+                }
             }
         }
-        documentType = DocumentType.Document.UnknownDocument
-        return documentType
-    }
-
-    private fun getMediaType(mimeType: String): DocumentType {
-        return when {
-            mimeType.contains("image", ignoreCase = true) -> {
-                DocumentType.Image
-            }
-            mimeType.contains("video", ignoreCase = true) -> {
-                DocumentType.Video
-            }
-            mimeType.contains("Pdf", ignoreCase = true) -> {
-                DocumentType.Document.Pdf
-            }
-            mimeType.contains("app", ignoreCase = true) -> {
-                DocumentType.App
-            }
-            mimeType.contains("audio", ignoreCase = true) -> {
-                DocumentType.Audio
-            }
-            mimeType.contains("word", ignoreCase = true) -> {
-                DocumentType.Document.WordDocument
-            }
-            mimeType.contains(DocumentsContract.Document.MIME_TYPE_DIR, ignoreCase = true) -> {
-                DocumentType.Directory
-            }
-            else -> {
-                DocumentType.Document.UnknownDocument
-            }
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DataToTransfer) return false
-
-        if (dataDisplayName != other.dataDisplayName) return false
-        if (dataUri != other.dataUri) return false
-        if (dataSize != other.dataSize) return false
-        if (dataType != other.dataType) return false
-        if (percentTransferred != other.percentTransferred) return false
-        if (transferStatus != other.transferStatus) return false
-        if (documentType != other.documentType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = dataDisplayName.hashCode()
-        result = 31 * result + dataUri.hashCode()
-        result = 31 * result + dataSize.hashCode()
-        result = 31 * result + dataType
-        result = 31 * result + percentTransferred.hashCode()
-        result = 31 * result + transferStatus.hashCode()
-        result = 31 * result + documentType.hashCode()
-        return result
     }
 }
 

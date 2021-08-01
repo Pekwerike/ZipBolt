@@ -3,7 +3,9 @@ package com.salesground.zipbolt.utils
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import java.io.File
 import java.math.MathContext
+import java.util.*
 
 fun Uri.getMediaDuration(context: Context): String {
     var mediaDuration: String? = ""
@@ -65,4 +67,23 @@ fun Long.transformDataSizeToMeasuredUnit(): String {
         }gb"
         else -> "${this / 1_000_000_000_000F}tb"
     }
+}
+
+fun File.getDirectorySize(): Long {
+    var directorySize = 0L
+    val directoryStack: Deque<File> = ArrayDeque()
+    directoryStack.push(this)
+    var directory: File
+
+    while (directoryStack.isNotEmpty()) {
+        directory = directoryStack.pop()
+        directory.listFiles()?.forEach {
+            if (it.isDirectory) {
+                directoryStack.add(it)
+            } else {
+                directorySize += it.length()
+            }
+        }
+    }
+    return directorySize
 }

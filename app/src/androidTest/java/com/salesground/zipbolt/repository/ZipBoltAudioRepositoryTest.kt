@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.implementation.ZipBoltAudioRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -88,7 +89,7 @@ class ZipBoltAudioRepositoryTest {
                         dataUri: Uri?,
                         dataTransferStatus: DataToTransfer.TransferStatus
                     ) {
-                        assertEquals(DataToTransfer.MediaType.AUDIO.value, dataType)
+                        assertEquals(MediaType.Audio.value, dataType)
                         if(dataTransferStatus == DataToTransfer.TransferStatus.RECEIVE_COMPLETE){
                             assertEquals(100f, percentageOfDataRead)
                             assert(dataUri != null)

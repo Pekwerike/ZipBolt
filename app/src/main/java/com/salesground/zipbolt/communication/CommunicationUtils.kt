@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.communication
 
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.service.DataTransferService
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -17,7 +18,7 @@ fun DataInputStream.readStreamDataIntoFile(
     size: Long,
     transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
     receivingFile: File,
-    dataType: DataToTransfer.MediaType
+    dataType: MediaType
 ): Boolean {
     var dataSize = size
     val receivingFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(receivingFile))

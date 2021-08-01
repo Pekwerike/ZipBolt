@@ -5,53 +5,53 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.DocumentType
+import com.salesground.zipbolt.model.MediaType
 
 @BindingAdapter("bindImageForDocument")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
 
-    when (dataToTransfer.documentType) {
-        DocumentType.App -> {
+    when (dataToTransfer.dataType) {
+        MediaType.App.value -> {
 
         }
-        DocumentType.Audio -> {
+        MediaType.Audio.value -> {
 
         }
-        DocumentType.Directory -> {
+        MediaType.File.Directory.value -> {
 
         }
-        DocumentType.Document.ExcelDocument -> {
+        MediaType.File.Document.ExcelDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.sheets)
                 .into(this)
         }
-        DocumentType.Document.Pdf -> {
+        MediaType.File.Document.PdfDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.pdf)
                 .into(this)
         }
-        DocumentType.Document.PowerPointDocument -> {
+        MediaType.File.Document.PowerPointDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.slides)
                 .into(this)
         }
-        DocumentType.Document.UnknownDocument -> {
+        MediaType.File.Document.UnknownDocument.value -> {
 
         }
-        DocumentType.Document.WordDocument -> {
+        MediaType.File.Document.WordDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.docs)
                 .into(this)
         }
-        DocumentType.Document.ZipDocument -> {
+        MediaType.File.Document.ZipDocument.value -> {
             Glide.with(context)
                 .load(R.drawable.zip_file)
                 .into(this)
         }
-        DocumentType.Image -> {
+        MediaType.Image.value -> {
 
         }
-        DocumentType.Video -> {
+        MediaType.Video.value -> {
 
         }
     }

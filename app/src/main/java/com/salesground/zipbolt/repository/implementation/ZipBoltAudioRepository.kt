@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.readStreamDataIntoFile
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.AudioRepository
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -68,7 +69,7 @@ class ZipBoltAudioRepository @Inject constructor(
             audioName,
             audioSize,
             0f,
-            DataToTransfer.MediaType.AUDIO.value,
+            MediaType.Audio.value,
             null,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
@@ -79,7 +80,7 @@ class ZipBoltAudioRepository @Inject constructor(
                 size = audioSize,
                 transferMetaDataUpdateListener = transferMetaDataUpdateListener,
                 receivingFile = audioFile,
-                dataType = DataToTransfer.MediaType.AUDIO
+                dataType = MediaType.Audio
             )
         ) {
             return
@@ -101,7 +102,7 @@ class ZipBoltAudioRepository @Inject constructor(
                 audioName,
                 audioSize,
                 100f,
-                DataToTransfer.MediaType.AUDIO.value,
+                MediaType.Audio.value,
                 audioUri,
                 DataToTransfer.TransferStatus.RECEIVE_COMPLETE
             )

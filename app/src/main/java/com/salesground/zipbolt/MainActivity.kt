@@ -45,6 +45,7 @@ import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
 import com.salesground.zipbolt.viewmodel.*
@@ -223,7 +224,7 @@ class MainActivity : AppCompatActivity() {
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
                                     when (dataType) {
-                                        DataToTransfer.MediaType.IMAGE.value -> {
+                                        MediaType.Image.value -> {
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(dataUri)
                                                 .into(ongoingDataReceiveLayoutImageView)
@@ -246,7 +247,7 @@ class MainActivity : AppCompatActivity() {
                                                 )
                                             }
                                         }
-                                        DataToTransfer.MediaType.AUDIO.value -> {
+                                        MediaType.Audio.value -> {
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(R.drawable.ic_baseline_music_note_24)
                                                 .into(ongoingDataReceiveLayoutImageView)
@@ -271,7 +272,7 @@ class MainActivity : AppCompatActivity() {
                                                 )
                                             }
                                         }
-                                        DataToTransfer.MediaType.VIDEO.value -> {
+                                        MediaType.Video.value -> {
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(dataUri)
                                                 .into(ongoingDataReceiveLayoutImageView)
@@ -298,7 +299,7 @@ class MainActivity : AppCompatActivity() {
 
                                             }
                                         }
-                                        DataToTransfer.MediaType.APP.value -> {
+                                        MediaType.App.value -> {
                                             val applicationIcon = try {
                                                 dataUri?.path!!.let { path ->
                                                     packageManager.getPackageArchiveInfo(path, 0)
@@ -379,20 +380,20 @@ class MainActivity : AppCompatActivity() {
                                         )
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
-                                    if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value ||
-                                        dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
+                                    if (dataToTransfer.dataType == MediaType.Image.value ||
+                                        dataToTransfer.dataType == MediaType.Video.value
                                     ) {
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(dataToTransfer.dataUri)
                                             .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if (dataToTransfer.dataType == DataToTransfer.MediaType.APP.value) {
+                                    } else if (dataToTransfer.dataType == MediaType.App.value) {
                                         dataToTransfer as DataToTransfer.DeviceApplication
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(
                                                 dataToTransfer.applicationIcon
                                             )
                                             .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if (dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value) {
+                                    } else if (dataToTransfer.dataType == MediaType.Audio.value) {
                                         dataToTransfer as DataToTransfer.DeviceAudio
                                         Glide.with(ongoingDataTransferDataCategoryImageView)
                                             .load(dataToTransfer.audioArtPath)
