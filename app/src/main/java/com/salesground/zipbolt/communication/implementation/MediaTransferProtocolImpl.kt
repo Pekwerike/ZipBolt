@@ -4,6 +4,7 @@ import android.content.Context
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.MediaTransferProtocol.*
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.*
 import com.salesground.zipbolt.repository.implementation.*
 import com.salesground.zipbolt.service.DataTransferService
@@ -98,9 +99,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
         }
 
         val fileInputStream: InputStream? =
-            if (dataToTransfer.dataType == DataToTransfer.MediaType.IMAGE.value
-                || dataToTransfer.dataType == DataToTransfer.MediaType.VIDEO.value
-                || dataToTransfer.dataType == DataToTransfer.MediaType.AUDIO.value
+            if (dataToTransfer.dataType == MediaType.Image.value
+                || dataToTransfer.dataType == MediaType.Video.value
+                || dataToTransfer.dataType == MediaType.Audio.value
             ) {
                 try {
                     context.contentResolver.openInputStream(dataToTransfer.dataUri)
@@ -198,7 +199,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
         when (mediaType) {
-            DataToTransfer.MediaType.IMAGE.value -> {
+            MediaType.Image.value -> {
                 imageRepository.insertImageIntoMediaStore(
                     displayName = mediaName,
                     size = mediaSize,
@@ -207,7 +208,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataReceiveListener = dataReceiveListener
                 )
             }
-            DataToTransfer.MediaType.APP.value -> {
+            MediaType.App.value -> {
                 applicationsRepository.insertApplicationIntoDevice(
                     appFileName = mediaName,
                     appSize = mediaSize,
@@ -217,7 +218,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 )
             }
 
-            DataToTransfer.MediaType.VIDEO.value -> {
+            MediaType.Video.value -> {
                 videoRepository.insertVideoIntoMediaStore(
                     videoName = mediaName,
                     videoSize = mediaSize,
@@ -228,7 +229,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 )
             }
 
-            DataToTransfer.MediaType.AUDIO.value -> {
+            MediaType.Audio.value -> {
                 mAudioRepository.insertAudioIntoMediaStore(
                     audioName = mediaName,
                     audioSize = mediaSize,
