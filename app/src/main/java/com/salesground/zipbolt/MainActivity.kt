@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by viewModels()
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification

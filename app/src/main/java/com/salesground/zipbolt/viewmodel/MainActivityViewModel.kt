@@ -153,15 +153,4 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun addDataToTransfer(dataToTransfer: DataToTransfer) {
-        collectionOfDataToTransfer.add(dataToTransfer)
-    }
-
-    fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer) {
-        collectionOfDataToTransfer.remove(dataToTransfer)
-    }
-
-    fun clearCollectionOfDataToTransfer() {
-        collectionOfDataToTransfer = mutableListOf()
-    }
 }

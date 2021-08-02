@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
 import com.salesground.zipbolt.repository.implementation.ZipBoltFileRepository
 import com.salesground.zipbolt.utils.getDirectorySize
@@ -20,8 +21,9 @@ class DirectoryMediaTransferProtocolTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val zipBoltFileRepository: ZipBoltFileRepository = ZipBoltFileRepository()
-
-    private val gateWayFile = File(context.getExternalFilesDir(null), "Gateway.txt")
+    private val zipBoltSavedFilesRepository : ZipBoltSavedFilesRepository = ZipBoltSavedFilesRepository()
+    private val gateWayFile = File(zipBoltSavedFilesRepository
+        .getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.FOLDERS_BASE_DIRECTORY), "gateWay.txt")
     private val gateWayFileOutputStream =
         DataOutputStream(BufferedOutputStream(FileOutputStream(gateWayFile)))
     private val gateWayFileInputStream =
@@ -35,10 +37,15 @@ class DirectoryMediaTransferProtocolTest {
     fun transferMedia() {
         runBlocking {
             val rootDir = zipBoltFileRepository.getRootDirectory()
-            val rootFileChildren = zipBoltFileRepository.getDirectoryChildren(rootDir.path)
-            for (rootFileChild in rootFileChildren) {
+            val rootFileChildren = zipBoltFileRepository.getDirectoryChildren(rootDir.path) as List<DataToTransfer.DeviceFile>
+            val dataRoot = rootFileChildren.find {
+                it.dataDisplayName == "Android"
+            }
+            val dataFolder = zipBoltFileRepository.getDirectoryChildren(dataRoot!!.file.path)
+
+            for (rootFileChild in dataFolder) {
                 rootFileChild as DataToTransfer.DeviceFile
-                if (rootFileChild.file.isDirectory) {
+                if (rootFileChild.file.name == "data") {
                     directoryMediaTransferProtocol.transferMedia(
                         rootFileChild,
                         gateWayFileOutputStream,
@@ -78,12 +85,7 @@ class DirectoryMediaTransferProtocolTest {
 
     @Test
     fun receiveMedia() {
+
     }
 
-    @After
-    fun tearDown() {
-        gateWayFileInputStream.close()
-        gateWayFileOutputStream.close()
-        gateWayFile.delete()
-    }
 }

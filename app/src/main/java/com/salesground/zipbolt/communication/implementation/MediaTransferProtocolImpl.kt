@@ -208,7 +208,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
         mediaName = dataInputStream.readUTF()
         mediaSize = dataInputStream.readLong()
 
-
         when (mediaType) {
             MediaType.Image.value -> {
                 imageRepository.insertImageIntoMediaStore(
