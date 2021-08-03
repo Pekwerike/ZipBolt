@@ -12,7 +12,7 @@ import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewCo
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoReceiveCompleteLayoutItemViewHolder
 
-class ReceiveDataFragmentRecyclerViewAdapter :
+class ReceivedDataFragmentRecyclerViewAdapter :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>
         (DataToTransferRecyclerViewDiffUtil()) {
     enum class ReceiveDataFragmentAdapterViewTypes(val value: Int) {
