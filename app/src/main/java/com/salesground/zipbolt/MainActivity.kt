@@ -416,6 +416,12 @@ class MainActivity : AppCompatActivity() {
                                                 .into(ongoingDataTransferDataCategoryImageView)
 
                                         }
+                                        dataToTransfer.dataType == MediaType.File.Directory.value -> {
+                                            dataToTransfer as DataToTransfer.DeviceFile
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(R.drawable.ic_baseline_folder_open_24)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
                                     }
                                 }
                             }
@@ -768,8 +774,8 @@ class MainActivity : AppCompatActivity() {
                         ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
                             .alpha(0f)
                         ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(1f)
-
                     }
+
                     connectedToPeerTransferOngoingBottomSheetLayoutBinding
                         .expandedConnectedToPeerTransferOngoingLayout
                         .expandedConnectedToPeerTransferOngoingLayoutHeader
@@ -781,7 +787,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
 
-                    // transfer data using the DataTransferService
+                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
                         dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
@@ -1253,7 +1259,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 connectedToPeerNoActionBottomSheetLayoutBinding.collapsedConnectedToPeerNoActionLayout.root.alpha =

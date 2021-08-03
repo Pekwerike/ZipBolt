@@ -8,7 +8,7 @@ class DataToTransferViewModel : ViewModel() {
     private var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
 
     fun addDataToTransfer(dataToTransfer: DataToTransfer) {
-        collectionOfDataToTransfer.remove(dataToTransfer)
+        collectionOfDataToTransfer.add(dataToTransfer)
     }
 
     fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer) {

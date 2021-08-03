@@ -181,38 +181,36 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val dataToTransfer: DataToTransfer =
-            (currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer
         when (holder) {
             is ImageTransferOrReceiveCompleteLayoutViewHolder -> {
-                holder.bindImageData(dataToTransfer)
+                holder.bindImageData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is ImageTransferWaitingLayoutItemViewHolder -> {
-                holder.bindImageData(dataToTransfer)
+                holder.bindImageData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is ApplicationTransferOngoingViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is ApplicationTransferOrReceiveCompleteLayoutViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is VideoTransferWaitingLayoutItemViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is VideoTransferCompleteLayoutItemViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is AudioTransferCompleteLayoutItemViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is AudioTransferWaitingLayoutItemViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is DirectoryTransferCompleteLayoutItemViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is DirectoryTransferWaitingLayoutItemViewHolder -> {
-                holder.bindData(dataToTransfer)
+                holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
         }
     }
