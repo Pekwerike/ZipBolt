@@ -10,7 +10,7 @@ import com.salesground.zipbolt.databinding.ApplicationLayoutItemTransferOrReceiv
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
-class ApplicationTransferOrReceiveCompleteLayoutViewHolder(
+class ApplicationTransferCompleteLayoutViewHolder(
     private val applicationLayoutItemTransferOrReceiveBinding: ApplicationLayoutItemTransferOrReceiveBinding
 ) : RecyclerView.ViewHolder(applicationLayoutItemTransferOrReceiveBinding.root) {
 

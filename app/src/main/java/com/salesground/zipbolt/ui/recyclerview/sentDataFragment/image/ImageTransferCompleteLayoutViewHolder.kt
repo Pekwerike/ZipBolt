@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.salesground.zipbolt.databinding.ImageTransferOrReceiveCompleteLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
-class ImageTransferOrReceiveCompleteLayoutViewHolder(
+class ImageTransferCompleteLayoutViewHolder(
     private val imageTransferOrReceiveCompleteLayoutItemBinding: ImageTransferOrReceiveCompleteLayoutItemBinding
 ) : RecyclerView.ViewHolder(imageTransferOrReceiveCompleteLayoutItemBinding.root) {
 
