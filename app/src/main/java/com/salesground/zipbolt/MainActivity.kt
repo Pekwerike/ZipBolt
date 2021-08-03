@@ -59,9 +59,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
+import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -783,7 +785,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
 
-                     // transfer data using the DataTransferService
+                    // transfer data using the DataTransferService
                     dataTransferService?.transferData(
                         dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
@@ -1089,6 +1091,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
         isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true
+        val sentAndReceivedDataItemsViewPagerAdapter = SentAndReceiveDataItemsViewPagerAdapter(
+            supportFragmentManager, lifecycle, when (deviceTransferRole) {
+                DeviceTransferRole.SEND -> true
+                DeviceTransferRole.RECEIVE -> false
+                DeviceTransferRole.SEND_AND_RECEIVE -> true
+                else -> true
+            }
+        )
         with(connectedToPeerTransferOngoingBottomSheetLayoutBinding) {
             // configure collapsed connected to peer transfer ongoing layout
             with(collapsedConnectedToPeerOngoingDataTransferLayout) {
@@ -1115,41 +1125,31 @@ class MainActivity : AppCompatActivity() {
                             getBottomSheetPeekHeight()
                     }
                 }
-                with(expandedConnectedToPeerTransferOngoingRecyclerView) {
-                    adapter = ongoingDataTransferRecyclerViewAdapter
-                    val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
-                    gridLayoutManager.spanSizeLookup =
-                        object : GridLayoutManager.SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                                return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
-                                    position
-                                )) {
-                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
-                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
-                                    OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
-                                    else -> 3
-                                }
+                expandedConnectedToPeerTransferOngoingViewPager2.adapter =
+                    sentAndReceivedDataItemsViewPagerAdapter
+                TabLayoutMediator(expandedConnectedToPeerTransferOngoingTabLayout,
+                    expandedConnectedToPeerTransferOngoingViewPager2
+                ) { tab, position ->
+                    tab.text = when (deviceTransferRole) {
+                        DeviceTransferRole.SEND -> {
+                            if (position == 0) {
+                                "Sent"
+                            } else {
+                                "Received"
                             }
                         }
-                    layoutManager = gridLayoutManager
-                    setHasFixedSize(true)
-                }
-                with(expandedConnectedToPeerTransferOngoingLayoutHeader) {
-                    ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(0f)
-                    ongoingTransferReceiveHeaderLayoutDataReceiveView.root.animate().alpha(0f)
-
-                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                        if (root.alpha != 0f) {
-                            ongoingDataReceiveLayoutCancelTransferImageButton.setOnClickListener {
-                                dataTransferService?.cancelActiveReceive()
+                        DeviceTransferRole.RECEIVE -> {
+                            if (position == 0) {
+                                "Received"
+                            } else {
+                                "Sent"
                             }
                         }
-                    }
-
-                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                        if (root.alpha != 0f) {
-                            ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
-                                dataTransferService?.cancelActiveTransfer()
+                        else -> {
+                            if (position == 0) {
+                                "Sent"
+                            } else {
+                                "Received"
                             }
                         }
                     }
