@@ -9,14 +9,6 @@ class DataToTransferViewModel : ViewModel() {
 
     private var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
 
-
-
-    private val _receivedDataItems = MutableLiveData<MutableList<DataToTransfer>>(mutableListOf())
-    val receivedDataItems: LiveData<MutableList<DataToTransfer>>
-        get() = _receivedDataItems
-
-
-
     fun addDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.add(dataToTransfer)
     }

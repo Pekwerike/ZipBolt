@@ -12,11 +12,12 @@ import com.salesground.zipbolt.databinding.FragmentReceivedDataBinding
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.ReceivedDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
+import com.salesground.zipbolt.viewmodel.ReceivedDataViewModel
 
 
 class ReceivedDataFragment : Fragment() {
 
-    private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
+    private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
     private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter()
     private val receivedDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
     private lateinit var receivedDataFragmentBinding: FragmentReceivedDataBinding
@@ -56,7 +57,7 @@ class ReceivedDataFragment : Fragment() {
     }
 
     private fun observeViewModelLiveData() {
-        dataToTransferViewModel.receivedDataItems.observe(this) {
+        receivedDataViewModel.receivedDataItems.observe(this) {
             receivedDataFragmentRecyclerViewAdapter.submitList(it)
         }
     }

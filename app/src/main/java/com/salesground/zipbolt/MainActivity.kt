@@ -25,8 +25,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
@@ -37,17 +35,14 @@ import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
-import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
-import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -97,6 +92,8 @@ class MainActivity : AppCompatActivity() {
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by viewModels()
+    private val sentDataViewModel: SentDataViewModel by viewModels()
+    private val receivedDataViewModel: ReceivedDataViewModel by viewModels()
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -187,19 +184,19 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-                            with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                            ) {
-                                // show the receive progress indicator and the percentage received
-                                this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                    ((percentageOfDataRead / 100) * dataSize).roundToLong()
-                                )
-                                dataTransferPercent = percentageOfDataRead.roundToInt()
-                                dataTransferPercentAsString = "$dataTransferPercent%"
-                            }
+                            /*  with(
+                                  connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                      .expandedConnectedToPeerTransferOngoingLayout
+                                      .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                      .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                              ) {
+                                  // show the receive progress indicator and the percentage received
+                                  this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
+                                      ((percentageOfDataRead / 100) * dataSize).roundToLong()
+                                  )
+                                  dataTransferPercent = percentageOfDataRead.roundToInt()
+                                  dataTransferPercentAsString = "$dataTransferPercent%"
+                              }*/
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
@@ -210,20 +207,17 @@ class MainActivity : AppCompatActivity() {
                                         .expandedConnectedToPeerTransferOngoingLayoutHeader
                                         .ongoingTransferReceiveHeaderLayoutDataReceiveView
                                 ) {
-                                    // show the media thumbnail at the end of the transfer
-                                    dataTransferPercent = 100
-                                    dataTransferPercentAsString = "$dataTransferPercent%"
-                                    this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                        dataSize
-                                    )
+                                    /* // show the media thumbnail at the end of the transfer
+                                     dataTransferPercent = 100
+                                     dataTransferPercentAsString = "$dataTransferPercent%"
+                                     this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
+                                         dataSize
+                                     )*/
                                     /*// hide the cancel transfer/receive image button
                             ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
                                     // load the receive image into the image view
                                     when (dataType) {
                                         MediaType.Image.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(dataUri)
-                                                .into(ongoingDataReceiveLayoutImageView)
                                             mainActivityViewModel.run {
                                                 addDataToCurrentTransferHistory(
                                                     OngoingDataTransferUIState.DataItem(
