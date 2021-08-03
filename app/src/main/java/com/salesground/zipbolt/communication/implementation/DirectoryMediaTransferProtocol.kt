@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.communication.implementation
 
+import android.net.Uri
 import android.util.Log
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
@@ -214,7 +215,14 @@ class DirectoryMediaTransferProtocol(
                 directoryChildBufferedOS.close()
             }
         }
-
+        dataReceiveListener.onReceive(
+            initialDirectoryName,
+            initialDirectorySize,
+            100f,
+            MediaType.File.Directory.value,
+            Uri.fromFile(directoryFile),
+            DataToTransfer.TransferStatus.TRANSFER_ONGOING
+        )
     }
 
     private fun receiveDirectory(

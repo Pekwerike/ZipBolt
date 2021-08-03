@@ -58,6 +58,7 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
@@ -334,7 +335,18 @@ class MainActivity : AppCompatActivity() {
                                             Glide.with(ongoingDataReceiveLayoutImageView)
                                                 .load(R.drawable.ic_baseline_folder_open_24)
                                                 .into(ongoingDataReceiveLayoutImageView)
-                                            mainActivityViewModel.run{}
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceFile(
+                                                            file = dataUri!!.toFile()
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+                                            }
                                         }
                                     }
                                     // stop shimmer
@@ -381,26 +393,29 @@ class MainActivity : AppCompatActivity() {
                                         )
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
-                                    if (dataToTransfer.dataType == MediaType.Image.value ||
-                                        dataToTransfer.dataType == MediaType.Video.value
-                                    ) {
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(dataToTransfer.dataUri)
-                                            .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if (dataToTransfer.dataType == MediaType.App.value) {
-                                        dataToTransfer as DataToTransfer.DeviceApplication
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(
-                                                dataToTransfer.applicationIcon
-                                            )
-                                            .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if (dataToTransfer.dataType == MediaType.Audio.value) {
-                                        dataToTransfer as DataToTransfer.DeviceAudio
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(dataToTransfer.audioArtPath)
-                                            .error(R.drawable.ic_baseline_music_note_24)
-                                            .into(ongoingDataTransferDataCategoryImageView)
+                                    when {
+                                        dataToTransfer.dataType == MediaType.Image.value ||
+                                                dataToTransfer.dataType == MediaType.Video.value -> {
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(dataToTransfer.dataUri)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                        dataToTransfer.dataType == MediaType.App.value -> {
+                                            dataToTransfer as DataToTransfer.DeviceApplication
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(
+                                                    dataToTransfer.applicationIcon
+                                                )
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                        dataToTransfer.dataType == MediaType.Audio.value -> {
+                                            dataToTransfer as DataToTransfer.DeviceAudio
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(dataToTransfer.audioArtPath)
+                                                .error(R.drawable.ic_baseline_music_note_24)
+                                                .into(ongoingDataTransferDataCategoryImageView)
 
+                                        }
                                     }
                                 }
                             }
