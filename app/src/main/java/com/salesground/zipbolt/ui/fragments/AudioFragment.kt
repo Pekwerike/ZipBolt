@@ -19,6 +19,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.audioFragment.AudioFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.AudioViewModel
+import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,6 +29,7 @@ class AudioFragment : Fragment() {
     private lateinit var audioFragmentRecyclerViewAdapter: AudioFragmentRecyclerViewAdapter
     private var mainActivity: MainActivity? = null
     private val audioViewModel: AudioViewModel by activityViewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -36,10 +38,7 @@ class AudioFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                if (audioViewModel.selectedAudioFilesForTransfer.isNotEmpty()) {
-                    audioViewModel.clearCollectionOfSelectedAudioFiles()
-                    audioFragmentRecyclerViewAdapter.notifyDataSetChanged()
-                }
+                audioFragmentRecyclerViewAdapter.notifyDataSetChanged()
             }
         }
     )
@@ -52,13 +51,13 @@ class AudioFragment : Fragment() {
 
         audioFragmentRecyclerViewAdapter = AudioFragmentRecyclerViewAdapter(
             DataToTransferRecyclerViewItemClickListener {
-                if (audioViewModel.selectedAudioFilesForTransfer.contains(it)) {
+                if (dataToTransferViewModel.getCollectionOfDataToTransfer().contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
                     mainActivity?.addToDataToTransferList(it)
                 }
             },
-            audioViewModel.selectedAudioFilesForTransfer
+            dataToTransferViewModel.getCollectionOfDataToTransfer()
         )
         observeAudioViewModelLiveData()
     }

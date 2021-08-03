@@ -15,8 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AudioViewModel @Inject constructor(private val audioRepository: AudioRepository) : ViewModel() {
 
-    val selectedAudioFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
-
     private val _deviceAudio = MutableLiveData<MutableList<DataToTransfer>>()
     val deviceAudio: LiveData<MutableList<DataToTransfer>>
         get() = _deviceAudio
@@ -34,7 +32,4 @@ class AudioViewModel @Inject constructor(private val audioRepository: AudioRepos
         }
     }
 
-    fun clearCollectionOfSelectedAudioFiles(){
-        selectedAudioFilesForTransfer.clear()
-    }
 }

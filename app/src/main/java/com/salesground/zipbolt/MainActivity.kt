@@ -30,10 +30,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
-import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
@@ -44,7 +42,6 @@ import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
-import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
@@ -61,11 +58,9 @@ import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.fragment.app.commit
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
@@ -101,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by viewModels()
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -335,6 +331,23 @@ class MainActivity : AppCompatActivity() {
                                                     ))
                                             }
                                         }
+                                        MediaType.File.Directory.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(R.drawable.ic_baseline_folder_open_24)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            mainActivityViewModel.run {
+                                                addDataToCurrentTransferHistory(
+                                                    OngoingDataTransferUIState.DataItem(
+                                                        DataToTransfer.DeviceFile(
+                                                            file = dataUri!!.toFile()
+                                                        ).apply {
+                                                            this.transferStatus =
+                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                                                        }
+                                                    )
+                                                )
+                                            }
+                                        }
                                     }
                                     // stop shimmer
                                     ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
@@ -380,26 +393,35 @@ class MainActivity : AppCompatActivity() {
                                         )
 
                                     dataDisplayName = dataToTransfer.dataDisplayName
-                                    if (dataToTransfer.dataType == MediaType.Image.value ||
-                                        dataToTransfer.dataType == MediaType.Video.value
-                                    ) {
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(dataToTransfer.dataUri)
-                                            .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if (dataToTransfer.dataType == MediaType.App.value) {
-                                        dataToTransfer as DataToTransfer.DeviceApplication
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(
-                                                dataToTransfer.applicationIcon
-                                            )
-                                            .into(ongoingDataTransferDataCategoryImageView)
-                                    } else if (dataToTransfer.dataType == MediaType.Audio.value) {
-                                        dataToTransfer as DataToTransfer.DeviceAudio
-                                        Glide.with(ongoingDataTransferDataCategoryImageView)
-                                            .load(dataToTransfer.audioArtPath)
-                                            .error(R.drawable.ic_baseline_music_note_24)
-                                            .into(ongoingDataTransferDataCategoryImageView)
+                                    when {
+                                        dataToTransfer.dataType == MediaType.Image.value ||
+                                                dataToTransfer.dataType == MediaType.Video.value -> {
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(dataToTransfer.dataUri)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                        dataToTransfer.dataType == MediaType.App.value -> {
+                                            dataToTransfer as DataToTransfer.DeviceApplication
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(
+                                                    dataToTransfer.applicationIcon
+                                                )
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
+                                        dataToTransfer.dataType == MediaType.Audio.value -> {
+                                            dataToTransfer as DataToTransfer.DeviceAudio
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(dataToTransfer.audioArtPath)
+                                                .error(R.drawable.ic_baseline_music_note_24)
+                                                .into(ongoingDataTransferDataCategoryImageView)
 
+                                        }
+                                        dataToTransfer.dataType == MediaType.File.Directory.value -> {
+                                            dataToTransfer as DataToTransfer.DeviceFile
+                                            Glide.with(ongoingDataTransferDataCategoryImageView)
+                                                .load(R.drawable.ic_baseline_folder_open_24)
+                                                .into(ongoingDataTransferDataCategoryImageView)
+                                        }
                                     }
                                 }
                             }
@@ -752,8 +774,8 @@ class MainActivity : AppCompatActivity() {
                         ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
                             .alpha(0f)
                         ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(1f)
-
                     }
+
                     connectedToPeerTransferOngoingBottomSheetLayoutBinding
                         .expandedConnectedToPeerTransferOngoingLayout
                         .expandedConnectedToPeerTransferOngoingLayoutHeader
@@ -765,12 +787,12 @@ class MainActivity : AppCompatActivity() {
                         }
 
 
-                    // transfer data using the DataTransferService
+                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
-                        mainActivityViewModel.collectionOfDataToTransfer
+                        dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
                     // clear collection of data to transfer since transfer has been completed
-                    mainActivityViewModel.clearCollectionOfDataToTransfer()
+                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
                 }
             }
 
@@ -790,22 +812,22 @@ class MainActivity : AppCompatActivity() {
                     "Music",
                     "Files"
                 )
-               /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
-                    supportFragmentManager,
-                    lifecycle
-                )
-                TabLayoutMediator(
-                    allMediaOnDeviceTabLayout,
-                    allMediaOnDeviceViewPager
-                ) { tab, position ->
-                    when (position) {
-                        0 -> tab.text = "Apps"
-                        1 -> tab.text = "Images"
-                        2 -> tab.text = "Videos"
-                        3 -> tab.text = "Music"
-                        4 -> tab.text = "Files"
-                    }
-                }.attach()*/
+                /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
+                     supportFragmentManager,
+                     lifecycle
+                 )
+                 TabLayoutMediator(
+                     allMediaOnDeviceTabLayout,
+                     allMediaOnDeviceViewPager
+                 ) { tab, position ->
+                     when (position) {
+                         0 -> tab.text = "Apps"
+                         1 -> tab.text = "Images"
+                         2 -> tab.text = "Videos"
+                         3 -> tab.text = "Music"
+                         4 -> tab.text = "Files"
+                     }
+                 }.attach()*/
 
             }
             setContentView(root)
@@ -1238,7 +1260,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 connectedToPeerNoActionBottomSheetLayoutBinding.collapsedConnectedToPeerNoActionLayout.root.alpha =
                     1 - slideOffset * 3.5f
@@ -1358,11 +1379,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
-        mainActivityViewModel.addDataToTransfer(dataToTransfer)
+        dataToTransferViewModel.addDataToTransfer(dataToTransfer)
     }
 
     fun removeFromDataToTransferList(dataToTransfer: DataToTransfer) {
-        mainActivityViewModel.removeDataFromDataToTransfer(dataToTransfer)
+        dataToTransferViewModel.removeDataFromDataToTransfer(dataToTransfer)
     }
 
 

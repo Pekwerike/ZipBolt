@@ -84,6 +84,13 @@ fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: Strin
     }
 }
 
+@BindingAdapter("setFolderSize")
+fun TextView.setFolderSize(folderSize: Long?) {
+    folderSize?.let {
+        text = folderSize.transformDataSizeToMeasuredUnit()
+    }
+}
+
 @BindingAdapter("setVideoDuration", "setVideoSize", requireAll = true)
 fun TextView.setVideoDurationAndSize(videoDuration: Long?, videoSize: Long?) {
     if (videoDuration != null && videoSize != null) {

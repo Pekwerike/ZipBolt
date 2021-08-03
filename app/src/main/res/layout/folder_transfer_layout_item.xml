@@ -5,20 +5,17 @@
     <data>
 
         <variable
-            name="videoName"
+            name="folderName"
             type="String" />
 
         <variable
-            name="videoSize"
+            name="folderSize"
             type="Long" />
 
-        <variable
-            name="videoDuration"
-            type="Long" />
     </data>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/video_transfer_layout_item_shimmer"
+        android:id="@+id/folder_transfer_layout_item_shimmer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -27,47 +24,47 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/medium_margin">
 
-            <com.salesground.zipbolt.ui.customviews.CurvedImageView
-                android:id="@+id/video_transfer_layout_item_video_preview_image_view"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/folder_transfer_layout_item_image_view"
                 android:layout_width="58dp"
                 android:layout_height="58dp"
-                android:layout_margin="@dimen/small_margin"
+                android:layout_margin="@dimen/medium_margin"
+                android:padding="@dimen/medium_padding"
                 android:scaleType="centerCrop"
-                app:curvedImageViewCornerRadius="0.2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_folder_open_24" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/video_transfer_layout_item_video_name_text_view"
+                android:id="@+id/folder_transfer_layout_item_video_name_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/medium_margin"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:padding="@dimen/standard_text_view_padding"
-                android:text="@{videoName}"
+                android:text="@{folderName}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:layout_constraintBottom_toTopOf="@+id/video_transfer_layout_item_video_duration_and_size_text_view"
+                app:layout_constraintBottom_toTopOf="@+id/folder_transfer_layout_item_video_duration_and_size_text_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@id/video_transfer_layout_item_video_preview_image_view"
+                app:layout_constraintStart_toEndOf="@id/folder_transfer_layout_item_image_view"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/video_transfer_layout_item_video_duration_and_size_text_view"
+                android:id="@+id/folder_transfer_layout_item_video_duration_and_size_text_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/standard_text_view_padding"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/video_transfer_layout_item_video_name_text_view"
+                app:layout_constraintEnd_toEndOf="@id/folder_transfer_layout_item_video_name_text_view"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@id/video_transfer_layout_item_video_name_text_view"
-                app:layout_constraintTop_toBottomOf="@+id/video_transfer_layout_item_video_name_text_view"
-                app:setVideoDuration="@{videoDuration}"
-                app:setVideoSize="@{videoSize}" />
+                app:layout_constraintStart_toStartOf="@id/folder_transfer_layout_item_video_name_text_view"
+                app:layout_constraintTop_toBottomOf="@+id/folder_transfer_layout_item_video_name_text_view"
+                app:setFolderSize="@{folderSize}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
