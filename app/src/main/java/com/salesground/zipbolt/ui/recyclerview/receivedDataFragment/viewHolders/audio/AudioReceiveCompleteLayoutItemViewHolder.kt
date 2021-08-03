@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video
+package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,16 +9,16 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.VideoTransferLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
-class VideoTransferCompleteLayoutItemViewHolder(
-    private val videoTransferLayoutItemBinding: VideoTransferLayoutItemBinding
-) : RecyclerView.ViewHolder(videoTransferLayoutItemBinding.root) {
+class AudioReceiveCompleteLayoutItemViewHolder(
+    private val audioTransferLayoutItemBinding: VideoTransferLayoutItemBinding
+) : RecyclerView.ViewHolder(audioTransferLayoutItemBinding.root) {
 
     fun bindData(dataToTransfer: DataToTransfer) {
-        dataToTransfer as DataToTransfer.DeviceVideo
-        videoTransferLayoutItemBinding.run {
-            videoSize = dataToTransfer.videoSize
-            videoDuration = dataToTransfer.videoDuration
-            videoName = dataToTransfer.videoDisplayName
+        dataToTransfer as DataToTransfer.DeviceAudio
+        audioTransferLayoutItemBinding.run {
+            videoSize = dataToTransfer.audioSize
+            videoDuration = dataToTransfer.audioDuration
+            videoName = dataToTransfer.audioDisplayName
 
             videoTransferLayoutItemShimmer.run {
                 stopShimmer()
@@ -26,20 +26,22 @@ class VideoTransferCompleteLayoutItemViewHolder(
             }
 
             Glide.with(videoTransferLayoutItemVideoPreviewImageView)
-                .load(dataToTransfer.dataUri)
+                .load(dataToTransfer.audioArtPath)
+                .error(R.drawable.ic_baseline_music_note_24)
                 .into(videoTransferLayoutItemVideoPreviewImageView)
+
         }
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): VideoTransferCompleteLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup): AudioReceiveCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.video_transfer_layout_item,
                 parent,
                 false
             )
-            return VideoTransferCompleteLayoutItemViewHolder(layoutBinding)
+            return AudioReceiveCompleteLayoutItemViewHolder(layoutBinding)
         }
     }
 }

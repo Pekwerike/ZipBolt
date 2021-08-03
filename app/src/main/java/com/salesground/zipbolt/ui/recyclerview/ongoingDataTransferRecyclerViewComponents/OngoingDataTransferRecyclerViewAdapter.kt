@@ -6,16 +6,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageTransferCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image.ImageTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.OngoingTransferCategoryHeaderViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferWaitingViewHolder
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationTransferCompleteLayoutViewHolder
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationReceiveCompleteLayoutViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioTransferWaitingLayoutItemViewHolder
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.directory.DirectoryTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.directory.DirectoryReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.directory.DirectoryTransferWaitingLayoutItemViewHolder
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
 class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUIState,
@@ -182,7 +182,7 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is ImageTransferCompleteLayoutViewHolder -> {
+            is ImageReceiveCompleteLayoutViewHolder -> {
                 holder.bindImageData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is ImageTransferWaitingLayoutItemViewHolder -> {
@@ -191,22 +191,22 @@ class OngoingDataTransferRecyclerViewAdapter : ListAdapter<OngoingDataTransferUI
             is ApplicationTransferWaitingViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
-            is ApplicationTransferCompleteLayoutViewHolder -> {
+            is ApplicationReceiveCompleteLayoutViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is VideoTransferWaitingLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
-            is VideoTransferCompleteLayoutItemViewHolder -> {
+            is VideoReceiveCompleteLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
-            is AudioTransferCompleteLayoutItemViewHolder -> {
+            is AudioReceiveCompleteLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is AudioTransferWaitingLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
-            is DirectoryTransferCompleteLayoutItemViewHolder -> {
+            is DirectoryReceiveCompleteLayoutItemViewHolder -> {
                 holder.bindData((currentList[position] as OngoingDataTransferUIState.DataItem).dataToTransfer)
             }
             is DirectoryTransferWaitingLayoutItemViewHolder -> {
