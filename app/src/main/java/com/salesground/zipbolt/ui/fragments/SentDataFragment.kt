@@ -18,10 +18,11 @@ class SentDataFragment : Fragment() {
     private lateinit var sentDataFragmentBinding: FragmentSentDataBinding
     private val sentDataViewModel: SentDataViewModel by activityViewModels()
     private val sentDataFragmentRecyclerViewAdapter = SentDataFragmentRecyclerViewAdapter()
-    private val sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
+    private lateinit var sentDataFragmentLayoutManager : GridLayoutManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
+        sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
         sentDataFragmentLayoutManager.spanSizeLookup =
             object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {

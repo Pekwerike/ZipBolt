@@ -19,12 +19,13 @@ class ReceivedDataFragment : Fragment() {
 
     private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
     private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter()
-    private val receivedDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
+    private lateinit var receivedDataFragmentLayoutManager : GridLayoutManager
     private lateinit var receivedDataFragmentBinding: FragmentReceivedDataBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
+        receivedDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
         receivedDataFragmentLayoutManager.spanSizeLookup =
             object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {

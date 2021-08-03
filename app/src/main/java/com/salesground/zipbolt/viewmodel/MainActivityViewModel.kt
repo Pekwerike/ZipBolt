@@ -17,7 +17,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         mutableListOf()
 
     private var hasBeenNotifiedAboutReceive: Boolean = false
-    var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
 
     private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
         deviceName = "Samsung Galaxy X2"

@@ -23,32 +23,27 @@ class ReceivedDataFragmentRecyclerViewAdapter :
     }
 
     override fun getItemViewType(position: Int): Int {
-        val dataItem = (getItem(position) as OngoingDataTransferUIState.DataItem)
-        return when (dataItem.dataToTransfer.transferStatus) {
-            DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
-                when (dataItem.dataToTransfer) {
-                    is DataToTransfer.DeviceImage -> {
-                        ReceiveDataFragmentAdapterViewTypes.IMAGE_RECEIVE_COMPLETE.value
-                    }
-                    is DataToTransfer.DeviceApplication -> {
-                        ReceiveDataFragmentAdapterViewTypes.APP_RECEIVE_COMPLETE.value
-                    }
-                    is DataToTransfer.DeviceAudio -> {
-                        ReceiveDataFragmentAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value
-                    }
-                    is DataToTransfer.DeviceVideo -> {
-                        ReceiveDataFragmentAdapterViewTypes.VIDEO_RECEIVE_COMPLETE.value
-                    }
-                    is DataToTransfer.DeviceFile -> {
-                        if (dataItem.dataToTransfer.file.isDirectory) {
-                            ReceiveDataFragmentAdapterViewTypes.DIRECTORY_RECEIVE_COMPLETE.value
-                        } else {
-                            300
-                        }
-                    }
+
+        return when (val dataItem = currentList[position]) {
+            is DataToTransfer.DeviceImage -> {
+                ReceiveDataFragmentAdapterViewTypes.IMAGE_RECEIVE_COMPLETE.value
+            }
+            is DataToTransfer.DeviceApplication -> {
+                ReceiveDataFragmentAdapterViewTypes.APP_RECEIVE_COMPLETE.value
+            }
+            is DataToTransfer.DeviceAudio -> {
+                ReceiveDataFragmentAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value
+            }
+            is DataToTransfer.DeviceVideo -> {
+                ReceiveDataFragmentAdapterViewTypes.VIDEO_RECEIVE_COMPLETE.value
+            }
+            is DataToTransfer.DeviceFile -> {
+                if (dataItem.file.isDirectory) {
+                    ReceiveDataFragmentAdapterViewTypes.DIRECTORY_RECEIVE_COMPLETE.value
+                } else {
+                    300
                 }
             }
-            else -> 300
         }
     }
 

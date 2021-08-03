@@ -39,52 +39,65 @@ class SentDataFragmentRecyclerViewAdapter : ListAdapter<
     }
 
     override fun getItemViewType(position: Int): Int {
-        val dataItem = (getItem(position) as OngoingDataTransferUIState.DataItem)
-        return when (dataItem.dataToTransfer.transferStatus) {
-            DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
-                when (dataItem.dataToTransfer) {
-                    is DataToTransfer.DeviceImage -> {
-                        SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value
-                    }
-                    is DataToTransfer.DeviceApplication -> {
-                        SentDataFragmentAdapterViewTypes.APP_TRANSFER_WAITING.value
-                    }
-                    is DataToTransfer.DeviceAudio -> {
-                        SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_WAITING.value
-                    }
-                    is DataToTransfer.DeviceVideo -> {
-                        SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_WAITING.value
-                    }
-                    is DataToTransfer.DeviceFile -> {
-                        if (dataItem.dataToTransfer.file.isDirectory) {
-                            SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_WAITING.value
-                        } else {
-                            300
-                        }
-                    }
-                }
-            }
-            DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
-                when (dataItem.dataToTransfer) {
-                    is DataToTransfer.DeviceImage -> {
+        return when (val dataItem = getItem(position)) {
+            is DataToTransfer.DeviceImage -> {
+                when (dataItem.transferStatus) {
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value
                     }
-                    is DataToTransfer.DeviceApplication -> {
+                    DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                        SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value
+                    }
+                    else -> SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value
+                }
+            }
+            is DataToTransfer.DeviceApplication -> {
+                when (dataItem.transferStatus) {
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         SentDataFragmentAdapterViewTypes.APP_TRANSFER_COMPLETE.value
                     }
-                    is DataToTransfer.DeviceAudio -> {
+                    DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                        SentDataFragmentAdapterViewTypes.APP_TRANSFER_WAITING.value
+                    }
+                    else -> SentDataFragmentAdapterViewTypes.APP_TRANSFER_COMPLETE.value
+                }
+            }
+            is DataToTransfer.DeviceAudio -> {
+                when (dataItem.transferStatus) {
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value
                     }
-                    is DataToTransfer.DeviceVideo -> {
+                    DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                        SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_WAITING.value
+                    }
+                    else -> SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value
+                }
+            }
+            is DataToTransfer.DeviceVideo -> {
+                when (dataItem.transferStatus) {
+                    DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value
                     }
-                    is DataToTransfer.DeviceFile -> {
-                        if (dataItem.dataToTransfer.file.isDirectory) {
-                            SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
-                        } else {
-                            300
-                        }
+                    DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                        SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_WAITING.value
                     }
+                    else -> SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value
+                }
+            }
+            is DataToTransfer.DeviceFile -> {
+                if (dataItem.file.isDirectory) {
+                    when (dataItem.transferStatus) {
+                        DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
+                            SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
+                        }
+                        DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                            SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_WAITING.value
+                        }
+                        else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
+
+                    }
+                } else {
+                    300
                 }
             }
             else -> 300
