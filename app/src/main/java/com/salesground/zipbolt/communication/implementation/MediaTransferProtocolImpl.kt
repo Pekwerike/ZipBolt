@@ -69,6 +69,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
     private var ongoingTransfer = AtomicBoolean(false)
     private val buffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private var dataToTransfer: DataToTransfer? = null
+    private var isTransferringDirectory: Boolean = false
 
     // data receive variables
     private var mediaType: Int = 0
@@ -77,6 +78,10 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData) {
+        if (isTransferringDirectory) {
+            directoryMediaTransferProtocol.cancelCurrentTransfer(transferMetaData)
+            return
+        }
         if (ongoingTransfer.get()) mTransferMetaData = transferMetaData
     }
 
@@ -90,11 +95,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
         this.dataToTransfer = dataToTransfer
         if (dataToTransfer is DataToTransfer.DeviceFile) {
             if (dataToTransfer.getFileType(context) == MediaType.File.Directory.value) {
+                isTransferringDirectory = true
                 directoryMediaTransferProtocol.transferMedia(
                     dataToTransfer,
                     dataOutputStream,
                     dataTransferListener
                 )
+                isTransferringDirectory = false
                 return
             }
         }

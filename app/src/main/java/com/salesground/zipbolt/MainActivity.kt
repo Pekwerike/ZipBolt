@@ -30,10 +30,8 @@ import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
-import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver
 import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
@@ -44,7 +42,6 @@ import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
-import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPager2Adapter
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
@@ -62,10 +59,7 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.fragment.app.commit
 import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
@@ -335,6 +329,12 @@ class MainActivity : AppCompatActivity() {
                                                         }
                                                     ))
                                             }
+                                        }
+                                        MediaType.File.Directory.value -> {
+                                            Glide.with(ongoingDataReceiveLayoutImageView)
+                                                .load(R.drawable.ic_baseline_folder_open_24)
+                                                .into(ongoingDataReceiveLayoutImageView)
+                                            mainActivityViewModel.run{}
                                         }
                                     }
                                     // stop shimmer
@@ -768,10 +768,10 @@ class MainActivity : AppCompatActivity() {
 
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
-                        mainActivityViewModel.collectionOfDataToTransfer
+                        dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
                     // clear collection of data to transfer since transfer has been completed
-                    mainActivityViewModel.clearCollectionOfDataToTransfer()
+                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
                 }
             }
 
@@ -791,22 +791,22 @@ class MainActivity : AppCompatActivity() {
                     "Music",
                     "Files"
                 )
-               /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
-                    supportFragmentManager,
-                    lifecycle
-                )
-                TabLayoutMediator(
-                    allMediaOnDeviceTabLayout,
-                    allMediaOnDeviceViewPager
-                ) { tab, position ->
-                    when (position) {
-                        0 -> tab.text = "Apps"
-                        1 -> tab.text = "Images"
-                        2 -> tab.text = "Videos"
-                        3 -> tab.text = "Music"
-                        4 -> tab.text = "Files"
-                    }
-                }.attach()*/
+                /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
+                     supportFragmentManager,
+                     lifecycle
+                 )
+                 TabLayoutMediator(
+                     allMediaOnDeviceTabLayout,
+                     allMediaOnDeviceViewPager
+                 ) { tab, position ->
+                     when (position) {
+                         0 -> tab.text = "Apps"
+                         1 -> tab.text = "Images"
+                         2 -> tab.text = "Videos"
+                         3 -> tab.text = "Music"
+                         4 -> tab.text = "Files"
+                     }
+                 }.attach()*/
 
             }
             setContentView(root)
@@ -1359,11 +1359,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
-        mainActivityViewModel.addDataToTransfer(dataToTransfer)
+        dataToTransferViewModel.addDataToTransfer(dataToTransfer)
     }
 
     fun removeFromDataToTransferList(dataToTransfer: DataToTransfer) {
-        mainActivityViewModel.removeDataFromDataToTransfer(dataToTransfer)
+        dataToTransferViewModel.removeDataFromDataToTransfer(dataToTransfer)
     }
 
 

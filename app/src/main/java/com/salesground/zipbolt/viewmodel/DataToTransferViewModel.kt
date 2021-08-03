@@ -15,7 +15,7 @@ class DataToTransferViewModel : ViewModel() {
         collectionOfDataToTransfer.remove(dataToTransfer)
     }
 
-    fun clearCollectionOfDataToTranfer() {
+    fun clearCollectionOfDataToTransfer() {
         collectionOfDataToTransfer = mutableListOf()
     }
 
