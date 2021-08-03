@@ -10,7 +10,7 @@ import com.salesground.zipbolt.databinding.ApplicationLayoutItemTransferOrReceiv
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
-class ApplicationTransferOngoingViewHolder(
+class ApplicationReceiveCompleteLayoutViewHolder(
     private val applicationLayoutItemTransferOrReceiveBinding: ApplicationLayoutItemTransferOrReceiveBinding
 ) : RecyclerView.ViewHolder(applicationLayoutItemTransferOrReceiveBinding.root) {
 
@@ -25,12 +25,17 @@ class ApplicationTransferOngoingViewHolder(
                 .load(dataToTransfer.applicationIcon)
                 .into(applicationLayoutItemTransferOrReceiveImageView)
 
+            applicationLayoutItemTransferOrReceiveShimmer.run {
+                stopShimmer()
+                hideShimmer()
+            }
+
             executePendingBindings()
         }
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): ApplicationTransferOngoingViewHolder {
+        fun createViewHolder(parent: ViewGroup): ApplicationReceiveCompleteLayoutViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<ApplicationLayoutItemTransferOrReceiveBinding>(
                     LayoutInflater.from(parent.context),
@@ -38,7 +43,7 @@ class ApplicationTransferOngoingViewHolder(
                     parent,
                     false
                 )
-            return ApplicationTransferOngoingViewHolder(layoutBinding)
+            return ApplicationReceiveCompleteLayoutViewHolder(layoutBinding)
         }
     }
 }

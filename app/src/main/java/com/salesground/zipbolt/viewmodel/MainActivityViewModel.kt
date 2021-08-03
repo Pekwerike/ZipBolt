@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,8 +17,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         mutableListOf()
 
     private var hasBeenNotifiedAboutReceive: Boolean = false
-    var currentTransferHistory: MutableList<OngoingDataTransferUIState> =
-        mutableListOf(OngoingDataTransferUIState.Header)
     var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
 
     private var peeredDevice: WifiP2pDevice = WifiP2pDevice().apply {
@@ -66,19 +63,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
             )
     }
 
-    fun addCurrentDataToTransferToUIState() {
-      /*  currentTransferHistory.addAll(1,
-            collectionOfDataToTransfer.map {
-                OngoingDataTransferUIState.DataItem(it)
-            }
-        )*/
-
-        currentTransferHistory.addAll(collectionOfDataToTransfer.map {
-                OngoingDataTransferUIState.DataItem(it)
-            }
-        )
-
-    }
 
     fun expandedConnectedToPeerReceiveOngoing() {
         if (!hasBeenNotifiedAboutReceive) {
@@ -91,8 +75,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     fun expandedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
             PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
-                wifiP2pCurrentConnectionInfo,
-                currentTransferHistory
+                wifiP2pCurrentConnectionInfo
             )
     }
 
@@ -138,9 +121,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         hasBeenNotifiedAboutReceive = false
     }
 
-    fun addDataToCurrentTransferHistory(ongoingDataTransferUIState: OngoingDataTransferUIState) {
-        currentTransferHistory.add(ongoingDataTransferUIState)
-    }
 
     fun addDataFromReceiveToUIState() {
         if (_peerConnectionUIState.value is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing

@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.salesground.zipbolt.databinding.ImageTransferOrReceiveCompleteLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
-class ImageTransferOrReceiveCompleteLayoutViewHolder(
+class ImageReceiveCompleteLayoutViewHolder(
     private val imageTransferOrReceiveCompleteLayoutItemBinding: ImageTransferOrReceiveCompleteLayoutItemBinding
 ) : RecyclerView.ViewHolder(imageTransferOrReceiveCompleteLayoutItemBinding.root) {
 
@@ -20,7 +20,7 @@ class ImageTransferOrReceiveCompleteLayoutViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): ImageTransferOrReceiveCompleteLayoutViewHolder {
+        fun createViewHolder(parent: ViewGroup): ImageReceiveCompleteLayoutViewHolder {
             val layoutBinding =
                 ImageTransferOrReceiveCompleteLayoutItemBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -28,7 +28,7 @@ class ImageTransferOrReceiveCompleteLayoutViewHolder(
                     false
                 )
 
-            return ImageTransferOrReceiveCompleteLayoutViewHolder(layoutBinding)
+            return ImageReceiveCompleteLayoutViewHolder(layoutBinding)
         }
     }
 }

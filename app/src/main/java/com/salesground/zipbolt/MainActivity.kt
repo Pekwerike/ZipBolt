@@ -25,8 +25,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
@@ -37,19 +35,14 @@ import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
-import com.salesground.zipbolt.model.ui.OngoingDataTransferUIState
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
-import com.salesground.zipbolt.model.MediaType
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.OngoingDataTransferRecyclerViewAdapter.*
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -61,9 +54,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
+import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -97,6 +93,8 @@ class MainActivity : AppCompatActivity() {
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by viewModels()
+    private val sentDataViewModel: SentDataViewModel by viewModels()
+    private val receivedDataViewModel: ReceivedDataViewModel by viewModels()
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -159,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                         DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
                             // expand the bottom sheet to show receive has started
                             mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                            with(
+                            /*with(
                                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                     .expandedConnectedToPeerTransferOngoingLayout
                                     .expandedConnectedToPeerTransferOngoingLayoutHeader
@@ -182,121 +180,63 @@ class MainActivity : AppCompatActivity() {
                                         true
                                     )
                                 }
-                            }
-
+                            }*/
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-                            with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                            ) {
-                                // show the receive progress indicator and the percentage received
-                                this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                    ((percentageOfDataRead / 100) * dataSize).roundToLong()
-                                )
-                                dataTransferPercent = percentageOfDataRead.roundToInt()
-                                dataTransferPercentAsString = "$dataTransferPercent%"
-                            }
+                            /*  with(
+                                  connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                      .expandedConnectedToPeerTransferOngoingLayout
+                                      .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                      .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                              ) {
+                                  // show the receive progress indicator and the percentage received
+                                  this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
+                                      ((percentageOfDataRead / 100) * dataSize).roundToLong()
+                                  )
+                                  dataTransferPercent = percentageOfDataRead.roundToInt()
+                                  dataTransferPercentAsString = "$dataTransferPercent%"
+                              }*/
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                with(
-                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                        .expandedConnectedToPeerTransferOngoingLayout
-                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                        .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                                ) {
-                                    // show the media thumbnail at the end of the transfer
-                                    dataTransferPercent = 100
-                                    dataTransferPercentAsString = "$dataTransferPercent%"
-                                    this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                        dataSize
-                                    )
-                                    /*// hide the cancel transfer/receive image button
-                            ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
-                                    // load the receive image into the image view
-                                    when (dataType) {
-                                        MediaType.Image.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(dataUri)
-                                                .into(ongoingDataReceiveLayoutImageView)
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceImage(
-                                                            0L,
-                                                            dataUri!!,
-                                                            System.currentTimeMillis().parseDate(),
-                                                            dataDisplayName,
-                                                            "",
-                                                            dataSize,
-                                                            "ZipBolt Images"
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-                                            }
-                                        }
-                                        MediaType.Audio.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(R.drawable.ic_baseline_music_note_24)
-                                                .into(ongoingDataReceiveLayoutImageView)
-
-                                            val audioDuration = withContext(Dispatchers.IO) {
-                                                dataUri!!.getAudioDuration(this@MainActivity)
-                                            }
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceAudio(
-                                                            dataUri!!,
-                                                            dataDisplayName,
-                                                            dataSize,
-                                                            audioDuration,
-                                                            Uri.parse("")
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-                                            }
-                                        }
-                                        MediaType.Video.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(dataUri)
-                                                .into(ongoingDataReceiveLayoutImageView)
-                                            mainActivityViewModel.run {
-                                                val videoDuration = withContext(Dispatchers.IO) {
-                                                    dataUri!!.getVideoDuration(this@MainActivity)
-                                                }
-
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceVideo(
-                                                            0L,
-                                                            dataUri!!,
-                                                            dataDisplayName,
-                                                            videoDuration,
-                                                            dataSize,
-                                                            "Video/*"
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-
-                                            }
-                                        }
-                                        MediaType.App.value -> {
-                                            val applicationIcon = try {
+                            receivedDataViewModel.addDataToReceivedItems(
+                                when (dataType) {
+                                    MediaType.Image.value -> {
+                                        DataToTransfer.DeviceImage(
+                                            imageId = 0L,
+                                            imageUri = dataUri!!,
+                                            imageDateModified = "",
+                                            imageMimeType = "image/*",
+                                            imageSize = dataSize,
+                                            imageBucketName = "ZipBolt Images",
+                                            imageDisplayName = dataDisplayName
+                                        )
+                                    }
+                                    MediaType.Video.value -> {
+                                        DataToTransfer.DeviceVideo(
+                                            videoId = 0L,
+                                            videoUri = dataUri!!,
+                                            videoDisplayName = dataDisplayName,
+                                            videoDuration = dataUri.getVideoDuration(this@MainActivity),
+                                            videoSize = dataSize
+                                        )
+                                    }
+                                    MediaType.Audio.value -> {
+                                        DataToTransfer.DeviceAudio(
+                                            audioUri = dataUri!!,
+                                            audioDisplayName = dataDisplayName,
+                                            audioSize = dataSize,
+                                            audioDuration = dataUri.getAudioDuration(this@MainActivity),
+                                            audioArtPath = Uri.parse("")
+                                        )
+                                    }
+                                    MediaType.App.value -> {
+                                        DataToTransfer.DeviceApplication(
+                                            applicationName = dataDisplayName,
+                                            apkPath = dataUri!!.path ?: "",
+                                            appSize = dataSize,
+                                            applicationIcon = try {
                                                 dataUri?.path!!.let { path ->
                                                     packageManager.getPackageArchiveInfo(path, 0)
                                                         .let { packageInfo ->
@@ -311,55 +251,28 @@ class MainActivity : AppCompatActivity() {
                                             } catch (nullPointerException: NullPointerException) {
                                                 null
                                             }
-
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(applicationIcon)
-                                                .into(ongoingDataReceiveLayoutImageView)
-
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceApplication(
-                                                            applicationName = dataDisplayName,
-                                                            apkPath = dataUri!!.path ?: "",
-                                                            appSize = dataSize,
-                                                            applicationIcon = applicationIcon
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    ))
-                                            }
-                                        }
-                                        MediaType.File.Directory.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(R.drawable.ic_baseline_folder_open_24)
-                                                .into(ongoingDataReceiveLayoutImageView)
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceFile(
-                                                            file = dataUri!!.toFile()
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-                                            }
-                                        }
+                                        )
                                     }
-                                    // stop shimmer
-                                    ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
-                                    ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
-                                    mainActivityViewModel.run {
-                                        ongoingDataTransferRecyclerViewAdapter.run {
-                                            submitList(currentTransferHistory)
-                                            notifyItemInserted(currentTransferHistory.size - 1)
-                                        }
+                                    MediaType.File.Directory.value -> {
+                                        DataToTransfer.DeviceFile(
+                                            dataUri!!.toFile()
+                                        )
                                     }
+                                    else -> {
+                                        DataToTransfer.DeviceImage(
+                                            imageId = 0L,
+                                            imageUri = dataUri!!,
+                                            imageDateModified = "",
+                                            imageMimeType = "image/*",
+                                            imageSize = dataSize,
+                                            imageBucketName = "ZipBolt Images",
+                                            imageDisplayName = dataDisplayName
+                                        )
+                                    }
+                                }.apply {
+                                    transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
                                 }
-                            }
+                            )
                         }
                     }
                 }
@@ -378,95 +291,71 @@ class MainActivity : AppCompatActivity() {
 
                 when (transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_STARTED -> {
-                        lifecycleScope.launch(Dispatchers.Main) {
-                            with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                            ) {
-                                ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                                    .alpha(0f)
-                                with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                                    dataSize =
-                                        dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
-                                            0L
-                                        )
+                        /* with(
+                              connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                  .expandedConnectedToPeerTransferOngoingLayout
+                                  .expandedConnectedToPeerTransferOngoingLayoutHeader
+                          ) {
+                              ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
+                                  .alpha(0f)
+                              with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
+                                  dataSize =
+                                      dataToTransfer.dataSize.transformDataSizeToMeasuredUnit(
+                                          0L
+                                      )
 
-                                    dataDisplayName = dataToTransfer.dataDisplayName
-                                    when {
-                                        dataToTransfer.dataType == MediaType.Image.value ||
-                                                dataToTransfer.dataType == MediaType.Video.value -> {
-                                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                                .load(dataToTransfer.dataUri)
-                                                .into(ongoingDataTransferDataCategoryImageView)
-                                        }
-                                        dataToTransfer.dataType == MediaType.App.value -> {
-                                            dataToTransfer as DataToTransfer.DeviceApplication
-                                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                                .load(
-                                                    dataToTransfer.applicationIcon
-                                                )
-                                                .into(ongoingDataTransferDataCategoryImageView)
-                                        }
-                                        dataToTransfer.dataType == MediaType.Audio.value -> {
-                                            dataToTransfer as DataToTransfer.DeviceAudio
-                                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                                .load(dataToTransfer.audioArtPath)
-                                                .error(R.drawable.ic_baseline_music_note_24)
-                                                .into(ongoingDataTransferDataCategoryImageView)
+                                  dataDisplayName = dataToTransfer.dataDisplayName
+                                  when {
+                                      dataToTransfer.dataType == MediaType.Image.value ||
+                                              dataToTransfer.dataType == MediaType.Video.value -> {
+                                          Glide.with(ongoingDataTransferDataCategoryImageView)
+                                              .load(dataToTransfer.dataUri)
+                                              .into(ongoingDataTransferDataCategoryImageView)
+                                      }
+                                      dataToTransfer.dataType == MediaType.App.value -> {
+                                          dataToTransfer as DataToTransfer.DeviceApplication
+                                          Glide.with(ongoingDataTransferDataCategoryImageView)
+                                              .load(
+                                                  dataToTransfer.applicationIcon
+                                              )
+                                              .into(ongoingDataTransferDataCategoryImageView)
+                                      }
+                                      dataToTransfer.dataType == MediaType.Audio.value -> {
+                                          dataToTransfer as DataToTransfer.DeviceAudio
+                                          Glide.with(ongoingDataTransferDataCategoryImageView)
+                                              .load(dataToTransfer.audioArtPath)
+                                              .error(R.drawable.ic_baseline_music_note_24)
+                                              .into(ongoingDataTransferDataCategoryImageView)
 
-                                        }
-                                        dataToTransfer.dataType == MediaType.File.Directory.value -> {
-                                            dataToTransfer as DataToTransfer.DeviceFile
-                                            Glide.with(ongoingDataTransferDataCategoryImageView)
-                                                .load(R.drawable.ic_baseline_folder_open_24)
-                                                .into(ongoingDataTransferDataCategoryImageView)
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                                      }
+                                      dataToTransfer.dataType == MediaType.File.Directory.value -> {
+                                          dataToTransfer as DataToTransfer.DeviceFile
+                                          Glide.with(ongoingDataTransferDataCategoryImageView)
+                                              .load(R.drawable.ic_baseline_folder_open_24)
+                                              .into(ongoingDataTransferDataCategoryImageView)
+                                      }
+                                  }
+                              }
+                          }*/
                     }
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
-                        lifecycleScope.launch {
-                            with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                    .ongoingTransferReceiveHeaderLayoutDataTransferView
-                            ) {
-                                dataSize =
-                                    dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
-                                dataTransferPercentAsString = "100%"
-                                dataTransferPercent = 100
-                            }
+                        sentDataViewModel.dataTransferCompleted(dataToTransfer)
+                        /*   with(
+                               connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                   .expandedConnectedToPeerTransferOngoingLayout
+                                   .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                   .ongoingTransferReceiveHeaderLayoutDataTransferView
+                           ) {
+                               dataSize =
+                                   dataToTransfer.dataSize.transformDataSizeToMeasuredUnit((dataToTransfer.dataSize))
+                               dataTransferPercentAsString = "100%"
+                               dataTransferPercent = 100
+                           }*/
 
-                            mainActivityViewModel.currentTransferHistory.find {
-                                it.id == dataToTransfer.dataUri.toString()
-                            }.also {
-                                it?.let { ongoingDataTransferUIState ->
-                                    val index =
-                                        mainActivityViewModel.currentTransferHistory.indexOf(
-                                            ongoingDataTransferUIState
-                                        )
-                                    ongoingDataTransferUIState as OngoingDataTransferUIState.DataItem
-                                    ongoingDataTransferUIState.dataToTransfer.transferStatus =
-                                        transferStatus
-                                    withContext(Dispatchers.Main) {
-                                        ongoingDataTransferRecyclerViewAdapter.submitList(
-                                            mainActivityViewModel.currentTransferHistory
-                                        )
-                                        ongoingDataTransferRecyclerViewAdapter.notifyItemChanged(
-                                            index
-                                        )
-                                    }
-                                }
-                            }
-                        }
                     }
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
                         // update the transfer section of the UI
-                        lifecycleScope.launch(Dispatchers.Main) {
+                        /*lifecycleScope.launch(Dispatchers.Main) {
                             with(
                                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                     .expandedConnectedToPeerTransferOngoingLayout
@@ -483,31 +372,11 @@ class MainActivity : AppCompatActivity() {
                                     dataTransferPercent = percentTransferred.roundToInt()
                                 }
                             }
-                        }
+                        }*/
                     }
                     DataToTransfer.TransferStatus.TRANSFER_CANCELLED -> {
                         // from the cancelled media item from the queue of data in transfer
-                        lifecycleScope.launch {
-                            mainActivityViewModel.currentTransferHistory.find {
-                                it.id == dataToTransfer.dataUri.toString()
-                            }?.also { ongoingDataTransferUIState ->
-                                val index =
-                                    mainActivityViewModel.currentTransferHistory.indexOf(
-                                        ongoingDataTransferUIState
-                                    )
-                                mainActivityViewModel.currentTransferHistory.removeAt(
-                                    index
-                                )
-                                withContext(Dispatchers.Main) {
-                                    ongoingDataTransferRecyclerViewAdapter.submitList(
-                                        mainActivityViewModel.currentTransferHistory
-                                    )
-                                    ongoingDataTransferRecyclerViewAdapter.notifyItemRemoved(
-                                        index
-                                    )
-                                }
-                            }
-                        }
+                        sentDataViewModel.cancelDataTransfer(dataToTransfer)
                     }
                 }
             }
@@ -542,8 +411,6 @@ class MainActivity : AppCompatActivity() {
             }
         )
     }
-
-    private val ongoingDataTransferRecyclerViewAdapter = OngoingDataTransferRecyclerViewAdapter()
 
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
@@ -764,30 +631,9 @@ class MainActivity : AppCompatActivity() {
                     // send broadcast event that send data button has been triggered
                     localBroadcastManager.sendBroadcast(sendDataClickedIntent)
 
-                    mainActivityViewModel.addCurrentDataToTransferToUIState()
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                    with(
-                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                            .expandedConnectedToPeerTransferOngoingLayout
-                            .expandedConnectedToPeerTransferOngoingLayoutHeader
-                    ) {
-                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                            .alpha(0f)
-                        ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(1f)
-                    }
 
-                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                        .expandedConnectedToPeerTransferOngoingLayout
-                        .expandedConnectedToPeerTransferOngoingLayoutHeader
-                        .apply {
-                            ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                                .alpha(0f)
-                            ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate()
-                                .alpha(1f)
-                        }
-
-
-                     // transfer data using the DataTransferService
+                    // transfer data using the DataTransferService
                     dataTransferService?.transferData(
                         dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
@@ -911,10 +757,6 @@ class MainActivity : AppCompatActivity() {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
-
-                        // submit the list of items in transfer queue to the adapter
-                        ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
-                        ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
 
                         with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
@@ -1093,6 +935,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
         isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true
+        val sentAndReceivedDataItemsViewPagerAdapter = SentAndReceiveDataItemsViewPagerAdapter(
+            supportFragmentManager, lifecycle, when (deviceTransferRole) {
+                DeviceTransferRole.SEND -> true
+                DeviceTransferRole.RECEIVE -> false
+                DeviceTransferRole.SEND_AND_RECEIVE -> true
+                else -> true
+            }
+        )
         with(connectedToPeerTransferOngoingBottomSheetLayoutBinding) {
             // configure collapsed connected to peer transfer ongoing layout
             with(collapsedConnectedToPeerOngoingDataTransferLayout) {
@@ -1119,45 +969,36 @@ class MainActivity : AppCompatActivity() {
                             getBottomSheetPeekHeight()
                     }
                 }
-                with(expandedConnectedToPeerTransferOngoingRecyclerView) {
-                    adapter = ongoingDataTransferRecyclerViewAdapter
-                    val gridLayoutManager = GridLayoutManager(this@MainActivity, 3)
-                    gridLayoutManager.spanSizeLookup =
-                        object : GridLayoutManager.SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                                return when (ongoingDataTransferRecyclerViewAdapter.getItemViewType(
-                                    position
-                                )) {
-                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
-                                    OngoingDataTransferAdapterViewTypes.IMAGE_TRANSFER_OR_RECEIVE_COMPLETE.value -> 1
-                                    OngoingDataTransferAdapterViewTypes.CATEGORY_HEADER.value -> 3
-                                    else -> 3
-                                }
+                expandedConnectedToPeerTransferOngoingViewPager2.adapter =
+                    sentAndReceivedDataItemsViewPagerAdapter
+                TabLayoutMediator(
+                    expandedConnectedToPeerTransferOngoingTabLayout,
+                    expandedConnectedToPeerTransferOngoingViewPager2
+                ) { tab, position ->
+                    tab.text = when (deviceTransferRole) {
+                        DeviceTransferRole.SEND -> {
+                            if (position == 0) {
+                                "Sent"
+                            } else {
+                                "Received"
                             }
                         }
-                    layoutManager = gridLayoutManager
-                    setHasFixedSize(true)
-                }
-                with(expandedConnectedToPeerTransferOngoingLayoutHeader) {
-                    ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(0f)
-                    ongoingTransferReceiveHeaderLayoutDataReceiveView.root.animate().alpha(0f)
-
-                    with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                        if (root.alpha != 0f) {
-                            ongoingDataReceiveLayoutCancelTransferImageButton.setOnClickListener {
-                                dataTransferService?.cancelActiveReceive()
+                        DeviceTransferRole.RECEIVE -> {
+                            if (position == 0) {
+                                "Received"
+                            } else {
+                                "Sent"
                             }
                         }
-                    }
-
-                    with(ongoingTransferReceiveHeaderLayoutDataTransferView) {
-                        if (root.alpha != 0f) {
-                            ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
-                                dataTransferService?.cancelActiveTransfer()
+                        else -> {
+                            if (position == 0) {
+                                "Sent"
+                            } else {
+                                "Received"
                             }
                         }
                     }
-                }
+                }.attach()
             }
         }
 

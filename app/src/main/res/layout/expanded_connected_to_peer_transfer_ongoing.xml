@@ -9,35 +9,15 @@
         android:id="@+id/expanded_connected_to_peer_transfer_ongoing_toolbar"
         layout="@layout/expanded_bottom_sheet_layout_toolbar" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/expanded_connected_to_peer_transfer_ongoing_tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        app:tabTextAppearance="@style/CustomTabTextAppearance" />
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_margin="@dimen/standard_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp">
-
-
-            <include
-                android:id="@+id/expanded_connected_to_peer_transfer_ongoing_layout_header"
-                layout="@layout/ongoing_transfer_receive_header_layout"
-                app:layout_scrollFlags="scroll" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/expanded_connected_to_peer_transfer_ongoing_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/standard_margin"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/expanded_connected_to_peer_transfer_ongoing_view_pager2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

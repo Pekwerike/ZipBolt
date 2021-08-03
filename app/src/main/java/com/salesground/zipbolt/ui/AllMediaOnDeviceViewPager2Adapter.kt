@@ -27,8 +27,11 @@ class AllMediaOnDeviceViewPager2Adapter(fragmentManager: FragmentManager, lifecy
     }
 }
 
-class AllMediaOnDeviceViewPagerAdapter( private val fragmentManager: FragmentManager)
-    : FragmentStatePagerAdapter(fragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class AllMediaOnDeviceViewPagerAdapter(private val fragmentManager: FragmentManager) :
+    FragmentStatePagerAdapter(
+        fragmentManager,
+        FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+    ) {
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> DeviceAppsFragment()
@@ -44,3 +47,4 @@ class AllMediaOnDeviceViewPagerAdapter( private val fragmentManager: FragmentMan
         return 5
     }
 }
+

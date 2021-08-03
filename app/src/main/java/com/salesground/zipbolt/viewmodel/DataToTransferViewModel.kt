@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.salesground.zipbolt.model.DataToTransfer
 
@@ -22,4 +24,6 @@ class DataToTransferViewModel : ViewModel() {
     fun getCollectionOfDataToTransfer(): MutableList<DataToTransfer> {
         return collectionOfDataToTransfer
     }
+
+
 }

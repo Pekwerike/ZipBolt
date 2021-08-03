@@ -34,14 +34,14 @@ class AudioTransferCompleteLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): AudioTransferCompleteLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup): AudioReceiveCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.video_transfer_layout_item,
                 parent,
                 false
             )
-            return AudioTransferCompleteLayoutItemViewHolder(layoutBinding)
+            return AudioReceiveCompleteLayoutItemViewHolder(layoutBinding)
         }
     }
 }

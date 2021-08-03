@@ -26,14 +26,14 @@ class DirectoryTransferCompleteLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): DirectoryTransferCompleteLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup): DirectoryReceiveCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<FolderTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.folder_transfer_layout_item,
                 parent,
                 false
             )
-            return DirectoryTransferCompleteLayoutItemViewHolder(layoutBinding)
+            return DirectoryReceiveCompleteLayoutItemViewHolder(layoutBinding)
         }
     }
 }
