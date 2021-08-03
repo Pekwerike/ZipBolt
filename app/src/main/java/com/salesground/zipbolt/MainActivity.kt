@@ -339,7 +339,7 @@ class MainActivity : AppCompatActivity() {
                           }*/
                     }
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
-                        dataToTransferViewModel.dataTransferCompleted(dataToTransfer)
+                        sentDataViewModel.dataTransferCompleted(dataToTransfer)
                         /*   with(
                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                    .expandedConnectedToPeerTransferOngoingLayout
@@ -376,7 +376,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     DataToTransfer.TransferStatus.TRANSFER_CANCELLED -> {
                         // from the cancelled media item from the queue of data in transfer
-                        dataToTransferViewModel.cancelDataTransfer(dataToTransfer)
+                        sentDataViewModel.cancelDataTransfer(dataToTransfer)
                     }
                 }
             }
@@ -631,7 +631,6 @@ class MainActivity : AppCompatActivity() {
                     // send broadcast event that send data button has been triggered
                     localBroadcastManager.sendBroadcast(sendDataClickedIntent)
 
-                    mainActivityViewModel.addCurrentDataToTransferToUIState()
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
 
                     // transfer data using the DataTransferService
@@ -758,10 +757,6 @@ class MainActivity : AppCompatActivity() {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
-
-                        // submit the list of items in transfer queue to the adapter
-                        ongoingDataTransferRecyclerViewAdapter.submitList(it.collectionOfDataToTransfer)
-                        ongoingDataTransferRecyclerViewAdapter.notifyDataSetChanged()
 
                         with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
