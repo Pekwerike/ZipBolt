@@ -541,8 +541,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private val ongoingDataTransferRecyclerViewAdapter = OngoingDataTransferRecyclerViewAdapter()
-
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
         MainActivityDataBindingUtils.getExpandedSearchingForPeersBinding(this)

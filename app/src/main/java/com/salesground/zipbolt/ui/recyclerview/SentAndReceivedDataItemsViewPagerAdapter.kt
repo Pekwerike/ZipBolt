@@ -8,7 +8,7 @@ import com.salesground.zipbolt.ui.fragments.ReceivedDataFragment
 import com.salesground.zipbolt.ui.fragments.SentDataFragment
 
 class SentAndReceiveDataItemsViewPagerAdapter(
-    private val fragmentManager: FragmentManager, lifecycle: Lifecycle,
+    fragmentManager: FragmentManager, lifecycle: Lifecycle,
     private val isSender: Boolean
 ) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
