@@ -764,26 +764,6 @@ class MainActivity : AppCompatActivity() {
 
                     mainActivityViewModel.addCurrentDataToTransferToUIState()
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                    with(
-                        connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                            .expandedConnectedToPeerTransferOngoingLayout
-                            .expandedConnectedToPeerTransferOngoingLayoutHeader
-                    ) {
-                        ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                            .alpha(0f)
-                        ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate().alpha(1f)
-                    }
-
-                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                        .expandedConnectedToPeerTransferOngoingLayout
-                        .expandedConnectedToPeerTransferOngoingLayoutHeader
-                        .apply {
-                            ongoingTransferReceiveHeaderLayoutNoItemsInTransferTextView.root.animate()
-                                .alpha(0f)
-                            ongoingTransferReceiveHeaderLayoutDataTransferView.root.animate()
-                                .alpha(1f)
-                        }
-
 
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
@@ -1153,7 +1133,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                     }
-                }
+                }.attach()
             }
         }
 

@@ -56,8 +56,18 @@ class SentDataFragment : Fragment() {
     }
 
     private fun observeViewModelLiveData() {
-        dataToTransferViewModel.sentDataItems.observe(this) {
-            sentDataFragmentRecyclerViewAdapter.submitList(it)
+        dataToTransferViewModel.run {
+            sentDataItems.observe(this@SentDataFragment) {
+                sentDataFragmentRecyclerViewAdapter.submitList(it)
+            }
+            canceledSentDataItemIndex.observe(this@SentDataFragment) {
+                sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
+                sentDataFragmentRecyclerViewAdapter.notifyItemRemoved(it)
+            }
+            updatedSentDataItemIndex.observe(this@SentDataFragment) {
+                sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
+                sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
+            }
         }
     }
 

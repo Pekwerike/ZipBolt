@@ -22,6 +22,10 @@ class DataToTransferViewModel : ViewModel() {
     val updatedSentDataItemIndex: LiveData<Int>
         get() = _updatedSentDataItemIndex
 
+    private val _canceledSentDataItemIndex = MutableLiveData(-1)
+    val canceledSentDataItemIndex: LiveData<Int>
+        get() = _updatedSentDataItemIndex
+
     fun addDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.add(dataToTransfer)
     }
@@ -53,6 +57,16 @@ class DataToTransferViewModel : ViewModel() {
         } as MutableList<DataToTransfer>)
 
         _sentDataItems.value = sentDataItemsNormalList
+    }
+
+    fun cancelDataTransfer(dataToTransfer: DataToTransfer) {
+        sentDataItemsNormalList.find {
+            it.dataUri == dataToTransfer.dataUri
+        }?.let {
+            val removedIndex = sentDataItemsNormalList.indexOf(it)
+            sentDataItemsNormalList.remove(it)
+            _canceledSentDataItemIndex.value = removedIndex
+        }
     }
 
 }
