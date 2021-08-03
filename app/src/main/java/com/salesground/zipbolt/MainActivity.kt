@@ -56,6 +56,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
                         DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
                             // expand the bottom sheet to show receive has started
                             mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                            with(
+                            /*with(
                                 connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                     .expandedConnectedToPeerTransferOngoingLayout
                                     .expandedConnectedToPeerTransferOngoingLayoutHeader
@@ -179,8 +180,7 @@ class MainActivity : AppCompatActivity() {
                                         true
                                     )
                                 }
-                            }
-
+                            }*/
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
@@ -200,97 +200,43 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                with(
-                                    connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                        .expandedConnectedToPeerTransferOngoingLayout
-                                        .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                        .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                                ) {
-                                    /* // show the media thumbnail at the end of the transfer
-                                     dataTransferPercent = 100
-                                     dataTransferPercentAsString = "$dataTransferPercent%"
-                                     this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                         dataSize
-                                     )*/
-                                    /*// hide the cancel transfer/receive image button
-                            ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(0f)*/
-                                    // load the receive image into the image view
-                                    when (dataType) {
-                                        MediaType.Image.value -> {
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceImage(
-                                                            0L,
-                                                            dataUri!!,
-                                                            System.currentTimeMillis().parseDate(),
-                                                            dataDisplayName,
-                                                            "",
-                                                            dataSize,
-                                                            "ZipBolt Images"
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-                                            }
-                                        }
-                                        MediaType.Audio.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(R.drawable.ic_baseline_music_note_24)
-                                                .into(ongoingDataReceiveLayoutImageView)
-
-                                            val audioDuration = withContext(Dispatchers.IO) {
-                                                dataUri!!.getAudioDuration(this@MainActivity)
-                                            }
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceAudio(
-                                                            dataUri!!,
-                                                            dataDisplayName,
-                                                            dataSize,
-                                                            audioDuration,
-                                                            Uri.parse("")
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-                                            }
-                                        }
-                                        MediaType.Video.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(dataUri)
-                                                .into(ongoingDataReceiveLayoutImageView)
-                                            mainActivityViewModel.run {
-                                                val videoDuration = withContext(Dispatchers.IO) {
-                                                    dataUri!!.getVideoDuration(this@MainActivity)
-                                                }
-
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceVideo(
-                                                            0L,
-                                                            dataUri!!,
-                                                            dataDisplayName,
-                                                            videoDuration,
-                                                            dataSize,
-                                                            "Video/*"
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-
-                                            }
-                                        }
-                                        MediaType.App.value -> {
-                                            val applicationIcon = try {
+                            receivedDataViewModel.addDataToReceivedItems(
+                                when (dataType) {
+                                    MediaType.Image.value -> {
+                                        DataToTransfer.DeviceImage(
+                                            imageId = 0L,
+                                            imageUri = dataUri!!,
+                                            imageDateModified = "",
+                                            imageMimeType = "image/*",
+                                            imageSize = dataSize,
+                                            imageBucketName = "ZipBolt Images",
+                                            imageDisplayName = dataDisplayName
+                                        )
+                                    }
+                                    MediaType.Video.value -> {
+                                        DataToTransfer.DeviceVideo(
+                                            videoId = 0L,
+                                            videoUri = dataUri!!,
+                                            videoDisplayName = dataDisplayName,
+                                            videoDuration = dataUri.getVideoDuration(this@MainActivity),
+                                            videoSize = dataSize
+                                        )
+                                    }
+                                    MediaType.Audio.value -> {
+                                        DataToTransfer.DeviceAudio(
+                                            audioUri = dataUri!!,
+                                            audioDisplayName = dataDisplayName,
+                                            audioSize = dataSize,
+                                            audioDuration = dataUri.getAudioDuration(this@MainActivity),
+                                            audioArtPath = Uri.parse("")
+                                        )
+                                    }
+                                    MediaType.App.value -> {
+                                        DataToTransfer.DeviceApplication(
+                                            applicationName = dataDisplayName,
+                                            apkPath = dataUri!!.path ?: "",
+                                            appSize = dataSize,
+                                            applicationIcon = try {
                                                 dataUri?.path!!.let { path ->
                                                     packageManager.getPackageArchiveInfo(path, 0)
                                                         .let { packageInfo ->
@@ -305,55 +251,28 @@ class MainActivity : AppCompatActivity() {
                                             } catch (nullPointerException: NullPointerException) {
                                                 null
                                             }
-
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(applicationIcon)
-                                                .into(ongoingDataReceiveLayoutImageView)
-
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceApplication(
-                                                            applicationName = dataDisplayName,
-                                                            apkPath = dataUri!!.path ?: "",
-                                                            appSize = dataSize,
-                                                            applicationIcon = applicationIcon
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    ))
-                                            }
-                                        }
-                                        MediaType.File.Directory.value -> {
-                                            Glide.with(ongoingDataReceiveLayoutImageView)
-                                                .load(R.drawable.ic_baseline_folder_open_24)
-                                                .into(ongoingDataReceiveLayoutImageView)
-                                            mainActivityViewModel.run {
-                                                addDataToCurrentTransferHistory(
-                                                    OngoingDataTransferUIState.DataItem(
-                                                        DataToTransfer.DeviceFile(
-                                                            file = dataUri!!.toFile()
-                                                        ).apply {
-                                                            this.transferStatus =
-                                                                DataToTransfer.TransferStatus.RECEIVE_COMPLETE
-                                                        }
-                                                    )
-                                                )
-                                            }
-                                        }
+                                        )
                                     }
-                                    // stop shimmer
-                                    ongoingDataReceiveDataCategoryImageShimmer.stopShimmer()
-                                    ongoingDataReceiveDataCategoryImageShimmer.hideShimmer()
-                                    mainActivityViewModel.run {
-                                        ongoingDataTransferRecyclerViewAdapter.run {
-                                            submitList(currentTransferHistory)
-                                            notifyItemInserted(currentTransferHistory.size - 1)
-                                        }
+                                    MediaType.File.Directory.value -> {
+                                        DataToTransfer.DeviceFile(
+                                            dataUri!!.toFile()
+                                        )
                                     }
+                                    else -> {
+                                        DataToTransfer.DeviceImage(
+                                            imageId = 0L,
+                                            imageUri = dataUri!!,
+                                            imageDateModified = "",
+                                            imageMimeType = "image/*",
+                                            imageSize = dataSize,
+                                            imageBucketName = "ZipBolt Images",
+                                            imageDisplayName = dataDisplayName
+                                        )
+                                    }
+                                }.apply {
+                                    transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
                                 }
-                            }
+                            )
                         }
                     }
                 }
