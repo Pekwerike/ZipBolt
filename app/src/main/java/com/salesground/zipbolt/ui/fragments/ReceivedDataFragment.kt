@@ -21,7 +21,7 @@ class ReceivedDataFragment : Fragment() {
 
     private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
     private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter()
-    private lateinit var receivedDataFragmentLayoutManager : GridLayoutManager
+    private lateinit var receivedDataFragmentLayoutManager: GridLayoutManager
     private lateinit var receivedDataFragmentBinding: FragmentReceivedDataBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,8 +60,15 @@ class ReceivedDataFragment : Fragment() {
     }
 
     private fun observeViewModelLiveData() {
-        receivedDataViewModel.receivedDataItems.observe(this) {
-            receivedDataFragmentRecyclerViewAdapter.submitList(it)
+        receivedDataViewModel.run {
+            receivedDataItems.observe(this@ReceivedDataFragment) {
+                receivedDataFragmentRecyclerViewAdapter.submitList(it)
+            }
+            newReceivedItemPosition.observe(this@ReceivedDataFragment) {
+                if (it != -1) {
+                    receivedDataFragmentRecyclerViewAdapter.notifyItemInserted(it)
+                }
+            }
         }
     }
 }
