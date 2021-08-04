@@ -21,9 +21,11 @@ class DirectoryMediaTransferProtocolTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val zipBoltFileRepository: ZipBoltFileRepository = ZipBoltFileRepository()
-    private val zipBoltSavedFilesRepository : ZipBoltSavedFilesRepository = ZipBoltSavedFilesRepository()
-    private val gateWayFile = File(zipBoltSavedFilesRepository
-        .getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.FOLDERS_BASE_DIRECTORY), "gateWay.txt")
+    private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository =
+        ZipBoltSavedFilesRepository()
+    private val gateWayFile = File(
+        context.getExternalFilesDir(null), "gateWay.txt"
+    )
     private val gateWayFileOutputStream =
         DataOutputStream(BufferedOutputStream(FileOutputStream(gateWayFile)))
     private val gateWayFileInputStream =
@@ -37,49 +39,49 @@ class DirectoryMediaTransferProtocolTest {
     fun transferMedia() {
         runBlocking {
             val rootDir = zipBoltFileRepository.getRootDirectory()
-            val rootFileChildren = zipBoltFileRepository.getDirectoryChildren(rootDir.path) as List<DataToTransfer.DeviceFile>
+            val rootFileChildren =
+                zipBoltFileRepository.getDirectoryChildren(rootDir.path) as List<DataToTransfer.DeviceFile>
             val dataRoot = rootFileChildren.find {
-                it.dataDisplayName == "Android"
+                it.dataDisplayName == "DCIM"
             }
-            val dataFolder = zipBoltFileRepository.getDirectoryChildren(dataRoot!!.file.path)
 
-            for (rootFileChild in dataFolder) {
-                rootFileChild as DataToTransfer.DeviceFile
-                if (rootFileChild.file.name == "data") {
-                    directoryMediaTransferProtocol.transferMedia(
-                        rootFileChild,
-                        gateWayFileOutputStream,
-                        object : MediaTransferProtocol.DataTransferListener {
-                            override fun onTransfer(
-                                dataToTransfer: DataToTransfer,
-                                percentTransferred: Float,
-                                transferStatus: DataToTransfer.TransferStatus
-                            ) {
+            directoryMediaTransferProtocol.transferMedia(
+                dataRoot!!,
+                gateWayFileOutputStream,
+                object : MediaTransferProtocol.DataTransferListener {
+                    override fun onTransfer(
+                        dataToTransfer: DataToTransfer,
+                        percentTransferred: Float,
+                        transferStatus: DataToTransfer.TransferStatus
+                    ) {
 
-                            }
-                        }
-                    )
-                    gateWayFileInputStream.readInt()
-                    directoryMediaTransferProtocol.receiveMedia(
-                        gateWayFileInputStream,
-                        object: MediaTransferProtocol.DataReceiveListener{
-                            override fun onReceive(
-                                dataDisplayName: String,
-                                dataSize: Long,
-                                percentageOfDataRead: Float,
-                                dataType: Int,
-                                dataUri: Uri?,
-                                dataTransferStatus: DataToTransfer.TransferStatus
-                            ) {
-
-                            }
-                        },
-                        gateWayFileInputStream.readUTF(),
-                        gateWayFileInputStream.readLong()
-                    )
-                    break
+                    }
                 }
-            }
+            )
+            gateWayFileInputStream.readInt()
+            directoryMediaTransferProtocol.receiveMedia(
+                gateWayFileInputStream,
+                object : MediaTransferProtocol.DataReceiveListener {
+                    override fun onReceive(
+                        dataDisplayName: String,
+                        dataSize: Long,
+                        percentageOfDataRead: Float,
+                        dataType: Int,
+                        dataUri: Uri?,
+                        dataTransferStatus: DataToTransfer.TransferStatus
+                    ) {
+
+                    }
+                },
+                object : MediaTransferProtocol.TransferMetaDataUpdateListener {
+                    override fun onMetaTransferDataUpdate(mediaTransferProtocolMetaData: MediaTransferProtocol.MediaTransferProtocolMetaData) {
+
+                    }
+                },
+                gateWayFileInputStream.readUTF(),
+                gateWayFileInputStream.readLong()
+            )
+
         }
     }
 
@@ -88,4 +90,8 @@ class DirectoryMediaTransferProtocolTest {
 
     }
 
+    @After
+    fun tearDown() {
+        gateWayFile.delete()
+    }
 }
