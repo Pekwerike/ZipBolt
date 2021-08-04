@@ -23,6 +23,19 @@ class SentDataFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
+        sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
+        sentDataFragmentLayoutManager.spanSizeLookup =
+            object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return when (sentDataFragmentRecyclerViewAdapter.getItemViewType(
+                        position
+                    )) {
+                        SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
+                        SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value -> 1
+                        else -> 3
+                    }
+                }
+            }
     }
 
     override fun onCreateView(
@@ -40,19 +53,6 @@ class SentDataFragment : Fragment() {
         sentDataFragmentBinding.run {
             sentDataFragmentRecyclerview.post {
                 sentDataFragmentRecyclerview.run {
-                    sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
-                  /*  sentDataFragmentLayoutManager.spanSizeLookup =
-                        object : GridLayoutManager.SpanSizeLookup() {
-                            override fun getSpanSize(position: Int): Int {
-                              when (sentDataFragmentRecyclerViewAdapter.getItemViewType(
-                                    position
-                                )) {
-                                    SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
-                                    SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value -> 1
-                                    else -> 3
-                                }
-                            }
-                        }*/
                     layoutManager = sentDataFragmentLayoutManager
                     adapter = sentDataFragmentRecyclerViewAdapter
                 }

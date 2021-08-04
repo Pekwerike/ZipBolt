@@ -4,25 +4,29 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.salesground.zipbolt.databinding.ImageTransferOrReceiveCompleteLayoutItemBinding
+import com.salesground.zipbolt.databinding.ImageTransferLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
 class ImageTransferCompleteLayoutViewHolder(
-    private val imageTransferOrReceiveCompleteLayoutItemBinding: ImageTransferOrReceiveCompleteLayoutItemBinding
-) : RecyclerView.ViewHolder(imageTransferOrReceiveCompleteLayoutItemBinding.root) {
+    private val imageTransferLayoutItemBinding: ImageTransferLayoutItemBinding
+) : RecyclerView.ViewHolder(imageTransferLayoutItemBinding.root) {
 
     fun bindImageData(dataToTransfer: DataToTransfer) {
-        imageTransferOrReceiveCompleteLayoutItemBinding.apply {
-            Glide.with(imageTransferOrReceiveCompleteLayoutItemImageView)
+        imageTransferLayoutItemBinding.run {
+            Glide.with(imageWaitingForTransferLayoutItemImageView)
                 .load(dataToTransfer.dataUri)
-                .into(imageTransferOrReceiveCompleteLayoutItemImageView)
+                .into(imageWaitingForTransferLayoutItemImageView)
+
+            imageTransferLayoutItemLoadingImageShimmer.run{
+                stopShimmer()
+                hideShimmer()
+            }
         }
     }
 
     companion object {
         fun createViewHolder(parent: ViewGroup): ImageReceiveCompleteLayoutViewHolder {
-            val layoutBinding =
-                ImageTransferOrReceiveCompleteLayoutItemBinding.inflate(
+            val layoutBinding = ImageTransferLayoutItemBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
