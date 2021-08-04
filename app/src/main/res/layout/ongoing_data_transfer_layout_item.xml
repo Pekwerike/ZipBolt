@@ -5,20 +5,13 @@
     <data>
 
         <variable
-            name="dataDisplayName"
-            type="String" />
+            name="dataToTransfer"
+            type="com.salesground.zipbolt.model.DataToTransfer" />
 
         <variable
             name="dataTransferPercent"
             type="Integer" />
 
-        <variable
-            name="dataTransferPercentAsString"
-            type="String" />
-
-        <variable
-            name="dataSize"
-            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,7 +38,7 @@
             android:layout_margin="6dp"
             android:paddingBottom="@dimen/standard_text_view_padding"
             android:lines="1"
-            android:text="@{dataDisplayName}"
+            android:text="@{dataToTransfer.dataDisplayName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_button"
@@ -69,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
-            android:text="@{dataTransferPercentAsString}"
+            app:setTransferPercent="@{dataTransferPercent}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_button"
@@ -93,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="@{dataSize}"
+            app:setFileSize="@{dataToTransfer.dataSize}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />

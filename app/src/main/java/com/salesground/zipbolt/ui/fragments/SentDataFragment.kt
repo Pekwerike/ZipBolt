@@ -18,7 +18,7 @@ class SentDataFragment : Fragment() {
     private lateinit var sentDataFragmentBinding: FragmentSentDataBinding
     private val sentDataViewModel: SentDataViewModel by activityViewModels()
     private val sentDataFragmentRecyclerViewAdapter = SentDataFragmentRecyclerViewAdapter()
-    private lateinit var sentDataFragmentLayoutManager : GridLayoutManager
+    private lateinit var sentDataFragmentLayoutManager: GridLayoutManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
@@ -55,14 +55,14 @@ class SentDataFragment : Fragment() {
                 layoutManager = sentDataFragmentLayoutManager
                 adapter = sentDataFragmentRecyclerViewAdapter
 
-            sentDataFragmentRecyclerview.post {
-                sentDataFragmentRecyclerview.run {
-                    layoutManager = sentDataFragmentLayoutManager
-                    adapter = sentDataFragmentRecyclerViewAdapter
+                sentDataFragmentRecyclerview.post {
+                    sentDataFragmentRecyclerview.run {
+                        layoutManager = sentDataFragmentLayoutManager
+                        adapter = sentDataFragmentRecyclerViewAdapter
+                    }
                 }
             }
         }
-    }
     }
 
     private fun observeViewModelLiveData() {
@@ -77,6 +77,13 @@ class SentDataFragment : Fragment() {
             updatedSentDataItemIndex.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
+            }
+            currentDataToTransferDataItem.observe(this@SentDataFragment) {dataToTransfer ->
+                dataToTransfer?.let {
+                    sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
+                        dataDisplayName = dataToTransfer.dataDisplayName
+                    }
+                }
             }
         }
     }

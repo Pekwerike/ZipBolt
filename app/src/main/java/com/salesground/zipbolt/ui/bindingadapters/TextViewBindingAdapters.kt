@@ -12,6 +12,7 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.utils.formatVideoDurationToString
 import com.salesground.zipbolt.utils.parseDate
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
+import kotlin.math.roundToInt
 
 @BindingAdapter("addGreenHighLightToText")
 fun TextView.addGreenHighLightToText(placeHolder: String?) {
@@ -84,10 +85,17 @@ fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: Strin
     }
 }
 
-@BindingAdapter("setFolderSize")
-fun TextView.setFolderSize(folderSize: Long?) {
-    folderSize?.let {
-        text = folderSize.transformDataSizeToMeasuredUnit()
+@BindingAdapter("setFileSize")
+fun TextView.setFolderSize(fileSize: Long?) {
+    fileSize?.let {
+        text = fileSize.transformDataSizeToMeasuredUnit()
+    }
+}
+
+@BindingAdapter("setTransferPercent")
+fun TextView.setTransferPercent(transferPercent: Int?){
+    transferPercent?.let {
+        text = context.getString(R.string.data_percent_transferred, transferPercent.roundToInt())
     }
 }
 
