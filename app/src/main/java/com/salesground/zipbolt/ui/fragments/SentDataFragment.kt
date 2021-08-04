@@ -12,14 +12,13 @@ import com.salesground.zipbolt.databinding.FragmentSentDataBinding
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+
 class SentDataFragment : Fragment() {
     private lateinit var sentDataFragmentBinding: FragmentSentDataBinding
     private val sentDataViewModel: SentDataViewModel by activityViewModels()
     private val sentDataFragmentRecyclerViewAdapter = SentDataFragmentRecyclerViewAdapter()
-    private lateinit var sentDataFragmentLayoutManager: GridLayoutManager
+    private lateinit var sentDataFragmentLayoutManager : GridLayoutManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
@@ -51,6 +50,11 @@ class SentDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentDataFragmentBinding.run {
+
+            sentDataFragmentRecyclerview.run {
+                layoutManager = sentDataFragmentLayoutManager
+                adapter = sentDataFragmentRecyclerViewAdapter
+
             sentDataFragmentRecyclerview.post {
                 sentDataFragmentRecyclerview.run {
                     layoutManager = sentDataFragmentLayoutManager
@@ -58,6 +62,7 @@ class SentDataFragment : Fragment() {
                 }
             }
         }
+    }
     }
 
     private fun observeViewModelLiveData() {

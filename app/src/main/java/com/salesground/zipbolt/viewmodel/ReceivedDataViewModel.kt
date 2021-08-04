@@ -15,10 +15,15 @@ class ReceivedDataViewModel : ViewModel() {
     val receivedDataItems: LiveData<MutableList<DataToTransfer>>
         get() = _receivedDataItems
 
+    private val _newReceivedItemPosition = MutableLiveData<Int>(-1)
+    val newReceivedItemPosition: LiveData<Int>
+        get() = _newReceivedItemPosition
+
     fun addDataToReceivedItems(dataToTransfer: DataToTransfer) {
         receivedDataItemsNormalList.add(dataToTransfer)
         viewModelScope.launch(Dispatchers.Main) {
             _receivedDataItems.value = receivedDataItemsNormalList
+            _newReceivedItemPosition.value = receivedDataItemsNormalList.size
         }
     }
 }

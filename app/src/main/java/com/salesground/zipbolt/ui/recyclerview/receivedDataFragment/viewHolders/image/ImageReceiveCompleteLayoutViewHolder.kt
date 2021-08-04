@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.image
+package com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.image
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -16,6 +16,11 @@ class ImageReceiveCompleteLayoutViewHolder(
             Glide.with(imageWaitingForTransferLayoutItemImageView)
                 .load(dataToTransfer.dataUri)
                 .into(imageWaitingForTransferLayoutItemImageView)
+
+            imageTransferLayoutItemLoadingImageShimmer.run {
+                stopShimmer()
+                hideShimmer()
+            }
         }
     }
 
