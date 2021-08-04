@@ -3,7 +3,10 @@ package com.salesground.zipbolt.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ReceivedDataViewModel : ViewModel() {
 
@@ -14,6 +17,8 @@ class ReceivedDataViewModel : ViewModel() {
 
     fun addDataToReceivedItems(dataToTransfer: DataToTransfer) {
         receivedDataItemsNormalList.add(dataToTransfer)
-        _receivedDataItems.value = receivedDataItemsNormalList
+        viewModelScope.launch(Dispatchers.Main) {
+            _receivedDataItems.value = receivedDataItemsNormalList
+        }
     }
 }

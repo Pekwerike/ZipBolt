@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/image_transfer_layout_item_loading_image_shimmer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="7dp"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="4dp">
+    android:layout_margin="@dimen/medium_margin">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/image_transfer_layout_item_loading_image_shimmer"
+    <com.salesground.zipbolt.ui.customviews.CurvedImageView
+        android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="100dp"
+        android:scaleType="centerCrop"
+        app:curvedImageViewCornerRadius="0.2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</com.facebook.shimmer.ShimmerFrameLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-</com.google.android.material.card.MaterialCardView>
 

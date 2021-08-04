@@ -26,7 +26,7 @@ class SentDataViewModel : ViewModel() {
 
     fun addCollectionOfDataToTransferToSentDataItems(collectionOfDataToTransfer: MutableList<DataToTransfer>) {
         collectionOfDataToTransfer.map {
-            it.transferStatus = DataToTransfer.TransferStatus.TRANSFER_ONGOING
+            it.transferStatus = DataToTransfer.TransferStatus.TRANSFER_WAITING
         }
         sentDataItemsNormalList.addAll(collectionOfDataToTransfer)
         viewModelScope.launch(Dispatchers.Main) {

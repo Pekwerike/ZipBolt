@@ -50,11 +50,19 @@ class SentDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentDataFragmentBinding.run {
+
             sentDataFragmentRecyclerview.run {
                 layoutManager = sentDataFragmentLayoutManager
                 adapter = sentDataFragmentRecyclerViewAdapter
+
+            sentDataFragmentRecyclerview.post {
+                sentDataFragmentRecyclerview.run {
+                    layoutManager = sentDataFragmentLayoutManager
+                    adapter = sentDataFragmentRecyclerViewAdapter
+                }
             }
         }
+    }
     }
 
     private fun observeViewModelLiveData() {
