@@ -95,7 +95,7 @@ fun TextView.setFolderSize(fileSize: Long?) {
 @BindingAdapter("setTransferPercent")
 fun TextView.setTransferPercent(transferPercent: Int?){
     transferPercent?.let {
-        text = context.getString(R.string.data_percent_transferred, transferPercent.roundToInt())
+        text = context.getString(R.string.data_percent_transferred, transferPercent)
     }
 }
 

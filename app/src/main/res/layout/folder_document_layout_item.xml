@@ -22,7 +22,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:padding="@dimen/medium_padding"
-            app:bindImageForDocument="@{document}"
+            app:bindImageBasedOnMediaType="@{document}"
             app:curvedImageViewCornerRadius="0.17" />
 
         <LinearLayout

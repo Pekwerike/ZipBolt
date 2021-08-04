@@ -7,7 +7,7 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
 
-@BindingAdapter("bindImageForDocument")
+@BindingAdapter("bindImageBasedOnMediaType")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
 
     when (dataToTransfer.dataType) {
@@ -20,10 +20,16 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
                 .into(this)
         }
         MediaType.Audio.value -> {
-
+            dataToTransfer as DataToTransfer.DeviceAudio
+            Glide.with(context)
+                .load(dataToTransfer.audioArtPath)
+                .error(R.drawable.ic_baseline_music_note_24)
+                .into(this)
         }
         MediaType.File.Directory.value -> {
-
+            Glide.with(context)
+                .load(R.drawable.ic_baseline_folder_open_24)
+                .into(this)
         }
         MediaType.File.Document.ExcelDocument.value -> {
             Glide.with(context)
@@ -66,33 +72,3 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer) {
     }
 }
 
-when {
-    dataToTransfer.dataType == MediaType.Image.value ||
-            dataToTransfer.dataType == MediaType.Video.value -> {
-        Glide.with(ongoingDataTransferDataCategoryImageView)
-            .load(dataToTransfer.dataUri)
-            .into(ongoingDataTransferDataCategoryImageView)
-    }
-    dataToTransfer.dataType == MediaType.App.value -> {
-        dataToTransfer as DataToTransfer.DeviceApplication
-        Glide.with(ongoingDataTransferDataCategoryImageView)
-            .load(
-                dataToTransfer.applicationIcon
-            )
-            .into(ongoingDataTransferDataCategoryImageView)
-    }
-    dataToTransfer.dataType == MediaType.Audio.value -> {
-        dataToTransfer as DataToTransfer.DeviceAudio
-        Glide.with(ongoingDataTransferDataCategoryImageView)
-            .load(dataToTransfer.audioArtPath)
-            .error(R.drawable.ic_baseline_music_note_24)
-            .into(ongoingDataTransferDataCategoryImageView)
-
-    }
-    dataToTransfer.dataType == MediaType.File.Directory.value -> {
-        dataToTransfer as DataToTransfer.DeviceFile
-        Glide.with(ongoingDataTransferDataCategoryImageView)
-            .load(R.drawable.ic_baseline_folder_open_24)
-            .into(ongoingDataTransferDataCategoryImageView)
-    }
-}
