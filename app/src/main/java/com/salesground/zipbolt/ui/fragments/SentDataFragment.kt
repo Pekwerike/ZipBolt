@@ -81,7 +81,7 @@ class SentDataFragment : Fragment() {
             currentDataToTransferDataItem.observe(this@SentDataFragment) {dataToTransfer ->
                 dataToTransfer?.let {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
-                        dataDisplayName = dataToTransfer.dataDisplayName
+                        this.dataToTransfer = dataToTransfer
                     }
                 }
             }
