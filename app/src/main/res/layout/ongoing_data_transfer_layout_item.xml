@@ -5,34 +5,29 @@
     <data>
 
         <variable
-            name="dataDisplayName"
-            type="String" />
+            name="dataToTransfer"
+            type="com.salesground.zipbolt.model.DataToTransfer" />
 
         <variable
             name="dataTransferPercent"
             type="Integer" />
 
-        <variable
-            name="dataTransferPercentAsString"
-            type="String" />
-
-        <variable
-            name="dataSize"
-            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ongoing_data_transfer_layout_item_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_padding">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <com.salesground.zipbolt.ui.customviews.CurvedImageView
             android:id="@+id/ongoing_data_transfer_data_category_image_view"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
-            android:layout_margin="4dp"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="@dimen/small_margin"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_undraw_well_done"
+            app:bindImageBasedOnMediaType="@{dataToTransfer}"
+            app:curvedImageViewCornerRadius="0.17"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -43,9 +38,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
-            android:paddingBottom="@dimen/standard_text_view_padding"
             android:lines="1"
-            android:text="@{dataDisplayName}"
+            android:paddingBottom="@dimen/standard_text_view_padding"
+            android:text="@{dataToTransfer.dataDisplayName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_button"
@@ -69,19 +64,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
-            android:text="@{dataTransferPercentAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:layout_constraintEnd_toStartOf="@id/ongoing_data_transfer_layout_cancel_transfer_image_button"
             app:layout_constraintStart_toEndOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
-            app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
+            app:layout_constraintTop_toTopOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
+            app:setTransferPercent="@{dataTransferPercent}" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/ongoing_data_transfer_layout_cancel_transfer_image_button"
             android:layout_width="@dimen/image_button_size"
             android:layout_height="@dimen/image_button_size"
-            android:layout_marginStart="4dp"
             android:layout_marginVertical="4dp"
+            android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/close_icon"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
@@ -93,10 +88,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="@{dataSize}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
-            app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator" />
+            app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
+            app:setFileSize="@{dataToTransfer.dataSize}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -23,6 +23,16 @@ class SentDataViewModel : ViewModel() {
     val canceledSentDataItemIndex: LiveData<Int>
         get() = _canceledSentDataItemIndex
 
+    private val _currentDataToTransferDataItem = MutableLiveData<DataToTransfer>(null)
+    val currentDataToTransferDataItem: LiveData<DataToTransfer>
+        get() = _currentDataToTransferDataItem
+
+    fun changeCurrentDataToTransferDataItem(dataToTransfer: DataToTransfer) {
+        viewModelScope.launch {
+            _currentDataToTransferDataItem.value = dataToTransfer
+        }
+    }
+
 
     fun addCollectionOfDataToTransferToSentDataItems(collectionOfDataToTransfer: MutableList<DataToTransfer>) {
         collectionOfDataToTransfer.map {

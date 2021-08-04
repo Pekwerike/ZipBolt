@@ -64,7 +64,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/folder_transfer_layout_item_video_name_text_view"
                 app:layout_constraintTop_toBottomOf="@+id/folder_transfer_layout_item_video_name_text_view"
-                app:setFolderSize="@{folderSize}" />
+                app:setFileSize="@{folderSize}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
