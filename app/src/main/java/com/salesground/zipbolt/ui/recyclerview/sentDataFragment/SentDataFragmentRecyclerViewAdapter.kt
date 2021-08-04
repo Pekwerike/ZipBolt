@@ -21,7 +21,7 @@ import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewCo
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
-class SentDataFragmentRecyclerViewAdapter : ListAdapter<
+class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
         DataToTransfer, RecyclerView.ViewHolder>(
     DataToTransferRecyclerViewDiffUtil()
 ) {
@@ -39,7 +39,7 @@ class SentDataFragmentRecyclerViewAdapter : ListAdapter<
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (val dataItem = getItem(position)) {
+        return when (val dataItem = currentList[position]) {
             is DataToTransfer.DeviceImage -> {
                 when (dataItem.transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
@@ -95,86 +95,86 @@ class SentDataFragmentRecyclerViewAdapter : ListAdapter<
                         }
                         else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
 
+                    } }
+                else {
+                        300
                     }
-                } else {
-                    300
+                }
+                else -> 300
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            return when (viewType) {
+                SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> {
+                    ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value -> {
+                    ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_WAITING.value -> {
+                    VideoTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value -> {
+                    VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.APP_TRANSFER_COMPLETE.value -> {
+                    ApplicationTransferCompleteLayoutViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.APP_TRANSFER_WAITING.value -> {
+                    ApplicationTransferWaitingViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value -> {
+                    AudioTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_WAITING.value -> {
+                    AudioTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_WAITING.value -> {
+                    DirectoryTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+                }
+                SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value -> {
+                    DirectoryTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+                }
+                else -> {
+                    ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
                 }
             }
-            else -> 300
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> {
-                ImageTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value -> {
-                ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_WAITING.value -> {
-                VideoTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.VIDEO_TRANSFER_COMPLETE.value -> {
-                VideoTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.APP_TRANSFER_COMPLETE.value -> {
-                ApplicationTransferCompleteLayoutViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.APP_TRANSFER_WAITING.value -> {
-                ApplicationTransferWaitingViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_COMPLETE.value -> {
-                AudioTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.AUDIO_TRANSFER_WAITING.value -> {
-                AudioTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_WAITING.value -> {
-                DirectoryTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
-            }
-            SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value -> {
-                DirectoryTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
-            }
-            else -> {
-                ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
-            }
-        }
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val dataItem = currentList[position]
-        when (holder) {
-            is ImageReceiveCompleteLayoutViewHolder -> {
-                holder.bindImageData(dataItem)
-            }
-            is ImageTransferWaitingLayoutItemViewHolder -> {
-                holder.bindImageData(dataItem)
-            }
-            is ApplicationTransferWaitingViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is ApplicationReceiveCompleteLayoutViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is VideoTransferWaitingLayoutItemViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is VideoReceiveCompleteLayoutItemViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is AudioReceiveCompleteLayoutItemViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is AudioTransferWaitingLayoutItemViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is DirectoryReceiveCompleteLayoutItemViewHolder -> {
-                holder.bindData(dataItem)
-            }
-            is DirectoryTransferWaitingLayoutItemViewHolder -> {
-                holder.bindData(dataItem)
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            val dataItem = currentList[position]
+            when (holder) {
+                is ImageReceiveCompleteLayoutViewHolder -> {
+                    holder.bindImageData(dataItem)
+                }
+                is ImageTransferWaitingLayoutItemViewHolder -> {
+                    holder.bindImageData(dataItem)
+                }
+                is ApplicationTransferWaitingViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is ApplicationReceiveCompleteLayoutViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is VideoTransferWaitingLayoutItemViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is VideoReceiveCompleteLayoutItemViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is AudioReceiveCompleteLayoutItemViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is AudioTransferWaitingLayoutItemViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is DirectoryReceiveCompleteLayoutItemViewHolder -> {
+                    holder.bindData(dataItem)
+                }
+                is DirectoryTransferWaitingLayoutItemViewHolder -> {
+                    holder.bindData(dataItem)
+                }
             }
         }
     }
-}

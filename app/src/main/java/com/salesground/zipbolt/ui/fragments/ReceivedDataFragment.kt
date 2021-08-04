@@ -13,8 +13,10 @@ import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.ReceivedData
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.ReceivedDataViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class ReceivedDataFragment : Fragment() {
 
     private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
@@ -26,17 +28,6 @@ class ReceivedDataFragment : Fragment() {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
         receivedDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
-        receivedDataFragmentLayoutManager.spanSizeLookup =
-            object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return when (receivedDataFragmentRecyclerViewAdapter.getItemViewType(
-                        position
-                    )) {
-                        ReceivedDataFragmentRecyclerViewAdapter.ReceiveDataFragmentAdapterViewTypes.IMAGE_RECEIVE_COMPLETE.value -> 1
-                        else -> 3
-                    }
-                }
-            }
     }
 
     override fun onCreateView(
@@ -51,6 +42,17 @@ class ReceivedDataFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         receivedDataFragmentBinding.run {
             receivedDataFragmentRecyclerview.run {
+                receivedDataFragmentLayoutManager.spanSizeLookup =
+                    object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when (receivedDataFragmentRecyclerViewAdapter.getItemViewType(
+                                position
+                            )) {
+                                ReceivedDataFragmentRecyclerViewAdapter.ReceiveDataFragmentAdapterViewTypes.IMAGE_RECEIVE_COMPLETE.value -> 1
+                                else -> 3
+                            }
+                        }
+                    }
                 layoutManager = receivedDataFragmentLayoutManager
                 adapter = receivedDataFragmentRecyclerViewAdapter
             }

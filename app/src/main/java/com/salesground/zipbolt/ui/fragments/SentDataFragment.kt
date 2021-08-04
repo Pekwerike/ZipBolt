@@ -12,29 +12,17 @@ import com.salesground.zipbolt.databinding.FragmentSentDataBinding
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class SentDataFragment : Fragment() {
     private lateinit var sentDataFragmentBinding: FragmentSentDataBinding
     private val sentDataViewModel: SentDataViewModel by activityViewModels()
     private val sentDataFragmentRecyclerViewAdapter = SentDataFragmentRecyclerViewAdapter()
-    private lateinit var sentDataFragmentLayoutManager : GridLayoutManager
+    private lateinit var sentDataFragmentLayoutManager: GridLayoutManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeViewModelLiveData()
-        sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
-        sentDataFragmentLayoutManager.spanSizeLookup =
-            object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    return when (sentDataFragmentRecyclerViewAdapter.getItemViewType(
-                        position
-                    )) {
-                        SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
-                        SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value -> 1
-                        else -> 3
-                    }
-                }
-            }
     }
 
     override fun onCreateView(
@@ -50,9 +38,24 @@ class SentDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentDataFragmentBinding.run {
-            sentDataFragmentRecyclerview.run {
-                layoutManager = sentDataFragmentLayoutManager
-                adapter = sentDataFragmentRecyclerViewAdapter
+            sentDataFragmentRecyclerview.post {
+                sentDataFragmentRecyclerview.run {
+                    sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
+                  /*  sentDataFragmentLayoutManager.spanSizeLookup =
+                        object : GridLayoutManager.SpanSizeLookup() {
+                            override fun getSpanSize(position: Int): Int {
+                              when (sentDataFragmentRecyclerViewAdapter.getItemViewType(
+                                    position
+                                )) {
+                                    SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_WAITING.value -> 1
+                                    SentDataFragmentRecyclerViewAdapter.SentDataFragmentAdapterViewTypes.IMAGE_TRANSFER_COMPLETE.value -> 1
+                                    else -> 3
+                                }
+                            }
+                        }*/
+                    layoutManager = sentDataFragmentLayoutManager
+                    adapter = sentDataFragmentRecyclerViewAdapter
+                }
             }
         }
     }
