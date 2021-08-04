@@ -3,7 +3,10 @@ package com.salesground.zipbolt.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class SentDataViewModel : ViewModel() {
 
@@ -22,10 +25,13 @@ class SentDataViewModel : ViewModel() {
 
 
     fun addCollectionOfDataToTransferToSentDataItems(collectionOfDataToTransfer: MutableList<DataToTransfer>) {
-        sentDataItemsNormalList.addAll(collectionOfDataToTransfer.map {
+        collectionOfDataToTransfer.map {
             it.transferStatus = DataToTransfer.TransferStatus.TRANSFER_ONGOING
-        } as MutableList<DataToTransfer>)
-        _sentDataItems.value = sentDataItemsNormalList
+        }
+        sentDataItemsNormalList.addAll(collectionOfDataToTransfer)
+        viewModelScope.launch(Dispatchers.Main) {
+            _sentDataItems.value = sentDataItemsNormalList
+        }
     }
 
 
@@ -34,7 +40,9 @@ class SentDataViewModel : ViewModel() {
             it.dataUri == dataToTransfer.dataUri
         }?.let {
             it.transferStatus = DataToTransfer.TransferStatus.TRANSFER_COMPLETE
-            _updatedSentDataItemIndex.value = sentDataItemsNormalList.indexOf(it)
+            viewModelScope.launch(Dispatchers.Main) {
+                _updatedSentDataItemIndex.value = sentDataItemsNormalList.indexOf(it)
+            }
         }
     }
 
@@ -45,7 +53,9 @@ class SentDataViewModel : ViewModel() {
         }?.let {
             val removedIndex = sentDataItemsNormalList.indexOf(it)
             sentDataItemsNormalList.remove(it)
-            _canceledSentDataItemIndex.value = removedIndex
+            viewModelScope.launch(Dispatchers.Main) {
+                _canceledSentDataItemIndex.value = removedIndex
+            }
         }
     }
 

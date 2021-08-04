@@ -637,6 +637,7 @@ class MainActivity : AppCompatActivity() {
                     dataTransferService?.transferData(
                         dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
+                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(dataToTransferViewModel.getCollectionOfDataToTransfer())
                     // clear collection of data to transfer since transfer has been completed
                     dataToTransferViewModel.clearCollectionOfDataToTransfer()
                 }
