@@ -260,6 +260,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                 directoryMediaTransferProtocol.receiveMedia(
                     dataInputStream,
                     dataReceiveListener,
+                    transferMetaDataUpdateListener,
                     mediaName,
                     mediaSize
                 )
