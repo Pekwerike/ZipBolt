@@ -158,45 +158,45 @@ class MainActivity : AppCompatActivity() {
                             // expand the bottom sheet to show receive has started
                             mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
                             /*with(
-                                connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                    .expandedConnectedToPeerTransferOngoingLayout
-                                    .expandedConnectedToPeerTransferOngoingLayoutHeader
-                            ) {
-                                // hide the  no item in receive label
-                                ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                    .alpha(0f)
-                                with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                    // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
-                                    root.animate().alpha(1f)
-                                    this.dataDisplayName = dataDisplayName
-                                    this.dataSize =
-                                        dataSize.transformDataSizeToMeasuredUnit(0L)
+                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                .expandedConnectedToPeerTransferOngoingLayout
+                                .expandedConnectedToPeerTransferOngoingLayoutHeader
+                        ) {
+                            // hide the  no item in receive label
+                            ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
+                                .alpha(0f)
+                            with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
+                                // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
+                                root.animate().alpha(1f)
+                                this.dataDisplayName = dataDisplayName
+                                this.dataSize =
+                                    dataSize.transformDataSizeToMeasuredUnit(0L)
 
-                                    Glide.with(ongoingDataReceiveLayoutImageView)
-                                        .load(R.drawable.ic_startup_outline_)
-                                        .into(ongoingDataReceiveLayoutImageView)
-                                    // start shimmer
-                                    ongoingDataReceiveDataCategoryImageShimmer.showShimmer(
-                                        true
-                                    )
-                                }
-                            }*/
+                                Glide.with(ongoingDataReceiveLayoutImageView)
+                                    .load(R.drawable.ic_startup_outline_)
+                                    .into(ongoingDataReceiveLayoutImageView)
+                                // start shimmer
+                                ongoingDataReceiveDataCategoryImageShimmer.showShimmer(
+                                    true
+                                )
+                            }
+                        }*/
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
                             /*  with(
-                                  connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                      .expandedConnectedToPeerTransferOngoingLayout
-                                      .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                      .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                              ) {
-                                  // show the receive progress indicator and the percentage received
-                                  this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                      ((percentageOfDataRead / 100) * dataSize).roundToLong()
-                                  )
-                                  dataTransferPercent = percentageOfDataRead.roundToInt()
-                                  dataTransferPercentAsString = "$dataTransferPercent%"
-                              }*/
+                              connectedToPeerTransferOngoingBottomSheetLayoutBinding
+                                  .expandedConnectedToPeerTransferOngoingLayout
+                                  .expandedConnectedToPeerTransferOngoingLayoutHeader
+                                  .ongoingTransferReceiveHeaderLayoutDataReceiveView
+                          ) {
+                              // show the receive progress indicator and the percentage received
+                              this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
+                                  ((percentageOfDataRead / 100) * dataSize).roundToLong()
+                              )
+                              dataTransferPercent = percentageOfDataRead.roundToInt()
+                              dataTransferPercentAsString = "$dataTransferPercent%"
+                          }*/
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
@@ -277,7 +277,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
 
             override fun totalFileReceiveComplete() {
                 mainActivityViewModel.totalFileReceiveComplete()
@@ -637,7 +636,9 @@ class MainActivity : AppCompatActivity() {
                     dataTransferService?.transferData(
                         dataToTransferViewModel.getCollectionOfDataToTransfer()
                     )
-                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(dataToTransferViewModel.getCollectionOfDataToTransfer())
+                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
+                        dataToTransferViewModel.getCollectionOfDataToTransfer()
+                    )
                     // clear collection of data to transfer since transfer has been completed
                     dataToTransferViewModel.clearCollectionOfDataToTransfer()
                 }
