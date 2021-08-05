@@ -95,6 +95,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
         this.dataToTransfer = dataToTransfer
         if (dataToTransfer is DataToTransfer.DeviceFile) {
             if (dataToTransfer.file.isDirectory) {
+                dataToTransfer.dataType = MediaType.File.Directory.value
                 isTransferringDirectory = true
                 directoryMediaTransferProtocol.transferMedia(
                     dataToTransfer,
