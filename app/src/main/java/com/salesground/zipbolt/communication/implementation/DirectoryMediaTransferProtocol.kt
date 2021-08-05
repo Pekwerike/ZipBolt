@@ -9,7 +9,6 @@ import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.service.DataTransferService
 import com.salesground.zipbolt.utils.getDirectorySize
 import java.io.*
-import java.util.*
 import kotlin.math.min
 
 class DirectoryMediaTransferProtocol(
@@ -19,8 +18,8 @@ class DirectoryMediaTransferProtocol(
         MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING
     private val transferBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private val receiveBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
-    private var dataSizeTransferredFromDirectory: Long = 0L
-    private var dataSizeReadFromSocket: Long = 0L
+    private var dataSizeUnreadFromDirectory: Long = 0L
+    private var dataSizeUnreadFromSocket: Long = 0L
     private val zipBoltBaseFolderDirectory: File by lazy {
         savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.FOLDERS_BASE_DIRECTORY)
     }
@@ -36,6 +35,7 @@ class DirectoryMediaTransferProtocol(
     ) {
         dataToTransfer as DataToTransfer.DeviceFile
         dataToTransfer.dataSize = dataToTransfer.file.getDirectorySize()
+        dataSizeUnreadFromDirectory = dataToTransfer.dataSize
 
         // send directory name, size, and type
         dataOutputStream.writeInt(MediaType.File.Directory.value)
@@ -95,11 +95,11 @@ class DirectoryMediaTransferProtocol(
                             0, lengthRead
                         )
                         directoryChildFileLength -= lengthRead
-                        dataSizeTransferredFromDirectory += lengthRead
+                        dataSizeUnreadFromDirectory -= lengthRead
 
                         dataTransferListener.onTransfer(
                             dataToTransfer,
-                            ((dataToTransfer.dataSize - dataSizeTransferredFromDirectory) / dataToTransfer.dataSize.toFloat()) * 100f,
+                            ((dataToTransfer.dataSize - dataSizeUnreadFromDirectory) / dataToTransfer.dataSize.toFloat()) * 100f,
                             DataToTransfer.TransferStatus.TRANSFER_ONGOING
                         )
                     }
@@ -147,7 +147,7 @@ class DirectoryMediaTransferProtocol(
 
                     dataTransferListener.onTransfer(
                         originalDataToTransfer,
-                        0f,
+                        ((originalDataToTransfer.dataSize - dataSizeUnreadFromDirectory) / originalDataToTransfer.dataSize.toFloat()) * 100f,
                         DataToTransfer.TransferStatus.TRANSFER_STARTED
                     )
 
@@ -175,11 +175,11 @@ class DirectoryMediaTransferProtocol(
                         )
 
                         directoryChildFileLength -= lengthRead
-                        dataSizeTransferredFromDirectory += lengthRead
+                        dataSizeUnreadFromDirectory -= lengthRead
 
                         dataTransferListener.onTransfer(
                             originalDataToTransfer,
-                            ((originalDataToTransfer.dataSize - dataSizeTransferredFromDirectory) / originalDataToTransfer.dataSize.toFloat()) * 100f,
+                            ((originalDataToTransfer.dataSize - dataSizeUnreadFromDirectory) / originalDataToTransfer.dataSize.toFloat()) * 100f,
                             DataToTransfer.TransferStatus.TRANSFER_ONGOING
                         )
                     }
@@ -197,7 +197,7 @@ class DirectoryMediaTransferProtocol(
         initialDirectoryName: String,
         initialDirectorySize: Long
     ) {
-
+        dataSizeUnreadFromSocket = initialDirectorySize
         // create directory file in base folders directory
         val directoryFile = File(zipBoltBaseFolderDirectory, initialDirectoryName)
         directoryFile.mkdirs()
@@ -254,7 +254,7 @@ class DirectoryMediaTransferProtocol(
                         receiveBuffer, 0,
                         min(receiveBuffer.size.toLong(), fileSize).toInt()
                     )
-                    dataSizeReadFromSocket += min(
+                    dataSizeUnreadFromSocket -= min(
                         receiveBuffer.size.toLong(),
                         fileSize
                     )
@@ -265,7 +265,7 @@ class DirectoryMediaTransferProtocol(
                     dataReceiveListener.onReceive(
                         initialDirectoryName,
                         initialDirectorySize,
-                        ((initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat()) * 100f,
+                        ((initialDirectorySize - dataSizeUnreadFromSocket) / initialDirectorySize.toFloat()) * 100f,
                         MediaType.File.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
@@ -352,11 +352,11 @@ class DirectoryMediaTransferProtocol(
                     )
 
                     directoryChildFileSize -= readSize
-                    dataSizeReadFromSocket += readSize
+                    dataSizeUnreadFromSocket -= readSize
                     dataReceiveListener.onReceive(
                         initialDirectoryName,
                         initialDirectorySize,
-                        ((initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat()) * 100f,
+                        ((initialDirectorySize - dataSizeUnreadFromSocket) / initialDirectorySize.toFloat()) * 100f,
                         MediaType.File.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING
