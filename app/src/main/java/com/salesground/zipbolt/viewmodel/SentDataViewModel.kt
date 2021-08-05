@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.salesground.zipbolt.model.DataToTransfer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class SentDataViewModel : ViewModel() {
 
@@ -26,6 +27,14 @@ class SentDataViewModel : ViewModel() {
     private val _currentDataToTransferDataItem = MutableLiveData<DataToTransfer>(null)
     val currentDataToTransferDataItem: LiveData<DataToTransfer>
         get() = _currentDataToTransferDataItem
+
+    private val _currentDataToTransferPercentTransferred = MutableLiveData(1)
+    val currentDataToTransfransferPercentTransferred: LiveData<Int>
+        get() = _currentDataToTransferPercentTransferred
+
+    fun setCurrentDataToTransferPercentTransferred(percentTransferred: Float) {
+        _currentDataToTransferPercentTransferred.value = percentTransferred.roundToInt()
+    }
 
     fun changeCurrentDataToTransferDataItem(dataToTransfer: DataToTransfer) {
         viewModelScope.launch {
