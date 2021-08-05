@@ -69,6 +69,7 @@ class SentDataFragment : Fragment() {
         sentDataViewModel.run {
             sentDataItems.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(it)
+                sentDataFragmentRecyclerViewAdapter.notifyDataSetChanged()
             }
             canceledSentDataItemIndex.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
@@ -78,11 +79,16 @@ class SentDataFragment : Fragment() {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
             }
-            currentDataToTransferDataItem.observe(this@SentDataFragment) {dataToTransfer ->
+            currentDataToTransferDataItem.observe(this@SentDataFragment) { dataToTransfer ->
                 dataToTransfer?.let {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                         this.dataToTransfer = dataToTransfer
                     }
+                }
+            }
+            currentDataToTransfransferPercentTransferred.observe(this@SentDataFragment) {
+                sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
+                    this.dataTransferPercent = it
                 }
             }
         }

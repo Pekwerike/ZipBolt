@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.directory
+package com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.directory
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -26,14 +26,14 @@ class DirectoryTransferCompleteLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): DirectoryReceiveCompleteLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup): DirectoryTransferCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<FolderTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.folder_transfer_layout_item,
                 parent,
                 false
             )
-            return DirectoryReceiveCompleteLayoutItemViewHolder(layoutBinding)
+            return DirectoryTransferCompleteLayoutItemViewHolder(layoutBinding)
         }
     }
 }

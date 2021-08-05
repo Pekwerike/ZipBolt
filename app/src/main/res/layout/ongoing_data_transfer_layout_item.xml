@@ -30,8 +30,7 @@
             app:curvedImageViewCornerRadius="0.17"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize8Percent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_data_transfer_layout_data_display_name"
@@ -91,7 +90,8 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
-            app:setFileSize="@{dataToTransfer.dataSize}" />
+            app:setTransferPercentForFileSize="@{dataTransferPercent}"
+            app:setTransferredSizeOverFileSize="@{dataToTransfer.dataSize}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

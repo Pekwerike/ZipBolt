@@ -17,7 +17,7 @@ sealed class DataToTransfer(
     var percentTransferred: Float = 0f,
     var transferStatus: TransferStatus = TransferStatus.TRANSFER_WAITING
 ) {
-    abstract val dataType: Int
+    abstract var dataType: Int
 
     enum class TransferStatus(val value: Int) {
         NO_ACTION(9),
@@ -42,7 +42,7 @@ sealed class DataToTransfer(
         dataUri = audioUri,
         dataSize = audioSize,
     ) {
-        override val dataType: Int = MediaType.Audio.value
+        override var dataType: Int = MediaType.Audio.value
     }
 
     data class DeviceImage(
@@ -58,7 +58,7 @@ sealed class DataToTransfer(
         dataUri = imageUri,
         dataSize = imageSize
     ) {
-        override val dataType: Int = MediaType.Image.value
+        override var dataType: Int = MediaType.Image.value
     }
 
     data class DeviceVideo(
@@ -73,7 +73,7 @@ sealed class DataToTransfer(
         dataUri = videoUri,
         dataSize = videoSize
     ) {
-        override val dataType: Int = MediaType.Video.value
+        override var dataType: Int = MediaType.Video.value
     }
 
     data class DeviceApplication(
@@ -86,8 +86,7 @@ sealed class DataToTransfer(
         dataUri = apkPath.toUri(),
         dataSize = appSize
     ) {
-        override val dataType: Int
-            get() = MediaType.App.value
+        override var dataType: Int = MediaType.App.value
     }
 
 
@@ -98,7 +97,7 @@ sealed class DataToTransfer(
         dataUri = Uri.fromFile(file),
         dataSize = file.length()
     ) {
-        override val dataType: Int = when {
+        override var dataType: Int = when {
             dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
                     || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")
                     || dataDisplayName.endsWith("webp") -> {

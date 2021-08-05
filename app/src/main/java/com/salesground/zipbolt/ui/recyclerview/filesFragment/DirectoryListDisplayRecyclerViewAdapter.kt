@@ -21,7 +21,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
 
     override fun getItemViewType(position: Int): Int {
         val dataItem = getItem(position) as DataToTransfer.DeviceFile
-        return dataItem.getFileType(context)
+        return dataItem.dataType
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

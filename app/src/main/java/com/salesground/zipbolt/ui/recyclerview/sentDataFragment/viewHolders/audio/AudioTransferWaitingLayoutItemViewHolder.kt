@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio
+package com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.audio
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

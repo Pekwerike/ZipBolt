@@ -32,8 +32,7 @@ fun Long.transformDataSizeToMeasuredUnit(percentSize: Long): String {
             }/${(this / 1000F).toBigDecimal().round(MathContext(3))}kb"
         }
         in 1_000_000..9_999_999 -> {
-            "${
-                (percentSize / 1_000_000F).toBigDecimal().round(MathContext(2))
+            "${(percentSize / 1_000_000F).toBigDecimal().round(MathContext(2))
             }/${(this / 1_000_000F).toBigDecimal().round(MathContext(2))}mb"
         }
         in 10_000_000..999_999_999 -> {
