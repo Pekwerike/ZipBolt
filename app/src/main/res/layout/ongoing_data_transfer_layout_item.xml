@@ -90,7 +90,8 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
-            app:setFileSize="@{dataToTransfer.dataSize}" />
+            app:setTransferPercentForFileSize="@{dataTransferPercent}"
+            app:setTransferredSizeOverFileSize="@{dataToTransfer.dataSize}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

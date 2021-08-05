@@ -93,10 +93,17 @@ fun TextView.setFolderSize(fileSize: Long?) {
 }
 
 @BindingAdapter("setTransferPercent")
-fun TextView.setTransferPercent(transferPercent: Int?){
+fun TextView.setTransferPercent(transferPercent: Int?) {
     transferPercent?.let {
         text = context.getString(R.string.data_percent_transferred, transferPercent)
     }
+}
+@BindingAdapter("setTransferPercentForFileSize", "setTransferredSizeOverFileSize", requireAll = true)
+fun TextView.setTransferPercent(transferPercent: Int?, fileSize: Long?) {
+    if (transferPercent != null && fileSize != null) {
+        text = fileSize.transformDataSizeToMeasuredUnit((transferPercent / 100) * fileSize)
+    }
+
 }
 
 @BindingAdapter("setVideoDuration", "setVideoSize", requireAll = true)
