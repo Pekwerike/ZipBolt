@@ -586,23 +586,6 @@ class MainActivity : AppCompatActivity() {
                     "Music",
                     "Files"
                 )
-                /* allMediaOnDeviceViewPager.adapter = AllMediaOnDeviceViewPager2Adapter(
-                     supportFragmentManager,
-                     lifecycle
-                 )
-                 TabLayoutMediator(
-                     allMediaOnDeviceTabLayout,
-                     allMediaOnDeviceViewPager
-                 ) { tab, position ->
-                     when (position) {
-                         0 -> tab.text = "Apps"
-                         1 -> tab.text = "Images"
-                         2 -> tab.text = "Videos"
-                         3 -> tab.text = "Music"
-                         4 -> tab.text = "Files"
-                     }
-                 }.attach()*/
-
             }
             setContentView(root)
         }
