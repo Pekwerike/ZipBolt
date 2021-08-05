@@ -107,6 +107,11 @@ class DirectoryMediaTransferProtocol(
                 }
             }
         }
+        dataTransferListener.onTransfer(
+            dataToTransfer,
+            100f,
+            DataToTransfer.TransferStatus.TRANSFER_ONGOING
+        )
     }
 
     // returns true if directory transfer was not cancelled by user
