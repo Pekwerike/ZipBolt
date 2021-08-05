@@ -54,7 +54,7 @@ class DirectoryMediaTransferProtocol(
                             directoryChild,
                             dataTransferListener
                         )
-                    ){
+                    ) {
                         return
                     }
                 } else {
@@ -99,7 +99,7 @@ class DirectoryMediaTransferProtocol(
 
                         dataTransferListener.onTransfer(
                             dataToTransfer,
-                            ((dataToTransfer.dataSize - dataSizeTransferredFromDirectory) / dataToTransfer.dataSize.toFloat()),
+                            ((dataToTransfer.dataSize - dataSizeTransferredFromDirectory) / dataToTransfer.dataSize.toFloat()) * 100f,
                             DataToTransfer.TransferStatus.TRANSFER_ONGOING
                         )
                     }
@@ -174,7 +174,7 @@ class DirectoryMediaTransferProtocol(
 
                         dataTransferListener.onTransfer(
                             originalDataToTransfer,
-                            ((originalDataToTransfer.dataSize - dataSizeTransferredFromDirectory) / originalDataToTransfer.dataSize.toFloat()),
+                            ((originalDataToTransfer.dataSize - dataSizeTransferredFromDirectory) / originalDataToTransfer.dataSize.toFloat()) * 100f,
                             DataToTransfer.TransferStatus.TRANSFER_ONGOING
                         )
                     }
@@ -260,7 +260,7 @@ class DirectoryMediaTransferProtocol(
                     dataReceiveListener.onReceive(
                         initialDirectoryName,
                         initialDirectorySize,
-                        (initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat(),
+                        ((initialDirectorySize - dataSizeReadFromSocket) / initialDirectorySize.toFloat()) * 100f,
                         MediaType.File.Directory.value,
                         null,
                         DataToTransfer.TransferStatus.TRANSFER_ONGOING
