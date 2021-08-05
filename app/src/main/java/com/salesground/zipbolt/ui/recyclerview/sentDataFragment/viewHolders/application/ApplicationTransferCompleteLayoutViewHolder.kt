@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application
+package com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.application
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -29,13 +29,12 @@ class ApplicationTransferCompleteLayoutViewHolder(
                 stopShimmer()
                 hideShimmer()
             }
-
             executePendingBindings()
         }
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): ApplicationReceiveCompleteLayoutViewHolder {
+        fun createViewHolder(parent: ViewGroup): ApplicationTransferCompleteLayoutViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<ApplicationLayoutItemTransferOrReceiveBinding>(
                     LayoutInflater.from(parent.context),
@@ -43,7 +42,7 @@ class ApplicationTransferCompleteLayoutViewHolder(
                     parent,
                     false
                 )
-            return ApplicationReceiveCompleteLayoutViewHolder(layoutBinding)
+            return ApplicationTransferCompleteLayoutViewHolder(layoutBinding)
         }
     }
 }

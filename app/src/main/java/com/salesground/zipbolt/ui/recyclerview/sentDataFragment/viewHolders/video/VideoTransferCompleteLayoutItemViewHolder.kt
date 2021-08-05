@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video
+package com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.video
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,14 +32,14 @@ class VideoTransferCompleteLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): VideoReceiveCompleteLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup): VideoTransferCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.video_transfer_layout_item,
                 parent,
                 false
             )
-            return VideoReceiveCompleteLayoutItemViewHolder(layoutBinding)
+            return VideoTransferCompleteLayoutItemViewHolder(layoutBinding)
         }
     }
 }

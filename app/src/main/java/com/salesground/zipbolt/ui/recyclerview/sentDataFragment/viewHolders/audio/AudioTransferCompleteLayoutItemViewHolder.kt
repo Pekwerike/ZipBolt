@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio
+package com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.audio
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -34,14 +34,14 @@ class AudioTransferCompleteLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): AudioReceiveCompleteLayoutItemViewHolder {
+        fun createViewHolder(parent: ViewGroup): AudioTransferCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.video_transfer_layout_item,
                 parent,
                 false
             )
-            return AudioReceiveCompleteLayoutItemViewHolder(layoutBinding)
+            return AudioTransferCompleteLayoutItemViewHolder(layoutBinding)
         }
     }
 }

@@ -13,6 +13,7 @@ import com.salesground.zipbolt.utils.formatVideoDurationToString
 import com.salesground.zipbolt.utils.parseDate
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 @BindingAdapter("addGreenHighLightToText")
 fun TextView.addGreenHighLightToText(placeHolder: String?) {
@@ -68,13 +69,7 @@ fun TextView.setConnectedDeviceDetails(deviceName: String?, deviceAddress: Strin
                 styleOffset + deviceName.length,
                 SpannableString.SPAN_INCLUSIVE_INCLUSIVE
             )
-            /*styleOffset += "$deviceName \nIp Address: ".length
-        setSpan(
-            StyleSpan(ITALIC),
-            styleOffset,
-            styleOffset + deviceAddress.length,
-            SpannableString.SPAN_INCLUSIVE_INCLUSIVE
-        )*/
+
             setSpan(
                 ForegroundColorSpan(ContextCompat.getColor(rootView.context, R.color.green_500)),
                 offset, offset + "Connected".length, SpannableString.SPAN_INCLUSIVE_INCLUSIVE
@@ -98,10 +93,15 @@ fun TextView.setTransferPercent(transferPercent: Int?) {
         text = context.getString(R.string.data_percent_transferred, transferPercent)
     }
 }
-@BindingAdapter("setTransferPercentForFileSize", "setTransferredSizeOverFileSize", requireAll = true)
+
+@BindingAdapter(
+    "setTransferPercentForFileSize",
+    "setTransferredSizeOverFileSize",
+    requireAll = true
+)
 fun TextView.setTransferPercent(transferPercent: Int?, fileSize: Long?) {
     if (transferPercent != null && fileSize != null) {
-        text = fileSize.transformDataSizeToMeasuredUnit((transferPercent / 100) * fileSize)
+        text = fileSize.transformDataSizeToMeasuredUnit(((transferPercent / 100f) * fileSize).roundToLong())
     }
 
 }

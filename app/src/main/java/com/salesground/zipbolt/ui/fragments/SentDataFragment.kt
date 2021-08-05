@@ -69,6 +69,7 @@ class SentDataFragment : Fragment() {
         sentDataViewModel.run {
             sentDataItems.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(it)
+                sentDataFragmentRecyclerViewAdapter.notifyDataSetChanged()
             }
             canceledSentDataItemIndex.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)

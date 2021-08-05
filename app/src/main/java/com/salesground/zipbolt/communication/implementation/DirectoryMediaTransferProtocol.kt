@@ -68,7 +68,7 @@ class DirectoryMediaTransferProtocol(
 
                     dataTransferListener.onTransfer(
                         dataToTransfer,
-                        0f,
+                        ((dataToTransfer.dataSize - dataSizeUnreadFromDirectory) / dataToTransfer.dataSize.toFloat()) * 100f,
                         DataToTransfer.TransferStatus.TRANSFER_STARTED
                     )
                     var lengthRead: Int
