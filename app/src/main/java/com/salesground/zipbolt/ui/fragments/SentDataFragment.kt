@@ -78,11 +78,16 @@ class SentDataFragment : Fragment() {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
             }
-            currentDataToTransferDataItem.observe(this@SentDataFragment) {dataToTransfer ->
+            currentDataToTransferDataItem.observe(this@SentDataFragment) { dataToTransfer ->
                 dataToTransfer?.let {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                         this.dataToTransfer = dataToTransfer
                     }
+                }
+            }
+            currentDataToTransfransferPercentTransferred.observe(this@SentDataFragment) {
+                sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
+                    this.dataTransferPercent = it
                 }
             }
         }

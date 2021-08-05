@@ -33,7 +33,9 @@ class SentDataViewModel : ViewModel() {
         get() = _currentDataToTransferPercentTransferred
 
     fun setCurrentDataToTransferPercentTransferred(percentTransferred: Float) {
-        _currentDataToTransferPercentTransferred.value = percentTransferred.roundToInt()
+        viewModelScope.launch(Dispatchers.Main) {
+            _currentDataToTransferPercentTransferred.value = percentTransferred.roundToInt()
+        }
     }
 
     fun changeCurrentDataToTransferDataItem(dataToTransfer: DataToTransfer) {
