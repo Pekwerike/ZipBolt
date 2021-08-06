@@ -54,10 +54,8 @@ class FilesFragment : Fragment() {
             DirectoryListDisplayRecyclerViewAdapter(requireContext(),
                 DataToTransferRecyclerViewItemClickListener {
                     if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
-                        dataToTransferViewModel.collectionOfDataToTransfer.remove(it)
                         mainActivity?.removeFromDataToTransferList(it)
                     } else {
-                        dataToTransferViewModel.collectionOfDataToTransfer.add(it)
                         mainActivity?.addToDataToTransferList(it)
                     }
                 }, DataToTransferRecyclerViewItemClickListener {

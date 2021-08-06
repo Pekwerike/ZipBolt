@@ -49,14 +49,12 @@ class VideoLayoutItemViewHolder(
 
                     if (selectedVideos.contains(dataToTransfer)) {
                         // user un-selected, so remove the video from the collection of selected videos
-                        setIsViewSelected(false)
-                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
-                        selectedVideos.remove(dataToTransfer)
-                    } else {
-                        // user selects, so add the application to the collection of selected videos
                         setIsViewSelected(true)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = true
-                        selectedVideos.add(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
                     }
                 }
 
@@ -67,14 +65,12 @@ class VideoLayoutItemViewHolder(
 
                     if (selectedVideos.contains(dataToTransfer)) {
                         // user un-selected, so remove the video from the collection of selected videos
-                        setIsViewSelected(false)
-                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
-                        selectedVideos.remove(dataToTransfer)
-                    } else {
-                        // user selects, so add the application to the collection of selected videos
                         setIsViewSelected(true)
                         videoLayoutItemVideoSelectedCheckBox.isChecked = true
-                        selectedVideos.add(dataToTransfer)
+                    } else {
+                        // user selects, so add the application to the collection of selected videos
+                        setIsViewSelected(false)
+                        videoLayoutItemVideoSelectedCheckBox.isChecked = false
                     }
                 }
 
