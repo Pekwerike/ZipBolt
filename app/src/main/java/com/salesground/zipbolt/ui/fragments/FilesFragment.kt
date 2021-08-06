@@ -14,6 +14,7 @@ import com.salesground.zipbolt.databinding.FragmentFilesBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.filesFragment.DirectoryListDisplayRecyclerViewAdapter
+import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.FileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -28,11 +29,13 @@ class FilesFragment : Fragment() {
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
     private var mainActivity: MainActivity? = null
 
+    private val fileViewModel: FileViewModel by activityViewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
+
     companion object {
         var backStackCount: Int = 0
     }
 
-    private val fileViewModel: FileViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let {
@@ -50,17 +53,17 @@ class FilesFragment : Fragment() {
         directoryListDisplayRecyclerViewAdapter =
             DirectoryListDisplayRecyclerViewAdapter(requireContext(),
                 DataToTransferRecyclerViewItemClickListener {
-                    if (fileViewModel.selectedFilesForTransfer.contains(it)) {
-                        fileViewModel.selectedFilesForTransfer.remove(it)
+                    if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
+                        dataToTransferViewModel.collectionOfDataToTransfer.remove(it)
                         mainActivity?.removeFromDataToTransferList(it)
                     } else {
-                        fileViewModel.selectedFilesForTransfer.add(it)
+                        dataToTransferViewModel.collectionOfDataToTransfer.add(it)
                         mainActivity?.addToDataToTransferList(it)
                     }
                 }, DataToTransferRecyclerViewItemClickListener {
                     backStackCount++
                     fileViewModel.moveToDirectory(it)
-                }, fileViewModel.selectedFilesForTransfer
+                }, dataToTransferViewModel.collectionOfDataToTransfer
             )
         recyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeViewModelLiveData()
