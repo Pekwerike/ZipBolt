@@ -97,6 +97,15 @@ open class ZipBoltImageRepository @Inject constructor(
         return deviceImages
     }
 
+    override suspend fun insertImageIntoMediaStore(
+        displayName: String,
+        size: Long,
+        dataInputStream: DataInputStream,
+        transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
+        dataReceiveListener: MediaTransferProtocol.DataReceiveListener
+    ) {
+    }
+
 
     protected fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {
