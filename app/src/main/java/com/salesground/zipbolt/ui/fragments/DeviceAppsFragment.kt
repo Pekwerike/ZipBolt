@@ -28,7 +28,7 @@ class DeviceAppsFragment : Fragment() {
     private lateinit var applicationFragmentAppsDisplayRecyclerViewAdapter: ApplicationFragmentAppsDisplayRecyclerViewAdapter
     private lateinit var applicationFragmentAppsDisplayLayoutManager: GridLayoutManager
     private lateinit var fragmentAppBinding: FragmentAppBinding
-    private var spanCount: Int = 3
+    private var spanCount: Int = 0
     private var mainActivity: MainActivity? = null
 
     @Inject
@@ -64,12 +64,12 @@ class DeviceAppsFragment : Fragment() {
                 },
                 dataToTransferViewModel.collectionOfDataToTransfer
             )
+
+        spanCount = getSpanCount()
         applicationFragmentAppsDisplayLayoutManager = GridLayoutManager(
             requireContext(),
             spanCount
         )
-
-        spanCount = getSpanCount()
         observeViewModelLiveData()
     }
 

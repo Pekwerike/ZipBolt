@@ -42,7 +42,7 @@ class DeviceImageViewHolder(
                 .placeholder(imagePlaceHolder)
                 .into(deviceImageDisplayImageView)
 
-            if (clickedImages.contains(data)) {
+            if (clickedImages.contains(data.deviceImage)) {
                 deviceImageDisplayImageView.scaleX = 0.7f
                 deviceImageDisplayImageView.scaleY = 0.7f
                 deviceImageDisplayImageViewGroup.foreground =
@@ -56,7 +56,7 @@ class DeviceImageViewHolder(
             }
 
             deviceImageDisplayImageViewGroup.setOnClickListener {
-                if (clickedImages.contains(data)) {
+                if (clickedImages.contains(data.deviceImage)) {
                     deviceImageDisplayImageView.scaleUpAnimation(
                         parent = deviceImageDisplayImageViewGroup,
                         currentParentForegroundColor = DeviceImageViewHolderConstants.unClickedForegroundOverlayColor
