@@ -26,7 +26,6 @@ interface ImageRepository {
         dataReceiveListener: DataReceiveListener
     )
 
-    suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer
     suspend fun getImagesOnDevice(limit: Int = 0): MutableList<DataToTransfer>
 
 }

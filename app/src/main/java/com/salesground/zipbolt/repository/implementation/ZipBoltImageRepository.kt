@@ -97,55 +97,6 @@ open class ZipBoltImageRepository @Inject constructor(
         return deviceImages
     }
 
-    override suspend fun insertImageIntoMediaStore(
-        displayName: String,
-        size: Long,
-        dataInputStream: DataInputStream,
-        transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
-        dataReceiveListener: MediaTransferProtocol.DataReceiveListener
-    ) {
-    }
-
-    override suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer {
-        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-        val projection = arrayOf(
-            MediaStore.Images.Media.MIME_TYPE,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DISPLAY_NAME
-        )
-        val selection = "${MediaStore.Images.Media._ID} =? "
-        val selectionArguments = arrayOf(image.imageId.toString())
-
-        applicationContext.contentResolver.query(
-            collection,
-            projection,
-            selection,
-            selectionArguments,
-            null
-        )?.let { cursor ->
-            if (cursor.moveToFirst()) {
-                //val imageMimeType =
-                //  cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
-                val imageSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.SIZE))
-                val imageDisplayName =
-                    cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
-
-                return image.apply {
-                    this.dataDisplayName = imageDisplayName
-                    //  this.dataType = imageMimeType
-                    this.dataSize = imageSize
-                    this.imageMimeType = imageMimeType
-                    this.imageSize = imageSize
-                    this.imageDisplayName = imageDisplayName
-                }
-            }
-        }
-        return image
-    }
 
     protected fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {
