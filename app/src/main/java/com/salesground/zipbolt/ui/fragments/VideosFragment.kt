@@ -40,10 +40,10 @@ class VideosFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
+                /*videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
                     videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
                     videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
-                )
+                )*/
             }
         }
     )
@@ -96,6 +96,12 @@ class VideosFragment : Fragment() {
     private fun observeVideoViewModelLiveData() {
         videoViewModel.allVideosOnDevice.observe(this) {
             videoFragmentRecyclerViewAdapter.submitList(it)
+        }
+        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+            videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
+                videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
+                videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
+            )
         }
     }
 

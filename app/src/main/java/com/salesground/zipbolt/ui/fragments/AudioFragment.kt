@@ -27,6 +27,7 @@ import javax.inject.Inject
 class AudioFragment : Fragment() {
     private lateinit var fragmentAudioBinding: FragmentAudioBinding
     private lateinit var audioFragmentRecyclerViewAdapter: AudioFragmentRecyclerViewAdapter
+    private lateinit var audioFragmentRecyclerViewLayoutManager: LinearLayoutManager
     private var mainActivity: MainActivity? = null
     private val audioViewModel: AudioViewModel by activityViewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
@@ -38,7 +39,7 @@ class AudioFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                audioFragmentRecyclerViewAdapter.notifyDataSetChanged()
+
             }
         }
     )
@@ -59,6 +60,7 @@ class AudioFragment : Fragment() {
             },
             dataToTransferViewModel.collectionOfDataToTransfer
         )
+        audioFragmentRecyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeAudioViewModelLiveData()
     }
 
@@ -77,7 +79,7 @@ class AudioFragment : Fragment() {
         fragmentAudioBinding.run {
             fragmentMusicRecyclerview.run {
                 adapter = audioFragmentRecyclerViewAdapter
-                layoutManager = LinearLayoutManager(requireContext())
+                layoutManager = audioFragmentRecyclerViewLayoutManager
                 addItemDecoration(
                     HalfLineRecyclerViewCustomDivider(
                         requireContext(),
@@ -91,6 +93,12 @@ class AudioFragment : Fragment() {
     private fun observeAudioViewModelLiveData() {
         audioViewModel.deviceAudio.observe(this) {
             audioFragmentRecyclerViewAdapter.submitList(it)
+        }
+        dataToTransferViewModel.sentDataButtonClicked.observe(this){
+            audioFragmentRecyclerViewAdapter.notifyItemRangeChanged(
+                audioFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
+                audioFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
+            )
         }
     }
 

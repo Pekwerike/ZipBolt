@@ -38,10 +38,10 @@ class DeviceAppsFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+               /* applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
                     applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
                     applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
-                )
+                )*/
             }
         }
     )
@@ -93,13 +93,18 @@ class DeviceAppsFragment : Fragment() {
     }
 
     private fun observeViewModelLiveData() {
-        with(applicationsViewModel) {
-            allApplicationsOnDevice.observe(this@DeviceAppsFragment) {
-                it?.let {
-                    applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
-                }
+        applicationsViewModel.allApplicationsOnDevice.observe(this@DeviceAppsFragment) {
+            it?.let {
+                applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
             }
         }
+        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+            applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+                applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
+                applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
+            )
+        }
+
     }
 
     private fun getSpanCount(): Int {

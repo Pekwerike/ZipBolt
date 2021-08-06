@@ -7,6 +7,10 @@ import com.salesground.zipbolt.model.DataToTransfer
 
 class DataToTransferViewModel : ViewModel() {
 
+    private val _sentDataButtonClicked = MutableLiveData(false)
+    val sentDataButtonClicked: LiveData<Boolean>
+        get() = _sentDataButtonClicked
+
     private var _collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
     val collectionOfDataToTransfer: MutableList<DataToTransfer>
         get() = _collectionOfDataToTransfer
@@ -22,4 +26,9 @@ class DataToTransferViewModel : ViewModel() {
     fun clearCollectionOfDataToTransfer() {
         _collectionOfDataToTransfer = mutableListOf()
     }
+
+    fun sentDataButtonClicked() {
+        _sentDataButtonClicked.value = true
+    }
+
 }

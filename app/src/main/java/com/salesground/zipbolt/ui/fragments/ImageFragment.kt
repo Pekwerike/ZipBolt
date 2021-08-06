@@ -50,10 +50,10 @@ class ImageFragment : Fragment() {
             override fun sendDataButtonClicked() {
                 // tell the view model to clear the collection of clicked images and notify
                 // the recycler that all clicked images have been sent
-                dAdapter.notifyItemRangeChanged(
+                /*dAdapter.notifyItemRangeChanged(
                     gridLayoutManager.findFirstVisibleItemPosition(),
                     gridLayoutManager.findLastVisibleItemPosition()
-                )
+                )*/
             }
         }
     )
@@ -149,6 +149,12 @@ class ImageFragment : Fragment() {
                     }
                 }
             }
+        }
+        dataToTransferViewModel.sentDataButtonClicked.observe(this){
+            dAdapter.notifyItemRangeChanged(
+                gridLayoutManager.findFirstVisibleItemPosition(),
+                gridLayoutManager.findLastVisibleItemPosition()
+            )
         }
     }
 
