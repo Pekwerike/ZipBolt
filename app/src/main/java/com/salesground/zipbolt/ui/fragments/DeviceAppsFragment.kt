@@ -99,10 +99,13 @@ class DeviceAppsFragment : Fragment() {
             }
         }
         dataToTransferViewModel.sentDataButtonClicked.observe(this) {
-            applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
-                applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
-                applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
-            )
+            it.getEvent(javaClass.name)?.let {
+                applicationFragmentAppsDisplayRecyclerViewAdapter.selectedApplications = dataToTransferViewModel.collectionOfDataToTransfer
+                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+                    applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
+                    applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
+                )
+            }
         }
 
     }

@@ -36,6 +36,8 @@ class DeviceImageViewHolder(
         onClick: (ImagesDisplayModel.DeviceImageDisplay) -> Unit,
         clickedImages: MutableList<DataToTransfer>
     ) {
+
+
         imageLayoutItemBinding.apply {
             Glide.with(root.context)
                 .load(data.deviceImage.imageUri)

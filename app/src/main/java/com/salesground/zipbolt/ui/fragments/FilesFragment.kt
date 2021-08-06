@@ -51,17 +51,16 @@ class FilesFragment : Fragment() {
         }
 
         directoryListDisplayRecyclerViewAdapter =
-            DirectoryListDisplayRecyclerViewAdapter(requireContext(),
-                DataToTransferRecyclerViewItemClickListener {
-                    if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
-                        mainActivity?.removeFromDataToTransferList(it)
-                    } else {
-                        mainActivity?.addToDataToTransferList(it)
-                    }
-                }, DataToTransferRecyclerViewItemClickListener {
-                    backStackCount++
-                    fileViewModel.moveToDirectory(it)
-                }, dataToTransferViewModel.collectionOfDataToTransfer
+            DirectoryListDisplayRecyclerViewAdapter(DataToTransferRecyclerViewItemClickListener {
+                if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
+                    mainActivity?.removeFromDataToTransferList(it)
+                } else {
+                    mainActivity?.addToDataToTransferList(it)
+                }
+            }, DataToTransferRecyclerViewItemClickListener {
+                backStackCount++
+                fileViewModel.moveToDirectory(it)
+            }, dataToTransferViewModel.collectionOfDataToTransfer
             )
         recyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeViewModelLiveData()
@@ -136,6 +135,16 @@ class FilesFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+            it.getEvent(javaClass.name)?.let {
+                directoryListDisplayRecyclerViewAdapter.filesSelectedForTransfer =
+                    dataToTransferViewModel.collectionOfDataToTransfer
+                directoryListDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+                    recyclerViewLayoutManager.findFirstVisibleItemPosition(),
+                    recyclerViewLayoutManager.findLastVisibleItemPosition()
+                )
             }
         }
     }

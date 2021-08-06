@@ -16,7 +16,7 @@ enum class DeviceImagesDisplayViewHolderType(val type: Int) {
 
 class DeviceImagesDisplayRecyclerViewAdapter(
     private val onImageClicked: (ImagesDisplayModel) -> Unit,
-    private val imagesClicked: MutableList<DataToTransfer>
+    var imagesClicked: MutableList<DataToTransfer>
 ) : ListAdapter<ImagesDisplayModel, RecyclerView.ViewHolder>(DeviceImagesDisplayRecyclerViewDiffUtil) {
 
 

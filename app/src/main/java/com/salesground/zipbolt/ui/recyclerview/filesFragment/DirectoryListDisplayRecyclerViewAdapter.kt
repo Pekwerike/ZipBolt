@@ -11,10 +11,9 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.filesFragment.viewholders.*
 
 class DirectoryListDisplayRecyclerViewAdapter(
-    private val context: Context,
     private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
     private val folderClickedListener: DataToTransferRecyclerViewItemClickListener<String>,
-    private val filesSelectedForTransfer: MutableList<DataToTransfer>
+    var filesSelectedForTransfer: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer,
         RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
 
