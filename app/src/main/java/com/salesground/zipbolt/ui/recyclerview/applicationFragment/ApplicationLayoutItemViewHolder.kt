@@ -21,15 +21,9 @@ class ApplicationLayoutItemViewHolder(
         selectedApplications: MutableList<DataToTransfer>
     ) {
         dataToTransfer as DataToTransfer.DeviceApplication
+
         with(applicationLayoutItemBinding) {
-            applicationName = if (dataToTransfer.applicationName?.startsWith("Google", true) == true
-                && dataToTransfer.applicationName.trim().length != 6
-            ) {
-                dataToTransfer.applicationName.subSequence(7, dataToTransfer.applicationName.length)
-                    .trim().toString()
-            } else {
-                dataToTransfer.applicationName
-            }
+            applicationName = dataToTransfer.applicationName
             applicationSizeFormattedAsString =
                 dataToTransfer.appSize.transformDataSizeToMeasuredUnit()
 
@@ -44,13 +38,9 @@ class ApplicationLayoutItemViewHolder(
                     )
 
                     if (selectedApplications.contains(dataToTransfer)) {
-                        setIsViewSelected(false)
-                        // user un-selected, so remove the application from the collection
-                        selectedApplications.remove(dataToTransfer)
-                    } else {
                         setIsViewSelected(true)
-                        // user selects, so add the application to the collection of clicked application
-                        selectedApplications.add(dataToTransfer)
+                    } else {
+                        setIsViewSelected(false)
                     }
                 }
                 if (selectedApplications.contains(dataToTransfer)) {

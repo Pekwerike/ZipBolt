@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ImageLayoutItemBinding
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import com.salesground.zipbolt.ui.animationutils.scaleDownAnimation
 import com.salesground.zipbolt.ui.animationutils.scaleUpAnimation
@@ -33,7 +34,7 @@ class DeviceImageViewHolder(
     fun bindImageDisplay(
         data: ImagesDisplayModel.DeviceImageDisplay,
         onClick: (ImagesDisplayModel.DeviceImageDisplay) -> Unit,
-        clickedImages: ArrayMap<ImagesDisplayModel, Boolean>
+        clickedImages: MutableList<DataToTransfer>
     ) {
         imageLayoutItemBinding.apply {
             Glide.with(root.context)
@@ -41,7 +42,7 @@ class DeviceImageViewHolder(
                 .placeholder(imagePlaceHolder)
                 .into(deviceImageDisplayImageView)
 
-            if (clickedImages.contains(data)) {
+            if (clickedImages.contains(data.deviceImage)) {
                 deviceImageDisplayImageView.scaleX = 0.7f
                 deviceImageDisplayImageView.scaleY = 0.7f
                 deviceImageDisplayImageViewGroup.foreground =
@@ -55,7 +56,7 @@ class DeviceImageViewHolder(
             }
 
             deviceImageDisplayImageViewGroup.setOnClickListener {
-                if (clickedImages.contains(data)) {
+                if (clickedImages.contains(data.deviceImage)) {
                     deviceImageDisplayImageView.scaleUpAnimation(
                         parent = deviceImageDisplayImageViewGroup,
                         currentParentForegroundColor = DeviceImageViewHolderConstants.unClickedForegroundOverlayColor

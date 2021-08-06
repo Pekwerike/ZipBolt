@@ -17,15 +17,18 @@ import com.salesground.zipbolt.databinding.FragmentAppBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.ApplicationsViewModel
+import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DeviceAppsFragment : Fragment() {
     private val applicationsViewModel: ApplicationsViewModel by activityViewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
     private lateinit var applicationFragmentAppsDisplayRecyclerViewAdapter: ApplicationFragmentAppsDisplayRecyclerViewAdapter
+    private lateinit var applicationFragmentAppsDisplayLayoutManager: GridLayoutManager
     private lateinit var fragmentAppBinding: FragmentAppBinding
-    private var spanCount: Int = 3
+    private var spanCount: Int = 0
     private var mainActivity: MainActivity? = null
 
     @Inject
@@ -35,10 +38,10 @@ class DeviceAppsFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                if (applicationsViewModel.selectedApplications.isNotEmpty()) {
-                    applicationsViewModel.clearCollectionOfSelectedApps()
-                    applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
-                }
+               /* applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+                    applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
+                    applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
+                )*/
             }
         }
     )
@@ -53,30 +56,20 @@ class DeviceAppsFragment : Fragment() {
         applicationFragmentAppsDisplayRecyclerViewAdapter =
             ApplicationFragmentAppsDisplayRecyclerViewAdapter(
                 DataToTransferRecyclerViewItemClickListener {
-                    if (applicationsViewModel.selectedApplications.contains(it)) {
+                    if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                         mainActivity?.removeFromDataToTransferList(it)
                     } else {
                         mainActivity?.addToDataToTransferList(it)
                     }
                 },
-                applicationsViewModel.selectedApplications
+                dataToTransferViewModel.collectionOfDataToTransfer
             )
-        spanCount = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
-                    3
-                } else {
-                    4
-                }
-            }
-            else -> {
-                if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
-                    5
-                } else {
-                    7
-                }
-            }
-        }
+
+        spanCount = getSpanCount()
+        applicationFragmentAppsDisplayLayoutManager = GridLayoutManager(
+            requireContext(),
+            spanCount
+        )
         observeViewModelLiveData()
     }
 
@@ -94,18 +87,40 @@ class DeviceAppsFragment : Fragment() {
         with(fragmentAppBinding) {
             fragmentAppDeviceApplicationsDisplayRecyclerview.adapter =
                 applicationFragmentAppsDisplayRecyclerViewAdapter
-            fragmentAppDeviceApplicationsDisplayRecyclerview.layoutManager = GridLayoutManager(
-                requireContext(),
-                spanCount
-            )
+            fragmentAppDeviceApplicationsDisplayRecyclerview.layoutManager =
+                applicationFragmentAppsDisplayLayoutManager
         }
     }
 
     private fun observeViewModelLiveData() {
-        with(applicationsViewModel) {
-            allApplicationsOnDevice.observe(this@DeviceAppsFragment) {
-                it?.let {
-                    applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
+        applicationsViewModel.allApplicationsOnDevice.observe(this@DeviceAppsFragment) {
+            it?.let {
+                applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
+            }
+        }
+        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+            applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+                applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
+                applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
+            )
+        }
+
+    }
+
+    private fun getSpanCount(): Int {
+        return when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
+                    3
+                } else {
+                    4
+                }
+            }
+            else -> {
+                if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
+                    5
+                } else {
+                    7
                 }
             }
         }

@@ -5,6 +5,7 @@ import androidx.collection.ArrayMap
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 
 enum class DeviceImagesDisplayViewHolderType(val type: Int) {
@@ -15,7 +16,7 @@ enum class DeviceImagesDisplayViewHolderType(val type: Int) {
 
 class DeviceImagesDisplayRecyclerViewAdapter(
     private val onImageClicked: (ImagesDisplayModel) -> Unit,
-    private val imagesClicked: ArrayMap<ImagesDisplayModel, Boolean>
+    private val imagesClicked: MutableList<DataToTransfer>
 ) : ListAdapter<ImagesDisplayModel, RecyclerView.ViewHolder>(DeviceImagesDisplayRecyclerViewDiffUtil) {
 
 

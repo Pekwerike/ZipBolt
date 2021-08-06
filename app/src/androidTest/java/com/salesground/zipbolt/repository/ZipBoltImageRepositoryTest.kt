@@ -47,9 +47,7 @@ class ZipBoltImageRepositoryTest {
 
     @Test
     fun test_getMetaDataOfImage() = runBlocking {
-        var firstImage = zipBoltImageRepository.getImagesOnDevice().first()
-        firstImage =
-            zipBoltImageRepository.getMetaDataOfImage(firstImage as DataToTransfer.DeviceImage) as DataToTransfer.DeviceImage
+        var firstImage = zipBoltImageRepository.getImagesOnDevice().first() as DataToTransfer.DeviceImage
         assert(firstImage.imageMimeType.contains("image"))
         assert(firstImage.imageSize > 10)
         assert(firstImage.imageDisplayName != "")
@@ -57,10 +55,7 @@ class ZipBoltImageRepositoryTest {
 
     @Test
     fun test_imageUriHoldsADrawable() = runBlocking {
-        var firstImage = zipBoltImageRepository.getImagesOnDevice().first()
-        firstImage =
-            zipBoltImageRepository.getMetaDataOfImage(firstImage as DataToTransfer.DeviceImage) as DataToTransfer.DeviceImage
-
+        var firstImage = zipBoltImageRepository.getImagesOnDevice().first() as DataToTransfer.DeviceImage
         assert(Glide.with(context).load(firstImage.imageUri).submit().get() != null)
     }
 }

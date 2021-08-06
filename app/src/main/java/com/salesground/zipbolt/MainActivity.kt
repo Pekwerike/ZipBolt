@@ -557,16 +557,16 @@ class MainActivity : AppCompatActivity() {
                     localBroadcastManager.sendBroadcast(sendDataClickedIntent)
 
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
-                        dataToTransferViewModel.getCollectionOfDataToTransfer()
+                        dataToTransferViewModel.collectionOfDataToTransfer
                     )
                     sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.getCollectionOfDataToTransfer()
+                        dataToTransferViewModel.collectionOfDataToTransfer
                     )
                     // clear collection of data to transfer since transfer has been completed
                     dataToTransferViewModel.clearCollectionOfDataToTransfer()
+                    dataToTransferViewModel.sentDataButtonClicked()
                 }
             }
 

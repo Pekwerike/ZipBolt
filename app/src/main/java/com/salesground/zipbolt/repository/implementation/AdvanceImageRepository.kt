@@ -23,8 +23,9 @@ class AdvanceImageRepository @Inject constructor(
     private val contentValues = ContentValues()
     private var mediaSize: Long = 0L
     private var verifiedImageName: String = ""
-    private val imagesBaseDirectory =
+    private val imagesBaseDirectory by lazy {
         savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.IMAGES_BASE_DIRECTORY)
+    }
     private lateinit var imageFile: File
     private lateinit var imageFileBufferedOutputStream: BufferedOutputStream
     private var currentTime: Long = 0L
@@ -43,7 +44,6 @@ class AdvanceImageRepository @Inject constructor(
         imageFileBufferedOutputStream = BufferedOutputStream(FileOutputStream(imageFile))
         val naturalCurrentTime = System.currentTimeMillis()
         currentTime = naturalCurrentTime / 1000
-
         contentValues.clear()
         contentValues.apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, imageFile.name)

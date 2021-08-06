@@ -16,9 +16,6 @@ import javax.inject.Inject
 class ApplicationsViewModel @Inject constructor(
     private val applicationsRepositoryInterface: ApplicationsRepositoryInterface
 ) : ViewModel() {
-    // the view model is going to hold all clicked applications from the
-    // ApplicationFragmentAppsDisplayRecyclerViewAdapter
-    val selectedApplications: MutableList<DataToTransfer> = mutableListOf()
 
     private var allNonSystemAppsOnDevice = listOf<DataToTransfer>()
     private val _allApplicationsOnDevice = MutableLiveData<List<DataToTransfer>>(
@@ -40,7 +37,4 @@ class ApplicationsViewModel @Inject constructor(
         }
     }
 
-    fun clearCollectionOfSelectedApps() {
-        selectedApplications.clear()
-    }
 }

@@ -25,63 +25,75 @@ open class ZipBoltImageRepository @Inject constructor(
 
     override suspend fun getImagesOnDevice(limit: Int): MutableList<DataToTransfer> {
         val deviceImages = mutableListOf<DataToTransfer>()
-            val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-            } else {
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            }
-            val projection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                arrayOf(
-                    MediaStore.Images.Media._ID,
-                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                    MediaStore.Images.Media.DATE_MODIFIED
-                )
-            } else {
-                arrayOf(
-                    MediaStore.Images.Media._ID,
-                    MediaStore.Images.Media.DATA,
-                    MediaStore.Images.Media.DATE_MODIFIED
-                )
-            }
-            val sortOrder =
-                if (limit != 0) "${MediaStore.Images.Media.DATE_MODIFIED} DESC LIMIT $limit"
-                else "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
+        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        } else {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        }
+        val projection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.Media.DATE_MODIFIED,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.DISPLAY_NAME
+            )
+        } else {
+            arrayOf(
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.DATE_MODIFIED,
+                MediaStore.Images.Media.SIZE,
+                MediaStore.Images.Media.DISPLAY_NAME
+            )
+        }
+        val sortOrder =
+            if (limit != 0) "${MediaStore.Images.Media.DATE_MODIFIED} DESC LIMIT $limit"
+            else "${MediaStore.Images.Media.DATE_MODIFIED} DESC"
 
-            applicationContext.contentResolver.query(
-                collection,
-                projection,
-                null,
-                null,
-                sortOrder
-            )?.let { cursor ->
-                val imageIdColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
-                val imageDateModifiedColumnIndex =
-                    cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
-                val imageBucketNameIndex = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-                } else {
-                    cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                }
-                while (cursor.moveToNext()) {
-                    val imageId = cursor.getLong(imageIdColumnIndex)
-                    val imageDateModified = cursor.getLong(imageDateModifiedColumnIndex)
-                    val imageBucketDisplayName =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            cursor.getString(imageBucketNameIndex)
-                        } else {
-                            File(cursor.getString(imageBucketNameIndex)).parentFile!!.name
-                        }
+        applicationContext.contentResolver.query(
+            collection,
+            projection,
+            null,
+            null,
+            sortOrder
+        )?.let { cursor ->
+            val imageIdColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+            val imageDateModifiedColumnIndex =
+                cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
+            val imageBucketNameIndex = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+            } else {
+                cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+            }
+            val imageSizeColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE)
+            val imageDisplayNameColumnIndex =
+                cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+            while (cursor.moveToNext()) {
+                val imageId = cursor.getLong(imageIdColumnIndex)
+                val imageDateModified = cursor.getLong(imageDateModifiedColumnIndex)
+                val imageBucketDisplayName =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        cursor.getString(imageBucketNameIndex)
+                    } else {
+                        File(cursor.getString(imageBucketNameIndex)).parentFile!!.name
+                    }
+                val imageSize = cursor.getLong(imageSizeColumnIndex)
+                val imageDisplayName = cursor.getString(imageDisplayNameColumnIndex)
 
-                    deviceImages.add(
-                        DataToTransfer.DeviceImage(
-                            imageId = imageId,
-                            imageUri = ContentUris.withAppendedId(collection, imageId),
-                            imageDateModified = (imageDateModified * 1000).parseDate(),
-                            imageBucketName = imageBucketDisplayName
-                        )
+                deviceImages.add(
+                    DataToTransfer.DeviceImage(
+                        imageId = imageId,
+                        imageUri = ContentUris.withAppendedId(collection, imageId),
+                        imageDateModified = (imageDateModified * 1000).parseDate(),
+                        imageBucketName = imageBucketDisplayName,
+                        imageDisplayName = imageDisplayName,
+                        imageMimeType = "image/*",
+                        imageSize = imageSize
                     )
-                }
+                )
             }
+        }
         return deviceImages
     }
 
@@ -94,46 +106,6 @@ open class ZipBoltImageRepository @Inject constructor(
     ) {
     }
 
-    override suspend fun getMetaDataOfImage(image: DataToTransfer.DeviceImage): DataToTransfer {
-        val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-        val projection = arrayOf(
-            MediaStore.Images.Media.MIME_TYPE,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DISPLAY_NAME
-        )
-        val selection = "${MediaStore.Images.Media._ID} =? "
-        val selectionArguments = arrayOf(image.imageId.toString())
-
-        applicationContext.contentResolver.query(
-            collection,
-            projection,
-            selection,
-            selectionArguments,
-            null
-        )?.let { cursor ->
-            if (cursor.moveToFirst()) {
-                //val imageMimeType =
-                  //  cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE))
-                val imageSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Images.Media.SIZE))
-                val imageDisplayName =
-                    cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME))
-
-               return image.apply {
-                   this.dataDisplayName = imageDisplayName
-                 //  this.dataType = imageMimeType
-                   this.dataSize = imageSize
-                   this.imageMimeType = imageMimeType
-                   this.imageSize = imageSize
-                   this.imageDisplayName = imageDisplayName
-               }
-            }
-        }
-        return image
-    }
 
     protected fun confirmImageName(mediaName: String?): String {
         return if (mediaName != null) {

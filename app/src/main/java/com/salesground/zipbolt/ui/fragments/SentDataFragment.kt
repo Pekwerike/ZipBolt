@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentSentDataBinding
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
-import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
 
 
@@ -86,7 +84,7 @@ class SentDataFragment : Fragment() {
                     }
                 }
             }
-            currentDataToTransfransferPercentTransferred.observe(this@SentDataFragment) {
+            currentDataToTransferPercentTransferred.observe(this@SentDataFragment) {
                 sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                     this.dataTransferPercent = it
                 }
