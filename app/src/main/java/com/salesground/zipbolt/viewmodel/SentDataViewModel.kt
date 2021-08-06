@@ -29,7 +29,7 @@ class SentDataViewModel : ViewModel() {
         get() = _currentDataToTransferDataItem
 
     private val _currentDataToTransferPercentTransferred = MutableLiveData(1)
-    val currentDataToTransfransferPercentTransferred: LiveData<Int>
+    val currentDataToTransferPercentTransferred: LiveData<Int>
         get() = _currentDataToTransferPercentTransferred
 
     fun setCurrentDataToTransferPercentTransferred(percentTransferred: Float) {

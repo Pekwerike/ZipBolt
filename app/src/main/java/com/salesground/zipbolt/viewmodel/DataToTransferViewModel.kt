@@ -7,7 +7,9 @@ import com.salesground.zipbolt.model.DataToTransfer
 
 class DataToTransferViewModel : ViewModel() {
 
-    private var collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
+    private var _collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
+    val collectionOfDataToTransfer: MutableList<DataToTransfer>
+        get() = _collectionOfDataToTransfer
 
     fun addDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.add(dataToTransfer)
@@ -18,12 +20,6 @@ class DataToTransferViewModel : ViewModel() {
     }
 
     fun clearCollectionOfDataToTransfer() {
-        collectionOfDataToTransfer = mutableListOf()
+        _collectionOfDataToTransfer = mutableListOf()
     }
-
-    fun getCollectionOfDataToTransfer(): MutableList<DataToTransfer> {
-        return collectionOfDataToTransfer
-    }
-
-
 }

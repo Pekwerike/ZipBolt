@@ -22,6 +22,7 @@ import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
+import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -31,11 +32,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ImageFragment : Fragment() {
     private val imagesViewModel: ImagesViewModel by activityViewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
+    private lateinit var gridLayoutManager: GridLayoutManager
     private var mainActivity: MainActivity? = null
     private lateinit var imageCategoryChipGroup: ChipGroup
     private lateinit var imageFragmentImageBinding: FragmentImageBinding
     private lateinit var asyncLayoutInflater: AsyncLayoutInflater
+    private var spanCount: Int = 3
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -46,10 +50,10 @@ class ImageFragment : Fragment() {
             override fun sendDataButtonClicked() {
                 // tell the view model to clear the collection of clicked images and notify
                 // the recycler that all clicked images have been sent
-                if (imagesViewModel.collectionOfClickedImages.isNotEmpty()) {
-                    imagesViewModel.clearCollectionOfClickedImages()
-                    dAdapter.notifyDataSetChanged()
-                }
+                dAdapter.notifyItemRangeChanged(
+                    gridLayoutManager.findFirstVisibleItemPosition(),
+                    gridLayoutManager.findLastVisibleItemPosition()
+                )
             }
         }
     )
@@ -61,19 +65,20 @@ class ImageFragment : Fragment() {
         }
         dAdapter = DeviceImagesDisplayRecyclerViewAdapter(
             onImageClicked = {
-                if (imagesViewModel.collectionOfClickedImages.contains(it)
-                    && it is ImagesDisplayModel.DeviceImageDisplay
-                ) {
-                    // remove image
-                    mainActivity?.removeFromDataToTransferList(it.deviceImage)
-                } else if (it is ImagesDisplayModel.DeviceImageDisplay) {
-                    // add image
-                    mainActivity?.addToDataToTransferList(it.deviceImage)
+                if (it is ImagesDisplayModel.DeviceImageDisplay) {
+                    if(dataToTransferViewModel.collectionOfDataToTransfer.contains(it.deviceImage)) {
+                        // remove image
+                        mainActivity?.removeFromDataToTransferList(it.deviceImage)
+                    }else{
+                        // add image
+                        mainActivity?.addToDataToTransferList(it.deviceImage)
+                    }
                 }
-                imagesViewModel.onImageClicked(it)
             },
-            imagesClicked = imagesViewModel.collectionOfClickedImages
+            imagesClicked = dataToTransferViewModel.collectionOfDataToTransfer
         )
+        spanCount = getSpanCount()
+        gridLayoutManager = GridLayoutManager(context, spanCount)
         asyncLayoutInflater = AsyncLayoutInflater(requireContext())
         observeViewModelLiveData()
     }
@@ -96,23 +101,6 @@ class ImageFragment : Fragment() {
             fragmentImageRecyclerview.run {
                 setHasFixedSize(true)
 
-                val spanCount: Int = when (resources.configuration.orientation) {
-                    Configuration.ORIENTATION_PORTRAIT -> {
-                        if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
-                            3
-                        } else {
-                            4
-                        }
-                    }
-                    else -> {
-                        if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
-                            5
-                        } else {
-                            7
-                        }
-                    }
-                }
-                val gridLayoutManager = GridLayoutManager(context, spanCount)
                 gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
                         return when (dAdapter.getItemViewType(
@@ -141,7 +129,7 @@ class ImageFragment : Fragment() {
                         asyncLayoutInflater.inflate(
                             R.layout.category_chip,
                             imageCategoryChipGroup
-                        ) { view, resid, parent ->
+                        ) { view, _, _ ->
                             view as Chip
                             view.text = bucketNameAndSize.bucketName
                             view.setOnClickListener { chip ->
@@ -159,6 +147,25 @@ class ImageFragment : Fragment() {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun getSpanCount(): Int {
+        return when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
+                    3
+                } else {
+                    4
+                }
+            }
+            else -> {
+                if (resources.displayMetrics.density > 3.1 || resources.configuration.densityDpi < 245) {
+                    5
+                } else {
+                    7
                 }
             }
         }

@@ -43,7 +43,6 @@ class FileViewModel @Inject constructor(
     val navigationHeaderText: String
         get() = _navigationHeaderText
 
-    val selectedFilesForTransfer: MutableList<DataToTransfer> = mutableListOf()
 
     fun moveToPreviousDirectory() {
         val previousDirectoryEntry = directoryStack.pop()

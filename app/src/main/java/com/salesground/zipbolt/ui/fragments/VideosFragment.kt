@@ -17,6 +17,7 @@ import com.salesground.zipbolt.databinding.FragmentVideosBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
+import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.VideoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,9 +26,12 @@ import javax.inject.Inject
 class VideosFragment : Fragment() {
     private lateinit var fragmentVideosBinding: FragmentVideosBinding
     private lateinit var videoFragmentRecyclerViewAdapter: VideoFragmentRecyclerViewAdapter
+    private lateinit var videoFragmentRecyclerViewLayoutManager: LinearLayoutManager
+
     private var mainActivity: MainActivity? = null
 
     private val videoViewModel: VideoViewModel by activityViewModels()
+    private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
@@ -36,10 +40,10 @@ class VideosFragment : Fragment() {
         object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
             @SuppressLint("NotifyDataSetChanged")
             override fun sendDataButtonClicked() {
-                if(videoViewModel.selectedVideosForTransfer.isNotEmpty()) {
-                    videoViewModel.clearCollectionOfSelectedVideos()
-                    videoFragmentRecyclerViewAdapter.notifyDataSetChanged()
-                }
+                videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
+                    videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
+                    videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
+                )
             }
         }
     )
@@ -52,14 +56,15 @@ class VideosFragment : Fragment() {
 
         videoFragmentRecyclerViewAdapter = VideoFragmentRecyclerViewAdapter(
             DataToTransferRecyclerViewItemClickListener {
-                if (videoViewModel.selectedVideosForTransfer.contains(it)) {
+                if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
                     mainActivity?.addToDataToTransferList(it)
                 }
             },
-            videoViewModel.selectedVideosForTransfer
+            dataToTransferViewModel.collectionOfDataToTransfer
         )
+        videoFragmentRecyclerViewLayoutManager = LinearLayoutManager(requireContext())
         observeVideoViewModelLiveData()
     }
 
@@ -77,7 +82,7 @@ class VideosFragment : Fragment() {
         fragmentVideosBinding.run {
             fragmentVideosRecyclerview.run {
                 adapter = videoFragmentRecyclerViewAdapter
-                layoutManager = LinearLayoutManager(requireContext())
+                layoutManager = videoFragmentRecyclerViewLayoutManager
                 addItemDecoration(
                     HalfLineRecyclerViewCustomDivider(
                         requireContext(),
