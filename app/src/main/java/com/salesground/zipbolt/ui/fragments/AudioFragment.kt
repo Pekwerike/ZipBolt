@@ -95,6 +95,7 @@ class AudioFragment : Fragment() {
             audioFragmentRecyclerViewAdapter.submitList(it)
         }
         dataToTransferViewModel.sentDataButtonClicked.observe(this){
+            audioFragmentRecyclerViewAdapter.selectedAudios = dataToTransferViewModel.collectionOfDataToTransfer
             audioFragmentRecyclerViewAdapter.notifyItemRangeChanged(
                 audioFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
                 audioFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()

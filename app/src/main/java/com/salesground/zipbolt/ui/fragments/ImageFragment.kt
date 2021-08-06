@@ -41,22 +41,6 @@ class ImageFragment : Fragment() {
     private lateinit var asyncLayoutInflater: AsyncLayoutInflater
     private var spanCount: Int = 3
 
-    @Inject
-    lateinit var localBroadcastManager: LocalBroadcastManager
-
-    private val sendDataBroadcastReceiver = SendDataBroadcastReceiver(
-        object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun sendDataButtonClicked() {
-                // tell the view model to clear the collection of clicked images and notify
-                // the recycler that all clicked images have been sent
-                /*dAdapter.notifyItemRangeChanged(
-                    gridLayoutManager.findFirstVisibleItemPosition(),
-                    gridLayoutManager.findLastVisibleItemPosition()
-                )*/
-            }
-        }
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,19 +159,5 @@ class ImageFragment : Fragment() {
                 }
             }
         }
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-        localBroadcastManager.registerReceiver(sendDataBroadcastReceiver,
-            IntentFilter().apply {
-                addAction(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
-            })
-    }
-
-    override fun onStop() {
-        super.onStop()
-        localBroadcastManager.unregisterReceiver(sendDataBroadcastReceiver)
     }
 }

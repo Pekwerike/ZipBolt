@@ -27,26 +27,10 @@ class VideosFragment : Fragment() {
     private lateinit var fragmentVideosBinding: FragmentVideosBinding
     private lateinit var videoFragmentRecyclerViewAdapter: VideoFragmentRecyclerViewAdapter
     private lateinit var videoFragmentRecyclerViewLayoutManager: LinearLayoutManager
-
     private var mainActivity: MainActivity? = null
-
     private val videoViewModel: VideoViewModel by activityViewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
 
-    @Inject
-    lateinit var localBroadcastManager: LocalBroadcastManager
-
-    private val sendDataBroadcastReceiver = SendDataBroadcastReceiver(
-        object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun sendDataButtonClicked() {
-                /*videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
-                    videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
-                    videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
-                )*/
-            }
-        }
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,19 +87,5 @@ class VideosFragment : Fragment() {
                 videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
             )
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        localBroadcastManager.registerReceiver(sendDataBroadcastReceiver,
-            IntentFilter().apply {
-                addAction(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
-            }
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        localBroadcastManager.unregisterReceiver(sendDataBroadcastReceiver)
     }
 }
