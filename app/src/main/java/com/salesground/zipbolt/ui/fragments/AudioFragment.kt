@@ -51,13 +51,13 @@ class AudioFragment : Fragment() {
 
         audioFragmentRecyclerViewAdapter = AudioFragmentRecyclerViewAdapter(
             DataToTransferRecyclerViewItemClickListener {
-                if (dataToTransferViewModel.getCollectionOfDataToTransfer().contains(it)) {
+                if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
                     mainActivity?.addToDataToTransferList(it)
                 }
             },
-            dataToTransferViewModel.getCollectionOfDataToTransfer()
+            dataToTransferViewModel.collectionOfDataToTransfer
         )
         observeAudioViewModelLiveData()
     }
