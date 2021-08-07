@@ -22,8 +22,7 @@ class DirectoryMediaTransferProtocolTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val zipBoltFileRepository: ZipBoltFileRepository = ZipBoltFileRepository()
-    private val zipBoltSavedFilesRepository: ZipBoltSavedFilesRepository =
-        ZipBoltSavedFilesRepository()
+
     private val gateWayFile = File(
         context.getExternalFilesDir(null), "gateWay.txt"
     )

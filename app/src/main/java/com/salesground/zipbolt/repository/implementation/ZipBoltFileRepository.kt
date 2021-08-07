@@ -16,7 +16,6 @@ import javax.inject.Inject
 import kotlin.math.min
 
 class ZipBoltFileRepository @Inject constructor(
-    @ApplicationContext private val context: Context
 ) : FileRepository {
     private val dataBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private var sizeOfDataReadFromDirectoryTransfer: Long = 0L
