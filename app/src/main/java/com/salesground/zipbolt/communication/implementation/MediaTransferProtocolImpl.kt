@@ -18,6 +18,13 @@ open class MediaTransferProtocolImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : MediaTransferProtocol {
 
+    enum class CurrentTransferState(val value: Int) {
+        DIRECTORY_TRANSFER(1),
+        PLAIN_FILE_TRANSFER(2),
+        MEDIA_ITEM(3)
+    }
+
+    private var currentTransferState = CurrentTransferState.MEDIA_ITEM
     private val savedFilesRepository: SavedFilesRepository by lazy {
         ZipBoltSavedFilesRepository()
     }
@@ -56,6 +63,10 @@ open class MediaTransferProtocolImpl @Inject constructor(
         )
     }
 
+    private val plainFileMediaTransferProtocol: PlainFileMediaTransferProtocol by lazy {
+        PlainFileMediaTransferProtocol(savedFilesRepository)
+    }
+
     private val transferMetaDataUpdateListener: TransferMetaDataUpdateListener by lazy {
         object : TransferMetaDataUpdateListener {
             override fun onMetaTransferDataUpdate(mediaTransferProtocolMetaData: MediaTransferProtocolMetaData) {
@@ -69,7 +80,6 @@ open class MediaTransferProtocolImpl @Inject constructor(
     private var ongoingTransfer = AtomicBoolean(false)
     private val buffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private var dataToTransfer: DataToTransfer? = null
-    private var isTransferringDirectory: Boolean = false
 
     // data receive variables
     private var mediaType: Int = 0
@@ -78,11 +88,18 @@ open class MediaTransferProtocolImpl @Inject constructor(
 
 
     override fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocolMetaData) {
-        if (isTransferringDirectory) {
-            directoryMediaTransferProtocol.cancelCurrentTransfer(transferMetaData)
-            return
+        when (currentTransferState) {
+            CurrentTransferState.DIRECTORY_TRANSFER -> {
+                directoryMediaTransferProtocol.cancelCurrentTransfer(transferMetaData)
+                return
+            }
+            CurrentTransferState.PLAIN_FILE_TRANSFER -> {
+                plainFileMediaTransferProtocol.cancelCurrentTransfer(transferMetaData)
+            }
+            CurrentTransferState.MEDIA_ITEM -> {
+                mTransferMetaData = transferMetaData
+            }
         }
-        if (ongoingTransfer.get()) mTransferMetaData = transferMetaData
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -95,14 +112,22 @@ open class MediaTransferProtocolImpl @Inject constructor(
         this.dataToTransfer = dataToTransfer
         if (dataToTransfer is DataToTransfer.DeviceFile) {
             if (dataToTransfer.file.isDirectory) {
-                isTransferringDirectory = true
+                currentTransferState = CurrentTransferState.DIRECTORY_TRANSFER
                 directoryMediaTransferProtocol.transferMedia(
                     dataToTransfer,
                     dataOutputStream,
                     dataTransferListener
                 )
-                isTransferringDirectory = false
+                currentTransferState = CurrentTransferState.MEDIA_ITEM
                 return
+            } else {
+                currentTransferState = CurrentTransferState.PLAIN_FILE_TRANSFER
+                plainFileMediaTransferProtocol.transferFile(
+                    dataToTransfer,
+                    dataOutputStream,
+                    dataTransferListener
+                )
+                currentTransferState = CurrentTransferState.MEDIA_ITEM
             }
         }
         dataOutputStream.writeInt(dataToTransfer.dataType)
@@ -263,6 +288,14 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     transferMetaDataUpdateListener,
                     mediaName,
                     mediaSize
+                )
+            }
+            else -> {
+                plainFileMediaTransferProtocol.receivePlainFile(
+                    dataInputStream = dataInputStream,
+                    dataReceiveListener = dataReceiveListener,
+                    transferMetaDataUpdateListener = transferMetaDataUpdateListener,
+                    dataType = mediaType
                 )
             }
         }
