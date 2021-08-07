@@ -28,7 +28,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
             }
             MediaType.File.Directory.value -> {
                 Glide.with(context)
-                    .load(R.drawable.ic_baseline_folder_open_24)
+                    .load(R.drawable.ic_baseline_folder_open_24_two)
                     .into(this)
             }
             MediaType.File.Document.ExcelDocument.value -> {

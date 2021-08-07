@@ -24,19 +24,11 @@ class ZipBoltFileRepository @Inject constructor(
         return Environment.getExternalStorageDirectory()
     }
 
-    override suspend fun insertFile() {
-
-    }
-
     override suspend fun getDirectoryChildren(directoryPath: String): List<DataToTransfer> {
         var children = listOf<DataToTransfer>()
         File(directoryPath).apply {
             children = listFiles()?.map {
-                DataToTransfer.DeviceFile(it).apply {
-                    if (dataType == MediaType.File.Document.UnknownDocument.value) {
-                        dataType = getFileType(context)
-                    }
-                }
+                DataToTransfer.DeviceFile(it)
             } ?: listOf()
         }
         return children

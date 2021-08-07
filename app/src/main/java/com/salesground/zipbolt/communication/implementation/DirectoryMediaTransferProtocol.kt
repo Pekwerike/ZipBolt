@@ -110,7 +110,7 @@ class DirectoryMediaTransferProtocol(
         dataTransferListener.onTransfer(
             dataToTransfer,
             100f,
-            DataToTransfer.TransferStatus.TRANSFER_ONGOING
+            DataToTransfer.TransferStatus.TRANSFER_COMPLETE
         )
     }
 
@@ -268,7 +268,7 @@ class DirectoryMediaTransferProtocol(
                         ((initialDirectorySize - dataSizeUnreadFromSocket) / initialDirectorySize.toFloat()) * 100f,
                         MediaType.File.Directory.value,
                         null,
-                        DataToTransfer.TransferStatus.TRANSFER_ONGOING
+                        DataToTransfer.TransferStatus.RECEIVE_ONGOING
                     )
                 }
                 directoryChildBufferedOS.close()
@@ -280,7 +280,7 @@ class DirectoryMediaTransferProtocol(
             100f,
             MediaType.File.Directory.value,
             Uri.fromFile(directoryFile),
-            DataToTransfer.TransferStatus.TRANSFER_ONGOING
+            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
         )
     }
 

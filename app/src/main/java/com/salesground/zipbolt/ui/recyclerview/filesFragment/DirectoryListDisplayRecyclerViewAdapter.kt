@@ -60,11 +60,7 @@ class DirectoryListDisplayRecyclerViewAdapter(
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
             }
             else -> {
-                DirectoryLayoutItemViewHolder.createViewHolder(
-                    parent,
-                    dataToTransferRecyclerViewItemClickListener,
-                    folderClickedListener
-                )
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
             }
         }
     }

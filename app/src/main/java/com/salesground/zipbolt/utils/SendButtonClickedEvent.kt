@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.utils
 
+
 open class SendButtonClickedEvent<out T>(private val content: T) {
     // list of all observers that have received the send button event
     private val mutableSet = mutableSetOf<String>()
@@ -12,5 +13,4 @@ open class SendButtonClickedEvent<out T>(private val content: T) {
             content
         }
     }
-
 }
