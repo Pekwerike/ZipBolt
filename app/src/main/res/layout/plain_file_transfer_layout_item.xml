@@ -23,9 +23,10 @@
             android:orientation="horizontal"
             android:padding="@dimen/view_group_standard_padding">
 
-            <androidx.appcompat.widget.AppCompatImageView
+            <com.salesground.zipbolt.ui.customviews.CurvedImageView
                 android:layout_width="58dp"
                 android:layout_height="58dp"
+                android:scaleType="centerCrop"
                 android:padding="@dimen/medium_padding"
                 app:bindImageBasedOnMediaType="@{document}"
                 app:curvedImageViewCornerRadius="0.17" />
