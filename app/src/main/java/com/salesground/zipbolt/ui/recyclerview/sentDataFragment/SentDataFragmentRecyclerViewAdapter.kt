@@ -14,6 +14,8 @@ import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.dire
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.directory.DirectoryTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.image.ImageTransferCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.image.ImageTransferWaitingLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.PlainFileTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.PlainFileTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
@@ -94,8 +96,14 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
                     }
                 } else {
-                    when (dataItem.dataType) {
-                        MediaType.File.ImageFile.value ->
+                    when (dataItem.transferStatus) {
+                        DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
+                            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_COMPLETE.value
+                        }
+                        DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value
+                        }
+                        else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
                     }
                 }
             }
@@ -135,6 +143,13 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
             SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value -> {
                 DirectoryTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
+            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_COMPLETE.value -> {
+                PlainFileTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value -> {
+                PlainFileTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+            }
+
             else -> {
                 ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
             }
@@ -172,6 +187,12 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                 holder.bindData(dataItem)
             }
             is DirectoryTransferWaitingLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainFileTransferCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainFileTransferWaitingLayoutItemViewHolder -> {
                 holder.bindData(dataItem)
             }
         }
