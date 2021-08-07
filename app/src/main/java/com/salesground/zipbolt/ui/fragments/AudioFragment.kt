@@ -94,12 +94,15 @@ class AudioFragment : Fragment() {
         audioViewModel.deviceAudio.observe(this) {
             audioFragmentRecyclerViewAdapter.submitList(it)
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this){
-            audioFragmentRecyclerViewAdapter.selectedAudios = dataToTransferViewModel.collectionOfDataToTransfer
-            audioFragmentRecyclerViewAdapter.notifyItemRangeChanged(
-                audioFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
-                audioFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
-            )
+        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+            it.getEvent(javaClass.name)?.let {
+                audioFragmentRecyclerViewAdapter.selectedAudios =
+                    dataToTransferViewModel.collectionOfDataToTransfer
+                audioFragmentRecyclerViewAdapter.notifyItemRangeChanged(
+                    audioFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
+                    audioFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
+                )
+            }
         }
     }
 

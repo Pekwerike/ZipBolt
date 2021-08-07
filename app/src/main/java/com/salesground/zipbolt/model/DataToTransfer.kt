@@ -98,6 +98,9 @@ sealed class DataToTransfer(
         dataSize = file.length()
     ) {
         override var dataType: Int = when {
+            file.isDirectory -> {
+                MediaType.File.Directory.value
+            }
             dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
                     || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")
                     || dataDisplayName.endsWith("webp") -> {
@@ -182,30 +185,6 @@ sealed class DataToTransfer(
                 }
             }
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DataToTransfer) return false
-
-        if (dataDisplayName != other.dataDisplayName) return false
-        if (dataUri != other.dataUri) return false
-        if (dataSize != other.dataSize) return false
-        if (percentTransferred != other.percentTransferred) return false
-        if (transferStatus != other.transferStatus) return false
-        if (dataType != other.dataType) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = dataDisplayName.hashCode()
-        result = 31 * result + dataUri.hashCode()
-        result = 31 * result + dataSize.hashCode()
-        result = 31 * result + percentTransferred.hashCode()
-        result = 31 * result + transferStatus.hashCode()
-        result = 31 * result + dataType
-        return result
     }
 }
 

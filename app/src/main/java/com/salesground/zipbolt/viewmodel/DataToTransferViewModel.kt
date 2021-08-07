@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.utils.SendButtonClickedEvent
 
 class DataToTransferViewModel : ViewModel() {
 
-    private val _sentDataButtonClicked = MutableLiveData(false)
-    val sentDataButtonClicked: LiveData<Boolean>
+    private val _sentDataButtonClicked = MutableLiveData<SendButtonClickedEvent<Boolean>>()
+    val sentDataButtonClicked: LiveData<SendButtonClickedEvent<Boolean>>
         get() = _sentDataButtonClicked
 
     private var _collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
@@ -28,7 +29,7 @@ class DataToTransferViewModel : ViewModel() {
     }
 
     fun sentDataButtonClicked() {
-        _sentDataButtonClicked.value = true
+        _sentDataButtonClicked.value = SendButtonClickedEvent(true)
     }
 
 }

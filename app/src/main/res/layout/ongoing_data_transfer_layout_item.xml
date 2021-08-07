@@ -11,7 +11,6 @@
         <variable
             name="dataTransferPercent"
             type="Integer" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,6 +24,7 @@
             android:layout_width="58dp"
             android:layout_height="58dp"
             android:layout_margin="@dimen/small_margin"
+            android:src="@drawable/ic_baseline_folder_open_24"
             android:scaleType="centerCrop"
             app:bindImageBasedOnMediaType="@{dataToTransfer}"
             app:curvedImageViewCornerRadius="0.17"

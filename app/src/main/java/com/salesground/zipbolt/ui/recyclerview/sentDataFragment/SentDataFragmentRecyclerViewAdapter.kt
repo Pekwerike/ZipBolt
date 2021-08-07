@@ -89,7 +89,6 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                             SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_WAITING.value
                         }
                         else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
-
                     }
                 } else {
                     300

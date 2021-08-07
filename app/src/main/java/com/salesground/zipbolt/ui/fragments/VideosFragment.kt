@@ -82,10 +82,14 @@ class VideosFragment : Fragment() {
             videoFragmentRecyclerViewAdapter.submitList(it)
         }
         dataToTransferViewModel.sentDataButtonClicked.observe(this) {
-            videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
-                videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
-                videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
-            )
+            it.getEvent(javaClass.name)?.let {
+                videoFragmentRecyclerViewAdapter.selectedVideos =
+                    dataToTransferViewModel.collectionOfDataToTransfer
+                videoFragmentRecyclerViewAdapter.notifyItemRangeChanged(
+                    videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
+                    videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
+                )
+            }
         }
     }
 }

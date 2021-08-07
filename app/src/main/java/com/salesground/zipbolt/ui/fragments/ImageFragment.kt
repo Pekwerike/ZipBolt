@@ -22,6 +22,7 @@ import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
+import com.salesground.zipbolt.utils.SendButtonClickedEvent
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -135,10 +136,13 @@ class ImageFragment : Fragment() {
             }
         }
         dataToTransferViewModel.sentDataButtonClicked.observe(this){
-            dAdapter.notifyItemRangeChanged(
-                gridLayoutManager.findFirstVisibleItemPosition(),
-                gridLayoutManager.findLastVisibleItemPosition()
-            )
+            it.getEvent(javaClass.name)?.let {
+                dAdapter.imagesClicked = dataToTransferViewModel.collectionOfDataToTransfer
+                dAdapter.notifyItemRangeChanged(
+                    gridLayoutManager.findFirstVisibleItemPosition(),
+                    gridLayoutManager.findLastVisibleItemPosition()
+                )
+            }
         }
     }
 

@@ -39,11 +39,10 @@ class SentDataViewModel : ViewModel() {
     }
 
     fun changeCurrentDataToTransferDataItem(dataToTransfer: DataToTransfer) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             _currentDataToTransferDataItem.value = dataToTransfer
         }
     }
-
 
     fun addCollectionOfDataToTransferToSentDataItems(collectionOfDataToTransfer: MutableList<DataToTransfer>) {
         collectionOfDataToTransfer.map {
@@ -79,5 +78,4 @@ class SentDataViewModel : ViewModel() {
             }
         }
     }
-
 }
