@@ -74,7 +74,8 @@ class SentDataViewModel : ViewModel() {
             val removedIndex = sentDataItemsNormalList.indexOf(it)
             sentDataItemsNormalList.remove(it)
             viewModelScope.launch(Dispatchers.Main) {
-                _canceledSentDataItemIndex.value = removedIndex
+                _sentDataItems.value = sentDataItemsNormalList
+              //  _canceledSentDataItemIndex.value = removedIndex
             }
         }
     }
