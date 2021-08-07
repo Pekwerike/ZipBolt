@@ -28,7 +28,16 @@ class DirectoryMediaTransferProtocol(
         mTransferMetaData = transferMetaData
     }
 
-    fun resetTransferMetaData() {
+    private fun resetTransferMetaData(
+        dataTransferListener: MediaTransferProtocol.DataTransferListener,
+        dataToTransfer: DataToTransfer
+    ) {
+        dataTransferListener.onTransfer(
+            dataToTransfer,
+            0f,
+            DataToTransfer.TransferStatus.TRANSFER_CANCELLED
+        )
+        // return the mTransferMetaData to keep receiving incase of reuse
         mTransferMetaData = MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING
     }
 
@@ -59,7 +68,9 @@ class DirectoryMediaTransferProtocol(
                             dataTransferListener
                         )
                     ) {
-                        resetTransferMetaData()
+                        resetTransferMetaData(
+                            dataTransferListener, dataToTransfer
+                        )
                         return
                     }
                 } else {
@@ -89,7 +100,7 @@ class DirectoryMediaTransferProtocol(
                         dataOutputStream.writeInt(mTransferMetaData.value)
 
                         if (mTransferMetaData == MediaTransferProtocol.MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE) {
-                            resetTransferMetaData()
+                            resetTransferMetaData(dataTransferListener, dataToTransfer)
                             return
                         } else if (mTransferMetaData == MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER) {
                             mTransferMetaData =
