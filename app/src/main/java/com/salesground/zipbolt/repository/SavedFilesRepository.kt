@@ -10,7 +10,8 @@ interface SavedFilesRepository {
         AUDIO_BASE_DIRECTORY("ZipBolt Audios"),
         FILES_BASE_DIRECTORY("Files"),
         APPS_BASE_DIRECTORY("Apps"),
-        FOLDERS_BASE_DIRECTORY("Folders")
+        FOLDERS_BASE_DIRECTORY("Folders"),
+        DOCUMENTS_BASE_DIRECTORY("Documents")
     }
 
     fun getZipBoltBaseDirectory(): File
