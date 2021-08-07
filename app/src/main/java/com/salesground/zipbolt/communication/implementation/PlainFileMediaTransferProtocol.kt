@@ -101,11 +101,10 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
         dataInputStream: DataInputStream,
         dataReceiveListener: MediaTransferProtocol.DataReceiveListener,
         transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
-        dataType: Int
+        dataType: Int,
+        fileName: String,
+        fileSize: Long
     ) {
-        // read file name and size
-        val fileName = dataInputStream.readUTF()
-        val fileSize = dataInputStream.readLong()
         var fileSizeUnread = fileSize
         val plainFile = File(zipBoltDocumentsFolder, fileName)
         // create file and open output stream

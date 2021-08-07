@@ -73,7 +73,9 @@ class PlainFileMediaTransferProtocolTest {
 
                                     }
                                 },
-                                gateWayFileInputStream.readInt()
+                                gateWayFileInputStream.readInt(),
+                                gateWayFileInputStream.readUTF(),
+                                gateWayFileInputStream.readLong()
                             )
                         }
                     }

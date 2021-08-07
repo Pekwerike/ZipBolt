@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.application.ApplicationTransferCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.application.ApplicationTransferWaitingViewHolder
@@ -13,6 +14,8 @@ import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.dire
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.directory.DirectoryTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.image.ImageTransferCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.image.ImageTransferWaitingLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.PlainFileTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.PlainFileTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.video.VideoTransferWaitingLayoutItemViewHolder
 
@@ -30,7 +33,9 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
         AUDIO_TRANSFER_WAITING(8),
         AUDIO_TRANSFER_COMPLETE(9),
         DIRECTORY_TRANSFER_WAITING(12),
-        DIRECTORY_TRANSFER_COMPLETE(13)
+        DIRECTORY_TRANSFER_COMPLETE(13),
+        PLAIN_FILE_TRANSFER_WAITING(14),
+        PLAIN_FILE_TRANSFER_COMPLETE(15)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -91,7 +96,15 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
                     }
                 } else {
-                    300
+                    when (dataItem.transferStatus) {
+                        DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
+                            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_COMPLETE.value
+                        }
+                        DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+                            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value
+                        }
+                        else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
+                    }
                 }
             }
             else -> 300
@@ -130,6 +143,12 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
             SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value -> {
                 DirectoryTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
+            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_COMPLETE.value -> {
+                PlainFileTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value -> {
+                PlainFileTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+            }
             else -> {
                 ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
             }
@@ -167,6 +186,12 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                 holder.bindData(dataItem)
             }
             is DirectoryTransferWaitingLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainFileTransferCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainFileTransferWaitingLayoutItemViewHolder -> {
                 holder.bindData(dataItem)
             }
         }

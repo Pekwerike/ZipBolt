@@ -128,6 +128,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataTransferListener
                 )
                 currentTransferState = CurrentTransferState.MEDIA_ITEM
+                return
             }
         }
         dataOutputStream.writeInt(dataToTransfer.dataType)
@@ -295,7 +296,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataInputStream = dataInputStream,
                     dataReceiveListener = dataReceiveListener,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
-                    dataType = mediaType
+                    dataType = mediaType,
+                    fileName = mediaName,
+                    fileSize = mediaSize
                 )
             }
         }

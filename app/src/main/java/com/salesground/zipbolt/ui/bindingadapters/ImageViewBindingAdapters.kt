@@ -69,6 +69,12 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .load(dataToTransfer.dataUri)
                     .into(this)
             }
+            MediaType.File.ImageFile.value -> {
+                Glide.with(context)
+                    .load(dataToTransfer.dataUri)
+                    .into(this)
+            }
+
             else -> {
 
             }
