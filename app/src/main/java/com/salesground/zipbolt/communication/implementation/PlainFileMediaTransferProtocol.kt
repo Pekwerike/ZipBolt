@@ -6,10 +6,7 @@ import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import com.salesground.zipbolt.repository.ZipBoltSavedFilesRepository
 import com.salesground.zipbolt.service.DataTransferService
-import java.io.BufferedInputStream
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.FileInputStream
+import java.io.*
 import kotlin.math.min
 
 class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository) {
@@ -17,6 +14,9 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
         MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING
     private val receiveBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
     private val transferBuffer = ByteArray(DataTransferService.BUFFER_SIZE)
+    private val zipBoltDocumentsFolder by lazy {
+        savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(SavedFilesRepository.ZipBoltMediaCategory.DOCUMENTS_BASE_DIRECTORY)
+    }
 
     fun cancelCurrentTransfer(transferMetaData: MediaTransferProtocol.MediaTransferProtocolMetaData) {
         mTransferMetaData = transferMetaData
@@ -43,7 +43,7 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
         dataToTransfer as DataToTransfer.DeviceFile
 
         // send file name, size, and type
-        dataOutputStream.writeInt(MediaType.File.Document.UnknownDocument.value)
+        dataOutputStream.writeInt(dataToTransfer.dataType)
         dataOutputStream.writeUTF(dataToTransfer.file.name)
         dataOutputStream.writeLong(dataToTransfer.dataSize)
         var unreadDataSize = dataToTransfer.dataSize
@@ -94,4 +94,35 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
             DataToTransfer.TransferStatus.TRANSFER_COMPLETE
         )
     }
+
+    fun receivePlainFile(
+        dataInputStream: DataInputStream,
+        dataReceiveListener: MediaTransferProtocol.DataReceiveListener,
+        transferMetaDataUpdateListener: MediaTransferProtocol.TransferMetaDataUpdateListener,
+        dataType: Int
+    ) {
+        // read file name and size
+        val fileName = dataInputStream.readUTF()
+        val fileSize = dataInputStream.readLong()
+        var fileSizeUnread = fileSize
+
+        // create file and open output stream
+        val plainFileBufferedOutputStream = BufferedOutputStream(
+            FileOutputStream(File(zipBoltDocumentsFolder, fileName))
+        )
+        dataReceiveListener.onReceive(
+            fileName,
+            fileSize,
+            0f,
+            dataType,
+            null,
+            DataToTransfer.TransferStatus.RECEIVE_STARTED
+        )
+
+        while (fileSizeUnread > 0) {
+
+        }
+
+    }
+
 }
