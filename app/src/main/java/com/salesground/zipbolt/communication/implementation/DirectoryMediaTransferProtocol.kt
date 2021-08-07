@@ -214,6 +214,7 @@ class DirectoryMediaTransferProtocol(
         val directoryFile = File(zipBoltBaseFolderDirectory, initialDirectoryName)
         directoryFile.mkdirs()
         val directoryChildrenCount = dataInputStream.readInt()
+
         dataReceiveListener.onReceive(
             initialDirectoryName,
             initialDirectorySize,
@@ -222,6 +223,7 @@ class DirectoryMediaTransferProtocol(
             null,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
+
         for (i in 0 until directoryChildrenCount) {
             // read child type
             val childType = dataInputStream.readInt()

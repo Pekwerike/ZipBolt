@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.communication.implementation
 
+import android.net.Uri
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
@@ -59,10 +60,6 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
         )
         var lengthRead: Int
         while (unreadDataSize > 0) {
-            lengthRead = min(unreadDataSize, transferBuffer.size.toLong()).toInt()
-            fileDataInputStream.readFully(
-                transferBuffer, 0, lengthRead
-            )
             //*** write the current transfer state to receiver
             dataOutputStream.writeInt(mTransferMetaData.value)
 
@@ -73,6 +70,11 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
                 mTransferMetaData =
                     MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING
             }
+
+            lengthRead = min(unreadDataSize, transferBuffer.size.toLong()).toInt()
+            fileDataInputStream.readFully(
+                transferBuffer, 0, lengthRead
+            )
 
             dataOutputStream.write(
                 transferBuffer,
@@ -105,10 +107,10 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
         val fileName = dataInputStream.readUTF()
         val fileSize = dataInputStream.readLong()
         var fileSizeUnread = fileSize
-
+        val plainFile = File(zipBoltDocumentsFolder, fileName)
         // create file and open output stream
         val plainFileBufferedOutputStream = BufferedOutputStream(
-            FileOutputStream(File(zipBoltDocumentsFolder, fileName))
+            FileOutputStream(plainFile)
         )
         dataReceiveListener.onReceive(
             fileName,
@@ -118,11 +120,50 @@ class PlainFileMediaTransferProtocol(savedFilesRepository: SavedFilesRepository)
             null,
             DataToTransfer.TransferStatus.RECEIVE_STARTED
         )
-
+        var lengthRead: Int
         while (fileSizeUnread > 0) {
+            // read current receive state
+            when (dataInputStream.readInt()) {
+                MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING.value -> {
 
+                }
+                MediaTransferProtocol.MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE.value -> {
+                    // delete file
+                    plainFile.delete()
+                    return
+                }
+                MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER.value -> {
+                    transferMetaDataUpdateListener.onMetaTransferDataUpdate(
+                        MediaTransferProtocol.MediaTransferProtocolMetaData.KEEP_RECEIVING_BUT_CANCEL_ACTIVE_TRANSFER
+                    )
+                }
+            }
+            lengthRead = min(
+                receiveBuffer.size.toLong(),
+                fileSizeUnread
+            ).toInt()
+            dataInputStream.readFully(receiveBuffer, 0, lengthRead)
+            plainFileBufferedOutputStream.write(receiveBuffer, 0, lengthRead)
+            fileSizeUnread -= lengthRead
+
+            dataReceiveListener.onReceive(
+                fileName,
+                fileSize,
+                ((fileSize - fileSizeUnread) / fileSize.toFloat()) * 100f,
+                dataType,
+                null,
+                DataToTransfer.TransferStatus.RECEIVE_ONGOING
+            )
         }
+        plainFileBufferedOutputStream.close()
 
+        dataReceiveListener.onReceive(
+            fileName,
+            fileSize,
+            100f,
+            dataType,
+            Uri.fromFile(plainFile),
+            DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+        )
     }
-
 }
