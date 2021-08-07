@@ -296,7 +296,9 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataInputStream = dataInputStream,
                     dataReceiveListener = dataReceiveListener,
                     transferMetaDataUpdateListener = transferMetaDataUpdateListener,
-                    dataType = mediaType
+                    dataType = mediaType,
+                    fileName = mediaName,
+                    fileSize = mediaSize
                 )
             }
         }

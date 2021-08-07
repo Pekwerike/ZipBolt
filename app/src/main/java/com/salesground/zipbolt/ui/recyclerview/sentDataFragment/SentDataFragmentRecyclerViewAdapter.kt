@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.application.ApplicationTransferCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.application.ApplicationTransferWaitingViewHolder
@@ -30,7 +31,9 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
         AUDIO_TRANSFER_WAITING(8),
         AUDIO_TRANSFER_COMPLETE(9),
         DIRECTORY_TRANSFER_WAITING(12),
-        DIRECTORY_TRANSFER_COMPLETE(13)
+        DIRECTORY_TRANSFER_COMPLETE(13),
+        PLAIN_FILE_TRANSFER_WAITING(14),
+        PLAIN_FILE_TRANSFER_COMPLETE(15)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -91,7 +94,9 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         else -> SentDataFragmentAdapterViewTypes.DIRECTORY_TRANSFER_COMPLETE.value
                     }
                 } else {
-                    300
+                    when (dataItem.dataType) {
+                        MediaType.File.ImageFile.value ->
+                    }
                 }
             }
             else -> 300
