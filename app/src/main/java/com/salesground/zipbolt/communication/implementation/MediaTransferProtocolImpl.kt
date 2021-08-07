@@ -128,6 +128,7 @@ open class MediaTransferProtocolImpl @Inject constructor(
                     dataTransferListener
                 )
                 currentTransferState = CurrentTransferState.MEDIA_ITEM
+                return
             }
         }
         dataOutputStream.writeInt(dataToTransfer.dataType)
