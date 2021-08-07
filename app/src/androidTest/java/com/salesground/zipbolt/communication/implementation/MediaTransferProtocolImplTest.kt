@@ -63,9 +63,7 @@ class MediaTransferProtocolImplTest {
     @Test
     fun test_transfer_and_receive() = runBlocking {
 
-        val allImagesOnDevice = imageRepository.getImagesOnDevice().map {
-            imageRepository.getMetaDataOfImage(it as DataToTransfer.DeviceImage)
-        }
+        val allImagesOnDevice = imageRepository.getImagesOnDevice()
         imagesToCancelTransfer = mutableListOf(
             allImagesOnDevice[0].dataDisplayName,
             allImagesOnDevice[1].dataDisplayName,

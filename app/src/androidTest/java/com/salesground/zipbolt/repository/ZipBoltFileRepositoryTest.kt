@@ -14,7 +14,7 @@ class ZipBoltFileRepositoryTest {
 
     @Before
     fun setUp() {
-        zipBoltFileRepository = ZipBoltFileRepository()
+        zipBoltFileRepository = ZipBoltFileRepository(context)
     }
 
     @After
