@@ -18,7 +18,7 @@ class PlainFileMediaTransferProtocolTest {
         context.getExternalFilesDir(null),
         "gateWay.txt"
     )
-    private val zipBoltFileRepository: ZipBoltFileRepository = ZipBoltFileRepository(context)
+    private val zipBoltFileRepository: ZipBoltFileRepository = ZipBoltFileRepository()
     private val gateWayFileOutputStream =
         DataOutputStream(BufferedOutputStream(FileOutputStream(gateWayFile)))
     private val gateWayFileInputStream =
