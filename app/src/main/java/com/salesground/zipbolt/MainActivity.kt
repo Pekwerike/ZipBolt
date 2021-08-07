@@ -1130,6 +1130,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun cancelOngoingDataTransfer() {
+        dataTransferService?.cancelActiveTransfer()
+    }
+
+    fun cancelOngoingDataReceive() {
+        dataTransferService?.cancelActiveReceive()
+    }
+
+
     fun addToDataToTransferList(dataToTransfer: DataToTransfer) {
         dataToTransferViewModel.addDataToTransfer(dataToTransfer)
     }

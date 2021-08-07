@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.databinding.FragmentSentDataBinding
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
@@ -17,8 +18,12 @@ class SentDataFragment : Fragment() {
     private val sentDataViewModel: SentDataViewModel by activityViewModels()
     private val sentDataFragmentRecyclerViewAdapter = SentDataFragmentRecyclerViewAdapter()
     private lateinit var sentDataFragmentLayoutManager: GridLayoutManager
+    private var mainActivity: MainActivity? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.let {
+            mainActivity = it as MainActivity
+        }
         observeViewModelLiveData()
         sentDataFragmentLayoutManager = GridLayoutManager(requireContext(), 3)
         sentDataFragmentLayoutManager.spanSizeLookup =
@@ -48,7 +53,6 @@ class SentDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentDataFragmentBinding.run {
-
             sentDataFragmentRecyclerview.run {
                 layoutManager = sentDataFragmentLayoutManager
                 adapter = sentDataFragmentRecyclerViewAdapter
@@ -58,6 +62,11 @@ class SentDataFragment : Fragment() {
                         layoutManager = sentDataFragmentLayoutManager
                         adapter = sentDataFragmentRecyclerViewAdapter
                     }
+                }
+            }
+            sentDataFragmentOngoingDataTransferLayoutItem.run {
+                ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
+                    mainActivity?.cancelOngoingDataTransfer()
                 }
             }
         }
@@ -91,5 +100,4 @@ class SentDataFragment : Fragment() {
             }
         }
     }
-
 }

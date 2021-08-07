@@ -24,8 +24,8 @@
             android:layout_width="58dp"
             android:layout_height="58dp"
             android:layout_margin="@dimen/small_margin"
-            android:src="@drawable/ic_baseline_folder_open_24"
             android:scaleType="centerCrop"
+            android:src="@drawable/ic_baseline_folder_open_24"
             app:bindImageBasedOnMediaType="@{dataToTransfer}"
             app:curvedImageViewCornerRadius="0.17"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -91,7 +91,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_transfer_data_category_image_view"
             app:layout_constraintStart_toStartOf="@id/ongoing_data_transfer_layout_linear_progress_indicator"
             app:setTransferPercentForFileSize="@{dataTransferPercent}"
-            app:setTransferredSizeOverFileSize="@{dataToTransfer.dataSize}"/>
+            app:setTransferredSizeOverFileSize="@{dataToTransfer.dataSize}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
