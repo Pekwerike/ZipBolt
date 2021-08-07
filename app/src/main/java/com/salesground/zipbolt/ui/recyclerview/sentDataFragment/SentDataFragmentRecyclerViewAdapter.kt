@@ -149,7 +149,6 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
             SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value -> {
                 PlainFileTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
             }
-
             else -> {
                 ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
             }
