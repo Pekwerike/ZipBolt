@@ -86,6 +86,5 @@ class CurvedImageView @JvmOverloads constructor(
                 mPaddingLeft, (h * (1 - cornerRadius)) - mPaddingBottom
             )
         }
-
     }
 }

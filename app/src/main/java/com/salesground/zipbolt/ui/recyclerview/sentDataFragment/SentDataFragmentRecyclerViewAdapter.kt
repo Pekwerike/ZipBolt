@@ -108,6 +108,7 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                             when (dataItem.dataType) {
                                 MediaType.File.VideoFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_TRANSFER_COMPLETE.value
+                                MediaType.File.ImageFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_COMPLETE.value
                                 else -> SentDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_TRANSFER_COMPLETE.value
                             }
 
@@ -115,6 +116,7 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
                             when (dataItem.dataType) {
                                 MediaType.File.VideoFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_TRANSFER_WAITING.value
+                                MediaType.File.ImageFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value
                                 else -> SentDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_TRANSFER_WAITING.value
                             }
                         }

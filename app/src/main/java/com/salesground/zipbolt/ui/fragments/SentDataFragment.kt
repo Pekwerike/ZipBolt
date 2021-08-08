@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.databinding.FragmentSentDataBinding
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
 
@@ -53,7 +54,9 @@ class SentDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentDataFragmentBinding.run {
+            root.isNestedScrollingEnabled = true
             sentDataFragmentRecyclerview.run {
+                isNestedScrollingEnabled = true
                 layoutManager = sentDataFragmentLayoutManager
                 adapter = sentDataFragmentRecyclerViewAdapter
 
@@ -78,18 +81,27 @@ class SentDataFragment : Fragment() {
                 sentDataFragmentRecyclerViewAdapter.submitList(it)
                 sentDataFragmentRecyclerViewAdapter.notifyDataSetChanged()
             }
-            canceledSentDataItemIndex.observe(this@SentDataFragment) {
-                sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
-                sentDataFragmentRecyclerViewAdapter.notifyItemRemoved(it)
-            }
+
             updatedSentDataItemIndex.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
             }
+
             currentDataToTransferDataItem.observe(this@SentDataFragment) { dataToTransfer ->
                 dataToTransfer?.let {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                         this.dataToTransfer = dataToTransfer
+                        when (dataToTransfer.dataType) {
+                            in MediaType.File.Directory.value..
+                                    MediaType.File.Document.DatDocument.value -> {
+                                ongoingDataTransferDataCategoryImageView.alpha = 0f
+                                ongoingDataTransferPlainDocumentOrDirectoryImageView.alpha = 1f
+                            }
+                            else -> {
+                                ongoingDataTransferDataCategoryImageView.alpha = 1f
+                                ongoingDataTransferPlainDocumentOrDirectoryImageView.alpha = 0f
+                            }
+                        }
                     }
                 }
             }

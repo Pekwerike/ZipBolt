@@ -25,9 +25,19 @@
             android:layout_height="58dp"
             android:layout_margin="@dimen/small_margin"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_folder_open_24"
             app:bindImageBasedOnMediaType="@{dataToTransfer}"
             app:curvedImageViewCornerRadius="0.17"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ongoing_data_transfer_plain_document_or_directory_image_view"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:padding="@dimen/medium_padding"
+            android:layout_margin="@dimen/small_margin"
+            app:bindImageBasedOnMediaType="@{dataToTransfer}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
