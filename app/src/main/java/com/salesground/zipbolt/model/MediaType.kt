@@ -17,7 +17,7 @@ sealed class MediaType(val value: Int) {
             object PdfDocument : Document(10)
             object WordDocument : Document(11)
             object ExcelDocument : Document(12)
-            object UnknownDocument : Document(12)
+            object UnknownDocument : Document(13)
             object PowerPointDocument : Document(14)
             object ZipDocument : Document(15)
             object WebpageDocument : Document(16)
