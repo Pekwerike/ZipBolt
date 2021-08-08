@@ -21,6 +21,7 @@ sealed class MediaType(val value: Int) {
             object PowerPointDocument : Document(14)
             object ZipDocument : Document(15)
             object WebpageDocument : Document(16)
+            object DatDocument: Document(17)
         }
     }
 }

@@ -131,6 +131,9 @@ sealed class DataToTransfer(
             dataDisplayName.endsWith("mhtml") -> {
                 MediaType.File.Document.WebpageDocument.value
             }
+            dataDisplayName.endsWith("dat") -> {
+                MediaType.File.Document.DatDocument.value
+            }
             file.isDirectory -> {
                 MediaType.File.Directory.value
             }

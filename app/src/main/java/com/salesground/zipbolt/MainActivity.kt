@@ -303,6 +303,21 @@ class MainActivity : AppCompatActivity() {
                         // from the cancelled media item from the queue of data in transfer
                         sentDataViewModel.cancelDataTransfer(dataToTransfer)
                     }
+                    DataToTransfer.TransferStatus.NO_ACTION -> {
+
+                    }
+                    DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
+
+                    }
+                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
+
+                    }
+                    DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
+
+                    }
+                    DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
+
+                    }
                 }
             }
         }
