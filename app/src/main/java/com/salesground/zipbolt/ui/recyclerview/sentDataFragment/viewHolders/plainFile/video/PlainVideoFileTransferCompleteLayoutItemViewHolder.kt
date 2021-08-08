@@ -8,14 +8,17 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.PlainVideoFileTransferLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 
-class PlainVideoFileTransferCompleteLayoutItemViewHolder (
+class PlainVideoFileTransferCompleteLayoutItemViewHolder(
     private val plainVideoFileTransferLayoutItemBinding: PlainVideoFileTransferLayoutItemBinding
 ) : RecyclerView.ViewHolder(plainVideoFileTransferLayoutItemBinding.root) {
 
     fun bindData(dataToTransfer: DataToTransfer) {
         plainVideoFileTransferLayoutItemBinding.run {
             this.document = dataToTransfer as DataToTransfer.DeviceFile
-            plainFileTransferLayoutItemShimmer
+            plainVideoFileTransferLayoutItemShimmer.run {
+                stopShimmer()
+                hideShimmer()
+            }
         }
     }
 
