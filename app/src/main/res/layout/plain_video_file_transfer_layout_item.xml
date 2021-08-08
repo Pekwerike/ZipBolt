@@ -11,24 +11,38 @@
     </data>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/plain_file_transfer_layout_item_shimmer"
+        android:id="@+id/plain_video_file_transfer_layout_item_shimmer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:gravity="center"
             android:orientation="horizontal"
             android:padding="@dimen/view_group_standard_padding">
 
-            <com.salesground.zipbolt.ui.customviews.CurvedImageView
-                android:layout_width="58dp"
-                android:layout_height="58dp"
-                android:scaleType="centerCrop"
-                android:padding="@dimen/medium_padding"
-                app:bindImageBasedOnMediaType="@{document}"
-                app:curvedImageViewCornerRadius="0.17" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.salesground.zipbolt.ui.customviews.CurvedImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:scaleType="centerCrop"
+                    app:bindImageBasedOnMediaType="@{document}"
+                    app:curvedImageViewCornerRadius="0.17" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="top|end"
+                    android:layout_margin="@dimen/small_margin"
+                    android:background="@color/black_20_percent"
+                    android:padding="1dp"
+                    app:srcCompat="@drawable/ic_baseline_play_circle_outline_24" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

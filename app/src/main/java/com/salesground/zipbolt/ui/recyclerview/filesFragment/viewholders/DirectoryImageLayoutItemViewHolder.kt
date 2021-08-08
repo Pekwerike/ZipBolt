@@ -36,8 +36,6 @@ class DirectoryImageLayoutItemViewHolder(
                 folderImageLayoutItemLayoutViewGroup.setIsViewSelected(false)
             }
 
-
-
             folderImageLayoutItemLayoutViewGroup.setOnClickListener {
                 isItemSelected(
                     folderImageLayoutItemLayoutViewGroup,

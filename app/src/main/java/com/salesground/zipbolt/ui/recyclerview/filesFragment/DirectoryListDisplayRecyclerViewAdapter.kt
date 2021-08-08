@@ -39,28 +39,52 @@ class DirectoryListDisplayRecyclerViewAdapter(
                 )
             }
             MediaType.File.VideoFile.value -> {
-                DirectoryVideoLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryVideoLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             MediaType.File.AudioFile.value -> {
-                DirectoryAudioLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryAudioLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             MediaType.File.Document.PowerPointDocument.value -> {
-                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             MediaType.File.Document.WordDocument.value -> {
-                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             MediaType.File.Document.PdfDocument.value -> {
-                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             MediaType.File.Document.ExcelDocument.value -> {
-                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             MediaType.File.Document.ZipDocument.value -> {
-                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
             else -> {
-                DirectoryDocumentLayoutItemViewHolder.createViewHolder(parent)
+                DirectoryDocumentLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
             }
         }
     }
@@ -75,9 +99,18 @@ class DirectoryListDisplayRecyclerViewAdapter(
                 getItem(position),
                 filesSelectedForTransfer
             )
-            is DirectoryVideoLayoutItemViewHolder -> holder.bindData(getItem(position))
-            is DirectoryAudioLayoutItemViewHolder -> holder.bindData(getItem(position))
-            is DirectoryDocumentLayoutItemViewHolder -> holder.bindData(getItem(position))
+            is DirectoryVideoLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
+            is DirectoryAudioLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
+            is DirectoryDocumentLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
         }
     }
 }
