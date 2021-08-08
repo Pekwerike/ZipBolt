@@ -96,20 +96,14 @@ class ReceivedDataFragment : Fragment() {
                         dataToTransfer = it
                         dataTransferPercent = 100
                         when (it.dataType) {
-                            in MediaType.File.Document.PdfDocument.value..
+                            in MediaType.File.Directory.value..
                                     MediaType.File.Document.DatDocument.value -> {
                                 ongoingDataReceiveDataCategoryImageView.alpha = 0f
-                                ongoingDataReceiveDirectoryImageView.alpha = 0f
                                 ongoingDataReceivePlainDocumentImageView.alpha = 1f
                             }
-                            MediaType.File.Directory.value -> {
-                                ongoingDataReceiveDataCategoryImageView.alpha = 0f
-                                ongoingDataReceiveDirectoryImageView.alpha = 1f
-                                ongoingDataReceivePlainDocumentImageView.alpha = 0f
-                            }
+
                             else -> {
                                 ongoingDataReceiveDataCategoryImageView.alpha = 1f
-                                ongoingDataReceiveDirectoryImageView.alpha = 0f
                                 ongoingDataReceivePlainDocumentImageView.alpha = 0f
                             }
                         }
