@@ -30,6 +30,14 @@ class DirectoryVideoLayoutItemViewHolder(
                 .load(dataToTransfer.file)
                 .into(folderVideoLayoutItemImageView)
 
+            if (filesSelectedForTransfer.contains(dataToTransfer)) {
+                folderVideoLayoutItemFolderSelectedCheckBox.isChecked = true
+                folderVideoLayoutItemLayoutViewGroup.setIsViewSelected(true)
+            } else {
+                folderVideoLayoutItemFolderSelectedCheckBox.isChecked = false
+                folderVideoLayoutItemLayoutViewGroup.setIsViewSelected(false)
+            }
+
             folderVideoLayoutItemLayoutViewGroup.setOnClickListener {
                 isItemSelected(
                     folderVideoLayoutItemLayoutViewGroup,
