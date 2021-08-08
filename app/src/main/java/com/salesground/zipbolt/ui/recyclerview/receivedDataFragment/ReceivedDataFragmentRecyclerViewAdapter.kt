@@ -19,7 +19,11 @@ class ReceivedDataFragmentRecyclerViewAdapter :
         VIDEO_RECEIVE_COMPLETE(2),
         APP_RECEIVE_COMPLETE(3),
         AUDIO_RECEIVE_COMPLETE(4),
-        DIRECTORY_RECEIVE_COMPLETE(5)
+        DIRECTORY_RECEIVE_COMPLETE(5),
+        PLAIN_IMAGE_FILE_RECEIVE_COMPLETE(6),
+        PLAIN_VIDEO_FILE_RECEIVE_COMPLETE(7),
+        PLAIN_APP_FILE_RECEIVE_COMPLETE(8),
+        PLAIN_AUDIO_FILE_RECEIVE_COMPLETE(9)
     }
 
     override fun getItemViewType(position: Int): Int {
