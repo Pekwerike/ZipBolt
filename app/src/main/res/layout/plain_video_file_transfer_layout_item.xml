@@ -11,18 +11,17 @@
     </data>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/plain_file_transfer_layout_item_shimmer"
+        android:id="@+id/plain_video_file_transfer_layout_item_shimmer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/plain_video_file_transfer_layout_item_layout_view_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:baselineAligned="false"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="@dimen/view_group_standard_padding"
-            android:baselineAligned="false">
+            android:padding="@dimen/view_group_standard_padding">
 
             <FrameLayout
                 android:layout_width="wrap_content"
