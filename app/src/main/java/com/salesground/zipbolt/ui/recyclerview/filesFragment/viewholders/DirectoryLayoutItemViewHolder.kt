@@ -25,19 +25,12 @@ class DirectoryLayoutItemViewHolder(
         folderLayoutItemBinding.run {
             folderName = dataToTransfer.dataDisplayName
 
-            if (selectedFilesToTransfer.contains(dataToTransfer)) {
-                isItemSelected(
-                    folderLayoutItemViewGroup,
-                    folderLayoutItemFolderSelectedCheckBox,
-                    true
-                )
-            } else {
-                isItemSelected(
-                    folderLayoutItemViewGroup,
-                    folderLayoutItemFolderSelectedCheckBox,
-                    false
-                )
-            }
+            isItemSelected(
+                folderLayoutItemViewGroup,
+                folderLayoutItemFolderSelectedCheckBox,
+                selectedFilesToTransfer.contains(dataToTransfer)
+            )
+
 
             folderLayoutItemViewGroup.setOnClickListener {
                 dataToTransfer as DataToTransfer.DeviceFile

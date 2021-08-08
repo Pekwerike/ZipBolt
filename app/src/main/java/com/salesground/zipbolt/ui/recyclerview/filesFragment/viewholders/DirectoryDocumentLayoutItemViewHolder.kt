@@ -24,13 +24,12 @@ class DirectoryDocumentLayoutItemViewHolder(
         folderDocumentLayoutItemBinding.run {
             document = dataToTransfer
 
-            if (filesSelectedForTransfer.contains(dataToTransfer)) {
-                folderDocumentLayoutItemFolderSelectedCheckBox.isChecked = true
-                folderDocumentLayoutItemLayoutViewGroup.setIsViewSelected(true)
-            } else {
-                folderDocumentLayoutItemFolderSelectedCheckBox.isChecked = false
-                folderDocumentLayoutItemLayoutViewGroup.setIsViewSelected(false)
-            }
+            isItemSelected(
+                folderDocumentLayoutItemLayoutViewGroup,
+                folderDocumentLayoutItemFolderSelectedCheckBox,
+                filesSelectedForTransfer.contains(dataToTransfer)
+            )
+
 
             folderDocumentLayoutItemLayoutViewGroup.setOnClickListener {
                 isItemSelected(
