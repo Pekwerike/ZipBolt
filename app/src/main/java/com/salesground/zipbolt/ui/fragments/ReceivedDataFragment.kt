@@ -16,6 +16,7 @@ import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragment
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.ReceivedDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.roundToInt
 
 
 @AndroidEntryPoint
@@ -70,22 +71,30 @@ class ReceivedDataFragment : Fragment() {
                     receivedDataFragmentRecyclerViewAdapter.notifyItemInserted(it)
                 }
             }
-            ongoingReceiveDataItem.observe(this@ReceivedDataFragment) { receivedDataItem ->
+            dataReceiveStartedDataItem.observe(this@ReceivedDataFragment) { receivedDataItem ->
                 receivedDataItem?.let {
                     receivedDataFragmentBinding.receivedDataFragmentOngoingDataReceiveLayoutItem.run {
-                        currentReceiveDataToTransferItem.apply {
+                        dataToTransfer = currentReceiveDataToTransferItem.apply {
                             dataDisplayName = it.dataDisplayName
                             dataSize = it.dataSize
                             dataType = it.dataType
                             transferStatus = DataToTransfer.TransferStatus.RECEIVE_ONGOING
                             percentTransferred = it.percentageOfDataRead
                         }
+                        dataTransferPercent = it.percentageOfDataRead.roundToInt()
                     }
+                }
+            }
+            ongoingDataReceivePercent.observe(this@ReceivedDataFragment) {
+                receivedDataFragmentBinding.receivedDataFragmentOngoingDataReceiveLayoutItem.run {
+                    dataTransferPercent = it.roundToInt()
                 }
             }
             completedReceivedDataItem.observe(this@ReceivedDataFragment) { receivedDataItem ->
                 receivedDataItem?.let {
                     receivedDataFragmentBinding.receivedDataFragmentOngoingDataReceiveLayoutItem.run {
+                        dataToTransfer = it
+                        dataTransferPercent = 100
                         when (it.dataType) {
                             in MediaType.File.Document.PdfDocument.value..
                                     MediaType.File.Document.DatDocument.value -> {

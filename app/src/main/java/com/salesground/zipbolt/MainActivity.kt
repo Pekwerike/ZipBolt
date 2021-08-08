@@ -157,28 +157,20 @@ class MainActivity : AppCompatActivity() {
                         DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
                             // expand the bottom sheet to show receive has started
                             mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                            receivedDataViewModel.updateOngoingReceiveDataItem(
+                            receivedDataViewModel.onDataReceiveStarted(
                                 ReceivedDataItem(
                                     dataDisplayName,
                                     dataSize,
                                     percentageOfDataRead,
                                     dataType,
-                                    dataUri,
-                                    DataToTransfer.TransferStatus.RECEIVE_STARTED
+                                    dataUri
                                 )
                             )
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-                            receivedDataViewModel.updateOngoingReceiveDataItem(
-                                ReceivedDataItem(
-                                    dataDisplayName,
-                                    dataSize,
-                                    percentageOfDataRead,
-                                    dataType,
-                                    dataUri,
-                                    DataToTransfer.TransferStatus.RECEIVE_ONGOING
-                                )
+                            receivedDataViewModel.updateOngoingReceiveDataItemReceivePercent(
+                                percentageOfDataRead
                             )
                         }
 

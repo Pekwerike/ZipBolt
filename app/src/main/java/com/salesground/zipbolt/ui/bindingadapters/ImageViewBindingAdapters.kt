@@ -13,10 +13,9 @@ import java.lang.NullPointerException
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
     dataToTransfer?.let {
         if (it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_ONGOING
-            || it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED) {
-            Glide.with(context)
-                .load(R.drawable.ic_baseline_arrow_circle_down_24)
-                .into(this)
+            || it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED
+        ) {
+            setImageDrawable(context.getDrawable(R.drawable.ic_baseline_arrow_circle_down_24))
             return
         }
         when (dataToTransfer.dataType) {
@@ -46,9 +45,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .into(this)
             }
             MediaType.File.Directory.value -> {
-                Glide.with(context)
-                    .load(R.drawable.ic_baseline_folder_open_24_two)
-                    .into(this)
+                setImageDrawable(context.getDrawable(R.drawable.ic_baseline_folder_open_24_two))
             }
             MediaType.File.Document.ExcelDocument.value -> {
                 Glide.with(context)

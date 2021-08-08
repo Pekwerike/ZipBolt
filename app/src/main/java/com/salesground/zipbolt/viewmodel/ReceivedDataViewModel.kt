@@ -26,13 +26,17 @@ class ReceivedDataViewModel : ViewModel() {
     val newReceivedItemPosition: LiveData<Int>
         get() = _newReceivedItemPosition
 
-    private val _ongoingReceiveDataItem = MutableLiveData<ReceivedDataItem>(null)
-    val ongoingReceiveDataItem: LiveData<ReceivedDataItem>
-        get() = _ongoingReceiveDataItem
+    private val _ongoingDataReceivePercent = MutableLiveData<Float>(0f)
+    val ongoingDataReceivePercent: LiveData<Float>
+        get() = _ongoingDataReceivePercent
 
     private val _completedReceivedDataItem = MutableLiveData<DataToTransfer>(null)
     val completedReceivedDataItem: LiveData<DataToTransfer>
         get() = _completedReceivedDataItem
+
+    private val _dataReceiveStartedDataItem = MutableLiveData<ReceivedDataItem>(null)
+    val dataReceiveStartedDataItem: LiveData<ReceivedDataItem>
+        get() = _dataReceiveStartedDataItem
 
     fun addDataToReceivedItems(dataToTransfer: DataToTransfer) {
         receivedDataItemsNormalList.add(dataToTransfer)
@@ -43,9 +47,15 @@ class ReceivedDataViewModel : ViewModel() {
         }
     }
 
-    fun updateOngoingReceiveDataItem(receivedDataItem: ReceivedDataItem) {
+    fun updateOngoingReceiveDataItemReceivePercent(receivePercent: Float) {
         viewModelScope.launch {
-            _ongoingReceiveDataItem.value = receivedDataItem
+            _ongoingDataReceivePercent.value = receivePercent
+        }
+    }
+
+    fun onDataReceiveStarted(receivedDataItem: ReceivedDataItem) {
+        viewModelScope.launch {
+            _dataReceiveStartedDataItem.value = receivedDataItem
         }
     }
 }
@@ -55,6 +65,5 @@ data class ReceivedDataItem(
     val dataSize: Long,
     val percentageOfDataRead: Float,
     val dataType: Int,
-    val dataUri: Uri?,
-    val transferStatus: DataToTransfer.TransferStatus
+    val dataUri: Uri?
 )
