@@ -9,7 +9,7 @@
             type="com.salesground.zipbolt.model.DataToTransfer.DeviceFile" />
     </data>
 
-    <LinearLayout
+    <com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
         android:id="@+id/folder_document_layout_item_layout_view_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -64,5 +64,5 @@
             android:minWidth="48dp"
             android:minHeight="48dp" />
 
-    </LinearLayout>
+    </com.salesground.zipbolt.ui.customviews.SelectableLinearLayout>
 </layout>

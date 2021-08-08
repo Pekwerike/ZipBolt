@@ -2,33 +2,81 @@ package com.salesground.zipbolt.ui.recyclerview.filesFragment.viewholders
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.CheckBox
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FolderDocumentLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
+import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 
 class DirectoryDocumentLayoutItemViewHolder(
-    private val folderDocumentLayoutItemBinding: FolderDocumentLayoutItemBinding
+    private val folderDocumentLayoutItemBinding: FolderDocumentLayoutItemBinding,
+    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(folderDocumentLayoutItemBinding.root) {
 
-    fun bindData(dataToTransfer: DataToTransfer) {
+    fun bindData(
+        dataToTransfer: DataToTransfer,
+        filesSelectedForTransfer: MutableList<DataToTransfer>
+    ) {
         dataToTransfer as DataToTransfer.DeviceFile
         folderDocumentLayoutItemBinding.run {
             document = dataToTransfer
+
+            if (filesSelectedForTransfer.contains(dataToTransfer)) {
+                folderDocumentLayoutItemFolderSelectedCheckBox.isChecked = true
+                folderDocumentLayoutItemLayoutViewGroup.setIsViewSelected(true)
+            } else {
+                folderDocumentLayoutItemFolderSelectedCheckBox.isChecked = false
+                folderDocumentLayoutItemLayoutViewGroup.setIsViewSelected(false)
+            }
+
+            folderDocumentLayoutItemLayoutViewGroup.setOnClickListener {
+                isItemSelected(
+                    folderDocumentLayoutItemLayoutViewGroup,
+                    folderDocumentLayoutItemFolderSelectedCheckBox,
+                    !filesSelectedForTransfer.contains(dataToTransfer)
+                )
+                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+            }
+
+            folderDocumentLayoutItemFolderSelectedCheckBox.setOnClickListener {
+                isItemSelected(
+                    folderDocumentLayoutItemLayoutViewGroup,
+                    folderDocumentLayoutItemFolderSelectedCheckBox,
+                    !filesSelectedForTransfer.contains(dataToTransfer)
+                )
+                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+            }
             executePendingBindings()
         }
     }
 
+    private fun isItemSelected(
+        viewGroup: SelectableLinearLayout,
+        selectedCheckBox: CheckBox,
+        isSelected: Boolean
+    ) {
+        viewGroup.setIsViewSelected(isSelected)
+        selectedCheckBox.isChecked = isSelected
+    }
+
     companion object {
-        fun createViewHolder(parent: ViewGroup): DirectoryDocumentLayoutItemViewHolder {
+        fun createViewHolder(
+            parent: ViewGroup,
+            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+        ): DirectoryDocumentLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<FolderDocumentLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.folder_document_layout_item,
                 parent,
                 false
             )
-            return DirectoryDocumentLayoutItemViewHolder(layoutBinding)
+            return DirectoryDocumentLayoutItemViewHolder(
+                layoutBinding,
+                dataToTransferRecyclerViewItemClickListener
+            )
         }
     }
 }
