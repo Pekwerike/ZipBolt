@@ -11,7 +11,7 @@
     </data>
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/plain_video_file_transfer_layout_item_shimmer"
+        android:id="@+id/plain_image_file_transfer_layout_item_shimmer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

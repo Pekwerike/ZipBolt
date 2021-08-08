@@ -18,6 +18,8 @@ import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plai
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.PlainFileTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.document.PlainDocumentFileTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.document.PlainDocumentFileTransferWaitingLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.image.PlainImageFileTransferCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.image.PlainImageFileTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.video.PlainVideoFileTransferCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.plainFile.video.PlainVideoFileTransferWaitingLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.viewHolders.video.VideoTransferCompleteLayoutItemViewHolder
@@ -43,7 +45,9 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
         PLAIN_VIDEO_FILE_TRANSFER_WAITING(16),
         PLAIN_VIDEO_FILE_TRANSFER_COMPLETE(17),
         PLAIN_DOCUMENT_FILE_TRANSFER_WAITING(18),
-        PLAIN_DOCUMENT_FILE_TRANSFER_COMPLETE(19)
+        PLAIN_DOCUMENT_FILE_TRANSFER_COMPLETE(19),
+        PLAIN_IMAGE_FILE_TRANSFER_WAITING(20),
+        PLAIN_IMAGE_FILE_TRANSFER_COMPLETE(21)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -108,7 +112,7 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                             when (dataItem.dataType) {
                                 MediaType.File.VideoFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_TRANSFER_COMPLETE.value
-                                MediaType.File.ImageFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_COMPLETE.value
+                                MediaType.File.ImageFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_TRANSFER_COMPLETE.value
                                 else -> SentDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_TRANSFER_COMPLETE.value
                             }
 
@@ -116,7 +120,7 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                         DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
                             when (dataItem.dataType) {
                                 MediaType.File.VideoFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_TRANSFER_WAITING.value
-                                MediaType.File.ImageFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_FILE_TRANSFER_WAITING.value
+                                MediaType.File.ImageFile.value -> SentDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_TRANSFER_WAITING.value
                                 else -> SentDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_TRANSFER_WAITING.value
                             }
                         }
@@ -178,6 +182,12 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
             SentDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_TRANSFER_COMPLETE.value -> {
                 PlainDocumentFileTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
+            SentDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_TRANSFER_COMPLETE.value -> {
+                PlainImageFileTransferCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            SentDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_TRANSFER_WAITING.value -> {
+                PlainImageFileTransferWaitingLayoutItemViewHolder.createViewHolder(parent)
+            }
             else -> {
                 ImageTransferCompleteLayoutViewHolder.createViewHolder(parent)
             }
@@ -233,6 +243,12 @@ class SentDataFragmentRecyclerViewAdapter() : ListAdapter<
                 holder.bindData(dataItem)
             }
             is PlainDocumentFileTransferWaitingLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainImageFileTransferWaitingLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainImageFileTransferCompleteLayoutItemViewHolder -> {
                 holder.bindData(dataItem)
             }
         }
