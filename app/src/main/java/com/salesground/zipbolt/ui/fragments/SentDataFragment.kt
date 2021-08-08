@@ -5,10 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.databinding.FragmentSentDataBinding
+import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
@@ -83,6 +85,10 @@ class SentDataFragment : Fragment() {
             updatedSentDataItemIndex.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
+            }
+
+            canceledSentDataItemIndex.observe(this@SentDataFragment){
+
             }
 
             currentDataToTransferDataItem.observe(this@SentDataFragment) { dataToTransfer ->

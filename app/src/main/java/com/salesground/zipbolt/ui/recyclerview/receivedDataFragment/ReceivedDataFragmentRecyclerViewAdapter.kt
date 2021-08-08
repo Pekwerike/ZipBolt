@@ -4,12 +4,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.directory.DirectoryReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.image.ImageReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoReceiveCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.document.PlainDocumentFileReceiveCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.image.PlainImageFileReceiveCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.video.PlainVideoFileReceiveCompleteLayoutItemViewHolder
 
 class ReceivedDataFragmentRecyclerViewAdapter :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>
@@ -19,11 +23,15 @@ class ReceivedDataFragmentRecyclerViewAdapter :
         VIDEO_RECEIVE_COMPLETE(2),
         APP_RECEIVE_COMPLETE(3),
         AUDIO_RECEIVE_COMPLETE(4),
-        DIRECTORY_RECEIVE_COMPLETE(5)
+        DIRECTORY_RECEIVE_COMPLETE(5),
+        PLAIN_IMAGE_FILE_RECEIVE_COMPLETE(6),
+        PLAIN_VIDEO_FILE_RECEIVE_COMPLETE(7),
+        PLAIN_APP_FILE_RECEIVE_COMPLETE(8),
+        PLAIN_AUDIO_FILE_RECEIVE_COMPLETE(9),
+        PLAIN_DOCUMENT_FILE_RECEIVE_COMPLETE(10)
     }
 
     override fun getItemViewType(position: Int): Int {
-
         return when (val dataItem = currentList[position]) {
             is DataToTransfer.DeviceImage -> {
                 ReceiveDataFragmentAdapterViewTypes.IMAGE_RECEIVE_COMPLETE.value
@@ -41,7 +49,12 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                 if (dataItem.file.isDirectory) {
                     ReceiveDataFragmentAdapterViewTypes.DIRECTORY_RECEIVE_COMPLETE.value
                 } else {
-                    300
+                    when (dataItem.dataType) {
+                        MediaType.File.ImageFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value
+                        MediaType.File.VideoFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_RECEIVE_COMPLETE.value
+                        MediaType.File.AudioFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_AUDIO_FILE_RECEIVE_COMPLETE.value
+                        else -> ReceiveDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_RECEIVE_COMPLETE.value
+                    }
                 }
             }
         }
@@ -64,6 +77,16 @@ class ReceivedDataFragmentRecyclerViewAdapter :
             ReceiveDataFragmentAdapterViewTypes.DIRECTORY_RECEIVE_COMPLETE.value -> {
                 DirectoryReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_RECEIVE_COMPLETE.value -> {
+                PlainDocumentFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_RECEIVE_COMPLETE.value -> {
+                PlainVideoFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value -> {
+                PlainImageFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
 
             else -> ImageReceiveCompleteLayoutViewHolder.createViewHolder(parent)
         }
@@ -85,6 +108,15 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                 holder.bindData(dataItem)
             }
             is DirectoryReceiveCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainDocumentFileReceiveCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainVideoFileReceiveCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainImageFileReceiveCompleteLayoutItemViewHolder -> {
                 holder.bindData(dataItem)
             }
         }
