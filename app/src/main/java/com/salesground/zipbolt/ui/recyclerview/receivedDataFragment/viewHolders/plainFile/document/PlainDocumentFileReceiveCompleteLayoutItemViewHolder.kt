@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile
+package com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.document
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
