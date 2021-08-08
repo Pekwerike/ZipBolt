@@ -75,6 +75,12 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .into(this)
             }
 
+            MediaType.File.VideoFile.value -> {
+                Glide.with(context)
+                    .load(dataToTransfer.dataUri)
+                    .into(this)
+            }
+
             MediaType.File.Document.WebpageDocument.value -> {
                 Glide.with(context)
                     .load(R.drawable.ic_google_chrome)

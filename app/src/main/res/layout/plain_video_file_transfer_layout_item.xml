@@ -28,8 +28,8 @@
                 android:layout_height="wrap_content">
 
                 <com.salesground.zipbolt.ui.customviews.CurvedImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
                     android:scaleType="centerCrop"
                     app:bindImageBasedOnMediaType="@{document}"
                     app:curvedImageViewCornerRadius="0.17" />
