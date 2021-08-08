@@ -12,6 +12,8 @@ import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewCo
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.image.ImageReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.document.PlainDocumentFileReceiveCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.image.PlainImageFileReceiveCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.video.PlainVideoFileReceiveCompleteLayoutItemViewHolder
 
 class ReceivedDataFragmentRecyclerViewAdapter :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>
@@ -78,6 +80,13 @@ class ReceivedDataFragmentRecyclerViewAdapter :
             ReceiveDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_RECEIVE_COMPLETE.value -> {
                 PlainDocumentFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_RECEIVE_COMPLETE.value -> {
+                PlainVideoFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value -> {
+                PlainImageFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+
 
             else -> ImageReceiveCompleteLayoutViewHolder.createViewHolder(parent)
         }
@@ -102,6 +111,12 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                 holder.bindData(dataItem)
             }
             is PlainDocumentFileReceiveCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainVideoFileReceiveCompleteLayoutItemViewHolder -> {
+                holder.bindData(dataItem)
+            }
+            is PlainImageFileReceiveCompleteLayoutItemViewHolder -> {
                 holder.bindData(dataItem)
             }
         }

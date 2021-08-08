@@ -251,13 +251,19 @@ class MainActivity : AppCompatActivity() {
                                             } catch (nullPointerException: NullPointerException) {
                                                 null
                                             }
-                                        )
+                                        ).apply {
+                                            this.dataType = dataType
+                                        }
                                     }
-                                    MediaType.File.Directory.value -> {
+                                    in MediaType.File.Directory.value
+                                            ..MediaType.File.Document.DatDocument.value -> {
                                         DataToTransfer.DeviceFile(
                                             dataUri!!.toFile()
-                                        )
+                                        ).apply {
+                                            this.dataType = dataType
+                                        }
                                     }
+
                                     else -> {
                                         DataToTransfer.DeviceImage(
                                             imageId = 0L,
@@ -290,14 +296,20 @@ class MainActivity : AppCompatActivity() {
                 when (transferStatus) {
                     DataToTransfer.TransferStatus.TRANSFER_STARTED -> {
                         sentDataViewModel.changeCurrentDataToTransferDataItem(dataToTransfer)
-                        sentDataViewModel.setCurrentDataToTransferPercentTransferred(percentTransferred)
+                        sentDataViewModel.setCurrentDataToTransferPercentTransferred(
+                            percentTransferred
+                        )
                     }
                     DataToTransfer.TransferStatus.TRANSFER_COMPLETE -> {
                         sentDataViewModel.dataTransferCompleted(dataToTransfer)
-                        sentDataViewModel.setCurrentDataToTransferPercentTransferred(percentTransferred)
+                        sentDataViewModel.setCurrentDataToTransferPercentTransferred(
+                            percentTransferred
+                        )
                     }
                     DataToTransfer.TransferStatus.TRANSFER_ONGOING -> {
-                        sentDataViewModel.setCurrentDataToTransferPercentTransferred(percentTransferred)
+                        sentDataViewModel.setCurrentDataToTransferPercentTransferred(
+                            percentTransferred
+                        )
                     }
                     DataToTransfer.TransferStatus.TRANSFER_CANCELLED -> {
                         // from the cancelled media item from the queue of data in transfer
@@ -895,7 +907,7 @@ class MainActivity : AppCompatActivity() {
                             getBottomSheetPeekHeight()
                     }
                 }
-               expandedConnectedToPeerTransferOngoingViewPager2.adapter =
+                expandedConnectedToPeerTransferOngoingViewPager2.adapter =
                     sentAndReceivedDataItemsViewPagerAdapter
                 TabLayoutMediator(
                     expandedConnectedToPeerTransferOngoingTabLayout,
