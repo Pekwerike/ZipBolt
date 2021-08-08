@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="dataToTransfer"
+            type="com.salesground.zipbolt.model.DataToTransfer.DeviceAudio" />
+
+    </data>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/audio_transfer_layout_item_shimmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin">
+
+
+            <com.salesground.zipbolt.ui.customviews.CurvedImageView
+                android:id="@+id/audio_transfer_layout_item_video_preview_image_view"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_margin="@dimen/small_margin"
+                android:scaleType="centerCrop"
+                app:curvedImageViewCornerRadius="0.17"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/audio_transfer_layout_item_video_name_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/medium_margin"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:padding="@dimen/standard_text_view_padding"
+                android:text="@{dataToTransfer.audioDisplayName}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:layout_constraintBottom_toTopOf="@+id/audio_transfer_layout_item_video_duration_and_size_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@id/audio_transfer_layout_item_video_preview_image_view"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/audio_transfer_layout_item_video_duration_and_size_text_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/standard_text_view_padding"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/audio_transfer_layout_item_video_name_text_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@id/audio_transfer_layout_item_video_name_text_view"
+                app:layout_constraintTop_toBottomOf="@+id/audio_transfer_layout_item_video_name_text_view"
+                app:setVideoDuration="@{dataToTransfer.audioDuration}"
+                app:setVideoSize="@{dataToTransfer.audioSize}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</layout>

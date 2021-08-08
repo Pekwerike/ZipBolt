@@ -25,12 +25,34 @@
             android:layout_height="58dp"
             android:layout_margin="@dimen/small_margin"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_baseline_folder_open_24"
             app:bindImageBasedOnMediaType="@{dataToTransfer}"
             app:curvedImageViewCornerRadius="0.17"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ongoing_data_transfer_plain_document_image_view"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="@dimen/small_margin"
+            android:padding="@dimen/medium_padding"
+            app:bindImageBasedOnMediaType="@{dataToTransfer}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ongoing_data_transfer_directory_image_view"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="@dimen/small_margin"
+            android:alpha="0"
+            android:padding="@dimen/medium_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_folder_open_24" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_data_transfer_layout_data_display_name"

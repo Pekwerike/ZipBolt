@@ -895,7 +895,7 @@ class MainActivity : AppCompatActivity() {
                             getBottomSheetPeekHeight()
                     }
                 }
-                expandedConnectedToPeerTransferOngoingViewPager2.adapter =
+               expandedConnectedToPeerTransferOngoingViewPager2.adapter =
                     sentAndReceivedDataItemsViewPagerAdapter
                 TabLayoutMediator(
                     expandedConnectedToPeerTransferOngoingTabLayout,

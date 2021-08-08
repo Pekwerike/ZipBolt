@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.databinding.FragmentSentDataBinding
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.SentDataViewModel
 
@@ -78,18 +79,34 @@ class SentDataFragment : Fragment() {
                 sentDataFragmentRecyclerViewAdapter.submitList(it)
                 sentDataFragmentRecyclerViewAdapter.notifyDataSetChanged()
             }
-            canceledSentDataItemIndex.observe(this@SentDataFragment) {
-                sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
-                sentDataFragmentRecyclerViewAdapter.notifyItemRemoved(it)
-            }
+
             updatedSentDataItemIndex.observe(this@SentDataFragment) {
                 sentDataFragmentRecyclerViewAdapter.submitList(sentDataItems.value)
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
             }
+
             currentDataToTransferDataItem.observe(this@SentDataFragment) { dataToTransfer ->
                 dataToTransfer?.let {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                         this.dataToTransfer = dataToTransfer
+                        when (dataToTransfer.dataType) {
+                            in MediaType.File.Document.PdfDocument.value..
+                                    MediaType.File.Document.DatDocument.value -> {
+                                ongoingDataTransferDataCategoryImageView.alpha = 0f
+                                ongoingDataTransferDirectoryImageView.alpha = 0f
+                                ongoingDataTransferPlainDocumentImageView.alpha = 1f
+                            }
+                            MediaType.File.Directory.value -> {
+                                ongoingDataTransferDataCategoryImageView.alpha = 0f
+                                ongoingDataTransferDirectoryImageView.alpha = 1f
+                                ongoingDataTransferPlainDocumentImageView.alpha = 0f
+                            }
+                            else -> {
+                                ongoingDataTransferDataCategoryImageView.alpha = 1f
+                                ongoingDataTransferDirectoryImageView.alpha = 0f
+                                ongoingDataTransferPlainDocumentImageView.alpha = 0f
+                            }
+                        }
                     }
                 }
             }
