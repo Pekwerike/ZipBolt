@@ -1,11 +1,13 @@
 package com.salesground.zipbolt.ui.bindingadapters
 
+import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
+import java.lang.NullPointerException
 
 @BindingAdapter("bindImageBasedOnMediaType")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
@@ -24,6 +26,16 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                 Glide.with(context)
                     .load(dataToTransfer.audioArtPath)
                     .error(R.drawable.ic_baseline_music_note_24)
+                    .into(this)
+            }
+            MediaType.Image.value -> {
+                Glide.with(context)
+                    .load(dataToTransfer.dataUri)
+                    .into(this)
+            }
+            MediaType.Video.value -> {
+                Glide.with(context)
+                    .load(dataToTransfer.dataUri)
                     .into(this)
             }
             MediaType.File.Directory.value -> {
@@ -59,16 +71,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .load(R.drawable.zip_file)
                     .into(this)
             }
-            MediaType.Image.value -> {
-                Glide.with(context)
-                    .load(dataToTransfer.dataUri)
-                    .into(this)
-            }
-            MediaType.Video.value -> {
-                Glide.with(context)
-                    .load(dataToTransfer.dataUri)
-                    .into(this)
-            }
+
             MediaType.File.ImageFile.value -> {
                 Glide.with(context)
                     .load(dataToTransfer.dataUri)
@@ -79,6 +82,34 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                 Glide.with(context)
                     .load(dataToTransfer.dataUri)
                     .into(this)
+            }
+
+            MediaType.File.AppFile.value -> {
+                dataToTransfer as DataToTransfer.DeviceFile
+                val filePath = dataToTransfer.file.path
+                val applicationIcon: Drawable? = try {
+                    context.packageManager.getPackageArchiveInfo(
+                        filePath, 0
+                    ).let { packageInfo ->
+                        context.packageManager.getApplicationIcon(
+                            packageInfo!!
+                                .applicationInfo.apply {
+                                    sourceDir = filePath
+                                    publicSourceDir = filePath
+                                })
+                    }
+                } catch (nullPointerException: NullPointerException) {
+                    null
+                }
+                if (applicationIcon != null) {
+                    Glide.with(context)
+                        .load(applicationIcon)
+                        .into(this)
+                } else {
+                    Glide.with(context)
+                        .load(R.drawable.ic_launcher_background)
+                        .into(this)
+                }
             }
 
             MediaType.File.Document.WebpageDocument.value -> {

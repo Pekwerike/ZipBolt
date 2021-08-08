@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class DeviceApplicationsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val savedFilesRepository: SavedFilesRepository
+     savedFilesRepository: SavedFilesRepository
 ) : ApplicationsRepositoryInterface {
 
     private val zipBoltAppsFolder = savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(
