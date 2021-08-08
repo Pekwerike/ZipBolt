@@ -255,7 +255,7 @@ class MainActivity : AppCompatActivity() {
                                             this.dataType = dataType
                                         }
                                     }
-                                    in MediaType.File.Directory.value
+                                    in MediaType.File.ImageFile.value
                                             ..MediaType.File.Document.DatDocument.value -> {
                                         DataToTransfer.DeviceFile(
                                             dataUri!!.toFile()
