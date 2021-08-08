@@ -54,9 +54,7 @@ class SentDataFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         sentDataFragmentBinding.run {
-            root.isNestedScrollingEnabled = true
             sentDataFragmentRecyclerview.run {
-                isNestedScrollingEnabled = true
                 layoutManager = sentDataFragmentLayoutManager
                 adapter = sentDataFragmentRecyclerViewAdapter
 
@@ -92,14 +90,21 @@ class SentDataFragment : Fragment() {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                         this.dataToTransfer = dataToTransfer
                         when (dataToTransfer.dataType) {
-                            in MediaType.File.Directory.value..
+                            in MediaType.File.Document.PdfDocument.value..
                                     MediaType.File.Document.DatDocument.value -> {
                                 ongoingDataTransferDataCategoryImageView.alpha = 0f
-                                ongoingDataTransferPlainDocumentOrDirectoryImageView.alpha = 1f
+                                ongoingDataTransferDirectoryImageView.alpha = 0f
+                                ongoingDataTransferPlainDocumentImageView.alpha = 1f
+                            }
+                            MediaType.File.Directory.value -> {
+                                ongoingDataTransferDataCategoryImageView.alpha = 0f
+                                ongoingDataTransferDirectoryImageView.alpha = 1f
+                                ongoingDataTransferPlainDocumentImageView.alpha = 0f
                             }
                             else -> {
                                 ongoingDataTransferDataCategoryImageView.alpha = 1f
-                                ongoingDataTransferPlainDocumentOrDirectoryImageView.alpha = 0f
+                                ongoingDataTransferDirectoryImageView.alpha = 0f
+                                ongoingDataTransferPlainDocumentImageView.alpha = 0f
                             }
                         }
                     }
