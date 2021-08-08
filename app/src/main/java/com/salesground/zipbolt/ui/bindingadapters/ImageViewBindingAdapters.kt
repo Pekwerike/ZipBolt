@@ -12,6 +12,13 @@ import java.lang.NullPointerException
 @BindingAdapter("bindImageBasedOnMediaType")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
     dataToTransfer?.let {
+        if (it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_ONGOING
+            || it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED) {
+            Glide.with(context)
+                .load(R.drawable.ic_baseline_arrow_circle_down_24)
+                .into(this)
+            return
+        }
         when (dataToTransfer.dataType) {
             MediaType.App.value -> {
                 dataToTransfer as DataToTransfer.DeviceApplication
