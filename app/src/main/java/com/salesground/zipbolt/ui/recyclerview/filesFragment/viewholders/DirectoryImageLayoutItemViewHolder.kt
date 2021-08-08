@@ -28,13 +28,11 @@ class DirectoryImageLayoutItemViewHolder(
                 .load(dataToTransfer.file)
                 .into(folderImageLayoutItemImageView)
 
-            if (filesSelectedForTransfer.contains(dataToTransfer)) {
-                folderImageLayoutItemFolderSelectedCheckBox.isChecked = true
-                folderImageLayoutItemLayoutViewGroup.setIsViewSelected(true)
-            } else {
-                folderImageLayoutItemFolderSelectedCheckBox.isChecked = false
-                folderImageLayoutItemLayoutViewGroup.setIsViewSelected(false)
-            }
+            isItemSelected(
+                folderImageLayoutItemLayoutViewGroup,
+                folderImageLayoutItemFolderSelectedCheckBox,
+                filesSelectedForTransfer.contains(dataToTransfer)
+            )
 
             folderImageLayoutItemLayoutViewGroup.setOnClickListener {
                 isItemSelected(

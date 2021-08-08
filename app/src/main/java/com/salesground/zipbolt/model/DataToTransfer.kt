@@ -98,9 +98,6 @@ sealed class DataToTransfer(
         dataSize = file.length()
     ) {
         override var dataType: Int = when {
-            file.isDirectory -> {
-                MediaType.File.Directory.value
-            }
             dataDisplayName.endsWith("jpg") || dataDisplayName.endsWith("png")
                     || dataDisplayName.endsWith("jpeg") || dataDisplayName.endsWith("gif")
                     || dataDisplayName.endsWith("webp") -> {
@@ -130,6 +127,15 @@ sealed class DataToTransfer(
             }
             dataDisplayName.endsWith("zip") -> {
                 MediaType.File.Document.ZipDocument.value
+            }
+            dataDisplayName.endsWith("mhtml") -> {
+                MediaType.File.Document.WebpageDocument.value
+            }
+            dataDisplayName.endsWith("dat") -> {
+                MediaType.File.Document.DatDocument.value
+            }
+            file.isDirectory -> {
+                MediaType.File.Directory.value
             }
             else -> MediaType.File.Document.UnknownDocument.value
         }

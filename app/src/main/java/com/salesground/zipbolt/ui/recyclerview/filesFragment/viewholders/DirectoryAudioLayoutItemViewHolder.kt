@@ -24,13 +24,12 @@ class DirectoryAudioLayoutItemViewHolder(
 
         folderAudioLayoutItemBinding.run {
             audioFile = dataToTransfer.file
-            if (filesSelectedForTransfer.contains(dataToTransfer)) {
-                folderAudioLayoutItemFolderSelectedCheckBox.isChecked = true
-                folderAudioLayoutItemLayoutViewGroup.setIsViewSelected(true)
-            } else {
-                folderAudioLayoutItemFolderSelectedCheckBox.isChecked = true
-                folderAudioLayoutItemLayoutViewGroup.setIsViewSelected(true)
-            }
+
+            isItemSelected(
+                folderAudioLayoutItemLayoutViewGroup,
+                folderAudioLayoutItemFolderSelectedCheckBox,
+                filesSelectedForTransfer.contains(dataToTransfer)
+            )
 
 
             folderAudioLayoutItemLayoutViewGroup.setOnClickListener {

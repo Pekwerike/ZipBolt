@@ -11,7 +11,7 @@ interface SavedFilesRepository {
         FILES_BASE_DIRECTORY("Files"),
         APPS_BASE_DIRECTORY("Apps"),
         FOLDERS_BASE_DIRECTORY("Folders"),
-        DOCUMENTS_BASE_DIRECTORY("Documents")
+        DOCUMENTS_BASE_DIRECTORY("ZipBolt Documents")
     }
 
     fun getZipBoltBaseDirectory(): File
