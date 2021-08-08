@@ -184,6 +184,15 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
+                            receivedDataViewModel.updateOngoingReceiveDataItem(
+                                ReceivedDataItem(
+                                    dataDisplayName,
+                                    dataSize,
+                                    percentageOfDataRead,
+                                    dataType,
+                                    dataUri
+                                )
+                            )
                             /*  with(
                               connectedToPeerTransferOngoingBottomSheetLayoutBinding
                                   .expandedConnectedToPeerTransferOngoingLayout

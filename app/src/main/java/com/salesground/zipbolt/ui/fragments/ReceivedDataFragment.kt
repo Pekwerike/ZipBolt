@@ -68,6 +68,11 @@ class ReceivedDataFragment : Fragment() {
                 if (it != -1) {
                     receivedDataFragmentRecyclerViewAdapter.notifyItemInserted(it)
                 }
+                ongoingReceiveDataItem.observe(this@ReceivedDataFragment) {
+                    it?.let {
+                        receivedDataFragmentBinding.
+                    }
+                }
             }
         }
     }

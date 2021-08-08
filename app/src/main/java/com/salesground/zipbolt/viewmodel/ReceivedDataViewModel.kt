@@ -1,5 +1,6 @@
 package com.salesground.zipbolt.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,11 @@ class ReceivedDataViewModel : ViewModel() {
     val newReceivedItemPosition: LiveData<Int>
         get() = _newReceivedItemPosition
 
+    private val _ongoingReceiveDataItem = MutableLiveData<ReceivedDataItem>(null)
+    val ongoingReceiveDataItem: LiveData<ReceivedDataItem>
+        get() = _ongoingReceiveDataItem
+
+
     fun addDataToReceivedItems(dataToTransfer: DataToTransfer) {
         receivedDataItemsNormalList.add(dataToTransfer)
         viewModelScope.launch(Dispatchers.Main) {
@@ -26,4 +32,18 @@ class ReceivedDataViewModel : ViewModel() {
             _newReceivedItemPosition.value = receivedDataItemsNormalList.size
         }
     }
+
+    fun updateOngoingReceiveDataItem(receivedDataItem: ReceivedDataItem) {
+        viewModelScope.launch {
+            _ongoingReceiveDataItem.value = receivedDataItem
+        }
+    }
 }
+
+data class ReceivedDataItem(
+    val dataDisplayName: String,
+    val dataSize: Long,
+    val percentageOfDataRead: Float,
+    val dataType: Int,
+    val dataUri: Uri?,
+)
