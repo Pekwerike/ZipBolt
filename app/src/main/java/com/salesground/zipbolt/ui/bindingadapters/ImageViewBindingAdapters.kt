@@ -53,7 +53,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                 setImageDrawable(
                     AppCompatResources.getDrawable(
                         context,
-                        R.drawable.ic_baseline_folder_open_24_two
+                        R.drawable.ic_baseline_folder_open_24
                     )
                 )
             }

@@ -87,7 +87,7 @@ class SentDataFragment : Fragment() {
                 sentDataFragmentRecyclerViewAdapter.notifyItemChanged(it)
             }
 
-            canceledSentDataItemIndex.observe(this@SentDataFragment){
+            canceledSentDataItemIndex.observe(this@SentDataFragment) {
 
             }
 
@@ -96,20 +96,14 @@ class SentDataFragment : Fragment() {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
                         this.dataToTransfer = dataToTransfer
                         when (dataToTransfer.dataType) {
-                            in MediaType.File.Document.PdfDocument.value..
+                            in MediaType.File.Directory.value..
                                     MediaType.File.Document.DatDocument.value -> {
                                 ongoingDataTransferDataCategoryImageView.alpha = 0f
-                                ongoingDataTransferDirectoryImageView.alpha = 0f
                                 ongoingDataTransferPlainDocumentImageView.alpha = 1f
                             }
-                            MediaType.File.Directory.value -> {
-                                ongoingDataTransferDataCategoryImageView.alpha = 0f
-                                ongoingDataTransferDirectoryImageView.alpha = 1f
-                                ongoingDataTransferPlainDocumentImageView.alpha = 0f
-                            }
+
                             else -> {
                                 ongoingDataTransferDataCategoryImageView.alpha = 1f
-                                ongoingDataTransferDirectoryImageView.alpha = 0f
                                 ongoingDataTransferPlainDocumentImageView.alpha = 0f
                             }
                         }
