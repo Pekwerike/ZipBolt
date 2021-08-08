@@ -32,6 +32,7 @@ class SentDataViewModel : ViewModel() {
     val currentDataToTransferPercentTransferred: LiveData<Int>
         get() = _currentDataToTransferPercentTransferred
 
+
     fun setCurrentDataToTransferPercentTransferred(percentTransferred: Float) {
         viewModelScope.launch(Dispatchers.Main) {
             _currentDataToTransferPercentTransferred.value = percentTransferred.roundToInt()

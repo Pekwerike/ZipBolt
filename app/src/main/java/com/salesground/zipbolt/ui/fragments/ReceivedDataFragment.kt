@@ -9,6 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentReceivedDataBinding
+import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.ReceivedDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
@@ -18,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ReceivedDataFragment : Fragment() {
-
     private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
     private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter()
     private lateinit var receivedDataFragmentLayoutManager: GridLayoutManager
@@ -67,6 +68,43 @@ class ReceivedDataFragment : Fragment() {
             newReceivedItemPosition.observe(this@ReceivedDataFragment) {
                 if (it != -1) {
                     receivedDataFragmentRecyclerViewAdapter.notifyItemInserted(it)
+                }
+            }
+            ongoingReceiveDataItem.observe(this@ReceivedDataFragment) { receivedDataItem ->
+                receivedDataItem?.let {
+                    receivedDataFragmentBinding.receivedDataFragmentOngoingDataReceiveLayoutItem.run {
+                        currentReceiveDataToTransferItem.apply {
+                            dataDisplayName = it.dataDisplayName
+                            dataSize = it.dataSize
+                            dataType = it.dataType
+                            transferStatus = DataToTransfer.TransferStatus.RECEIVE_ONGOING
+                            percentTransferred = it.percentageOfDataRead
+                        }
+                    }
+                }
+            }
+            completedReceivedDataItem.observe(this@ReceivedDataFragment) { receivedDataItem ->
+                receivedDataItem?.let {
+                    receivedDataFragmentBinding.receivedDataFragmentOngoingDataReceiveLayoutItem.run {
+                        when (it.dataType) {
+                            in MediaType.File.Document.PdfDocument.value..
+                                    MediaType.File.Document.DatDocument.value -> {
+                                ongoingDataReceiveDataCategoryImageView.alpha = 0f
+                                ongoingDataReceiveDirectoryImageView.alpha = 0f
+                                ongoingDataReceivePlainDocumentImageView.alpha = 1f
+                            }
+                            MediaType.File.Directory.value -> {
+                                ongoingDataReceiveDataCategoryImageView.alpha = 0f
+                                ongoingDataReceiveDirectoryImageView.alpha = 1f
+                                ongoingDataReceivePlainDocumentImageView.alpha = 0f
+                            }
+                            else -> {
+                                ongoingDataReceiveDataCategoryImageView.alpha = 1f
+                                ongoingDataReceiveDirectoryImageView.alpha = 0f
+                                ongoingDataReceivePlainDocumentImageView.alpha = 0f
+                            }
+                        }
+                    }
                 }
             }
         }

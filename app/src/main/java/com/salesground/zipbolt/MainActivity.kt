@@ -157,46 +157,29 @@ class MainActivity : AppCompatActivity() {
                         DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
                             // expand the bottom sheet to show receive has started
                             mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                            /*with(
-                            connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                .expandedConnectedToPeerTransferOngoingLayout
-                                .expandedConnectedToPeerTransferOngoingLayoutHeader
-                        ) {
-                            // hide the  no item in receive label
-                            ongoingTransferReceiveHeaderLayoutNoItemsInReceiveTextView.root.animate()
-                                .alpha(0f)
-                            with(ongoingTransferReceiveHeaderLayoutDataReceiveView) {
-                                // ongoingDataTransferLayoutCancelTransferImageView.animate().alpha(1f)
-                                root.animate().alpha(1f)
-                                this.dataDisplayName = dataDisplayName
-                                this.dataSize =
-                                    dataSize.transformDataSizeToMeasuredUnit(0L)
-
-                                Glide.with(ongoingDataReceiveLayoutImageView)
-                                    .load(R.drawable.ic_startup_outline_)
-                                    .into(ongoingDataReceiveLayoutImageView)
-                                // start shimmer
-                                ongoingDataReceiveDataCategoryImageShimmer.showShimmer(
-                                    true
+                            receivedDataViewModel.updateOngoingReceiveDataItem(
+                                ReceivedDataItem(
+                                    dataDisplayName,
+                                    dataSize,
+                                    percentageOfDataRead,
+                                    dataType,
+                                    dataUri,
+                                    DataToTransfer.TransferStatus.RECEIVE_STARTED
                                 )
-                            }
-                        }*/
+                            )
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-                            /*  with(
-                              connectedToPeerTransferOngoingBottomSheetLayoutBinding
-                                  .expandedConnectedToPeerTransferOngoingLayout
-                                  .expandedConnectedToPeerTransferOngoingLayoutHeader
-                                  .ongoingTransferReceiveHeaderLayoutDataReceiveView
-                          ) {
-                              // show the receive progress indicator and the percentage received
-                              this.dataSize = dataSize.transformDataSizeToMeasuredUnit(
-                                  ((percentageOfDataRead / 100) * dataSize).roundToLong()
-                              )
-                              dataTransferPercent = percentageOfDataRead.roundToInt()
-                              dataTransferPercentAsString = "$dataTransferPercent%"
-                          }*/
+                            receivedDataViewModel.updateOngoingReceiveDataItem(
+                                ReceivedDataItem(
+                                    dataDisplayName,
+                                    dataSize,
+                                    percentageOfDataRead,
+                                    dataType,
+                                    dataUri,
+                                    DataToTransfer.TransferStatus.RECEIVE_ONGOING
+                                )
+                            )
                         }
 
                         DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {

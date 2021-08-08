@@ -5,49 +5,54 @@
     <data>
 
         <variable
-            name="dataDisplayName"
-            type="String" />
+            name="dataToTransfer"
+            type="com.salesground.zipbolt.model.DataToTransfer" />
 
         <variable
             name="dataTransferPercent"
             type="Integer" />
-
-        <variable
-            name="dataTransferPercentAsString"
-            type="String" />
-
-        <variable
-            name="dataSize"
-            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ongoing_data_receive_layout_item_constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_padding">
 
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/ongoing_data_receive_data_category_image_shimmer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="@android:color/transparent"
+        <com.salesground.zipbolt.ui.customviews.CurvedImageView
+            android:id="@+id/ongoing_data_receive_data_category_image_view"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="@dimen/small_margin"
+            android:scaleType="centerCrop"
+            app:bindImageBasedOnMediaType="@{dataToTransfer}"
+            app:curvedImageViewCornerRadius="0.17"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ongoing_data_receive__layout_image_view"
-                android:layout_width="54dp"
-                android:layout_height="54dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_startup_outline_"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ongoing_data_receive_plain_document_image_view"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="@dimen/small_margin"
+            android:padding="@dimen/medium_padding"
+            app:bindImageBasedOnMediaType="@{dataToTransfer}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        </com.facebook.shimmer.ShimmerFrameLayout>
-
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ongoing_data_receive_directory_image_view"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_margin="@dimen/small_margin"
+            android:alpha="0"
+            android:padding="@dimen/medium_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_folder_open_24" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_data_receive_layout_data_display_name"
@@ -55,14 +60,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
             android:lines="1"
-            android:ellipsize="end"
             android:paddingBottom="@dimen/standard_text_view_padding"
-            android:text="@{dataDisplayName}"
+            android:text="@{dataToTransfer.dataDisplayName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_receive_layout_linear_progress_indicator"
-            app:layout_constraintEnd_toStartOf="@id/ongoing_data_receive_layout_cancel_transfer_image_button"
-            app:layout_constraintStart_toEndOf="@id/ongoing_data_receive_data_category_image_shimmer"
-            app:layout_constraintTop_toTopOf="@id/ongoing_data_receive_data_category_image_shimmer" />
+            app:layout_constraintEnd_toStartOf="@id/ongoing_data_receive_layout_cancel_receive_image_button"
+            app:layout_constraintStart_toEndOf="@id/ongoing_data_receive_data_category_image_view"
+            app:layout_constraintTop_toTopOf="@id/ongoing_data_receive_data_category_image_view" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/ongoing_data_receive_layout_linear_progress_indicator"
@@ -71,44 +75,45 @@
             android:layout_marginVertical="4dp"
             android:progress="@{dataTransferPercent}"
             app:layout_constraintBottom_toTopOf="@+id/ongoing_data_receive_layout_item_data_size_text_view"
-            app:layout_constraintEnd_toStartOf="@id/ongoing_data_receive_layout_item_transfer_percentage_text_view"
+            app:layout_constraintEnd_toStartOf="@id/ongoing_data_receive_layout_item_receive_percentage_text_view"
             app:layout_constraintStart_toStartOf="@+id/ongoing_data_receive_layout_data_display_name"
             app:showAnimationBehavior="outward"
             app:trackThickness="6dp" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/ongoing_data_receive_layout_item_transfer_percentage_text_view"
+            android:id="@+id/ongoing_data_receive_layout_item_receive_percentage_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="4dp"
-            android:text="@{dataTransferPercentAsString}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintBottom_toBottomOf="@id/ongoing_data_receive_layout_linear_progress_indicator"
-            app:layout_constraintEnd_toStartOf="@id/ongoing_data_receive_layout_cancel_transfer_image_button"
+            app:layout_constraintEnd_toStartOf="@id/ongoing_data_receive_layout_cancel_receive_image_button"
             app:layout_constraintStart_toEndOf="@id/ongoing_data_receive_layout_linear_progress_indicator"
-            app:layout_constraintTop_toTopOf="@id/ongoing_data_receive_layout_linear_progress_indicator" />
+            app:layout_constraintTop_toTopOf="@id/ongoing_data_receive_layout_linear_progress_indicator"
+            app:setTransferPercent="@{dataTransferPercent}" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/ongoing_data_receive_layout_cancel_transfer_image_button"
+            android:id="@+id/ongoing_data_receive_layout_cancel_receive_image_button"
             android:layout_width="@dimen/image_button_size"
             android:layout_height="@dimen/image_button_size"
             android:layout_marginVertical="4dp"
             android:layout_marginStart="4dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/close_icon"
-            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_receive_data_category_image_shimmer"
+            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_receive_data_category_image_view"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/ongoing_data_receive_data_category_image_shimmer" />
+            app:layout_constraintTop_toTopOf="@+id/ongoing_data_receive_data_category_image_view" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/ongoing_data_receive_layout_item_data_size_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="@{dataSize}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_receive_data_category_image_shimmer"
-            app:layout_constraintStart_toStartOf="@id/ongoing_data_receive_layout_linear_progress_indicator" />
+            app:layout_constraintBottom_toBottomOf="@+id/ongoing_data_receive_data_category_image_view"
+            app:layout_constraintStart_toStartOf="@id/ongoing_data_receive_layout_linear_progress_indicator"
+            app:setTransferPercentForFileSize="@{dataTransferPercent}"
+            app:setTransferredSizeOverFileSize="@{dataToTransfer.dataSize}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
