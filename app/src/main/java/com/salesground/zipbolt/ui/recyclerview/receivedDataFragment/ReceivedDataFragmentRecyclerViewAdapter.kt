@@ -7,7 +7,7 @@ import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationReceiveCompleteLayoutViewHolder
-import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.audio.AudioReceiveCompleteLayoutItemViewHolder
+import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.audio.AudioReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.directory.DirectoryReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.image.ImageReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.video.VideoReceiveCompleteLayoutItemViewHolder
@@ -53,6 +53,7 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                         MediaType.File.ImageFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value
                         MediaType.File.VideoFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_RECEIVE_COMPLETE.value
                         MediaType.File.AudioFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_AUDIO_FILE_RECEIVE_COMPLETE.value
+                        MediaType.File.AppFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_APP_FILE_RECEIVE_COMPLETE.value
                         else -> ReceiveDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_RECEIVE_COMPLETE.value
                     }
                 }
@@ -84,6 +85,12 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                 PlainVideoFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
             ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value -> {
+                PlainImageFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_APP_FILE_RECEIVE_COMPLETE.value -> {
+                PlainDocumentFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_AUDIO_FILE_RECEIVE_COMPLETE.value -> {
                 PlainImageFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
 

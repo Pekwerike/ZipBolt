@@ -46,7 +46,6 @@ import kotlin.math.roundToInt
 
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,6 +58,7 @@ import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
+import com.salesground.zipbolt.ui.fragments.GroupCreatedFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -96,6 +96,9 @@ class MainActivity : AppCompatActivity() {
     private val sentDataViewModel: SentDataViewModel by viewModels()
     private val receivedDataViewModel: ReceivedDataViewModel by viewModels()
 
+    //fragments
+    private var groupCreatedFragment: GroupCreatedFragment? = null
+
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
 
@@ -122,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 // create wifi direct group only if this device wants to be a sender
-                createWifiDirectGroup()
+                openGroupCreatedModalBottomSheet()
             }
         }
 
@@ -312,7 +315,7 @@ class MainActivity : AppCompatActivity() {
 
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
-    private lateinit var modalBottomSheetDialog: BottomSheetDialog
+    private lateinit var connectionOptionsBottomSheetDialog: BottomSheetDialog
     private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured: Boolean = false
@@ -410,7 +413,7 @@ class MainActivity : AppCompatActivity() {
     private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
             if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER) {
-                createWifiDirectGroup()
+                openGroupCreatedModalBottomSheet()
             } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
                 || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
             ) {
@@ -432,6 +435,7 @@ class MainActivity : AppCompatActivity() {
             startPeerDiscovery = false
             deviceTransferRole = when (deviceTransferRole) {
                 DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
+                    groupCreatedFragment?.dismiss()
                     DeviceTransferRole.SEND
                 }
                 DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
@@ -549,7 +553,7 @@ class MainActivity : AppCompatActivity() {
             connectToPeerButton.setOnClickListener {
                 if (it.alpha > 0f) {
                     configureConnectionOptionsModalBottomSheetLayout()
-                    modalBottomSheetDialog.show()
+                    connectionOptionsBottomSheetDialog.show()
                 }
             }
 
@@ -1076,8 +1080,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun configureConnectionOptionsModalBottomSheetLayout() {
-        modalBottomSheetDialog = BottomSheetDialog(this)
-        modalBottomSheetDialog.setContentView(
+        connectionOptionsBottomSheetDialog = BottomSheetDialog(this)
+        connectionOptionsBottomSheetDialog.setContentView(
             ZipBoltProConnectionOptionsBottomSheetLayoutBinding.inflate(layoutInflater).apply {
                 zipBoltProConnectionOptionsBottomSheetLayoutSendCardView.setOnClickListener {
                     deviceTransferRole = DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
@@ -1087,19 +1091,21 @@ class MainActivity : AppCompatActivity() {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
-                                // Show the user that searching for peers has started
                                 /**Listen for wifi on via the broadcast receiver
                                  * and then call createWifiDirectGroup**/
-
                             } else {
                                 displayToast("Turn off your hotspot")
                             }
                         }
                     } else {
-                        // Create Wifi p2p group, if wifi is enabled
-                        createWifiDirectGroup()
+                        if (isLocationPermissionGranted()) {
+                            // Create wifi p2p group, if wifi is enabled
+                            openGroupCreatedModalBottomSheet()
+                        } else {
+                            requestFineLocationPermission()
+                        }
                     }
-                    modalBottomSheetDialog.hide()
+                    connectionOptionsBottomSheetDialog.dismiss()
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
                     deviceTransferRole = DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
@@ -1121,7 +1127,7 @@ class MainActivity : AppCompatActivity() {
                         // begin peer discovery
                         beginPeerDiscovery()
                     }
-                    modalBottomSheetDialog.hide()
+                    connectionOptionsBottomSheetDialog.hide()
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
@@ -1129,7 +1135,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }.root
         )
+    }
 
+    private fun openGroupCreatedModalBottomSheet() {
+        groupCreatedFragment = GroupCreatedFragment.newInstance()
+        groupCreatedFragment?.isCancelable = false
+        groupCreatedFragment?.show(
+            supportFragmentManager,
+            "GroupCreatedBottomSheetFragment"
+        )
     }
 
     fun cancelOngoingDataTransfer() {
@@ -1154,33 +1168,6 @@ class MainActivity : AppCompatActivity() {
         return (60 * resources.displayMetrics.density).roundToInt()
     }
 
-
-    @SuppressLint("MissingPermission", "HardwareIds")
-    private fun createWifiDirectGroup() {
-        // local service addition was successfully sent to the android framework
-        wifiP2pManager.createGroup(wifiP2pChannel,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    /* group created successfully, update the device UI, that we are now
-                    * waiting for a receiver*/
-                    /*   wifiP2pManager.requestGroupInfo(wifiP2pChannel) {
-                           it?.let {
-                               Toast.makeText(
-                                   this@MainActivity, "Password is " +
-                                           it.passphrase, Toast.LENGTH_LONG
-                               ).show()
-                           }
-                       }*/
-                    mainActivityViewModel.expandedWaitingForReceiver()
-                    broadcastZipBoltFileTransferService()
-                }
-
-                override fun onFailure(p0: Int) {
-                    displayToast("Group creation failed")
-                    broadcastZipBoltFileTransferService()
-                }
-            })
-    }
 
     @SuppressLint("MissingPermission")
     private fun connectToADevice(device: WifiP2pDevice) {
@@ -1298,7 +1285,7 @@ class MainActivity : AppCompatActivity() {
                 })
 
         } else {
-            checkFineLocationPermission()
+            requestFineLocationPermission()
             displayToast("Cannot discover service. Missing permission")
         }
     }
@@ -1369,73 +1356,21 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("MissingPermission")
-    private fun broadcastZipBoltFileTransferService() {
-        /* val listeningPort : Int = DataTransferService.arrayOfPossiblePorts.random()
-          DataTransferService.SOCKET_PORT = listeningPort */
-        // register the zipBolt file transfer service
-        val record: Map<String, String> = mapOf(
-            "peerName" to "",
-            //  "listeningPort" to listeningPort.toString()
-        )
-
-        val serviceInfo = WifiP2pDnsSdServiceInfo.newInstance(
-            getString(R.string.zip_bolt_file_transfer_service),
-            "_presence._tcp",
-            record
-        )
-
-        if (isLocationPermissionGranted()) {
-            wifiP2pManager.clearLocalServices(
-                wifiP2pChannel,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        wifiP2pManager.addLocalService(wifiP2pChannel, serviceInfo,
-                            object : WifiP2pManager.ActionListener {
-                                override fun onSuccess() {
-                                    // local service addition was successfully sent to the android framework
-                                    //  createWifiDirectGroup()
-                                }
-
-                                override fun onFailure(reason: Int) {
-                                    // local service addition was not successfully sent to the android framework
-                                    broadcastZipBoltFileTransferService()
-                                }
-                            })
-                    }
-
-                    override fun onFailure(reason: Int) {
-                        broadcastZipBoltFileTransferService()
-                    }
-                })
-
-        } else {
-            //TODO request location permission and addLocalService again
-            displayToast("Cannot advertise service. Missing location permission")
-        }
-    }
 
     // check if SpeedForce has access to device fine location
-    private fun checkFineLocationPermission() {
-        val isFineLocationPermissionGranted = isLocationPermissionGranted()
-
-        if (isFineLocationPermissionGranted) {
-            // TODO check if the device location is on, using location manager
-            //TODO more resource @ https://developer.android.com/training/location
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(permission.ACCESS_FINE_LOCATION),
-                FINE_LOCATION_REQUEST_CODE
-            )
-        }
+    private fun requestFineLocationPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(permission.ACCESS_FINE_LOCATION),
+            FINE_LOCATION_REQUEST_CODE
+        )
     }
+
 
     private fun isLocationPermissionGranted() = ActivityCompat.checkSelfPermission(
         this,
         permission.ACCESS_FINE_LOCATION
-    ) ==
-            PackageManager.PERMISSION_GRANTED
+    ) == PackageManager.PERMISSION_GRANTED
 
     private fun displayToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -1471,9 +1406,19 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == FINE_LOCATION_REQUEST_CODE && permissions.contains(permission.ACCESS_FINE_LOCATION)) {
             if (grantResults.isNotEmpty()) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // access to device fine location has been granted to SpeedForce
-                    // TODO check if the device location is on, using location manager
-                    //TODO more resource @ https://developer.android.com/training/location
+                    when (deviceTransferRole) {
+                        DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
+                            beginPeerDiscovery()
+                        }
+                        DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
+                            openGroupCreatedModalBottomSheet()
+                        }
+                        DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
+                            beginPeerDiscovery()
+                        }
+                        else -> {
+                        }
+                    }
                 }
             }
         } else if (requestCode == PermissionUtils.READ_WRITE_STORAGE_REQUEST_CODE && permissions.contains(
