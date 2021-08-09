@@ -92,6 +92,11 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .into(this)
             }
 
+            MediaType.File.AudioFile.value -> {
+                Glide.with(context)
+                    .load(R.drawable.ic_baseline_music_note_24)
+                    .into(this)
+            }
             MediaType.File.VideoFile.value -> {
                 Glide.with(context)
                     .load(dataToTransfer.dataUri)

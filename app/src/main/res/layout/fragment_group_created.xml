@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.fragments.GroupCreatedFragment">
+
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/fragment_group_created_close_group_image_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="@dimen/medium_margin"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/close_group_button_desc"
+        android:tint="@color/background_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/close_icon" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_group_created_waiting_for_receiver_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="64dp"
+        android:padding="@dimen/medium_padding"
+        android:text="Waiting for receiver...."
+        android:textColor="@color/background_color"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_group_created_close_group_image_button" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_group_created_waiting_for_receiver_description_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:padding="@dimen/medium_padding"
+        android:text="@string/waiting_for_peers_description"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_group_created_waiting_for_receiver_text_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

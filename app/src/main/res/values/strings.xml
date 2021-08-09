@@ -47,4 +47,6 @@
     <string name="data_percent_transferred">%1$d%%</string>
     <string name="data_transferred_over_data_size_place_holder">%1$d/%1$s</string>
     <string name="document_file_icon_desc">document file icon</string>
+    <string name="close_group_button_desc">Close group button</string>
+    <string name="group_created_label">Group Created</string>
 </resources>
