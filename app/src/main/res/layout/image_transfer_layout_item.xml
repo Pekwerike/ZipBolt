@@ -10,7 +10,7 @@
     <com.salesground.zipbolt.ui.customviews.CurvedImageView
         android:id="@+id/image_waiting_for_transfer_layout_item_image_view"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="110dp"
         android:scaleType="centerCrop"
         app:curvedImageViewCornerRadius="0.15" />
 </com.facebook.shimmer.ShimmerFrameLayout>

@@ -53,6 +53,7 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                         MediaType.File.ImageFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value
                         MediaType.File.VideoFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_VIDEO_FILE_RECEIVE_COMPLETE.value
                         MediaType.File.AudioFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_AUDIO_FILE_RECEIVE_COMPLETE.value
+                        MediaType.File.AppFile.value -> ReceiveDataFragmentAdapterViewTypes.PLAIN_APP_FILE_RECEIVE_COMPLETE.value
                         else -> ReceiveDataFragmentAdapterViewTypes.PLAIN_DOCUMENT_FILE_RECEIVE_COMPLETE.value
                     }
                 }
@@ -84,6 +85,12 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                 PlainVideoFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
             ReceiveDataFragmentAdapterViewTypes.PLAIN_IMAGE_FILE_RECEIVE_COMPLETE.value -> {
+                PlainImageFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_APP_FILE_RECEIVE_COMPLETE.value -> {
+                PlainDocumentFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
+            }
+            ReceiveDataFragmentAdapterViewTypes.PLAIN_AUDIO_FILE_RECEIVE_COMPLETE.value -> {
                 PlainImageFileReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)
             }
 
