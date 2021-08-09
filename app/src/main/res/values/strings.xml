@@ -49,4 +49,5 @@
     <string name="document_file_icon_desc">document file icon</string>
     <string name="close_group_button_desc">Close group button</string>
     <string name="group_created_label">Group Created</string>
+    <string name="waiting_for_receiver_label">Waiting for receiver</string>
 </resources>

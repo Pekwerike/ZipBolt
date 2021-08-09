@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".ui.fragments.GroupCreatedFragment">
 
@@ -20,17 +20,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/close_icon" />
 
-    <com.google.android.material.textview.MaterialTextView
+    <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
         android:id="@+id/fragment_group_created_waiting_for_receiver_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/standard_margin"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="@dimen/standard_margin"
         android:padding="@dimen/medium_padding"
-        android:text="Waiting for receiver...."
-        android:textColor="@color/background_color"
+        android:text="@string/waiting_for_receiver_label"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/background_color"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_group_created_close_group_image_button" />
@@ -39,12 +40,16 @@
         android:id="@+id/fragment_group_created_waiting_for_receiver_description_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_margin"
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:layout_marginBottom="32dp"
         android:padding="@dimen/medium_padding"
         android:text="@string/waiting_for_peers_description"
         android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_group_created_waiting_for_receiver_text_view" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

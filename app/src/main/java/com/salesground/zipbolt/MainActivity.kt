@@ -1141,6 +1141,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openGroupCreatedModalBottomSheet() {
         groupCreatedFragment = GroupCreatedFragment.newInstance()
+        groupCreatedFragment?.isCancelable = false
         groupCreatedFragment?.show(
             supportFragmentManager,
             "GroupCreatedBottomSheetFragment"
@@ -1170,7 +1171,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("MissingPermission", "HardwareIds")
+   /* @SuppressLint("MissingPermission", "HardwareIds")
     private fun createWifiDirectGroup() {
         // local service addition was successfully sent to the android framework
         wifiP2pManager.createGroup(wifiP2pChannel,
@@ -1195,7 +1196,7 @@ class MainActivity : AppCompatActivity() {
                     broadcastZipBoltFileTransferService()
                 }
             })
-    }
+    }*/
 
     @SuppressLint("MissingPermission")
     private fun connectToADevice(device: WifiP2pDevice) {
@@ -1384,7 +1385,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("MissingPermission")
+   /* @SuppressLint("MissingPermission")
     private fun broadcastZipBoltFileTransferService() {
         /* val listeningPort : Int = DataTransferService.arrayOfPossiblePorts.random()
           DataTransferService.SOCKET_PORT = listeningPort */
@@ -1428,7 +1429,7 @@ class MainActivity : AppCompatActivity() {
             //TODO request location permission and addLocalService again
             displayToast("Cannot advertise service. Missing location permission")
         }
-    }
+    }*/
 
     // check if SpeedForce has access to device fine location
     private fun requestFineLocationPermission() {
