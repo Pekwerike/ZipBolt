@@ -411,12 +411,11 @@ class MainActivity : AppCompatActivity() {
                 && groupCreatedFragment == null
             ) {
                 openGroupCreatedModalBottomSheet()
-            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
-                || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
+            } else if ((deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
+                        || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING)
                 && peersDiscoveryFragment == null
             ) {
                 openPeersDiscoveryModalBottomSheet()
-
             }
         }
 
@@ -435,12 +434,12 @@ class MainActivity : AppCompatActivity() {
             deviceTransferRole = when (deviceTransferRole) {
                 DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
                     groupCreatedFragment?.dismiss()
-                    groupCreatedFragment == null
+                    groupCreatedFragment = null
                     DeviceTransferRole.SEND
                 }
                 DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
                     peersDiscoveryFragment?.dismiss()
-                    peersDiscoveryFragment == null
+                    peersDiscoveryFragment = null
                     DeviceTransferRole.RECEIVE
                 }
                 DeviceTransferRole.NO_ROLE -> {
@@ -448,7 +447,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
                     peersDiscoveryFragment?.dismiss()
-                    peersDiscoveryFragment == null
+                    peersDiscoveryFragment = null
                     DeviceTransferRole.SEND_AND_RECEIVE
                 }
                 else -> {
