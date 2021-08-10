@@ -59,6 +59,7 @@ import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.ui.fragments.GroupCreatedFragment
+import com.salesground.zipbolt.ui.fragments.PeersDiscoveryFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -98,6 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     //fragments
     private var groupCreatedFragment: GroupCreatedFragment? = null
+    private var peersDiscoveryFragment: PeersDiscoveryFragment? = null
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -322,16 +324,18 @@ class MainActivity : AppCompatActivity() {
                 override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
                     connectToADevice(wifiP2pDevice)
                     startPeerDiscovery = false
-                    //   stopDevicePeerDiscovery()
-                    /**
-                     * 1. Collapse the searching for peers expanded bottom sheet ui
-                     * 2. Display the connected to peer collapsed bottom sheet ui
-                     * 3. Stop peer discovery
-                     * **/
                 }
             }
         )
     }
+
+    fun connectedToDeviceSuccessfully(){
+        startPeerDiscovery = false
+    }
+    fun deviceConnectionFailed(){
+
+    }
+
 
     private val expandedSearchingForPeersInfoBinding:
             ExpandedSearchingForPeersInformationBinding by lazy {
