@@ -13,6 +13,8 @@
         android:id="@+id/expanded_connected_to_peer_transfer_ongoing_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:tabIndicatorColor="@color/background_color"
+        app:tabSelectedTextColor="@color/background_color"
         app:tabTextAppearance="@style/CustomTabTextAppearance" />
 
     <androidx.viewpager2.widget.ViewPager2

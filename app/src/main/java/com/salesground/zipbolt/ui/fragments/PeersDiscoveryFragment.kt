@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +47,9 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     private lateinit var peersDiscoveryFragment: FragmentPeersDiscoveryBinding
     private val peersDiscoveredRecyclerViewAdapter = PeersDiscoveredRecyclerViewAdapter(
         DataToTransferRecyclerViewItemClickListener {
-            connectToADevice(it)
+            if (peersDiscoveryFragment.fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility != View.INVISIBLE) {
+                connectToADevice(it)
+            }
         }
     )
 
@@ -69,7 +72,10 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        peersDiscoveryFragment = FragmentPeersDiscoveryBinding.inflate(inflater, container, false)
+        peersDiscoveryFragment = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_peers_discovery, container, false
+        )
         // Inflate the layout for this fragment
         return peersDiscoveryFragment.root
     }
