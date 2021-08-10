@@ -322,18 +322,11 @@ class MainActivity : AppCompatActivity() {
             connectToDeviceClickListener = object :
                 DiscoveredPeersRecyclerViewAdapter.ConnectToDeviceClickListener {
                 override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
-                    connectToADevice(wifiP2pDevice)
-                    startPeerDiscovery = false
+                    // connectToADevice(wifiP2pDevice)
+                    // startPeerDiscovery = false
                 }
             }
         )
-    }
-
-    fun connectedToDeviceSuccessfully(){
-        startPeerDiscovery = false
-    }
-    fun deviceConnectionFailed(){
-
     }
 
 
@@ -412,7 +405,7 @@ class MainActivity : AppCompatActivity() {
             } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
                 || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
             ) {
-                beginPeerDiscovery()
+                openPeersDiscoveryModalBottomSheet()
             }
         }
 
@@ -519,7 +512,7 @@ class MainActivity : AppCompatActivity() {
                 mainActivityViewModel.peerConnectionNoAction()
             } else {
                 if (startPeerDiscovery) {
-                    beginPeerDiscovery()
+                    //beginPeerDiscovery()
                 }
             }
         }
@@ -1087,7 +1080,7 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
                                 /**Listen for wifi on via the broadcast receiver
-                                 * and then call createWifiDirectGroup**/
+                                 * and then call openGroupCreatedModalBottomSheet**/
                             } else {
                                 displayToast("Turn off your hotspot")
                             }
@@ -1110,17 +1103,20 @@ class MainActivity : AppCompatActivity() {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
-                                // Show the user that searching for peers has started
-                                mainActivityViewModel.expandedSearchingForPeers()
+                                /**Listen for wifi on via the broadcast receiver
+                                 * and then call openPeersDiscoveryModalBottomSheet**/
+
                             } else {
                                 displayToast("Turn off your hotspot")
                             }
                         }
                     } else {
-                        // Show the user that searching for peers has started
-                        mainActivityViewModel.expandedSearchingForPeers()
-                        // begin peer discovery
-                        beginPeerDiscovery()
+                        if (isLocationPermissionGranted()) {
+                            // Create wifi p2p group, if wifi is enabled
+                            openPeersDiscoveryModalBottomSheet()
+                        } else {
+                            requestFineLocationPermission()
+                        }
                     }
                     connectionOptionsBottomSheetDialog.hide()
                 }
@@ -1139,6 +1135,24 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager,
             "GroupCreatedBottomSheetFragment"
         )
+    }
+
+    private fun openPeersDiscoveryModalBottomSheet() {
+        peersDiscoveryFragment = PeersDiscoveryFragment.newInstance()
+        peersDiscoveryFragment?.isCancelable = false
+        peersDiscoveryFragment?.show(
+            supportFragmentManager,
+            "PeersDiscoveryBottomSheetFragment"
+        )
+    }
+
+    fun connectedToDeviceSuccessfully() {
+        startPeerDiscovery = false
+        peersDiscoveryFragment?.dismiss()
+    }
+
+    fun deviceConnectionFailed() {
+
     }
 
     fun cancelOngoingDataTransfer() {
@@ -1164,126 +1178,126 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @SuppressLint("MissingPermission")
-    private fun connectToADevice(device: WifiP2pDevice) {
-        val wifiP2pConfig = WifiP2pConfig().apply {
-            deviceAddress = device.deviceAddress
-            wps.setup = WpsInfo.PBC
-        }
+    /* @SuppressLint("MissingPermission")
+     private fun connectToADevice(device: WifiP2pDevice) {
+         val wifiP2pConfig = WifiP2pConfig().apply {
+             deviceAddress = device.deviceAddress
+             wps.setup = WpsInfo.PBC
+         }
 
-        wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfig,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-                    displayToast("Connection attempt successful")
-                }
+         wifiP2pManager.connect(wifiP2pChannel, wifiP2pConfig,
+             object : WifiP2pManager.ActionListener {
+                 override fun onSuccess() {
+                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
+                     displayToast("Connection attempt successful")
+                 }
 
-                override fun onFailure(p0: Int) {
-                    // connection initiation failed,
-                    displayToast("Connection attempt failed")
-                }
-            })
-    }
+                 override fun onFailure(p0: Int) {
+                     // connection initiation failed,
+                     displayToast("Connection attempt failed")
+                 }
+             })
+     }*/
 
-    @SuppressLint("MissingPermission")
-    private fun discoverServices() {
-        wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-            override fun onSuccess() {
-                Timer().schedule(2000) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
-                            discoverServices()
-                        }
-                    }
-                }
-            }
+    /* @SuppressLint("MissingPermission")
+     private fun discoverServices() {
+         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+             override fun onSuccess() {
+                 Timer().schedule(2000) {
+                     lifecycleScope.launch(Dispatchers.Main) {
+                         if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                             discoverServices()
+                         }
+                     }
+                 }
+             }
 
-            override fun onFailure(reason: Int) {
-                if (reason == WifiP2pManager.ERROR || reason == WifiP2pManager.BUSY) {
-                    discoverServices()
-                }
-            }
-        })
-    }
+             override fun onFailure(reason: Int) {
+                 if (reason == WifiP2pManager.ERROR || reason == WifiP2pManager.BUSY) {
+                     discoverServices()
+                 }
+             }
+         })
+     }*/
 
-    @SuppressLint("MissingPermission")
-    private fun beginPeerDiscovery() {
-        if (isLocationPermissionGranted()) {
-            val recordListener =
-                WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
-                                                        txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
-                    if (txtRecordMap != null && srcDevice != null) {
-                        txtRecordMap["listeningPort"]?.let {
-                            //  DataTransferService.SOCKET_PORT = it.toInt()
-                        }
-                        txtRecordMap["peerName"]?.let { peerName ->
-                            nearByDevices[srcDevice.deviceAddress] = if (peerName.isBlank()) {
-                                srcDevice.deviceName
-                            } else {
-                                peerName
-                            }
-                        }
-                    }
-                }
+    /* @SuppressLint("MissingPermission")
+     private fun beginPeerDiscovery() {
+         if (isLocationPermissionGranted()) {
+             val recordListener =
+                 WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
+                                                         txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
+                     if (txtRecordMap != null && srcDevice != null) {
+                         txtRecordMap["listeningPort"]?.let {
+                             //  DataTransferService.SOCKET_PORT = it.toInt()
+                         }
+                         txtRecordMap["peerName"]?.let { peerName ->
+                             nearByDevices[srcDevice.deviceAddress] = if (peerName.isBlank()) {
+                                 srcDevice.deviceName
+                             } else {
+                                 peerName
+                             }
+                         }
+                     }
+                 }
 
-            val serviceInfoListener =
-                WifiP2pManager.DnsSdServiceResponseListener { instanceName: String?,
-                                                              registrationType: String?,
-                                                              srcDevice: WifiP2pDevice? ->
-                    // replace the default device name, with the peer name sent through the service record
-                    srcDevice?.let {
-                        srcDevice.deviceName =
-                            nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
-                        if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
-                            if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
-                                mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
-                                    srcDevice
-                                )
-                            }
-                    }
-                }
+             val serviceInfoListener =
+                 WifiP2pManager.DnsSdServiceResponseListener { instanceName: String?,
+                                                               registrationType: String?,
+                                                               srcDevice: WifiP2pDevice? ->
+                     // replace the default device name, with the peer name sent through the service record
+                     srcDevice?.let {
+                         srcDevice.deviceName =
+                             nearByDevices[srcDevice.deviceAddress] ?: srcDevice.deviceName
+                         if (instanceName == getString(R.string.zip_bolt_file_transfer_service))
+                             if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                 mainActivityViewModel.newDeviceAdvertisingZipBoltTransferService(
+                                     srcDevice
+                                 )
+                             }
+                     }
+                 }
 
-            wifiP2pManager.setDnsSdResponseListeners(
-                wifiP2pChannel,
-                serviceInfoListener,
-                recordListener
-            )
-            wifiP2pManager.clearServiceRequests(wifiP2pChannel,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        wifiP2pManager.addServiceRequest(wifiP2pChannel,
-                            WifiP2pDnsSdServiceRequest.newInstance(),
-                            object : WifiP2pManager.ActionListener {
-                                override fun onSuccess() {
-                                    lifecycleScope.launch(Dispatchers.Main) {
-                                        discoverServices()
-                                    }
-                                }
+             wifiP2pManager.setDnsSdResponseListeners(
+                 wifiP2pChannel,
+                 serviceInfoListener,
+                 recordListener
+             )
+             wifiP2pManager.clearServiceRequests(wifiP2pChannel,
+                 object : WifiP2pManager.ActionListener {
+                     override fun onSuccess() {
+                         wifiP2pManager.addServiceRequest(wifiP2pChannel,
+                             WifiP2pDnsSdServiceRequest.newInstance(),
+                             object : WifiP2pManager.ActionListener {
+                                 override fun onSuccess() {
+                                     lifecycleScope.launch(Dispatchers.Main) {
+                                         discoverServices()
+                                     }
+                                 }
 
-                                override fun onFailure(reason: Int) {
-                                    if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
-                                        lifecycleScope.launch(Dispatchers.Main) {
-                                            beginPeerDiscovery()
-                                        }
-                                    }
-                                }
-                            })
-                    }
+                                 override fun onFailure(reason: Int) {
+                                     if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                                         lifecycleScope.launch(Dispatchers.Main) {
+                                             beginPeerDiscovery()
+                                         }
+                                     }
+                                 }
+                             })
+                     }
 
-                    override fun onFailure(reason: Int) {
-                        if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                beginPeerDiscovery()
-                            }
-                        }
-                    }
-                })
+                     override fun onFailure(reason: Int) {
+                         if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER) {
+                             lifecycleScope.launch(Dispatchers.Main) {
+                                 beginPeerDiscovery()
+                             }
+                         }
+                     }
+                 })
 
-        } else {
-            requestFineLocationPermission()
-            displayToast("Cannot discover service. Missing permission")
-        }
-    }
+         } else {
+             requestFineLocationPermission()
+             displayToast("Cannot discover service. Missing permission")
+         }
+     }*/
 
 
     private fun cancelDeviceConnection() {
@@ -1403,13 +1417,13 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     when (deviceTransferRole) {
                         DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
-                            beginPeerDiscovery()
+                            openPeersDiscoveryModalBottomSheet()
                         }
                         DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
                             openGroupCreatedModalBottomSheet()
                         }
                         DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
-                            beginPeerDiscovery()
+                            openPeersDiscoveryModalBottomSheet()
                         }
                         else -> {
                         }

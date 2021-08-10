@@ -17,19 +17,22 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentPeersDiscoveryBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.peersDiscoveryFragment.PeersDiscoveredRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.PeersDiscoveryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
-class PeersDiscoveryFragment : Fragment() {
+@AndroidEntryPoint
+class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null
 
@@ -83,7 +86,9 @@ class PeersDiscoveryFragment : Fragment() {
 
     private fun observeViewModelLiveData() {
         peersDiscoveryViewModel.discoveredPeerSet.observe(this) {
-            peersDiscoveredRecyclerViewAdapter.submitList(it.toList())
+            it?.let {
+                peersDiscoveredRecyclerViewAdapter.submitList(it.toList())
+            }
         }
     }
 
@@ -98,7 +103,7 @@ class PeersDiscoveryFragment : Fragment() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-                    mainActivity
+                    mainActivity?.connectedToDeviceSuccessfully()
                 }
 
                 override fun onFailure(p0: Int) {
