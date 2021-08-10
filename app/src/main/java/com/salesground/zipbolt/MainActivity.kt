@@ -299,15 +299,6 @@ class MainActivity : AppCompatActivity() {
                     DataToTransfer.TransferStatus.TRANSFER_WAITING -> {
 
                     }
-                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
-
-                    }
-                    DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
-
-                    }
-                    DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-
-                    }
                 }
             }
         }

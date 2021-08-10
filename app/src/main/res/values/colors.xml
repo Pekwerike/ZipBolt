@@ -17,4 +17,10 @@
     <color name="background_color">#FF121212</color>
     <color name="uncheck_box_gray">#E0E0E0</color>
     <color name="surface_color">#FFFFFFFF</color>
+
+    <color name="green_dark">#2E7D57</color>
+    <color name="yellow_orange_dark">#CC992D</color>
+    <color name="red_orange_dark">#CC462A</color>
+    <color name="yellow_bright_dark">#FCB030</color>
+    <color name="red_orange">#FF6F50</color>
 </resources>

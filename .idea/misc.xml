@@ -95,6 +95,7 @@
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/audio_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/audio_transfer_layout_item.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/collapsed_waiting_for_receiver_layout.xml" value="0.1" />
+        <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/discovered_peer_layout_item.xml" value="0.25" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/expanded_bottom_sheet_layout_toolbar.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/expanded_connected_to_peer_no_action.xml" value="0.17708333333333334" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/expanded_connected_to_peer_transfer_ongoing.xml" value="0.1" />
@@ -112,6 +113,7 @@
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_group_created_modal_bottom_sheet_dialog.xml" value="0.1734375" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_item_list_dialog_list_dialog.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_music.xml" value="0.17708333333333334" />
+        <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_peers_discovery.xml" value="0.375" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_received_data.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_sent_data.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/fragment_videos.xml" value="0.17708333333333334" />
@@ -132,6 +134,7 @@
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/video_layout_item.xml" value="0.21660649819494585" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/video_transfer_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/waiting_for_receiver_persistent_bottom_sheet_layout.xml" value="0.17708333333333334" />
+        <entry key="..\:/Users/Prosper's PC/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/wifi_p2p_device_item_layout.xml" value="0.12569444444444444" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/application_layout_item.xml" value="0.1" />
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/application_layout_item_large_application_name.xml" value="0.1322463768115942" />
