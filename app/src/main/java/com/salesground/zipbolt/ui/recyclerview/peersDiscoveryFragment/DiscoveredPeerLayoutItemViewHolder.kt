@@ -30,14 +30,19 @@ class DiscoveredPeerLayoutItemViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup,
-                             deviceClickListener: DataToTransferRecyclerViewItemClickListener<WifiP2pDevice>): DiscoveredPeerLayoutItemViewHolder {
+        fun createViewHolder(
+            parent: ViewGroup,
+            deviceClickListener: DataToTransferRecyclerViewItemClickListener<WifiP2pDevice>
+        ): DiscoveredPeerLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<
                     DiscoveredPeerLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.discovered_peer_layout_item,
                 parent,
-                false,
+                false
+            )
+            return DiscoveredPeerLayoutItemViewHolder(
+                layoutBinding,
                 deviceClickListener
             )
         }
