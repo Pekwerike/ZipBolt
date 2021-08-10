@@ -22,7 +22,6 @@ class WifiDirectBroadcastReceiver(
     interface WifiDirectBroadcastReceiverCallback {
         fun wifiOn()
         fun wifiOff()
-        fun peersListAvailable(peersList: MutableList<WifiP2pDevice>)
         fun connectedToPeer(
             wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
@@ -52,20 +51,6 @@ class WifiDirectBroadcastReceiver(
 
                     }
 
-                    /* Broadcast when you call discoverPeers().
-                        You will usually call requestPeers() to get an updated list of peers if you handle this intent in your application.
-                        */
-                    WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
-                        wifiP2pManager.requestPeers(wifiP2pChannel) { p0 ->
-                            // potential peers are available
-                            // Store this list in a viewModel to display it on the UI
-                            p0?.deviceList?.let { collectionOfWifiP2pDevice ->
-                                wifiDirectBroadcastReceiverCallback.peersListAvailable(
-                                    collectionOfWifiP2pDevice.toMutableList()
-                                )
-                            }
-                        }
-                    }
 
                     //Broadcast when the state of the device's Wi-Fi connection changes.
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {

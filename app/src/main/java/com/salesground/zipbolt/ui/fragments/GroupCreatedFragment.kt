@@ -53,7 +53,6 @@ class GroupCreatedFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-
         fun newInstance(): GroupCreatedFragment {
             return GroupCreatedFragment()
         }

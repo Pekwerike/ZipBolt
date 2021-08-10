@@ -13,7 +13,6 @@ import android.os.Build
 
 class UpgradedWifiDirectBroadcastReceiver(
     private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback,
-    private val connectivityManager: ConnectivityManager,
     private val wifiP2pManager: WifiP2pManager,
     private val wifiP2pChannel: WifiP2pManager.Channel
 ) : BroadcastReceiver() {

@@ -1,36 +1,12 @@
 package com.salesground.zipbolt
 
 import android.app.Activity
-import android.content.Context
 import android.view.ViewStub
-import android.widget.FrameLayout
-import androidx.databinding.DataBindingUtil
-import androidx.viewbinding.ViewBinding
 import com.salesground.zipbolt.databinding.*
 
 
 object MainActivityDataBindingUtils {
 
-    fun getExpandedSearchingForPeersBinding(activity: Activity)
-            : ExpandedSearchingForPeersInformationBinding {
-        val expandedSearchingForPeersInfoView =
-            activity.findViewById<ViewStub>(R.id.expanded_searching_for_peers_info_view_stub)
-                .inflate()
-        DataBindingUtil.bind<ExpandedSearchingForPeersInformationBinding>(
-            expandedSearchingForPeersInfoView
-        )
-        return DataBindingUtil.getBinding(expandedSearchingForPeersInfoView)!!
-    }
-
-    fun getCollapsedSearchingForPeersBinding(activity: Activity): CollapsedSearchingForPeersInformationBinding {
-        val collapsedSearchingForPeersInfoView =
-            activity.findViewById<ViewStub>(R.id.collapsed_searching_for_peers_info_view_stub)
-                .inflate()
-        DataBindingUtil.bind<CollapsedSearchingForPeersInformationBinding>(
-            collapsedSearchingForPeersInfoView
-        )
-        return DataBindingUtil.getBinding(collapsedSearchingForPeersInfoView)!!
-    }
 
     fun getConnectedToPeerNoActionPersistentBottomSheetBinding(activity: Activity):
             ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding {
@@ -48,13 +24,5 @@ object MainActivityDataBindingUtils {
         return ConnectedToPeerTransferOngoingPersistentBottomSheetBinding.bind(view)
     }
 
-    fun getWaitingForReceiverPersistentBottomSheetBinding(activity: Activity):
-            WaitingForReceiverPersistentBottomSheetLayoutBinding {
-        val view =
-            activity.findViewById<ViewStub>(R.id.waiting_for_receiver_persistent_bottom_sheet_view_stub)
-                .inflate()
-        return WaitingForReceiverPersistentBottomSheetLayoutBinding.bind(view)
-
-    }
 
 }
