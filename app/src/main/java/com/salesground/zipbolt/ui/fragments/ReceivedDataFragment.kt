@@ -58,6 +58,9 @@ class ReceivedDataFragment : Fragment() {
                 layoutManager = receivedDataFragmentLayoutManager
                 adapter = receivedDataFragmentRecyclerViewAdapter
             }
+            receivedDataFragmentOngoingDataReceiveLayoutItem.run {
+                root.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -74,6 +77,7 @@ class ReceivedDataFragment : Fragment() {
             dataReceiveStartedDataItem.observe(this@ReceivedDataFragment) { receivedDataItem ->
                 receivedDataItem?.let {
                     receivedDataFragmentBinding.receivedDataFragmentOngoingDataReceiveLayoutItem.run {
+                        root.visibility = View.VISIBLE
                         dataToTransfer = currentReceiveDataToTransferItem.apply {
                             dataDisplayName = it.dataDisplayName
                             dataSize = it.dataSize

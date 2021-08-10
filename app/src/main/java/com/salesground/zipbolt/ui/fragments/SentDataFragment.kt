@@ -59,7 +59,6 @@ class SentDataFragment : Fragment() {
             sentDataFragmentRecyclerview.run {
                 layoutManager = sentDataFragmentLayoutManager
                 adapter = sentDataFragmentRecyclerViewAdapter
-
                 sentDataFragmentRecyclerview.post {
                     sentDataFragmentRecyclerview.run {
                         layoutManager = sentDataFragmentLayoutManager
@@ -71,6 +70,9 @@ class SentDataFragment : Fragment() {
                 ongoingDataTransferLayoutCancelTransferImageButton.setOnClickListener {
                     mainActivity?.cancelOngoingDataTransfer()
                 }
+            }
+            sentDataFragmentOngoingDataTransferLayoutItem.run {
+                root.visibility = View.INVISIBLE
             }
         }
     }
@@ -94,6 +96,7 @@ class SentDataFragment : Fragment() {
             currentDataToTransferDataItem.observe(this@SentDataFragment) { dataToTransfer ->
                 dataToTransfer?.let {
                     sentDataFragmentBinding.sentDataFragmentOngoingDataTransferLayoutItem.run {
+                        root.visibility = View.VISIBLE
                         this.dataToTransfer = dataToTransfer
                         when (dataToTransfer.dataType) {
                             in MediaType.File.Directory.value..

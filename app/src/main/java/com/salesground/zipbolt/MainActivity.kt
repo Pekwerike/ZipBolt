@@ -1,6 +1,5 @@
 package com.salesground.zipbolt
 
-
 import android.Manifest.*
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -107,9 +106,6 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
 
-    private val connectivityManager: ConnectivityManager by lazy {
-        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-    }
     private val sendDataClickedIntent =
         Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
@@ -400,7 +396,6 @@ class MainActivity : AppCompatActivity() {
                             this@MainActivity,
                             DataTransferService::class.java
                         ).also { serviceIntent ->
-
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, true)
                                 putExtra(
@@ -485,7 +480,7 @@ class MainActivity : AppCompatActivity() {
         inflate(layoutInflater).apply {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
-                if (it.alpha > 0f) {
+                if (it.visibility == VISIBLE) {
                     configureConnectionOptionsModalBottomSheetLayout()
                     connectionOptionsBottomSheetDialog.show()
                 }
@@ -587,6 +582,14 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
+                        if (deviceTransferRole == DeviceTransferRole.SEND ||
+                            deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE
+                        ) {
+                            activityMainBinding.run {
+                                sendFileButton.visibility = VISIBLE
+                                connectToPeerButton.visibility = INVISIBLE
+                            }
+                        }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
@@ -615,8 +618,9 @@ class MainActivity : AppCompatActivity() {
                                 BottomSheetBehavior.STATE_HIDDEN
                             isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = false
                         }
-                        with(activityMainBinding) {
-                            sendFileButton.animate().alpha(0f)
+                        activityMainBinding.run {
+                            sendFileButton.visibility = INVISIBLE
+                            connectToPeerButton.visibility = VISIBLE
                         }
                     }
                 }
@@ -635,15 +639,16 @@ class MainActivity : AppCompatActivity() {
                 else -> true
             }
         )
-        with(connectedToPeerTransferOngoingBottomSheetLayoutBinding) {
+        connectedToPeerTransferOngoingBottomSheetLayoutBinding.run {
             // configure collapsed connected to peer transfer ongoing layout
-            with(collapsedConnectedToPeerOngoingDataTransferLayout) {
-                root.animate().alpha(0f)
+            collapsedConnectedToPeerOngoingDataTransferLayout.run {
+
             }
 
             // configure expanded connected to peer transfer ongoing layout
-            with(expandedConnectedToPeerTransferOngoingLayout) {
-                with(expandedConnectedToPeerTransferOngoingToolbar) {
+            expandedConnectedToPeerTransferOngoingLayout.run {
+                root.alpha = 0f
+                expandedConnectedToPeerTransferOngoingToolbar.run {
                     expandedBottomSheetLayoutToolbarTitleTextView.text =
                         getString(R.string.transfer_history)
                     expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {

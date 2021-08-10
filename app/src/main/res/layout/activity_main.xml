@@ -30,18 +30,11 @@
         android:layout_gravity="end|bottom"
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="62dp"
-        android:alpha="0"
+        android:visibility="invisible"
         android:text="@string/send_label"
         app:cornerRadius="6dp"
         app:elevation="6dp"
         app:icon="@drawable/send_icon" />
-
-    <ViewStub
-        android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_view_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
-        app:layout_behavior="@string/bottom_sheet_behavior" />
 
     <ViewStub
         android:id="@+id/connected_to_peer_transfer_ongoing_persistent_bottom_sheet_view_stub"
@@ -49,8 +42,5 @@
         android:layout_height="match_parent"
         android:layout="@layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet"
         app:layout_behavior="@string/bottom_sheet_behavior" />
-
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
