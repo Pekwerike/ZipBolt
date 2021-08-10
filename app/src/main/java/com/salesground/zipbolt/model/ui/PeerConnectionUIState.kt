@@ -12,12 +12,7 @@ sealed class PeerConnectionUIState {
 
     object NoConnectionUIAction : PeerConnectionUIState()
 
-    data class CollapsedConnectedToPeerTransferOngoing(
-        val peeredDeviceConnectionInfo: WifiP2pInfo,
+    object CollapsedConnectedToPeerTransferOngoing : PeerConnectionUIState()
 
-        ) : PeerConnectionUIState()
-
-    data class ExpandedConnectedToPeerTransferOngoing(
-        val peeredDeviceConnectionInfo: WifiP2pInfo
-    ) : PeerConnectionUIState()
+    object ExpandedConnectedToPeerTransferOngoing : PeerConnectionUIState()
 }

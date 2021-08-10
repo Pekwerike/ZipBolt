@@ -14,7 +14,6 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     private var hasBeenNotifiedAboutReceive: Boolean = false
-    private var wifiP2pCurrentConnectionInfo: WifiP2pInfo = WifiP2pInfo()
     private val _peerConnectionUIState =
         MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
     val peerConnectionUIState: LiveData<PeerConnectionUIState>
@@ -26,9 +25,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun collapsedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
-            PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing(
-                wifiP2pCurrentConnectionInfo
-            )
+            PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing
     }
 
 
@@ -41,9 +38,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun expandedConnectedToPeerTransferOngoing() {
         _peerConnectionUIState.value =
-            PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing(
-                wifiP2pCurrentConnectionInfo
-            )
+            PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing
     }
 
     fun totalFileReceiveComplete() {

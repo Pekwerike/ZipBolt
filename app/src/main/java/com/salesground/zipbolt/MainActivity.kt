@@ -594,44 +594,21 @@ class MainActivity : AppCompatActivity() {
                             state = BottomSheetBehavior.STATE_COLLAPSED
                             peekHeight = getBottomSheetPeekHeight()
                         }
-
-                        // hide the connected to pair no action bottom sheet
-                        connectedToPeerNoActionBottomSheetBehavior.apply {
-                            isHideable = true
-                            state = BottomSheetBehavior.STATE_HIDDEN
-                        }
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_HIDDEN
                     }
 
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
-
                         with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED
                             peekHeight =
                                 getBottomSheetPeekHeight()
                         }
-                        // hide the connected to pair no action bottom sheet
-                        if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
-                            with(connectedToPeerNoActionBottomSheetBehavior) {
-                                isHideable = true
-                                state = BottomSheetBehavior.STATE_HIDDEN
-                            }
-                        }
-
                     }
 
                     PeerConnectionUIState.NoConnectionUIAction -> {
-                        if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
-                            connectedToPeerNoActionBottomSheetBehavior.isHideable = true
-                            connectedToPeerNoActionBottomSheetBehavior.state =
-                                BottomSheetBehavior.STATE_HIDDEN
-                            isConnectedToPeerNoActionBottomSheetLayoutConfigured = false
-                        }
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
@@ -820,10 +797,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager,
             "PeersDiscoveryBottomSheetFragment"
         )
-    }
-
-    fun connectedToDeviceSuccessfully() {
-        peersDiscoveryFragment?.dismiss()
     }
 
     fun deviceConnectionFailed() {
