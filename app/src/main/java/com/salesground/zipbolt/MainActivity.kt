@@ -318,34 +318,9 @@ class MainActivity : AppCompatActivity() {
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var connectionOptionsBottomSheetDialog: BottomSheetDialog
-    private var isSearchingForPeersBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured: Boolean = false
-    private var isWaitingForReceiverBottomSheetLayoutConfigured: Boolean = false
-    private var shouldStopPeerDiscovery: Boolean = false
-    private var startPeerDiscovery: Boolean = false
 
-    private val discoveredPeersRecyclerViewAdapter: DiscoveredPeersRecyclerViewAdapter by lazy {
-        DiscoveredPeersRecyclerViewAdapter(
-            connectToDeviceClickListener = object :
-                DiscoveredPeersRecyclerViewAdapter.ConnectToDeviceClickListener {
-                override fun onConnectToDevice(wifiP2pDevice: WifiP2pDevice) {
-                    // connectToADevice(wifiP2pDevice)
-                    // startPeerDiscovery = false
-                }
-            }
-        )
-    }
-
-    private val expandedSearchingForPeersInfoBinding:
-            ExpandedSearchingForPeersInformationBinding by lazy {
-        MainActivityDataBindingUtils.getExpandedSearchingForPeersBinding(this)
-    }
-
-    private val collapsedSearchingForPeersInfoBinding:
-            CollapsedSearchingForPeersInformationBinding by lazy {
-        MainActivityDataBindingUtils.getCollapsedSearchingForPeersBinding(this)
-    }
 
     private val connectedToPeerNoActionBottomSheetLayoutBinding:
             ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding by lazy {
@@ -359,17 +334,6 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private val waitingForReceiverPersistentBottomSheetLayoutBinding:
-            WaitingForReceiverPersistentBottomSheetLayoutBinding by lazy {
-        MainActivityDataBindingUtils.getWaitingForReceiverPersistentBottomSheetBinding(this)
-    }
-
-    // persistent bottom sheet behavior variables
-    private val searchingForPeersBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
-        BottomSheetBehavior.from(
-            activityMainBinding.connectionInfoPersistentBottomSheetLayout.root
-        )
-    }
 
     private val connectedToPeerNoActionBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
@@ -380,12 +344,6 @@ class MainActivity : AppCompatActivity() {
     private val connectedToPeerTransferOngoingBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
             connectedToPeerTransferOngoingBottomSheetLayoutBinding.root
-        )
-    }
-
-    private val waitingForReceiverBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
-        BottomSheetBehavior.from(
-            waitingForReceiverPersistentBottomSheetLayoutBinding.root
         )
     }
 
@@ -422,15 +380,11 @@ class MainActivity : AppCompatActivity() {
         override fun wifiOff() {
         }
 
-        override fun peersListAvailable(peersList: MutableList<WifiP2pDevice>) {
-            mainActivityViewModel.peersListAvailable(peersList)
-        }
 
         override fun connectedToPeer(
             wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
         ) {
-            startPeerDiscovery = false
             deviceTransferRole = when (deviceTransferRole) {
                 DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
                     groupCreatedFragment?.dismiss()
@@ -523,13 +477,7 @@ class MainActivity : AppCompatActivity() {
         override fun wifiP2pDiscoveryStopped() {
             // in order to avoid disrupting the ui state due to multiple broadcast events
             // make sure you end the peer discovery only when the user specifies so
-            if (shouldStopPeerDiscovery) {
-                mainActivityViewModel.peerConnectionNoAction()
-            } else {
-                if (startPeerDiscovery) {
-                    //beginPeerDiscovery()
-                }
-            }
+
         }
 
         override fun wifiP2pDiscoveryStarted() {
@@ -539,7 +487,7 @@ class MainActivity : AppCompatActivity() {
             if (mainActivityViewModel.peerConnectionUIState.value ==
                 PeerConnectionUIState.NoConnectionUIAction
             ) {
-                mainActivityViewModel.expandedSearchingForPeers()
+
             }
         }
 
@@ -551,15 +499,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
-        localBroadcastManager.registerReceiver(
-            dataTransferServiceConnectionStateReceiver,
-            IntentFilter().apply {
-                addAction(DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER)
-                addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
-            }
-        )
 
         inflate(layoutInflater).apply {
             activityMainBinding = this
@@ -617,6 +556,15 @@ class MainActivity : AppCompatActivity() {
         Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
+        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
+        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        localBroadcastManager.registerReceiver(
+            dataTransferServiceConnectionStateReceiver,
+            IntentFilter().apply {
+                addAction(DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER)
+                addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
+            }
+        )
     }
 
     private fun tabLayoutViewPagerConfiguration(
@@ -673,16 +621,7 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_HIDDEN
                     }
-                    is PeerConnectionUIState.CollapsedSearchingForPeer -> {
-                        // update the UI to display the number of devices found
-                        if (!isSearchingForPeersBottomSheetLayoutConfigured) {
-                            configureSearchingForPeersPersistentBottomSheetInfo()
-                            expandedSearchingForPeersInfoBinding.root.alpha = 0f
-                        }
-                        collapsedSearchingForPeersInfoBinding.numberOfDevicesFound =
-                            it.numberOfDevicesFound
-                        collapseSearchingForPeersBottomSheet()
-                    }
+
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
@@ -702,38 +641,14 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
 
-                        // if waiting for receive bottom sheet is configured hide it
-                        if (isWaitingForReceiverBottomSheetLayoutConfigured) {
-                            waitingForReceiverBottomSheetBehavior.run {
-                                isHideable = true
-                                state = BottomSheetBehavior.STATE_HIDDEN
-                            }
-                        }
                     }
-                    is PeerConnectionUIState.ExpandedSearchingForPeer -> {
-                        if (!isSearchingForPeersBottomSheetLayoutConfigured) {
-                            configureSearchingForPeersPersistentBottomSheetInfo()
-                            collapsedSearchingForPeersInfoBinding.root.alpha = 0f
-                        }
-                        discoveredPeersRecyclerViewAdapter.submitList(it.devices.map { wifiP2pDevice ->
-                            DiscoveredPeersDataItem.DiscoveredPeer(wifiP2pDevice)
-                        }.toMutableList())
-                        searchingForPeersBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_EXPANDED
-                        searchingForPeersBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-                    }
+
                     PeerConnectionUIState.NoConnectionUIAction -> {
                         if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
                             connectedToPeerNoActionBottomSheetBehavior.isHideable = true
                             connectedToPeerNoActionBottomSheetBehavior.state =
                                 BottomSheetBehavior.STATE_HIDDEN
                             isConnectedToPeerNoActionBottomSheetLayoutConfigured = false
-                        }
-                        if (isSearchingForPeersBottomSheetLayoutConfigured) {
-                            searchingForPeersBottomSheetBehavior.isHideable = true
-                            searchingForPeersBottomSheetBehavior.state =
-                                BottomSheetBehavior.STATE_HIDDEN
-                            isSearchingForPeersBottomSheetLayoutConfigured = false
                         }
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
@@ -753,29 +668,9 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
 
-                        // hide the searching for peers bottom
-                        if (isSearchingForPeersBottomSheetLayoutConfigured) {
-                            searchingForPeersBottomSheetBehavior.run {
-                                isHideable = true
-                                state = BottomSheetBehavior.STATE_HIDDEN
-                            }
-                        } else if (isWaitingForReceiverBottomSheetLayoutConfigured) {
-                            waitingForReceiverBottomSheetBehavior.run {
-                                isHideable = true
-                                state = BottomSheetBehavior.STATE_HIDDEN
-                            }
-                        }
 
                         // show the send button
                         activityMainBinding.sendFileButton.animate().alpha(1f)
-
-                        // stop searching for peers animation
-                        expandedSearchingForPeersInfoBinding
-                            .expandedSearchingForPeersInformationSearchingForDevicesAnimation
-                            .setKeepAnimating(false)
-                        collapsedSearchingForPeersInfoBinding
-                            .mediumSearchingForPeersAnimation
-                            .setKeepAnimating(false)
 
                         // hide the expanded connected to pair no action layout
                         connectedToPeerNoActionBottomSheetLayoutBinding
@@ -793,10 +688,6 @@ class MainActivity : AppCompatActivity() {
                         if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
                             it.connectedDevice
                         )
-                        // hide the searching for peers bottom
-                        searchingForPeersBottomSheetBehavior.isHideable = true
-                        searchingForPeersBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_HIDDEN
 
                         connectedToPeerNoActionBottomSheetLayoutBinding
                             .collapsedConnectedToPeerNoActionLayout
@@ -805,63 +696,11 @@ class MainActivity : AppCompatActivity() {
                         connectedToPeerNoActionBottomSheetBehavior.state =
                             BottomSheetBehavior.STATE_EXPANDED
                     }
-                    PeerConnectionUIState.CollapsedWaitingForReceiver -> {
-                        if (!isWaitingForReceiverBottomSheetLayoutConfigured) {
-                            configureWaitingForReceiverBottomSheetLayout()
-                        }
-                        waitingForReceiverBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
-                        waitingForReceiverBottomSheetBehavior.peekHeight =
-                            getBottomSheetPeekHeight()
-                    }
-                    PeerConnectionUIState.ExpandedWaitingForReceiver -> {
-                        if (!isWaitingForReceiverBottomSheetLayoutConfigured) {
-                            configureWaitingForReceiverBottomSheetLayout()
-                        }
-                        waitingForReceiverBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_EXPANDED
-                        waitingForReceiverBottomSheetBehavior.peekHeight =
-                            getBottomSheetPeekHeight()
-                    }
                 }
             }
         }
     }
 
-    private fun configureWaitingForReceiverBottomSheetLayout() {
-        isWaitingForReceiverBottomSheetLayoutConfigured = true
-        waitingForReceiverPersistentBottomSheetLayoutBinding.run {
-            // collapsed layout
-            waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.run {
-                root.animate().alpha(0f)
-            }
-
-            waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.run {
-
-            }
-        }
-
-        waitingForReceiverBottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-
-                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
-                    mainActivityViewModel.expandedWaitingForReceiver()
-                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mainActivityViewModel.collapsedWaitingForReceiver()
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                waitingForReceiverPersistentBottomSheetLayoutBinding.run {
-                    waitingForReceiverPersistentBottomSheetLayoutCollapsedWaitingForReceiverLayout.root.alpha =
-                        1 - slideOffset * 3.5f
-                    waitingForReceiverPersistentBottomSheetLayoutExpandedWaitingForReceiverLayout.root.alpha =
-                        slideOffset
-                }
-            }
-        })
-    }
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
         isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true
@@ -1041,57 +880,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun configureSearchingForPeersPersistentBottomSheetInfo() {
-        isSearchingForPeersBottomSheetLayoutConfigured = true
-
-        collapsedSearchingForPeersInfoBinding.apply {
-            collapsedSearchingForPeersInformationCancelSearchingForPeers.setOnClickListener {
-                stopDevicePeerDiscovery()
-            }
-            root.setOnClickListener {
-                mainActivityViewModel.expandedSearchingForPeers()
-            }
-        }
-
-        expandedSearchingForPeersInfoBinding.apply {
-            collapseExpandedSearchingForPeersImageButton.setOnClickListener {
-                mainActivityViewModel.collapsedSearchingForPeers()
-            }
-            expandedSearchingForPeersInformationStopSearchButton.setOnClickListener {
-                stopDevicePeerDiscovery()
-            }
-            expandedSearchingForPeersInformationDiscoveredPeersRecyclerView.apply {
-                adapter = discoveredPeersRecyclerViewAdapter
-            }
-        }
-        searchingForPeersBottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        mainActivityViewModel.collapsedSearchingForPeers()
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        mainActivityViewModel.expandedSearchingForPeers()
-                    }
-                    else -> {
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                collapsedSearchingForPeersInfoBinding.root.alpha = 1 - slideOffset * 3.5f
-                expandedSearchingForPeersInfoBinding.root.alpha = slideOffset
-            }
-        })
-    }
-
-    private fun collapseSearchingForPeersBottomSheet() {
-        searchingForPeersBottomSheetBehavior.peekHeight = getBottomSheetPeekHeight()
-        searchingForPeersBottomSheetBehavior.state =
-            BottomSheetBehavior.STATE_COLLAPSED
-    }
-
     private fun configureConnectionOptionsModalBottomSheetLayout() {
         connectionOptionsBottomSheetDialog = BottomSheetDialog(this)
         connectionOptionsBottomSheetDialog.setContentView(
@@ -1172,7 +960,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun connectedToDeviceSuccessfully() {
-        startPeerDiscovery = false
         peersDiscoveryFragment?.dismiss()
     }
 
@@ -1215,21 +1002,6 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    private fun stopDevicePeerDiscovery() {
-        if (isLocationPermissionGranted()) {
-            wifiP2pManager.stopPeerDiscovery(
-                wifiP2pChannel,
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        shouldStopPeerDiscovery = true
-                    }
-
-                    override fun onFailure(p0: Int) {
-                        displayToast("Couldn't stop peer discovery")
-                    }
-                })
-        }
-    }
 
     private fun createSystemBroadcastIntentFilter(): IntentFilter {
         return IntentFilter().apply {
@@ -1251,7 +1023,6 @@ class MainActivity : AppCompatActivity() {
 
         upgradedWifiDirectBroadcastReceiver = UpgradedWifiDirectBroadcastReceiver(
             wifiDirectBroadcastReceiverCallback = wifiDirectBroadcastReceiverCallback,
-            connectivityManager = connectivityManager,
             wifiP2pManager = wifiP2pManager,
             wifiP2pChannel = wifiP2pChannel
         )

@@ -70,16 +70,17 @@ class CircularSingleCharacterTextView @JvmOverloads constructor(
         circlePath = Path().apply {
             addCircle(w / 2f, h / 2f, circleRadius, Path.Direction.CCW)
         }
-         text = if(text.length > 2 ) {
+        text = if (text.length > 2) {
             text.subSequence(0, 2)
-        }else {
+        } else {
             "U"
         }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = resolveSize(minWidth.roundToInt(), widthMeasureSpec)
-        val height = resolveSize(minHeight.roundToInt(), heightMeasureSpec)
+        val width = resolveSize(minWidth.roundToInt() + paddingStart + paddingEnd, widthMeasureSpec)
+        val height =
+            resolveSize(minHeight.roundToInt() + paddingTop + paddingBottom, heightMeasureSpec)
         setMeasuredDimension(max(width, height), max(width, height))
     }
 }

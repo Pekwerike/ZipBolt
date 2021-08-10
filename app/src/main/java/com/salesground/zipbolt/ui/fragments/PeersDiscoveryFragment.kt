@@ -183,6 +183,19 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         })
     }
 
+    private fun stopDevicePeerDiscovery() {
+        wifiP2pManager.stopPeerDiscovery(
+            wifiP2pChannel,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                }
+
+                override fun onFailure(p0: Int) {
+                    displayToast("Couldn't stop peer discovery")
+                }
+            })
+    }
+
     private fun displayToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }

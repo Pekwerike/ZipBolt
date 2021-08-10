@@ -13,7 +13,7 @@
         android:id="@+id/discovered_peer_layout_item_view_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?attr/selectableItemBackground"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="@dimen/medium_padding">
@@ -27,7 +27,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
+            android:layout_margin="@dimen/small_margin"
             android:padding="@dimen/medium_padding"
             android:text="@{deviceName}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
