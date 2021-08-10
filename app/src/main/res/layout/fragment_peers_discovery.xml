@@ -1,103 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.fragments.PeersDiscoveryFragment">
 
-    <data>
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/fragment_peers_discovery_stop_discovery_image_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="@dimen/medium_margin"
+        android:background="?android:attr/selectableItemBackground"
+        android:contentDescription="@string/close_group_button_desc"
+        android:tint="@color/background_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/close_icon" />
 
-        <variable
-            name="connectionToDeviceMessage"
-            type="String" />
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
+        android:id="@+id/fragment_peers_discovery_searching_for_peers_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".ui.fragments.PeersDiscoveryFragment">
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:maxLines="1"
+        android:padding="@dimen/medium_padding"
+        android:text="@string/searching_for_peers_label"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/background_color"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_stop_discovery_image_button" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/fragment_peers_discovery_stop_discovery_image_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="@dimen/medium_margin"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="@string/close_group_button_desc"
-            android:tint="@color/background_color"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/close_icon" />
+    <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
+        android:id="@+id/fragment_peers_discovery_connecting_to_peer_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:maxLines="1"
+        android:padding="@dimen/medium_padding"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/background_color"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
-            android:id="@+id/fragment_peers_discovery_searching_for_peers_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:maxLines="1"
-            android:padding="@dimen/medium_padding"
-            android:text="@string/searching_for_peers_label"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textColor="@color/background_color"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_stop_discovery_image_button" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_peers_discovery_searching_for_sender_description_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:padding="@dimen/medium_padding"
+        android:text="@string/searching_for_peers_discovery_description"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_searching_for_peers_text_view" />
 
-        <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
-            android:id="@+id/fragment_peers_discovery_connecting_to_peer_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:maxLines="1"
-            android:padding="@dimen/medium_padding"
-            android:text="@{connectionToDeviceMessage}"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textColor="@color/background_color"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/fragment_peers_discovery_discovered_peers_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/medium_margin"
+        android:padding="@dimen/medium_padding"
+        android:text="@string/discovered_peers_label"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_peers_discovery_searching_for_sender_description_text_view" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/fragment_peers_discovery_searching_for_sender_description_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/standard_margin"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:padding="@dimen/medium_padding"
-            android:text="@string/searching_for_peers_discovery_description"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_searching_for_peers_text_view" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/fragment_peers_discovery_discovered_peers_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            android:padding="@dimen/medium_padding"
-            android:text="@string/discovered_peers_label"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_peers_discovery_searching_for_sender_description_text_view" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_peers_discovery_discovered_peers_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginHorizontal="@dimen/medium_margin"
-            android:layout_marginBottom="@dimen/standard_margin"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_discovered_peers_text_view" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_peers_discovery_discovered_peers_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="@dimen/medium_margin"
+        android:layout_marginBottom="@dimen/standard_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_discovered_peers_text_view" />
+</androidx.constraintlayout.widget.ConstraintLayout>

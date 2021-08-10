@@ -72,9 +72,8 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        peersDiscoveryFragment = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_peers_discovery, container, false
+        peersDiscoveryFragment = FragmentPeersDiscoveryBinding.inflate(
+            inflater, container, false
         )
         // Inflate the layout for this fragment
         return peersDiscoveryFragment.root
@@ -111,11 +110,14 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
                     lifecycleScope.launch(Dispatchers.Main) {
                         peersDiscoveryFragment.run {
-                            connectionToDeviceMessage = getString(
-                                R.string.connecting_to_device_message_place_holder,
-                                device.deviceName
-                            )
-                            fragmentPeersDiscoveryConnectingToPeerTextView.visibility = View.VISIBLE
+                            fragmentPeersDiscoveryConnectingToPeerTextView.run {
+                                setAnimatedText(getString(
+                                    R.string.connecting_to_device_message_place_holder,
+                                    device.deviceName
+                                ))
+                                fragmentPeersDiscoveryConnectingToPeerTextView.visibility =
+                                    View.VISIBLE
+                            }
                             fragmentPeersDiscoverySearchingForPeersTextView.visibility =
                                 View.INVISIBLE
                             fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility =
