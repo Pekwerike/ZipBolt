@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/standard_margin"
-        android:layout_marginTop="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/medium_margin"
         android:padding="@dimen/medium_padding"
         android:text="@string/waiting_for_receiver_label"
         android:textAlignment="center"

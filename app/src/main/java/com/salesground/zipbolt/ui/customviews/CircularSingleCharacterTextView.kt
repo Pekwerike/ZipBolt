@@ -42,7 +42,6 @@ class CircularSingleCharacterTextView @JvmOverloads constructor(
     }
 
     init {
-        text = text.subSequence(0, 2)
         gravity = Gravity.CENTER
         textAlignment = TEXT_ALIGNMENT_CENTER
         setTextColor(Color.WHITE)
@@ -70,6 +69,11 @@ class CircularSingleCharacterTextView @JvmOverloads constructor(
         circleRadius = w * 0.4f
         circlePath = Path().apply {
             addCircle(w / 2f, h / 2f, circleRadius, Path.Direction.CCW)
+        }
+         text = if(text.length > 2 ) {
+            text.subSequence(0, 2)
+        }else {
+            "U"
         }
     }
 

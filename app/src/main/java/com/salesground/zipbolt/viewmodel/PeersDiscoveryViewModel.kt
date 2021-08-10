@@ -17,9 +17,13 @@ class PeersDiscoveryViewModel() : ViewModel() {
         get() = _discoveredPeerSet
 
     fun addDiscoveredDevice(wifiP2pDevice: WifiP2pDevice) {
-        normalDiscoveredPeerSet.add(wifiP2pDevice)
-        viewModelScope.launch(Dispatchers.Main) {
-            _discoveredPeerSet.value = normalDiscoveredPeerSet
+        if (normalDiscoveredPeerSet.find {
+                it.deviceAddress == wifiP2pDevice.deviceAddress
+            } == null) {
+            normalDiscoveredPeerSet.add(wifiP2pDevice)
+            viewModelScope.launch(Dispatchers.Main) {
+                _discoveredPeerSet.value = normalDiscoveredPeerSet
+            }
         }
     }
 

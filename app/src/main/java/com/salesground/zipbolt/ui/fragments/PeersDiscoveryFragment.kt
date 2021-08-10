@@ -103,7 +103,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-                    mainActivity?.connectedToDeviceSuccessfully()
+
                 }
 
                 override fun onFailure(p0: Int) {
