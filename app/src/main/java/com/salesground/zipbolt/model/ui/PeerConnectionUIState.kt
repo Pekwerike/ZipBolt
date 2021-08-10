@@ -20,14 +20,4 @@ sealed class PeerConnectionUIState {
     data class ExpandedConnectedToPeerTransferOngoing(
         val peeredDeviceConnectionInfo: WifiP2pInfo
     ) : PeerConnectionUIState()
-
-    data class ExpandedConnectedToPeerNoAction(
-        val peeredDeviceConnectionInfo: WifiP2pInfo,
-        val connectedDevice: WifiP2pDevice
-    ) : PeerConnectionUIState()
-
-    data class CollapsedConnectedToPeerNoAction(
-        val peeredDeviceConnectionInfo: WifiP2pInfo,
-        val connectedDevice: WifiP2pDevice
-    ) : PeerConnectionUIState()
 }

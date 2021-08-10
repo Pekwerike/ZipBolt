@@ -657,42 +657,6 @@ class MainActivity : AppCompatActivity() {
                             sendFileButton.animate().alpha(0f)
                         }
                     }
-                    is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
-                        // in case of a configuration or theme change, inflate and configure the bottom sheet
-                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
-                            configureConnectedToPeerNoActionBottomSheetLayoutInfo(
-                                it.connectedDevice
-                            )
-                        }
-
-
-                        // show the send button
-                        activityMainBinding.sendFileButton.animate().alpha(1f)
-
-                        // hide the expanded connected to pair no action layout
-                        connectedToPeerNoActionBottomSheetLayoutBinding
-                            .expandedConnectedToPeerNoActionLayout
-                            .root
-                            .alpha = 0f
-
-                        // set bottom sheet peek height
-                        connectedToPeerNoActionBottomSheetBehavior.peekHeight =
-                            getBottomSheetPeekHeight()
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                    is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
-                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
-                            it.connectedDevice
-                        )
-
-                        connectedToPeerNoActionBottomSheetLayoutBinding
-                            .collapsedConnectedToPeerNoActionLayout
-                            .root
-                            .alpha = 0f
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_EXPANDED
-                    }
                 }
             }
         }
