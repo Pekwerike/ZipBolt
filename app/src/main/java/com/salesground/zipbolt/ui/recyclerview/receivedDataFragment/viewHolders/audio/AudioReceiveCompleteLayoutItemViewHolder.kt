@@ -35,7 +35,7 @@ class AudioReceiveCompleteLayoutItemViewHolder(
         fun createViewHolder(parent: ViewGroup): AudioReceiveCompleteLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<AudioTransferLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
-                R.layout.video_transfer_layout_item,
+                R.layout.audio_transfer_layout_item,
                 parent,
                 false
             )
