@@ -20,7 +20,6 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
         deviceAddress = "192.021.294.24"
     }
     private var wifiP2pCurrentConnectionInfo: WifiP2pInfo = WifiP2pInfo()
-    private var currentPeersList: MutableList<WifiP2pDevice> = mutableListOf()
     private val _peerConnectionUIState =
         MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
     val peerConnectionUIState: LiveData<PeerConnectionUIState>

@@ -403,8 +403,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // update the ui to show that this device is connected to peer
-            mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
+            mainActivityViewModel.collapsedConnectedToPeerTransferOngoing()
             if (dataTransferService?.isActive == true) {
 
             } else {
@@ -419,7 +418,11 @@ class MainActivity : AppCompatActivity() {
 
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, true)
-                                putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
+                                putExtra(
+                                    DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER,
+                                    deviceTransferRole
+                                            != DeviceTransferRole.SEND_AND_RECEIVE
+                                )
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 ContextCompat.startForegroundService(
