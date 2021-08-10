@@ -8,8 +8,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.net.wifi.WifiManager
-import android.net.wifi.WpsInfo
-import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
@@ -34,11 +32,9 @@ import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectB
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.model.ui.DiscoveredPeersDataItem
 import com.salesground.zipbolt.model.ui.PeerConnectionUIState
 import com.salesground.zipbolt.notification.FileTransferServiceNotification
 import com.salesground.zipbolt.service.DataTransferService
-import com.salesground.zipbolt.ui.recyclerview.expandedsearchingforpeersinformation.DiscoveredPeersRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -46,7 +42,6 @@ import kotlin.math.roundToInt
 
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -64,7 +59,6 @@ import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerA
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.concurrent.schedule
 
 
 private const val FINE_LOCATION_REQUEST_CODE = 100
