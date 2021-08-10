@@ -1,6 +1,5 @@
 package com.salesground.zipbolt
 
-
 import android.Manifest.*
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -635,15 +634,16 @@ class MainActivity : AppCompatActivity() {
                 else -> true
             }
         )
-        with(connectedToPeerTransferOngoingBottomSheetLayoutBinding) {
+        connectedToPeerTransferOngoingBottomSheetLayoutBinding.run {
             // configure collapsed connected to peer transfer ongoing layout
-            with(collapsedConnectedToPeerOngoingDataTransferLayout) {
-                root.animate().alpha(0f)
+            collapsedConnectedToPeerOngoingDataTransferLayout.run {
+
             }
 
             // configure expanded connected to peer transfer ongoing layout
-            with(expandedConnectedToPeerTransferOngoingLayout) {
-                with(expandedConnectedToPeerTransferOngoingToolbar) {
+            expandedConnectedToPeerTransferOngoingLayout.run {
+                root.alpha = 0f
+                expandedConnectedToPeerTransferOngoingToolbar.run {
                     expandedBottomSheetLayoutToolbarTitleTextView.text =
                         getString(R.string.transfer_history)
                     expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {

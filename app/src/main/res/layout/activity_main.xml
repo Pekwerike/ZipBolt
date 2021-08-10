@@ -37,20 +37,10 @@
         app:icon="@drawable/send_icon" />
 
     <ViewStub
-        android:id="@+id/connected_to_peer_no_action_persistent_bottom_sheet_view_stub"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout="@layout/connected_to_peer_no_action_persistent_bottom_sheet_layout"
-        app:layout_behavior="@string/bottom_sheet_behavior" />
-
-    <ViewStub
         android:id="@+id/connected_to_peer_transfer_ongoing_persistent_bottom_sheet_view_stub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout="@layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet"
         app:layout_behavior="@string/bottom_sheet_behavior" />
-
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
