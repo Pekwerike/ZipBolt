@@ -103,7 +103,23 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        peersDiscoveryFragment.run {
+                            connectionToDeviceMessage = getString(
+                                R.string.connecting_to_device_message_place_holder,
+                                device.deviceName
+                            )
+                            fragmentPeersDiscoveryConnectingToPeerTextView.visibility = View.VISIBLE
+                            fragmentPeersDiscoverySearchingForPeersTextView.visibility =
+                                View.INVISIBLE
+                            fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility =
+                                View.INVISIBLE
+                            fragmentPeersDiscoveryDiscoveredPeersTextView.visibility =
+                                View.INVISIBLE
+                            fragmentPeersDiscoverySearchingForSenderDescriptionTextView.visibility =
+                                View.INVISIBLE
+                        }
+                    }
                 }
 
                 override fun onFailure(p0: Int) {
