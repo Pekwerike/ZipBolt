@@ -551,6 +551,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
+        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        localBroadcastManager.registerReceiver(
+            dataTransferServiceConnectionStateReceiver,
+            IntentFilter().apply {
+                addAction(DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER)
+                addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
+            }
+        )
 
         inflate(layoutInflater).apply {
             activityMainBinding = this
@@ -1278,27 +1287,6 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onStart() {
-        super.onStart()
-        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
-        localBroadcastManager.registerReceiver(
-            dataTransferServiceConnectionStateReceiver,
-            IntentFilter().apply {
-                addAction(DataTransferServiceConnectionStateReceiver.ACTION_DISCONNECTED_FROM_PEER)
-                addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
-            }
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        unbindService(dataTransferServiceConnection)
-        // unregister the broadcast receiver
-        unregisterReceiver(upgradedWifiDirectBroadcastReceiver)
-        localBroadcastManager.unregisterReceiver(dataTransferServiceConnectionStateReceiver)
-    }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -1340,14 +1328,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        /* wifiP2pManager.clearLocalServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
-             override fun onSuccess() {
+        unbindService(dataTransferServiceConnection)
+        // unregister the broadcast receiver
+        unregisterReceiver(upgradedWifiDirectBroadcastReceiver)
+        localBroadcastManager.unregisterReceiver(dataTransferServiceConnectionStateReceiver)
 
-             }
-
-             override fun onFailure(reason: Int) {
-             }
-         })*/
     }
 
     override fun onBackPressed() {
