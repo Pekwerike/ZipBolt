@@ -52,4 +52,5 @@
     <string name="close_group_button_desc">Close group button</string>
     <string name="group_created_label">Group Created</string>
     <string name="waiting_for_receiver_label">Waiting for receiver</string>
+    <string name="connecting_to_device_message_place_holder">Connecting to %1$s</string>
 </resources>
