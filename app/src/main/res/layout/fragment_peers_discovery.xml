@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/standard_margin"
         android:layout_marginTop="@dimen/medium_margin"
+        android:maxLines="1"
         android:padding="@dimen/medium_padding"
         android:text="@string/searching_for_peers_label"
         android:textAlignment="center"
@@ -33,6 +34,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_stop_discovery_image_button" />
+
+    <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
+        android:id="@+id/fragment_peers_discovery_connecting_to_peer_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/standard_margin"
+        android:layout_marginTop="@dimen/medium_margin"
+        android:maxLines="1"
+        android:padding="@dimen/medium_padding"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/background_color"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fragment_peers_discovery_searching_for_sender_description_text_view"

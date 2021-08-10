@@ -312,14 +312,7 @@ class MainActivity : AppCompatActivity() {
     // ui variables
     private lateinit var activityMainBinding: ActivityMainBinding
     private lateinit var connectionOptionsBottomSheetDialog: BottomSheetDialog
-    private var isConnectedToPeerNoActionBottomSheetLayoutConfigured: Boolean = false
     private var isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured: Boolean = false
-
-
-    private val connectedToPeerNoActionBottomSheetLayoutBinding:
-            ConnectedToPeerNoActionPersistentBottomSheetLayoutBinding by lazy {
-        MainActivityDataBindingUtils.getConnectedToPeerNoActionPersistentBottomSheetBinding(this)
-    }
 
     private val connectedToPeerTransferOngoingBottomSheetLayoutBinding:
             ConnectedToPeerTransferOngoingPersistentBottomSheetBinding by lazy {
@@ -328,19 +321,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-
-    private val connectedToPeerNoActionBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
-        BottomSheetBehavior.from(
-            connectedToPeerNoActionBottomSheetLayoutBinding.root
-        )
-    }
-
     private val connectedToPeerTransferOngoingBottomSheetBehavior: BottomSheetBehavior<FrameLayout> by lazy {
         BottomSheetBehavior.from(
             connectedToPeerTransferOngoingBottomSheetLayoutBinding.root
         )
     }
-
 
     // service variables
     private var dataTransferService: DataTransferService? = null
@@ -403,8 +388,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            // update the ui to show that this device is connected to peer
-            mainActivityViewModel.connectedToPeer(wifiP2pInfo, peeredDevice)
+            mainActivityViewModel.collapsedConnectedToPeerTransferOngoing()
             if (dataTransferService?.isActive == true) {
 
             } else {
@@ -419,7 +403,11 @@ class MainActivity : AppCompatActivity() {
 
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, true)
-                                putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
+                                putExtra(
+                                    DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER,
+                                    deviceTransferRole
+                                            != DeviceTransferRole.SEND_AND_RECEIVE
+                                )
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 ContextCompat.startForegroundService(
@@ -606,44 +594,21 @@ class MainActivity : AppCompatActivity() {
                             state = BottomSheetBehavior.STATE_COLLAPSED
                             peekHeight = getBottomSheetPeekHeight()
                         }
-
-                        // hide the connected to pair no action bottom sheet
-                        connectedToPeerNoActionBottomSheetBehavior.apply {
-                            isHideable = true
-                            state = BottomSheetBehavior.STATE_HIDDEN
-                        }
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_HIDDEN
                     }
 
                     is PeerConnectionUIState.ExpandedConnectedToPeerTransferOngoing -> {
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
                         }
-
                         with(connectedToPeerTransferOngoingBottomSheetBehavior) {
                             state =
                                 BottomSheetBehavior.STATE_EXPANDED
                             peekHeight =
                                 getBottomSheetPeekHeight()
                         }
-                        // hide the connected to pair no action bottom sheet
-                        if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
-                            with(connectedToPeerNoActionBottomSheetBehavior) {
-                                isHideable = true
-                                state = BottomSheetBehavior.STATE_HIDDEN
-                            }
-                        }
-
                     }
 
                     PeerConnectionUIState.NoConnectionUIAction -> {
-                        if (isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
-                            connectedToPeerNoActionBottomSheetBehavior.isHideable = true
-                            connectedToPeerNoActionBottomSheetBehavior.state =
-                                BottomSheetBehavior.STATE_HIDDEN
-                            isConnectedToPeerNoActionBottomSheetLayoutConfigured = false
-                        }
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
@@ -653,42 +618,6 @@ class MainActivity : AppCompatActivity() {
                         with(activityMainBinding) {
                             sendFileButton.animate().alpha(0f)
                         }
-                    }
-                    is PeerConnectionUIState.CollapsedConnectedToPeerNoAction -> {
-                        // in case of a configuration or theme change, inflate and configure the bottom sheet
-                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) {
-                            configureConnectedToPeerNoActionBottomSheetLayoutInfo(
-                                it.connectedDevice
-                            )
-                        }
-
-
-                        // show the send button
-                        activityMainBinding.sendFileButton.animate().alpha(1f)
-
-                        // hide the expanded connected to pair no action layout
-                        connectedToPeerNoActionBottomSheetLayoutBinding
-                            .expandedConnectedToPeerNoActionLayout
-                            .root
-                            .alpha = 0f
-
-                        // set bottom sheet peek height
-                        connectedToPeerNoActionBottomSheetBehavior.peekHeight =
-                            getBottomSheetPeekHeight()
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                    is PeerConnectionUIState.ExpandedConnectedToPeerNoAction -> {
-                        if (!isConnectedToPeerNoActionBottomSheetLayoutConfigured) configureConnectedToPeerNoActionBottomSheetLayoutInfo(
-                            it.connectedDevice
-                        )
-
-                        connectedToPeerNoActionBottomSheetLayoutBinding
-                            .collapsedConnectedToPeerNoActionLayout
-                            .root
-                            .alpha = 0f
-                        connectedToPeerNoActionBottomSheetBehavior.state =
-                            BottomSheetBehavior.STATE_EXPANDED
                     }
                 }
             }
@@ -791,89 +720,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun configureConnectedToPeerNoActionBottomSheetLayoutInfo(
-        connectedDevice: WifiP2pDevice
-    ) {
-        isConnectedToPeerNoActionBottomSheetLayoutConfigured = true
-        connectedToPeerNoActionBottomSheetLayoutBinding.run {
-            collapsedConnectedToPeerNoActionLayout.run {
-                deviceConnectedTo =
-                    "Connected to ${connectedDevice.deviceName ?: "unknown device"}"
-                collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
-
-                }
-                collapsedConnectedToPeerNoTransferBreakConnectionButton.setOnClickListener {
-                    cancelDeviceConnection()
-                    // TODO, remove later
-                    mainActivityViewModel.peerConnectionNoAction()
-                }
-
-                root.setOnClickListener {
-                    mainActivityViewModel.expandedConnectedToPeerNoAction()
-                }
-            }
-            expandedConnectedToPeerNoActionLayout.run {
-                deviceAddress = connectedDevice.deviceAddress
-                deviceName = connectedDevice.deviceName
-
-                expandedConnectedToPeerNoActionTransferActionLabel.text =
-                    when (deviceTransferRole) {
-                        DeviceTransferRole.SEND -> {
-                            getString(
-                                R.string.you_can_transfer_files_now,
-                                connectedDevice.deviceName
-                            )
-                        }
-                        DeviceTransferRole.RECEIVE -> {
-                            getString(
-                                R.string.you_can_receive_files_now,
-                                connectedDevice.deviceName
-                            )
-                        }
-                        DeviceTransferRole.SEND_AND_RECEIVE -> {
-                            getString(R.string.you_can_transfer_and_receive_files_now)
-                        }
-                        DeviceTransferRole.NO_ROLE -> {
-                            getString(R.string.you_can_transfer_and_receive_files_now)
-                        }
-                        else -> ""
-                    }
-
-                collapseExpandedConnectedToPeerNoActionImageButton.setOnClickListener {
-                    mainActivityViewModel.collapsedConnectedToPeerNoAction()
-                }
-                expandedConnectedToPeerNoActionCloseConnectionImageButton.setOnClickListener {
-                    cancelDeviceConnection()
-                    // TODO, remove later
-                    mainActivityViewModel.peerConnectionNoAction()
-                }
-            }
-        }
-        connectedToPeerNoActionBottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        mainActivityViewModel.expandedConnectedToPeerNoAction()
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        mainActivityViewModel.collapsedConnectedToPeerNoAction()
-                    }
-                    else -> {
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                connectedToPeerNoActionBottomSheetLayoutBinding.collapsedConnectedToPeerNoActionLayout.root.alpha =
-                    1 - slideOffset * 3.5f
-                connectedToPeerNoActionBottomSheetLayoutBinding
-                    .expandedConnectedToPeerNoActionLayout.root.alpha = slideOffset
-            }
-        })
-    }
-
-
     private fun configureConnectionOptionsModalBottomSheetLayout() {
         connectionOptionsBottomSheetDialog = BottomSheetDialog(this)
         connectionOptionsBottomSheetDialog.setContentView(
@@ -951,10 +797,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager,
             "PeersDiscoveryBottomSheetFragment"
         )
-    }
-
-    fun connectedToDeviceSuccessfully() {
-        peersDiscoveryFragment?.dismiss()
     }
 
     fun deviceConnectionFailed() {

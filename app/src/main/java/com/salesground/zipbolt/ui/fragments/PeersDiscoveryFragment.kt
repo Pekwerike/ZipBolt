@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +47,9 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     private lateinit var peersDiscoveryFragment: FragmentPeersDiscoveryBinding
     private val peersDiscoveredRecyclerViewAdapter = PeersDiscoveredRecyclerViewAdapter(
         DataToTransferRecyclerViewItemClickListener {
-            connectToADevice(it)
+            if (peersDiscoveryFragment.fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility != View.INVISIBLE) {
+                connectToADevice(it)
+            }
         }
     )
 
@@ -69,7 +72,9 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        peersDiscoveryFragment = FragmentPeersDiscoveryBinding.inflate(inflater, container, false)
+        peersDiscoveryFragment = FragmentPeersDiscoveryBinding.inflate(
+            inflater, container, false
+        )
         // Inflate the layout for this fragment
         return peersDiscoveryFragment.root
     }
@@ -103,7 +108,26 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        peersDiscoveryFragment.run {
+                            fragmentPeersDiscoveryConnectingToPeerTextView.run {
+                                setAnimatedText(getString(
+                                    R.string.connecting_to_device_message_place_holder,
+                                    device.deviceName
+                                ))
+                                fragmentPeersDiscoveryConnectingToPeerTextView.visibility =
+                                    View.VISIBLE
+                            }
+                            fragmentPeersDiscoverySearchingForPeersTextView.visibility =
+                                View.INVISIBLE
+                            fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility =
+                                View.INVISIBLE
+                            fragmentPeersDiscoveryDiscoveredPeersTextView.visibility =
+                                View.INVISIBLE
+                            fragmentPeersDiscoverySearchingForSenderDescriptionTextView.visibility =
+                                View.INVISIBLE
+                        }
+                    }
                 }
 
                 override fun onFailure(p0: Int) {
