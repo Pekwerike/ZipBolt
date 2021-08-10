@@ -14,7 +14,6 @@ import javax.inject.Inject
 class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     private var hasBeenNotifiedAboutReceive: Boolean = false
-
     private var wifiP2pCurrentConnectionInfo: WifiP2pInfo = WifiP2pInfo()
     private val _peerConnectionUIState =
         MutableLiveData<PeerConnectionUIState>(PeerConnectionUIState.NoConnectionUIAction)
