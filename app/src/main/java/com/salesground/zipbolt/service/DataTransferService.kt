@@ -24,6 +24,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 import kotlin.collections.ArrayDeque
+import kotlin.jvm.Throws
 import kotlin.math.roundToInt
 
 
@@ -148,7 +149,8 @@ class DataTransferService : Service() {
             MediaTransferProtocolMetaData.NO_DATA -> {
                 // not transferring any data, but wants to stop receiving data from peer,
                 // so send a message to peer to cancel ongoing transfer
-                mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER
+                mediaTransferProtocolMetaData =
+                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER
             }
             MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
                 // transferring data to peer but wants to stop receiving from peer,
@@ -242,7 +244,11 @@ class DataTransferService : Service() {
             socket.receiveBufferSize = BUFFER_SIZE
             socketDOS = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
 
-            listenForMediaToTransfer(socketDOS)
+            try {
+                listenForMediaToTransfer(socketDOS)
+            }catch (socketException: SocketException){
+                killDataTransferService()
+            }
         }
     }
 
@@ -284,14 +290,22 @@ class DataTransferService : Service() {
             } catch (exception: IOException) {
 
             }
-           // try {
+            try {
                 socketDIS =
                     DataInputStream(BufferedInputStream(socket.getInputStream()))
-                delay(400)
-                listenForMediaToReceive(socketDIS)
-          /*  } catch (connectionException: Exception) {
+            } catch (connectionException: Exception) {
                 configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
-            }*/
+                return@launch
+            }
+
+            delay(200)
+
+            try {
+                listenForMediaToReceive(socketDIS)
+            } catch (socketException: SocketException) {
+                killDataTransferService()
+            }
+
         }
     }
 
@@ -332,18 +346,18 @@ class DataTransferService : Service() {
         }
     }
 
-
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
         // try {
         while (true) {
             when (mediaTransferProtocolMetaData) {
                 MediaTransferProtocolMetaData.NO_DATA -> {
                     dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
-                    if(transferQueue.isNotEmpty()) mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
+                    if (transferQueue.isNotEmpty()) mediaTransferProtocolMetaData =
+                        MediaTransferProtocolMetaData.DATA_AVAILABLE
                 }
                 MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
                     // write the collection size to the peer
-                    while(transferQueue.isNotEmpty()) {
+                    while (transferQueue.isNotEmpty()) {
                         val dataCollection = transferQueue.remove()
                         dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
                         dataOutputStream.writeInt(dataCollection.size)
@@ -369,34 +383,38 @@ class DataTransferService : Service() {
         }
     }
 
+    @Throws(SocketException::class)
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-        //  try {
-        while (true) {
-            when (dataInputStream.readInt()) {
-                MediaTransferProtocolMetaData.NO_DATA.value -> continue
-                MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
-                    delay(200)
-                    // read the number of files sent from the peer
-                    val filesCount = dataInputStream.readInt()
-                    for (i in 0 until filesCount) {
-                        mediaTransferProtocol.receiveMedia(
-                            dataInputStream,
-                            mediaTransferProtocolDataReceiveListener
-                        )
+        try {
+            while (true) {
+                when (dataInputStream.readInt()) {
+                    MediaTransferProtocolMetaData.NO_DATA.value -> continue
+                    MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
                         delay(200)
+                        // read the number of files sent from the peer
+                        val filesCount = dataInputStream.readInt()
+                        for (i in 0 until filesCount) {
+                            mediaTransferProtocol.receiveMedia(
+                                dataInputStream,
+                                mediaTransferProtocolDataReceiveListener
+                            )
+                            delay(200)
+                        }
+                        dataFlowListener?.totalFileReceiveComplete()
                     }
-                    dataFlowListener?.totalFileReceiveComplete()
-                }
-                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
-                    mediaTransferProtocol.cancelCurrentTransfer(
-                        transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
-                    )
+                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
+                        mediaTransferProtocol.cancelCurrentTransfer(
+                            transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+                        )
+                    }
                 }
             }
+        } catch (socketException: SocketException) {
+            throw socketException
         }
     }
 
-    fun killDataTransferService(){
+    fun killDataTransferService() {
         stopForeground(true)
         stopSelf()
     }
