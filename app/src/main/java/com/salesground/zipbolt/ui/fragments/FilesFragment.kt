@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
-import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.filesFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel

@@ -13,9 +13,7 @@ import java.lang.NullPointerException
 @BindingAdapter("bindImageBasedOnMediaType")
 fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
     dataToTransfer?.let {
-        if (it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_ONGOING
-            || it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED
-        ) {
+        if (it.transferStatus == DataToTransfer.TransferStatus.RECEIVE_STARTED) {
             setImageDrawable(
                 AppCompatResources.getDrawable(
                     context, R.drawable.ic_baseline_arrow_circle_down_24
@@ -73,7 +71,9 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .into(this)
             }
             MediaType.File.Document.UnknownDocument.value -> {
-
+                Glide.with(context)
+                    .load(R.drawable.plain_file_icon)
+                    .into(this)
             }
             MediaType.File.Document.WordDocument.value -> {
                 Glide.with(context)
@@ -139,6 +139,11 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
             MediaType.File.Document.DatDocument.value -> {
                 Glide.with(context)
                     .load(R.drawable.ic_dat_file_logo)
+                    .into(this)
+            }
+            MediaType.File.Document.TextFileDocument.value -> {
+                Glide.with(context)
+                    .load(R.drawable.text_file_icon)
                     .into(this)
             }
 
