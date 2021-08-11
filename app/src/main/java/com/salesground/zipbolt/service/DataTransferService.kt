@@ -20,7 +20,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.io.*
 import java.net.*
+import java.util.*
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
+import kotlin.collections.ArrayDeque
 import kotlin.math.roundToInt
 
 
@@ -34,7 +37,6 @@ class DataTransferService : Service() {
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
         const val SOCKET_PORT = 7091
         const val SOCKET_PORT2 = 7063
-        val arrayOfPossiblePorts = arrayOf(8020, 7070, 4050, 5030, 6040)
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
         const val BUFFER_SIZE = 1024 * 1024
 
@@ -45,10 +47,9 @@ class DataTransferService : Service() {
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()
 
-    // private var dataTransferUserEvent = DataTransferUserEvent.NO_DATA
+    private val transferQueue = LinkedList<MutableList<DataToTransfer>>()
     private var mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
     private lateinit var socket: Socket
-    private lateinit var socketTwo: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
     private var dataTransferListener: ((
@@ -141,15 +142,14 @@ class DataTransferService : Service() {
         fun totalFileReceiveComplete()
     }
 
-    private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
+    //private var dataCollection: MutableList<DataToTransfer> = mutableListOf()
 
     fun cancelActiveReceive() {
         when (mediaTransferProtocolMetaData) {
             MediaTransferProtocolMetaData.NO_DATA -> {
                 // not transferring any data, but wants to stop receiving data from peer,
                 // so send a message to peer to cancel ongoing transfer
-                mediaTransferProtocolMetaData =
-                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER
+                mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER
             }
             MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
                 // transferring data to peer but wants to stop receiving from peer,
@@ -188,18 +188,9 @@ class DataTransferService : Service() {
     }
 
     fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                if (mediaTransferProtocolMetaData == MediaTransferProtocolMetaData.NO_DATA) {
-                    delay(300)
-                    break
-                }
-                // else get stuck in this loop waiting for the current transfer to complete
-            }
-            // when dataTransferUserEvent shows data is not available then assign the new data
-            dataCollection = dataCollectionSelected
-            mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
-        }
+        transferQueue.add(dataCollectionSelected)
+        // when dataTransferUserEvent shows data is not available then assign the new data
+        //dataCollection = dataCollectionSelected
     }
 
 
@@ -359,18 +350,22 @@ class DataTransferService : Service() {
             when (mediaTransferProtocolMetaData) {
                 MediaTransferProtocolMetaData.NO_DATA -> {
                     dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                    if(transferQueue.isNotEmpty()) mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.DATA_AVAILABLE
                 }
                 MediaTransferProtocolMetaData.DATA_AVAILABLE -> {
                     // write the collection size to the peer
-                    dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
-                    dataOutputStream.writeInt(dataCollection.size)
+                    while(transferQueue.isNotEmpty()) {
+                        val dataCollection = transferQueue.remove()
+                        dataOutputStream.writeInt(mediaTransferProtocolMetaData.value)
+                        dataOutputStream.writeInt(dataCollection.size)
 
-                    for (dataToTransfer in dataCollection) {
-                        mediaTransferProtocol.transferMedia(
-                            dataToTransfer,
-                            dataOutputStream,
-                            mediaTransferProtocolDataTransferListener
-                        )
+                        for (dataToTransfer in dataCollection) {
+                            mediaTransferProtocol.transferMedia(
+                                dataToTransfer,
+                                dataOutputStream,
+                                mediaTransferProtocolDataTransferListener
+                            )
+                        }
                     }
                     mediaTransferProtocolMetaData = MediaTransferProtocolMetaData.NO_DATA
                 }

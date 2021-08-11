@@ -621,7 +621,7 @@ class MainActivity : AppCompatActivity() {
                         BottomSheetBehavior.STATE_EXPANDED
                 }
                 collapsedConnectedToPeerOngoingTransferQuitTransferButton.setOnClickListener {
-
+                    breakConnection()
                 }
             }
 
@@ -802,7 +802,7 @@ class MainActivity : AppCompatActivity() {
         dataTransferService?.cancelActiveReceive()
     }
 
-    private fun quitTransfer() {
+    private fun breakConnection() {
         dataTransferService?.stopService(
             DataTransferService.createServiceIntent(this)
         )
