@@ -45,7 +45,7 @@
     click on "Send" so that you can discover his/her device</string>
     <string name="middle_round_dot_text_separation">%1$s \u2022 %2$s</string>
     <string name="comma_separated_strings">%1$s \u25E6 %2$s</string>
-    <string name="directory_navigation_header_text">%1$s \u27A6 %2$s</string>
+    <string name="directory_navigation_header_text">%1$s \u279E %2$s</string>
     <string name="data_percent_transferred">%1$d%%</string>
     <string name="data_transferred_over_data_size_place_holder">%1$d/%1$s</string>
     <string name="document_file_icon_desc">document file icon</string>
