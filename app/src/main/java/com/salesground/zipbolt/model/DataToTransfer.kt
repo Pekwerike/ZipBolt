@@ -109,7 +109,7 @@ sealed class DataToTransfer(
             }
             dataDisplayName.endsWith("mp3") || dataDisplayName.endsWith("aac")
                     || dataDisplayName.endsWith("3gpp") || dataDisplayName.endsWith("m4a")
-                    || dataDisplayName.endsWith("ogg")-> {
+                    || dataDisplayName.endsWith("ogg") || dataDisplayName.endsWith("opus") -> {
                 MediaType.File.AudioFile.value
             }
             dataDisplayName.endsWith("apk") -> {
