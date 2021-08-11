@@ -20,7 +20,7 @@ class AudioTransferWaitingLayoutItemViewHolder(
 
             Glide.with(audioTransferLayoutItemVideoPreviewImageView)
                 .load(dataToTransfer.dataUri)
-                .error(R.drawable.ic_baseline_music_note_24)
+                .error(R.drawable.ic_icons8_music)
                 .into(audioTransferLayoutItemVideoPreviewImageView)
         }
     }

@@ -36,7 +36,6 @@ class DataTransferService : Service() {
         const val IS_SERVER: String = "IsDeviceTheServer"
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
         const val SOCKET_PORT = 7091
-        const val SOCKET_PORT2 = 7063
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
         const val BUFFER_SIZE = 1024 * 1024
 
@@ -283,26 +282,16 @@ class DataTransferService : Service() {
                 )
 
             } catch (exception: IOException) {
-                Log.e("UnseenError", exception.stackTraceToString())
-                // send broadcast message to the main activity that we couldn't connect to peer.
-                // the main activity will use this message to determine how to update the ui
-                /* with(dataTransferServiceConnectionStateIntent) {
-                     action =
-                         DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
 
-                     localBroadcastManager.sendBroadcast(this)
-                 }
-                 stopForeground(true)
-                 stopSelf()*/
             }
-            try {
+           // try {
                 socketDIS =
                     DataInputStream(BufferedInputStream(socket.getInputStream()))
                 delay(400)
                 listenForMediaToReceive(socketDIS)
-            } catch (connectionException: Exception) {
+          /*  } catch (connectionException: Exception) {
                 configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
-            }
+            }*/
         }
     }
 
@@ -407,7 +396,9 @@ class DataTransferService : Service() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    fun killDataTransferService(){
+        stopForeground(true)
+        stopSelf()
     }
+
 }

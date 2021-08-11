@@ -34,7 +34,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                 dataToTransfer as DataToTransfer.DeviceAudio
                 Glide.with(context)
                     .load(dataToTransfer.audioArtPath)
-                    .error(R.drawable.ic_baseline_music_note_24)
+                    .error(R.drawable.ic_icons8_music)
                     .into(this)
             }
             MediaType.Image.value -> {

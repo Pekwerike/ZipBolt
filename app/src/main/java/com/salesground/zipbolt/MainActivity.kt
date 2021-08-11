@@ -451,7 +451,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+       // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
@@ -801,9 +801,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun breakConnection() {
-        dataTransferService?.stopService(
-            DataTransferService.createServiceIntent(this)
-        )
+        dataTransferService?.killDataTransferService()
         // remove the wifi p2p group
         wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
