@@ -108,7 +108,7 @@ sealed class DataToTransfer(
                 MediaType.File.VideoFile.value
             }
             dataDisplayName.endsWith("mp3") || dataDisplayName.endsWith("aac")
-                    || dataDisplayName.endsWith("3gpp") -> {
+                    || dataDisplayName.endsWith("3gpp") || dataDisplayName.endsWith("m4a") -> {
                 MediaType.File.AudioFile.value
             }
             dataDisplayName.endsWith("apk") -> {
