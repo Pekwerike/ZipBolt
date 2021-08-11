@@ -12,7 +12,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
-import com.salesground.zipbolt.R
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentAudioBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener

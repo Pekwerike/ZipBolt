@@ -9,12 +9,10 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.os.Bundle
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +34,7 @@ import kotlin.concurrent.schedule
 class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null
+    private lateinit var wifiP2pDnsSdServiceRequest: WifiP2pDnsSdServiceRequest
 
     @Inject
     lateinit var wifiManager: WifiManager
@@ -65,7 +64,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
 
         }
         observeViewModelLiveData()
-        beginPeerDiscovery()
+        beginServiceDiscovery()
     }
 
     override fun onCreateView(
@@ -85,6 +84,9 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 adapter = peersDiscoveredRecyclerViewAdapter
+            }
+            fragmentPeersDiscoveryStopDiscoveryImageButton.setOnClickListener {
+                endServiceDiscovery()
             }
         }
     }
@@ -111,10 +113,12 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
                     lifecycleScope.launch(Dispatchers.Main) {
                         peersDiscoveryFragment.run {
                             fragmentPeersDiscoveryConnectingToPeerTextView.run {
-                                setAnimatedText(getString(
-                                    R.string.connecting_to_device_message_place_holder,
-                                    device.deviceName
-                                ))
+                                setAnimatedText(
+                                    getString(
+                                        R.string.connecting_to_device_message_place_holder,
+                                        device.deviceName
+                                    )
+                                )
                                 fragmentPeersDiscoveryConnectingToPeerTextView.visibility =
                                     View.VISIBLE
                             }
@@ -139,7 +143,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
 
 
     @SuppressLint("MissingPermission")
-    private fun beginPeerDiscovery() {
+    private fun beginServiceDiscovery() {
         val recordListener =
             WifiP2pManager.DnsSdTxtRecordListener { fullDomainName: String?,
                                                     txtRecordMap: MutableMap<String, String>?, srcDevice: WifiP2pDevice? ->
@@ -160,11 +164,12 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             serviceInfoListener,
             recordListener
         )
+        wifiP2pDnsSdServiceRequest = WifiP2pDnsSdServiceRequest.newInstance()
         wifiP2pManager.clearServiceRequests(wifiP2pChannel,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     wifiP2pManager.addServiceRequest(wifiP2pChannel,
-                        WifiP2pDnsSdServiceRequest.newInstance(),
+                        wifiP2pDnsSdServiceRequest,
                         object : WifiP2pManager.ActionListener {
                             override fun onSuccess() {
                                 lifecycleScope.launch(Dispatchers.Main) {
@@ -174,7 +179,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
 
                             override fun onFailure(reason: Int) {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                    beginPeerDiscovery()
+                                    beginServiceDiscovery()
                                 }
                             }
                         })
@@ -182,8 +187,23 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(reason: Int) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        beginPeerDiscovery()
+                        beginServiceDiscovery()
                     }
+                }
+            })
+    }
+
+    private fun endServiceDiscovery() {
+        wifiP2pManager.removeServiceRequest(
+            wifiP2pChannel,
+            wifiP2pDnsSdServiceRequest,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    mainActivity?.closePeersDiscoveryModalBottomSheet()
+                }
+
+                override fun onFailure(reason: Int) {
+                    mainActivity?.closePeersDiscoveryModalBottomSheet()
                 }
             })
     }
@@ -194,7 +214,10 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             override fun onSuccess() {
                 Timer().schedule(2000) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        discoverServices()
+                        if (isVisible) {
+                            discoverServices()
+                            // displayToast("Searching for peers")
+                        }
                     }
                 }
             }
@@ -207,21 +230,13 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         })
     }
 
-    private fun stopDevicePeerDiscovery() {
-        wifiP2pManager.stopPeerDiscovery(
-            wifiP2pChannel,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                }
-
-                override fun onFailure(p0: Int) {
-                    displayToast("Couldn't stop peer discovery")
-                }
-            })
-    }
-
     private fun displayToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        peersDiscoveryViewModel.clearDiscoveredPeerSet()
     }
 
     companion object {
@@ -230,8 +245,4 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        peersDiscoveryViewModel.clearDiscoveredPeerSet()
-    }
 }

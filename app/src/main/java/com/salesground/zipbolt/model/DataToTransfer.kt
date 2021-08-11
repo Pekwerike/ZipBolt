@@ -108,7 +108,8 @@ sealed class DataToTransfer(
                 MediaType.File.VideoFile.value
             }
             dataDisplayName.endsWith("mp3") || dataDisplayName.endsWith("aac")
-                    || dataDisplayName.endsWith("3gpp")-> {
+                    || dataDisplayName.endsWith("3gpp") || dataDisplayName.endsWith("m4a")
+                    || dataDisplayName.endsWith("ogg") || dataDisplayName.endsWith("opus") -> {
                 MediaType.File.AudioFile.value
             }
             dataDisplayName.endsWith("apk") -> {
@@ -135,63 +136,15 @@ sealed class DataToTransfer(
             dataDisplayName.endsWith("dat") -> {
                 MediaType.File.Document.DatDocument.value
             }
+            dataDisplayName.endsWith("txt") -> {
+                MediaType.File.Document.TextFileDocument.value
+            }
             file.isDirectory -> {
                 MediaType.File.Directory.value
             }
             else -> MediaType.File.Document.UnknownDocument.value
         }
 
-        fun getFileType(context: Context): Int {
-            // if file is not an image go further processing
-            if (ContentResolver.SCHEME_CONTENT == dataUri.scheme
-            ) {
-                context.contentResolver.run {
-                    getType(dataUri)?.let {
-                        return getMediaType(it)
-                    }
-                }
-            } else {
-                val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
-                    dataUri.toString()
-                )
-
-                MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase(Locale.ROOT)
-                )?.let {
-                    return getMediaType(it)
-                }
-            }
-            return MediaType.File.Document.UnknownDocument.value
-        }
-
-        private fun getMediaType(mimeType: String): Int {
-            return when {
-                mimeType.contains("image", ignoreCase = true) -> {
-                    MediaType.File.ImageFile.value
-                }
-                mimeType.contains("video", ignoreCase = true) -> {
-                    MediaType.File.VideoFile.value
-                }
-                mimeType.contains("Pdf", ignoreCase = true) -> {
-                    MediaType.File.Document.PdfDocument.value
-                }
-                mimeType.contains("app", ignoreCase = true) -> {
-                    MediaType.File.AppFile.value
-                }
-                mimeType.contains("audio", ignoreCase = true) -> {
-                    MediaType.File.AudioFile.value
-                }
-                mimeType.contains("word", ignoreCase = true) -> {
-                    MediaType.File.Document.WordDocument.value
-                }
-                mimeType.contains(DocumentsContract.Document.MIME_TYPE_DIR, ignoreCase = true) -> {
-                    MediaType.File.Directory.value
-                }
-                else -> {
-                    MediaType.File.Document.UnknownDocument.value
-                }
-            }
-        }
     }
 }
 

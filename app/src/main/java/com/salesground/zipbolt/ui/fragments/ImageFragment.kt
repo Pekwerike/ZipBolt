@@ -1,7 +1,5 @@
 package com.salesground.zipbolt.ui.fragments
 
-import android.annotation.SuppressLint
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,24 +9,20 @@ import android.view.ViewGroup
 import androidx.asynclayoutinflater.view.AsyncLayoutInflater
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
-import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentImageBinding
 import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
-import com.salesground.zipbolt.utils.SendButtonClickedEvent
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ImageFragment : Fragment() {

@@ -12,7 +12,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 
 class UpgradedWifiDirectBroadcastReceiver(
-    private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback,
+    private val wifiDirectBroadcastReceiverCallback: WifiDirectBroadcastReceiverCallback,
     private val wifiP2pManager: WifiP2pManager,
     private val wifiP2pChannel: WifiP2pManager.Channel
 ) : BroadcastReceiver() {
@@ -20,15 +20,10 @@ class UpgradedWifiDirectBroadcastReceiver(
     interface WifiDirectBroadcastReceiverCallback {
         fun wifiOn()
         fun wifiOff()
-        fun peersListAvailable(peersList: MutableList<WifiP2pDevice>)
         fun connectedToPeer(
             wifiP2pInfo: WifiP2pInfo,
             peeredDevice: WifiP2pDevice
         )
-
-        fun wifiP2pDiscoveryStopped()
-        fun wifiP2pDiscoveryStarted()
-        fun disconnectedFromPeer()
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {

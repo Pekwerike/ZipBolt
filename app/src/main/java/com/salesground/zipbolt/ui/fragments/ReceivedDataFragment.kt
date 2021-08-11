@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.R
@@ -82,7 +83,7 @@ class ReceivedDataFragment : Fragment() {
                             dataDisplayName = it.dataDisplayName
                             dataSize = it.dataSize
                             dataType = it.dataType
-                            transferStatus = DataToTransfer.TransferStatus.RECEIVE_ONGOING
+                            transferStatus = DataToTransfer.TransferStatus.RECEIVE_STARTED
                             percentTransferred = it.percentageOfDataRead
                         }
                         dataTransferPercent = it.percentageOfDataRead.roundToInt()

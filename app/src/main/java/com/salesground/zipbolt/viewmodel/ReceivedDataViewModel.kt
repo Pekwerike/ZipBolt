@@ -48,13 +48,13 @@ class ReceivedDataViewModel : ViewModel() {
     }
 
     fun updateOngoingReceiveDataItemReceivePercent(receivePercent: Float) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             _ongoingDataReceivePercent.value = receivePercent
         }
     }
 
     fun onDataReceiveStarted(receivedDataItem: ReceivedDataItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             _dataReceiveStartedDataItem.value = receivedDataItem
         }
     }
