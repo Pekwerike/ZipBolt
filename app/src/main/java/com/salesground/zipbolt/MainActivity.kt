@@ -917,17 +917,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
+            if (connectedToPeerTransferOngoingBottomSheetBehavior.state ==
+                BottomSheetBehavior.STATE_EXPANDED
+            ) {
+                connectedToPeerTransferOngoingBottomSheetBehavior.state =
+                    BottomSheetBehavior.STATE_COLLAPSED
+                return
+            }
+        }
+
         if (FilesFragment.backStackCount > 0) {
             if (popBackStackListener?.popStack() == true) {
 
             } else {
                 super.onBackPressed()
             }
-        } else if (connectedToPeerTransferOngoingBottomSheetBehavior.state ==
-            BottomSheetBehavior.STATE_EXPANDED
-        ) {
-            connectedToPeerTransferOngoingBottomSheetBehavior.state =
-                BottomSheetBehavior.STATE_COLLAPSED
         } else super.onBackPressed()
     }
 }

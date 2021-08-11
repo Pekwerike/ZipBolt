@@ -111,10 +111,12 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
                     lifecycleScope.launch(Dispatchers.Main) {
                         peersDiscoveryFragment.run {
                             fragmentPeersDiscoveryConnectingToPeerTextView.run {
-                                setAnimatedText(getString(
-                                    R.string.connecting_to_device_message_place_holder,
-                                    device.deviceName
-                                ))
+                                setAnimatedText(
+                                    getString(
+                                        R.string.connecting_to_device_message_place_holder,
+                                        device.deviceName
+                                    )
+                                )
                                 fragmentPeersDiscoveryConnectingToPeerTextView.visibility =
                                     View.VISIBLE
                             }
@@ -194,7 +196,10 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             override fun onSuccess() {
                 Timer().schedule(2000) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        discoverServices()
+                        if(isVisible) {
+                            discoverServices()
+                            displayToast("Searching for peers")
+                        }
                     }
                 }
             }
@@ -207,21 +212,13 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         })
     }
 
-    private fun stopDevicePeerDiscovery() {
-        wifiP2pManager.stopPeerDiscovery(
-            wifiP2pChannel,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                }
-
-                override fun onFailure(p0: Int) {
-                    displayToast("Couldn't stop peer discovery")
-                }
-            })
-    }
-
     private fun displayToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        peersDiscoveryViewModel.clearDiscoveredPeerSet()
     }
 
     companion object {
@@ -230,8 +227,4 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        peersDiscoveryViewModel.clearDiscoveredPeerSet()
-    }
 }
