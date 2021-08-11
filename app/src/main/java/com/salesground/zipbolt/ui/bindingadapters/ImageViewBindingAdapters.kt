@@ -94,7 +94,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
 
             MediaType.File.AudioFile.value -> {
                 Glide.with(context)
-                    .load(R.drawable.ic_baseline_music_note_24)
+                    .load(R.drawable.ic_icons8_music)
                     .into(this)
             }
             MediaType.File.VideoFile.value -> {
@@ -104,7 +104,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
             }
 
             MediaType.File.AppFile.value -> {
-                dataToTransfer as DataToTransfer.DeviceFile
+                /*dataToTransfer as DataToTransfer.DeviceFile
                 val filePath = dataToTransfer.file.path
                 val applicationIcon: Drawable? = try {
                     context.packageManager.getPackageArchiveInfo(
@@ -119,16 +119,11 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     }
                 } catch (nullPointerException: NullPointerException) {
                     null
-                }
-                if (applicationIcon != null) {
-                    Glide.with(context)
-                        .load(applicationIcon)
-                        .into(this)
-                } else {
-                    Glide.with(context)
-                        .load(R.drawable.ic_launcher_background)
-                        .into(this)
-                }
+                }*/
+                Glide.with(context)
+                    .load(R.drawable.ic_android_new_logo_2019)
+                    .into(this)
+
             }
 
             MediaType.File.Document.WebpageDocument.value -> {

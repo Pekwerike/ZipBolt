@@ -40,6 +40,7 @@ import kotlin.math.roundToInt
 import android.content.Intent
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -450,7 +451,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
@@ -633,10 +634,7 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.transfer_history)
                     expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
                         // close the connection with the peer
-                        dataTransferServiceIntent?.let {
-                            unbindService(dataTransferServiceConnection)
-                            stopService(dataTransferServiceIntent)
-                        }
+                        breakConnection()
                     }
                     expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
                         // collapse the connected to peer transfer ongoing bottom sheet
