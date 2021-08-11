@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.service
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Binder
@@ -36,6 +37,10 @@ class DataTransferService : Service() {
         val arrayOfPossiblePorts = arrayOf(8020, 7070, 4050, 5030, 6040)
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
         const val BUFFER_SIZE = 1024 * 1024
+
+        fun createServiceIntent(context: Context): Intent {
+            return Intent(context, DataTransferService::class.java)
+        }
     }
 
     private val dataTransferService: DataTransferServiceBinder = DataTransferServiceBinder()

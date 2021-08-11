@@ -479,7 +479,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            with(mainActivityAllMediaOnDevice) {
+            mainActivityAllMediaOnDevice.run {
                 // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
                     TabLayout.MODE_SCROLLABLE
@@ -619,6 +619,9 @@ class MainActivity : AppCompatActivity() {
                 root.setOnClickListener {
                     connectedToPeerTransferOngoingBottomSheetBehavior.state =
                         BottomSheetBehavior.STATE_EXPANDED
+                }
+                collapsedConnectedToPeerOngoingTransferQuitTransferButton.setOnClickListener {
+
                 }
             }
 
@@ -797,6 +800,23 @@ class MainActivity : AppCompatActivity() {
 
     fun cancelOngoingDataReceive() {
         dataTransferService?.cancelActiveReceive()
+    }
+
+    private fun quitTransfer() {
+        dataTransferService?.stopService(
+            DataTransferService.createServiceIntent(this)
+        )
+        // remove the wifi p2p group
+        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                mainActivityViewModel.peerConnectionNoAction()
+            }
+
+            override fun onFailure(reason: Int) {
+                mainActivityViewModel.peerConnectionNoAction()
+            }
+        })
+        // turn of wifi if it is on
     }
 
 
