@@ -13,4 +13,5 @@ open class SingleLiveDataEventForUIState<out T>(private val content: T) {
             content
         }
     }
+
 }

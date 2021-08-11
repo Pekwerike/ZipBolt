@@ -10,9 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
+import com.salesground.zipbolt.databinding.FragmentGroupCreatedBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -26,11 +31,15 @@ class GroupCreatedFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var wifiP2pManager: WifiP2pManager
-
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
+    private lateinit var fragmentGroupCreatedBinding: FragmentGroupCreatedBinding
+    private var mainActivity: MainActivity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.let {
+            mainActivity = it as MainActivity
+        }
         // initialize wifi p2p channel
         wifiP2pChannel = wifiP2pManager.initialize(
             requireContext(), Looper.getMainLooper()
@@ -45,17 +54,48 @@ class GroupCreatedFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(
-            R.layout.fragment_group_created,
-            container,
-            false
+        fragmentGroupCreatedBinding = FragmentGroupCreatedBinding.inflate(
+            inflater, container, false
         )
+        return fragmentGroupCreatedBinding.root
     }
 
-    companion object {
-        fun newInstance(): GroupCreatedFragment {
-            return GroupCreatedFragment()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fragmentGroupCreatedBinding.run {
+            fragmentGroupCreatedCloseGroupImageButton.setOnClickListener {
+                stopAdvertisingServiceToNearbyDevices()
+            }
         }
+    }
+
+    private fun stopAdvertisingServiceToNearbyDevices() {
+        wifiP2pManager.clearLocalServices(wifiP2pChannel,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    closeWifiDirectGroup()
+                }
+
+                override fun onFailure(reason: Int) {
+                    closeWifiDirectGroup()
+                }
+            })
+    }
+
+    private fun closeWifiDirectGroup() {
+        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    mainActivity?.closeGroupCreatedModalBottomSheet()
+                }
+            }
+
+            override fun onFailure(reason: Int) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    mainActivity?.closeGroupCreatedModalBottomSheet()
+                }
+            }
+        })
     }
 
     @SuppressLint("MissingPermission", "HardwareIds")
@@ -109,5 +149,11 @@ class GroupCreatedFragment : BottomSheetDialogFragment() {
                     broadcastZipBoltFileTransferService()
                 }
             })
+    }
+
+    companion object {
+        fun newInstance(): GroupCreatedFragment {
+            return GroupCreatedFragment()
+        }
     }
 }

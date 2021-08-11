@@ -27,7 +27,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.tabs.TabLayout
 import com.salesground.zipbolt.broadcast.DataTransferServiceConnectionStateReceiver
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
-import com.salesground.zipbolt.broadcast.WifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback
 import com.salesground.zipbolt.databinding.*
 import com.salesground.zipbolt.databinding.ActivityMainBinding.inflate
 import com.salesground.zipbolt.model.DataToTransfer
@@ -38,9 +37,7 @@ import com.salesground.zipbolt.viewmodel.*
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
-
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -75,14 +72,14 @@ class MainActivity : AppCompatActivity() {
         this.popBackStackListener = popBackStackListener
     }
 
-    enum class DeviceTransferRole(value: Int) {
-        SEND(1),
-        RECEIVE(2),
-        SEND_AND_RECEIVE(3),
-        SEND_AND_RECEIVE_BUT_DISCOVERING(7),
-        SEND_BUT_DISCOVERING_PEER(5),
-        RECEIVE_BUT_DISCOVERING_PEER(6),
-        NO_ROLE(4)
+    enum class DeviceTransferRole {
+        SEND,
+        RECEIVE,
+        SEND_AND_RECEIVE,
+        SEND_AND_RECEIVE_BUT_DISCOVERING,
+        SEND_BUT_DISCOVERING_PEER,
+        RECEIVE_BUT_DISCOVERING_PEER,
+        NO_ROLE
     }
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
@@ -338,7 +335,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val wifiDirectBroadcastReceiverCallback = object : WifiDirectBroadcastReceiverCallback {
+    private val wifiDirectBroadcastReceiverCallback = object :
+        UpgradedWifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
             if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                 && groupCreatedFragment == null
@@ -353,6 +351,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun wifiOff() {
+
         }
 
 
@@ -362,21 +361,18 @@ class MainActivity : AppCompatActivity() {
         ) {
             deviceTransferRole = when (deviceTransferRole) {
                 DeviceTransferRole.SEND_BUT_DISCOVERING_PEER -> {
-                    groupCreatedFragment?.dismiss()
-                    groupCreatedFragment = null
+                    closeGroupCreatedModalBottomSheet()
                     DeviceTransferRole.SEND
                 }
                 DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
-                    peersDiscoveryFragment?.dismiss()
-                    peersDiscoveryFragment = null
+                    closePeersDiscoveryModalBottomSheet()
                     DeviceTransferRole.RECEIVE
                 }
                 DeviceTransferRole.NO_ROLE -> {
                     DeviceTransferRole.NO_ROLE
                 }
                 DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
-                    peersDiscoveryFragment?.dismiss()
-                    peersDiscoveryFragment = null
+                    closePeersDiscoveryModalBottomSheet()
                     DeviceTransferRole.SEND_AND_RECEIVE
                 }
                 else -> {
@@ -449,28 +445,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-
-        override fun wifiP2pDiscoveryStopped() {
-            // in order to avoid disrupting the ui state due to multiple broadcast events
-            // make sure you end the peer discovery only when the user specifies so
-
-        }
-
-        override fun wifiP2pDiscoveryStarted() {
-            displayToast("Discovery started")
-            // only inform the view model that the device has began searching
-            // for peers when there is no ui action
-            if (mainActivityViewModel.peerConnectionUIState.value ==
-                PeerConnectionUIState.NoConnectionUIAction
-            ) {
-
-            }
-        }
-
-
-        override fun disconnectedFromPeer() {
-            mainActivityViewModel.peerConnectionNoAction()
         }
     }
 
@@ -642,7 +616,10 @@ class MainActivity : AppCompatActivity() {
         connectedToPeerTransferOngoingBottomSheetLayoutBinding.run {
             // configure collapsed connected to peer transfer ongoing layout
             collapsedConnectedToPeerOngoingDataTransferLayout.run {
-
+                root.setOnClickListener {
+                    connectedToPeerTransferOngoingBottomSheetBehavior.state =
+                        BottomSheetBehavior.STATE_EXPANDED
+                }
             }
 
             // configure expanded connected to peer transfer ongoing layout
@@ -804,8 +781,14 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun deviceConnectionFailed() {
+    fun closeGroupCreatedModalBottomSheet() {
+        groupCreatedFragment?.dismiss()
+        groupCreatedFragment = null
+    }
 
+    fun closePeersDiscoveryModalBottomSheet() {
+        peersDiscoveryFragment?.dismiss()
+        peersDiscoveryFragment = null
     }
 
     fun cancelOngoingDataTransfer() {
@@ -828,19 +811,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun getBottomSheetPeekHeight(): Int {
         return (60 * resources.displayMetrics.density).roundToInt()
-    }
-
-    private fun cancelDeviceConnection() {
-        wifiP2pManager.removeGroup(wifiP2pChannel,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    displayToast("P2p connection canceled")
-                }
-
-                override fun onFailure(reason: Int) {
-                    displayToast("Cannot disconnect from device")
-                }
-            })
     }
 
 
@@ -878,7 +848,6 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
-
 
     // check if SpeedForce has access to device fine location
     private fun requestFineLocationPermission() {
