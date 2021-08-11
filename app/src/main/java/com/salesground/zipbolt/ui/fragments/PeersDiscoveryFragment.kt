@@ -198,7 +198,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
                     lifecycleScope.launch(Dispatchers.Main) {
                         if(isVisible) {
                             discoverServices()
-                            displayToast("Searching for peers")
+                           // displayToast("Searching for peers")
                         }
                     }
                 }
