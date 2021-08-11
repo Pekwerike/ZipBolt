@@ -487,7 +487,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             sendFileButton.setOnClickListener {
-                if (it.alpha != 0f) {
+                if (it.visibility != INVISIBLE) {
                     // send broadcast event that send data button has been triggered
                     localBroadcastManager.sendBroadcast(sendDataClickedIntent)
 
@@ -954,6 +954,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 super.onBackPressed()
             }
+        } else if (connectedToPeerTransferOngoingBottomSheetBehavior.state ==
+            BottomSheetBehavior.STATE_EXPANDED
+        ) {
+            connectedToPeerTransferOngoingBottomSheetBehavior.state =
+                BottomSheetBehavior.STATE_COLLAPSED
         } else super.onBackPressed()
     }
 }
