@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
+import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import com.salesground.zipbolt.R
 
 class ConnectionUtils {
@@ -71,7 +72,9 @@ class ConnectionUtils {
                     }
                 }
             wifiP2pManager.setDnsSdResponseListeners(wifiP2pChannel, serviceListener, recordListener)
-            wifiP2pManager.addServiceRequest()
+            wifiP2pManager.addServiceRequest(wifiP2pChannel,
+                WifiP2pDnsSdServiceRequest.newInstance(),
+            actionListener)
         }
     }
 }
