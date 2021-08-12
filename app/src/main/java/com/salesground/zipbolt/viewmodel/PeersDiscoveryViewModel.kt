@@ -10,7 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class PeersDiscoveryViewModel() : ViewModel() {
+class PeersDiscoveryViewModel : ViewModel() {
+    val deviceTransferTypeMap = HashMap<String, String>()
     private var normalDiscoveredPeerSet = mutableSetOf<WifiP2pDevice>()
     private val _discoveredPeerSet = MutableLiveData<MutableSet<WifiP2pDevice>>(null)
     val discoveredPeerSet: LiveData<MutableSet<WifiP2pDevice>>

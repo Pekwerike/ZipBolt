@@ -49,7 +49,6 @@ class ConnectionUtils {
 
         fun discoverWifiP2pService(
             context: Context,
-            transferType: String,
             wifiP2pManager: WifiP2pManager,
             wifiP2pChannel: WifiP2pManager.Channel,
             actionListener: WifiP2pManager.ActionListener
