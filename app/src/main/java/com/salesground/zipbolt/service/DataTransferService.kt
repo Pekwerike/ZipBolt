@@ -415,6 +415,7 @@ class DataTransferService : Service() {
     }
 
     fun killDataTransferService() {
+        isActive = false
         stopForeground(true)
         stopSelf()
     }

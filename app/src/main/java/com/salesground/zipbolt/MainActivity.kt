@@ -332,6 +332,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            displayToast("Service disconnected")
             dataTransferService = null
         }
     }
@@ -451,7 +452,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
@@ -711,6 +712,7 @@ class MainActivity : AppCompatActivity() {
                     deviceTransferRole = DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
+                        toggleWifi(false)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
@@ -812,7 +814,23 @@ class MainActivity : AppCompatActivity() {
                 mainActivityViewModel.peerConnectionNoAction()
             }
         })
+        toggleWifi(false)
         // turn of wifi if it is on
+    }
+
+    private fun toggleWifi(state: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            wifiManager.isWifiEnabled = state
+        } else {
+            registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult()
+            ) {
+            }.launch(
+                Intent(
+                    Settings.Panel.ACTION_WIFI
+                )
+            )
+        }
     }
 
 
