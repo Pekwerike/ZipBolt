@@ -7,7 +7,7 @@
     tools:context=".ui.fragments.modalbottomsheets.PeersDiscoveryFragment">
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/fragment_peers_discovery_stop_discovery_image_button"
+        android:id="@+id/fragment_send_and_receive_stop_peer_discovery_image_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="@dimen/medium_margin"
@@ -19,7 +19,7 @@
         app:srcCompat="@drawable/close_icon" />
 
     <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
-        android:id="@+id/fragment_peers_discovery_searching_for_peers_text_view"
+        android:id="@+id/fragment_send_and_receive_searching_for_peers_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/standard_margin"
@@ -33,7 +33,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_stop_discovery_image_button" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_send_and_receive_stop_peer_discovery_image_button" />
 
     <com.salesground.zipbolt.ui.customviews.AnimatedLoadingTextView
         android:id="@+id/fragment_peers_discovery_connecting_to_peer_text_view"
@@ -60,15 +60,15 @@
         android:layout_marginHorizontal="@dimen/standard_margin"
         android:layout_marginTop="@dimen/medium_margin"
         android:padding="@dimen/medium_padding"
-        android:text="@string/searching_for_peers_discovery_description"
+        android:text="@string/send_and_receive_searching_for_peers_discovery_description"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_searching_for_peers_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_send_and_receive_searching_for_peers_text_view" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/fragment_peers_discovery_discovered_peers_text_view"
+        android:id="@+id/fragment_send_and_receive_discovered_peers_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/medium_margin"
@@ -80,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/fragment_peers_discovery_searching_for_sender_description_text_view" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fragment_peers_discovery_discovered_peers_recycler_view"
+        android:id="@+id/fragment_send_and_receive_discovered_peers_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="@dimen/medium_margin"
@@ -88,5 +88,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fragment_peers_discovery_discovered_peers_text_view" />
+        app:layout_constraintTop_toBottomOf="@id/fragment_send_and_receive_discovered_peers_text_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>

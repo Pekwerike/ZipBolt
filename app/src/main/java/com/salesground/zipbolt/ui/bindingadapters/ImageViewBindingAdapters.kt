@@ -28,6 +28,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     .load(
                         dataToTransfer.applicationIcon
                     )
+                    .error(R.drawable.apk_file_icon)
                     .into(this)
             }
             MediaType.Audio.value -> {
@@ -121,7 +122,7 @@ fun ImageView.bindImageForDocument(dataToTransfer: DataToTransfer?) {
                     null
                 }*/
                 Glide.with(context)
-                    .load(R.drawable.ic_android_new_logo_2019)
+                    .load(R.drawable.apk_file_icon)
                     .into(this)
 
             }

@@ -43,6 +43,10 @@
     click on "Receive" to discover your device</string>
     <string name="searching_for_peers_discovery_description">Tell your friend to open the ZipBolt app, click on "Connect" and then
     click on "Send" so that you can discover his/her device</string>
+    <string name="send_and_receive_searching_for_peers_discovery_description">
+        Tell your friend to open the ZipBolt app, click on "Connect" and then
+    click on "Send and Receive" so that you can connect his/her device
+    </string>
     <string name="middle_round_dot_text_separation">%1$s \u2022 %2$s</string>
     <string name="comma_separated_strings">%1$s \u25E6 %2$s</string>
     <string name="directory_navigation_header_text">%1$s \u279E %2$s</string>

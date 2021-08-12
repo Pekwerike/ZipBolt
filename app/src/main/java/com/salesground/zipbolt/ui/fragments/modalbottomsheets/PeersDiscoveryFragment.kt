@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.fragments
+package com.salesground.zipbolt.ui.fragments.modalbottomsheets
 
 import android.annotation.SuppressLint
 import android.net.wifi.WifiManager
@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
+
 
 @AndroidEntryPoint
 class PeersDiscoveryFragment : BottomSheetDialogFragment() {
@@ -110,7 +111,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-                    lifecycleScope.launch(Dispatchers.Main) {
+                    lifecycleScope.launch(Dispatchers.Main) {""
                         peersDiscoveryFragment.run {
                             fragmentPeersDiscoveryConnectingToPeerTextView.run {
                                 setAnimatedText(

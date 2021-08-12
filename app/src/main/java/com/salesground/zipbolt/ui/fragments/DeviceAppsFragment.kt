@@ -103,7 +103,7 @@ class DeviceAppsFragment : Fragment() {
                 applicationFragmentAppsDisplayRecyclerViewAdapter.selectedApplications = dataToTransferViewModel.collectionOfDataToTransfer
                 applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
                     applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
-                    applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
+                    applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition() + 1
                 )
             }
         }

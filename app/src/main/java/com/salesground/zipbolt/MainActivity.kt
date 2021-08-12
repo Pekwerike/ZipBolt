@@ -40,7 +40,6 @@ import kotlin.math.roundToInt
 import android.content.Intent
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -50,8 +49,8 @@ import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
-import com.salesground.zipbolt.ui.fragments.GroupCreatedFragment
-import com.salesground.zipbolt.ui.fragments.PeersDiscoveryFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.GroupCreatedFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.PeersDiscoveryFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*

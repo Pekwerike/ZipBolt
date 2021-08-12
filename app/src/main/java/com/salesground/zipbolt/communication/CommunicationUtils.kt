@@ -63,6 +63,7 @@ fun DataInputStream.readStreamDataIntoFile(
         }
     } catch (exception: Exception) {
         receivingFile.delete()
+        throw exception
     }
 
     receivingFileBufferedOutputStream.close()
