@@ -32,6 +32,12 @@ class DirectoryListDisplayRecyclerViewAdapter(
                     folderClickedListener
                 )
             }
+            MediaType.File.AppFile.value -> {
+                DirectoryAppLayoutItemViewHolder.createViewHolder(
+                    parent,
+                    dataToTransferRecyclerViewItemClickListener
+                )
+            }
             MediaType.File.ImageFile.value -> {
                 DirectoryImageLayoutItemViewHolder.createViewHolder(
                     parent,
@@ -108,6 +114,10 @@ class DirectoryListDisplayRecyclerViewAdapter(
                 filesSelectedForTransfer
             )
             is DirectoryDocumentLayoutItemViewHolder -> holder.bindData(
+                getItem(position),
+                filesSelectedForTransfer
+            )
+            is DirectoryAppLayoutItemViewHolder -> holder.bindData(
                 getItem(position),
                 filesSelectedForTransfer
             )
