@@ -246,7 +246,7 @@ class DataTransferService : Service() {
 
             try {
                 listenForMediaToTransfer(socketDOS)
-            }catch (socketException: SocketException){
+            } catch (socketException: SocketException) {
                 killDataTransferService()
             }
         }
@@ -304,6 +304,8 @@ class DataTransferService : Service() {
                 listenForMediaToReceive(socketDIS)
             } catch (socketException: SocketException) {
                 killDataTransferService()
+            } catch (endOfFileException: EOFException) {
+
             }
 
         }
@@ -383,7 +385,6 @@ class DataTransferService : Service() {
         }
     }
 
-    @Throws(SocketException::class)
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
         try {
             while (true) {
@@ -411,6 +412,8 @@ class DataTransferService : Service() {
             }
         } catch (socketException: SocketException) {
             throw socketException
+        } catch (endOfFileException: EOFException) {
+            throw endOfFileException
         }
     }
 
