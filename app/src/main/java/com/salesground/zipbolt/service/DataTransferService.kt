@@ -272,7 +272,6 @@ class DataTransferService : Service() {
         }
     }
 
-
     private fun configureReceiverSocketForOneDirectionalReceive(serverIpAddress: String) {
         CoroutineScope(Dispatchers.IO).launch {
             socket = Socket()
@@ -303,11 +302,10 @@ class DataTransferService : Service() {
             try {
                 listenForMediaToReceive(socketDIS)
             } catch (socketException: SocketException) {
-                killDataTransferService()
+                // killDataTransferService()
             } catch (endOfFileException: EOFException) {
-
+                //
             }
-
         }
     }
 
@@ -327,7 +325,7 @@ class DataTransferService : Service() {
             } catch (connectException: ConnectException) {
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
-                with(dataTransferServiceConnectionStateIntent) {
+                dataTransferServiceConnectionStateIntent.run {
                     action =
                         DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
 
@@ -349,7 +347,6 @@ class DataTransferService : Service() {
     }
 
     private suspend fun listenForMediaToTransfer(dataOutputStream: DataOutputStream) {
-        // try {
         while (true) {
             when (mediaTransferProtocolMetaData) {
                 MediaTransferProtocolMetaData.NO_DATA -> {
@@ -386,34 +383,28 @@ class DataTransferService : Service() {
     }
 
     private suspend fun listenForMediaToReceive(dataInputStream: DataInputStream) {
-        try {
-            while (true) {
-                when (dataInputStream.readInt()) {
-                    MediaTransferProtocolMetaData.NO_DATA.value -> continue
-                    MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
-                        delay(200)
-                        // read the number of files sent from the peer
-                        val filesCount = dataInputStream.readInt()
-                        for (i in 0 until filesCount) {
-                            mediaTransferProtocol.receiveMedia(
-                                dataInputStream,
-                                mediaTransferProtocolDataReceiveListener
-                            )
-                            delay(200)
-                        }
-                        dataFlowListener?.totalFileReceiveComplete()
-                    }
-                    MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
-                        mediaTransferProtocol.cancelCurrentTransfer(
-                            transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+        while (true) {
+            when (dataInputStream.readInt()) {
+                MediaTransferProtocolMetaData.NO_DATA.value -> continue
+                MediaTransferProtocolMetaData.DATA_AVAILABLE.value -> {
+                    delay(200)
+                    // read the number of files sent from the peer
+                    val filesCount = dataInputStream.readInt()
+                    for (i in 0 until filesCount) {
+                        mediaTransferProtocol.receiveMedia(
+                            dataInputStream,
+                            mediaTransferProtocolDataReceiveListener
                         )
+                        delay(200)
                     }
+                    dataFlowListener?.totalFileReceiveComplete()
+                }
+                MediaTransferProtocolMetaData.CANCEL_ON_GOING_TRANSFER.value -> {
+                    mediaTransferProtocol.cancelCurrentTransfer(
+                        transferMetaData = MediaTransferProtocolMetaData.CANCEL_ACTIVE_RECEIVE
+                    )
                 }
             }
-        } catch (socketException: SocketException) {
-            throw socketException
-        } catch (endOfFileException: EOFException) {
-            throw endOfFileException
         }
     }
 
@@ -422,5 +413,4 @@ class DataTransferService : Service() {
         stopForeground(true)
         stopSelf()
     }
-
 }

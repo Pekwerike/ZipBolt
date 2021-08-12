@@ -1,4 +1,4 @@
-package com.salesground.zipbolt.ui.fragments
+package com.salesground.zipbolt.ui.fragments.modalbottomsheets
 
 import android.annotation.SuppressLint
 import android.net.wifi.WifiManager
