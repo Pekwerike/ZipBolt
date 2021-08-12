@@ -25,7 +25,7 @@
             android:layout_height="50dp"
             android:padding="@dimen/medium_padding"
             app:curvedImageViewCornerRadius="0.17"
-            app:srcCompat="@drawable/ic_baseline_music_note_24" />
+            app:srcCompat="@drawable/ic_icons8_music" />
 
 
         <LinearLayout

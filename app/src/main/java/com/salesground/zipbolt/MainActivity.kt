@@ -40,6 +40,7 @@ import kotlin.math.roundToInt
 import android.content.Intent
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -331,6 +332,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
+            displayToast("Service disconnected")
             dataTransferService = null
         }
     }
@@ -450,7 +452,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
             connectToPeerButton.setOnClickListener {
@@ -479,7 +481,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            with(mainActivityAllMediaOnDevice) {
+            mainActivityAllMediaOnDevice.run {
                 // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
                     TabLayout.MODE_SCROLLABLE
@@ -620,6 +622,9 @@ class MainActivity : AppCompatActivity() {
                     connectedToPeerTransferOngoingBottomSheetBehavior.state =
                         BottomSheetBehavior.STATE_EXPANDED
                 }
+                collapsedConnectedToPeerOngoingTransferQuitTransferButton.setOnClickListener {
+                    breakConnection()
+                }
             }
 
             // configure expanded connected to peer transfer ongoing layout
@@ -630,10 +635,7 @@ class MainActivity : AppCompatActivity() {
                         getString(R.string.transfer_history)
                     expandedBottomSheetLayoutToolbarCancelButton.setOnClickListener {
                         // close the connection with the peer
-                        dataTransferServiceIntent?.let {
-                            unbindService(dataTransferServiceConnection)
-                            stopService(dataTransferServiceIntent)
-                        }
+                        breakConnection()
                     }
                     expandedBottomSheetLayoutToolbarCollapseBottomSheetButton.setOnClickListener {
                         // collapse the connected to peer transfer ongoing bottom sheet
@@ -710,6 +712,7 @@ class MainActivity : AppCompatActivity() {
                     deviceTransferRole = DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
+                        toggleWifi(false)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
@@ -797,6 +800,37 @@ class MainActivity : AppCompatActivity() {
 
     fun cancelOngoingDataReceive() {
         dataTransferService?.cancelActiveReceive()
+    }
+
+    private fun breakConnection() {
+        dataTransferService?.killDataTransferService()
+        // remove the wifi p2p group
+        wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                mainActivityViewModel.peerConnectionNoAction()
+            }
+
+            override fun onFailure(reason: Int) {
+                mainActivityViewModel.peerConnectionNoAction()
+            }
+        })
+        toggleWifi(false)
+        // turn of wifi if it is on
+    }
+
+    private fun toggleWifi(state: Boolean) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            wifiManager.isWifiEnabled = state
+        } else {
+            registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult()
+            ) {
+            }.launch(
+                Intent(
+                    Settings.Panel.ACTION_WIFI
+                )
+            )
+        }
     }
 
 

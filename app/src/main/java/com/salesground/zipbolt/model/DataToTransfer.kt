@@ -130,7 +130,7 @@ sealed class DataToTransfer(
             dataDisplayName.endsWith("zip") -> {
                 MediaType.File.Document.ZipDocument.value
             }
-            dataDisplayName.endsWith("mhtml") -> {
+            dataDisplayName.endsWith("html") -> {
                 MediaType.File.Document.WebpageDocument.value
             }
             dataDisplayName.endsWith("dat") -> {
