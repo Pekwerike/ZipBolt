@@ -29,11 +29,23 @@ class DeviceApplicationsRepository @Inject constructor(
     )
 
     override suspend fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.packageManager.getInstalledApplications(PackageManager.INSTALL_REASON_USER)
+        val applicationInfoList = mutableListOf<ApplicationInfo>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.packageManager
+                .getInstalledApplications(PackageManager.INSTALL_REASON_USER).forEach {
+                    if ((it.flags and ApplicationInfo.FLAG_SYSTEM) != ApplicationInfo.FLAG_SYSTEM) {
+                        applicationInfoList.add(it)
+                    }
+                }
+
         } else {
-            context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA).forEach {
+                if ((it.flags and ApplicationInfo.FLAG_SYSTEM) != ApplicationInfo.FLAG_SYSTEM) {
+                    applicationInfoList.add(it)
+                }
+            }
         }
+        return applicationInfoList
     }
 
     override suspend fun getNonSystemAppsOnDevice(): List<DataToTransfer> {
