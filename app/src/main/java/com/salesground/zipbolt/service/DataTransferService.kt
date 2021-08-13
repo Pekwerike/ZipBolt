@@ -273,7 +273,7 @@ class DataTransferService : Service() {
                 }
                 delay(300)
                 listenForMediaToReceive(socketDIS)
-            }catch (socketException: SocketException) {
+            } catch (socketException: SocketException) {
 
             }
         }
