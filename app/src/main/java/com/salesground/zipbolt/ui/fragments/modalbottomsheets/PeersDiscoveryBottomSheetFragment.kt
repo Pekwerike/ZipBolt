@@ -213,12 +213,9 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                Timer().schedule(2000) {
+                Timer().schedule(2500) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        if (isVisible) {
                             discoverServices()
-                            // displayToast("Searching for peers")
-                        }
                     }
                 }
             }
@@ -237,7 +234,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        displayToast("Killed me")
         peersDiscoveryViewModel.clearDiscoveredPeerSet()
     }
 

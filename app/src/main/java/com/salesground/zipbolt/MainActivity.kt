@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     //fragments
     private var groupCreatedBottomSheetFragment: GroupCreatedBottomSheetFragment? = null
-    private var peersDiscoveryBottomSheetBottomSheetFragment: PeersDiscoveryBottomSheetFragment? =
+    private var peersDiscoveryBottomSheetFragment: PeersDiscoveryBottomSheetFragment? =
         null
     private var sendAndReceiveBottomSheetFragment: SendAndReceiveBottomSheetFragment? = null
 
@@ -347,7 +347,7 @@ class MainActivity : AppCompatActivity() {
                 && groupCreatedBottomSheetFragment == null
             ) {
                 openGroupCreatedModalBottomSheet()
-            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER && peersDiscoveryBottomSheetBottomSheetFragment == null) {
+            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER && peersDiscoveryBottomSheetFragment == null) {
                 openSendAndReceiveModalBottomSheet()
             } else if (deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING &&
                 sendAndReceiveBottomSheetFragment == null
@@ -816,10 +816,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPeersDiscoveryModalBottomSheet() {
-        peersDiscoveryBottomSheetBottomSheetFragment =
+        peersDiscoveryBottomSheetFragment =
             PeersDiscoveryBottomSheetFragment.newInstance()
-        peersDiscoveryBottomSheetBottomSheetFragment?.isCancelable = false
-        peersDiscoveryBottomSheetBottomSheetFragment?.show(
+        peersDiscoveryBottomSheetFragment?.isCancelable = false
+        peersDiscoveryBottomSheetFragment?.show(
             supportFragmentManager,
             "PeersDiscoveryBottomSheetFragment"
         )
@@ -836,13 +836,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun closePeersDiscoveryModalBottomSheet() {
-        peersDiscoveryBottomSheetBottomSheetFragment?.dismiss()
-        peersDiscoveryBottomSheetBottomSheetFragment = null
+        peersDiscoveryBottomSheetFragment?.let {
+            peersDiscoveryBottomSheetFragment!!.dismiss()
+            supportFragmentManager.beginTransaction()
+                .remove(peersDiscoveryBottomSheetFragment!!)
+                .commitAllowingStateLoss()
+            peersDiscoveryBottomSheetFragment = null
+        }
     }
 
     fun closeSendAndReceiveModalBottomSheet() {
         sendAndReceiveBottomSheetFragment?.let {
-
+            sendAndReceiveBottomSheetFragment!!.dismiss()
+            supportFragmentManager.beginTransaction()
+                .remove(sendAndReceiveBottomSheetFragment!!)
+                .commitAllowingStateLoss()
+            sendAndReceiveBottomSheetFragment = null
         }
     }
 

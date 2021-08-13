@@ -9,6 +9,7 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,13 +25,14 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.peersDiscoveryFragment.PeersDiscoveredRecyclerViewAdapter
 import com.salesground.zipbolt.utils.ConnectionUtils
 import com.salesground.zipbolt.viewmodel.PeersDiscoveryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
-
+@AndroidEntryPoint
 class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var fragmentSendAndReceiveBottomSheetBinding: FragmentSendAndReceiveBottomSheetBinding
     private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
@@ -56,6 +58,14 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
         activity?.let {
             mainActivity = it as MainActivity
         }
+        // initialize wifi p2p channel
+        wifiP2pChannel = wifiP2pManager.initialize(
+            requireContext(), Looper.getMainLooper()
+        ) {
+
+        }
+
+        observeViewModelLiveData()
         removeAllLocalServices()
         clearServiceRequests()
     }
@@ -93,6 +103,7 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
             }
         }
     }
+
     @SuppressLint("MissingPermission")
     private fun removeAllLocalServices() {
         wifiP2pManager.clearLocalServices(wifiP2pChannel,
@@ -222,12 +233,9 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                Timer().schedule(2000) {
+                Timer().schedule(2500) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        if (isVisible) {
-                            discoverServices()
-                            // displayToast("Searching for peers")
-                        }
+                        discoverServices()
                     }
                 }
             }
@@ -253,6 +261,11 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
                     mainActivity?.closeSendAndReceiveModalBottomSheet()
                 }
             })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        peersDiscoveryViewModel.clearDiscoveredPeerSet()
     }
 
     companion object {
