@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentSendAndReceiveBottomSheetBinding
@@ -30,7 +31,7 @@ import javax.inject.Inject
 import kotlin.concurrent.schedule
 
 
-class SendAndReceiveBottomSheetFragment : Fragment() {
+class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var fragmentSendAndReceiveBottomSheetBinding: FragmentSendAndReceiveBottomSheetBinding
     private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null

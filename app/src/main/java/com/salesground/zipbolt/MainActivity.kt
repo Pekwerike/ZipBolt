@@ -51,6 +51,7 @@ import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
 import com.salesground.zipbolt.ui.fragments.modalbottomsheets.GroupCreatedBottomSheetFragment
 import com.salesground.zipbolt.ui.fragments.modalbottomsheets.PeersDiscoveryBottomSheetFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.SendAndReceiveBottomSheetFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -89,7 +90,8 @@ class MainActivity : AppCompatActivity() {
 
     //fragments
     private var groupCreatedBottomSheetFragment: GroupCreatedBottomSheetFragment? = null
-    private var peersDiscoveryBottomSheetBottomSheetFragment: PeersDiscoveryBottomSheetFragment? = null
+    private var peersDiscoveryBottomSheetBottomSheetFragment: PeersDiscoveryBottomSheetFragment? =
+        null
     private var sendAndReceiveBottomSheetFragment: SendAndReceiveBottomSheetFragment? = null
 
 
@@ -345,13 +347,15 @@ class MainActivity : AppCompatActivity() {
                 && groupCreatedBottomSheetFragment == null
             ) {
                 openGroupCreatedModalBottomSheet()
-            } else if ((deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
-                        || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING)
-                && peersDiscoveryBottomSheetBottomSheetFragment == null
+            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER && peersDiscoveryBottomSheetBottomSheetFragment == null) {
+                openSendAndReceiveModalBottomSheet()
+            } else if (deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING &&
+                sendAndReceiveBottomSheetFragment == null
             ) {
-                openPeersDiscoveryModalBottomSheet()
+                openSendAndReceiveModalBottomSheet()
             }
         }
+
 
         override fun wifiOff() {
 
@@ -484,9 +488,10 @@ class MainActivity : AppCompatActivity() {
 
             mainActivityAllMediaOnDevice.run {
                 // change the tab mode based on the current screen density
-                allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
-                    TabLayout.MODE_SCROLLABLE
-                } else TabLayout.MODE_FIXED
+                allMediaOnDeviceTabLayout.tabMode =
+                    if (resources.configuration.fontScale > 1.1) {
+                        TabLayout.MODE_SCROLLABLE
+                    } else TabLayout.MODE_FIXED
 
                 tabLayoutViewPagerConfiguration(
                     allMediaOnDeviceTabLayout,
@@ -511,7 +516,10 @@ class MainActivity : AppCompatActivity() {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
         PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        registerReceiver(
+            upgradedWifiDirectBroadcastReceiver,
+            createSystemBroadcastIntentFilter()
+        )
         localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
             IntentFilter().apply {
@@ -762,8 +770,39 @@ class MainActivity : AppCompatActivity() {
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
                     deviceTransferRole = DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
+                    // Turn on device wifi
+                    if (!wifiManager.isWifiEnabled) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                        } else {
+                            if (wifiManager.setWifiEnabled(true)) {
+                                /**Listen for wifi on via the broadcast receiver
+                                 * and then call openPeersDiscoveryModalBottomSheet**/
+
+                            } else {
+                                displayToast("Turn off your hotspot")
+                            }
+                        }
+                    } else {
+                        if (isLocationPermissionGranted()) {
+                            // Create wifi p2p group, if wifi is enabled
+                            openSendAndReceiveModalBottomSheet()
+                        } else {
+                            requestFineLocationPermission()
+                        }
+                    }
+                    connectionOptionsBottomSheetDialog.hide()
                 }
             }.root
+        )
+    }
+
+    private fun openSendAndReceiveModalBottomSheet() {
+        sendAndReceiveBottomSheetFragment = SendAndReceiveBottomSheetFragment.newInstance()
+        sendAndReceiveBottomSheetFragment?.isCancelable = false
+        sendAndReceiveBottomSheetFragment?.show(
+            supportFragmentManager,
+            "SendAndReceiveBottomSheetFragment"
         )
     }
 
@@ -777,7 +816,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPeersDiscoveryModalBottomSheet() {
-        peersDiscoveryBottomSheetBottomSheetFragment = PeersDiscoveryBottomSheetFragment.newInstance()
+        peersDiscoveryBottomSheetBottomSheetFragment =
+            PeersDiscoveryBottomSheetFragment.newInstance()
         peersDiscoveryBottomSheetBottomSheetFragment?.isCancelable = false
         peersDiscoveryBottomSheetBottomSheetFragment?.show(
             supportFragmentManager,
@@ -801,7 +841,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun closeSendAndReceiveModalBottomSheet() {
-        TODO("Not yet implemented")
+        sendAndReceiveBottomSheetFragment?.let {
+
+        }
     }
 
     fun cancelOngoingDataTransfer() {
