@@ -332,10 +332,10 @@ class MainActivity : AppCompatActivity() {
             service.getServiceInstance()
                 .setOnDataReceiveListener(dataTransferServiceDataReceiveListener)
             dataTransferService = service.getServiceInstance()
+            displayToast("Service bound")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            displayToast("Service disconnected")
             dataTransferService = null
         }
     }
