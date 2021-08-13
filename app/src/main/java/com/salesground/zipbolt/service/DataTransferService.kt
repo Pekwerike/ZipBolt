@@ -287,7 +287,8 @@ class DataTransferService : Service() {
                 )
 
             } catch (exception: IOException) {
-
+                configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
+                return@launch
             }
             try {
                 socketDIS =
@@ -334,15 +335,23 @@ class DataTransferService : Service() {
                 stopForeground(true)
                 stopSelf()
             }
+            try {
+                socketDOS =
+                    DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
+                socketDIS =
+                    DataInputStream(BufferedInputStream(socket.getInputStream()))
+            } catch (connectionException: Exception) {
+                configureClientSocket(serverIpAddress)
+                return@launch
+            }
 
-            socketDOS =
-                DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
-            socketDIS =
-                DataInputStream(BufferedInputStream(socket.getInputStream()))
+            try {
+                listenForMediaToTransfer(socketDOS)
+                delay(300)
+                listenForMediaToReceive(socketDIS)
+            } catch (socketException: SocketException) {
 
-            listenForMediaToTransfer(socketDOS)
-            delay(300)
-            listenForMediaToReceive(socketDIS)
+            }
         }
     }
 

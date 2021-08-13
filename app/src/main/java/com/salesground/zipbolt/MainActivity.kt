@@ -379,7 +379,7 @@ class MainActivity : AppCompatActivity() {
                     DeviceTransferRole.NO_ROLE
                 }
                 DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
-                    closePeersDiscoveryModalBottomSheet()
+                    closeSendAndReceiveModalBottomSheet()
                     DeviceTransferRole.SEND_AND_RECEIVE
                 }
                 else -> {
@@ -433,7 +433,11 @@ class MainActivity : AppCompatActivity() {
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, false)
                                 putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
-                                putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
+                                putExtra(
+                                    DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER,
+                                    deviceTransferRole
+                                            != DeviceTransferRole.SEND_AND_RECEIVE
+                                )
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 ContextCompat.startForegroundService(
