@@ -30,7 +30,7 @@ class PeersDiscoveryViewModel : ViewModel() {
 
     fun clearDiscoveredPeerSet() {
         normalDiscoveredPeerSet = mutableSetOf()
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             _discoveredPeerSet.value = normalDiscoveredPeerSet
         }
     }

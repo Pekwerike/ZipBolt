@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
-import com.salesground.zipbolt.databinding.FragmentGroupCreatedBinding
+import com.salesground.zipbolt.databinding.FragmentGroupCreatedBottomSheetBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,14 +24,14 @@ import javax.inject.Inject
  * 1. Wifi is enabled
  * 2. ZipBolt has been given access to device location**/
 @AndroidEntryPoint
-class GroupCreatedFragment : BottomSheetDialogFragment() {
+class GroupCreatedBottomSheetFragment : BottomSheetDialogFragment() {
     @Inject
     lateinit var wifiManager: WifiManager
 
     @Inject
     lateinit var wifiP2pManager: WifiP2pManager
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
-    private lateinit var fragmentGroupCreatedBinding: FragmentGroupCreatedBinding
+    private lateinit var fragmentGroupCreatedBinding: FragmentGroupCreatedBottomSheetBinding
     private var mainActivity: MainActivity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +53,7 @@ class GroupCreatedFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        fragmentGroupCreatedBinding = FragmentGroupCreatedBinding.inflate(
+        fragmentGroupCreatedBinding = FragmentGroupCreatedBottomSheetBinding.inflate(
             inflater, container, false
         )
         return fragmentGroupCreatedBinding.root
@@ -151,8 +151,8 @@ class GroupCreatedFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(): GroupCreatedFragment {
-            return GroupCreatedFragment()
+        fun newInstance(): GroupCreatedBottomSheetFragment {
+            return GroupCreatedBottomSheetFragment()
         }
     }
 }

@@ -49,8 +49,8 @@ import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
-import com.salesground.zipbolt.ui.fragments.modalbottomsheets.GroupCreatedFragment
-import com.salesground.zipbolt.ui.fragments.modalbottomsheets.PeersDiscoveryFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.GroupCreatedBottomSheetFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.PeersDiscoveryBottomSheetFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -88,8 +88,10 @@ class MainActivity : AppCompatActivity() {
     private val receivedDataViewModel: ReceivedDataViewModel by viewModels()
 
     //fragments
-    private var groupCreatedFragment: GroupCreatedFragment? = null
-    private var peersDiscoveryFragment: PeersDiscoveryFragment? = null
+    private var groupCreatedBottomSheetFragment: GroupCreatedBottomSheetFragment? = null
+    private var peersDiscoveryBottomSheetBottomSheetFragment: PeersDiscoveryBottomSheetFragment? = null
+    private var sendAndReceiveBottomSheetFragment: SendAndReceiveBottomSheetFragment? = null
+
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -340,12 +342,12 @@ class MainActivity : AppCompatActivity() {
         UpgradedWifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
             if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
-                && groupCreatedFragment == null
+                && groupCreatedBottomSheetFragment == null
             ) {
                 openGroupCreatedModalBottomSheet()
             } else if ((deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
                         || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING)
-                && peersDiscoveryFragment == null
+                && peersDiscoveryBottomSheetBottomSheetFragment == null
             ) {
                 openPeersDiscoveryModalBottomSheet()
             }
@@ -766,31 +768,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openGroupCreatedModalBottomSheet() {
-        groupCreatedFragment = GroupCreatedFragment.newInstance()
-        groupCreatedFragment?.isCancelable = false
-        groupCreatedFragment?.show(
+        groupCreatedBottomSheetFragment = GroupCreatedBottomSheetFragment.newInstance()
+        groupCreatedBottomSheetFragment?.isCancelable = false
+        groupCreatedBottomSheetFragment?.show(
             supportFragmentManager,
             "GroupCreatedBottomSheetFragment"
         )
     }
 
     private fun openPeersDiscoveryModalBottomSheet() {
-        peersDiscoveryFragment = PeersDiscoveryFragment.newInstance()
-        peersDiscoveryFragment?.isCancelable = false
-        peersDiscoveryFragment?.show(
+        peersDiscoveryBottomSheetBottomSheetFragment = PeersDiscoveryBottomSheetFragment.newInstance()
+        peersDiscoveryBottomSheetBottomSheetFragment?.isCancelable = false
+        peersDiscoveryBottomSheetBottomSheetFragment?.show(
             supportFragmentManager,
             "PeersDiscoveryBottomSheetFragment"
         )
     }
 
     fun closeGroupCreatedModalBottomSheet() {
-        groupCreatedFragment?.dismiss()
-        groupCreatedFragment = null
+        groupCreatedBottomSheetFragment?.let {
+            groupCreatedBottomSheetFragment!!.dismiss()
+            supportFragmentManager.beginTransaction()
+                .remove(groupCreatedBottomSheetFragment!!)
+                .commitAllowingStateLoss()
+            groupCreatedBottomSheetFragment = null
+        }
     }
 
     fun closePeersDiscoveryModalBottomSheet() {
-        peersDiscoveryFragment?.dismiss()
-        peersDiscoveryFragment = null
+        peersDiscoveryBottomSheetBottomSheetFragment?.dismiss()
+        peersDiscoveryBottomSheetBottomSheetFragment = null
+    }
+
+    fun closeSendAndReceiveModalBottomSheet() {
+        TODO("Not yet implemented")
     }
 
     fun cancelOngoingDataTransfer() {
@@ -968,4 +979,5 @@ class MainActivity : AppCompatActivity() {
             }
         } else super.onBackPressed()
     }
+
 }
