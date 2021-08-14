@@ -189,6 +189,7 @@ class DataTransferService : Service() {
     }
 
     fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
+        Toast.makeText(this, "Transfer Data", Toast.LENGTH_SHORT).show()
         transferQueue.add(dataCollectionSelected)
         // when dataTransferUserEvent shows data is not available then assign the new data
         //dataCollection = dataCollectionSelected
@@ -266,9 +267,15 @@ class DataTransferService : Service() {
             socketDIS =
                 DataInputStream(BufferedInputStream(socket.getInputStream()))
 
-            listenForMediaToTransfer(socketDOS)
-            delay(300)
-            listenForMediaToReceive(socketDIS)
+            try {
+                launch {
+                    listenForMediaToTransfer(socketDOS)
+                }
+                delay(300)
+                listenForMediaToReceive(socketDIS)
+            } catch (socketException: SocketException) {
+
+            }
         }
     }
 
@@ -287,7 +294,8 @@ class DataTransferService : Service() {
                 )
 
             } catch (exception: IOException) {
-
+                configureReceiverSocketForOneDirectionalReceive(serverIpAddress)
+                return@launch
             }
             try {
                 socketDIS =
@@ -320,7 +328,7 @@ class DataTransferService : Service() {
                     InetSocketAddress(
                         serverIpAddress,
                         SOCKET_PORT
-                    ), 100000
+                    ), 100
                 )
             } catch (connectException: ConnectException) {
                 // send broadcast message to the main activity that we couldn't connect to peer.
@@ -331,18 +339,27 @@ class DataTransferService : Service() {
 
                     localBroadcastManager.sendBroadcast(this)
                 }
-                stopForeground(true)
-                stopSelf()
+
+            }
+            try {
+                socketDOS =
+                    DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
+                socketDIS =
+                    DataInputStream(BufferedInputStream(socket.getInputStream()))
+            } catch (connectionException: Exception) {
+                configureClientSocket(serverIpAddress)
+                return@launch
             }
 
-            socketDOS =
-                DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
-            socketDIS =
-                DataInputStream(BufferedInputStream(socket.getInputStream()))
+            try {
+                launch {
+                    listenForMediaToTransfer(socketDOS)
+                }
+                delay(300)
+                listenForMediaToReceive(socketDIS)
+            } catch (socketException: SocketException) {
 
-            listenForMediaToTransfer(socketDOS)
-            delay(300)
-            listenForMediaToReceive(socketDIS)
+            }
         }
     }
 

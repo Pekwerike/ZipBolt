@@ -49,8 +49,9 @@ import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.AllMediaOnDeviceViewPagerAdapter
 import com.salesground.zipbolt.ui.fragments.FilesFragment
-import com.salesground.zipbolt.ui.fragments.modalbottomsheets.GroupCreatedFragment
-import com.salesground.zipbolt.ui.fragments.modalbottomsheets.PeersDiscoveryFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.GroupCreatedBottomSheetFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.PeersDiscoveryBottomSheetFragment
+import com.salesground.zipbolt.ui.fragments.modalbottomsheets.SendAndReceiveBottomSheetFragment
 import com.salesground.zipbolt.ui.recyclerview.SentAndReceiveDataItemsViewPagerAdapter
 import com.salesground.zipbolt.utils.*
 import kotlinx.coroutines.*
@@ -88,8 +89,11 @@ class MainActivity : AppCompatActivity() {
     private val receivedDataViewModel: ReceivedDataViewModel by viewModels()
 
     //fragments
-    private var groupCreatedFragment: GroupCreatedFragment? = null
-    private var peersDiscoveryFragment: PeersDiscoveryFragment? = null
+    private var groupCreatedBottomSheetFragment: GroupCreatedBottomSheetFragment? = null
+    private var peersDiscoveryBottomSheetFragment: PeersDiscoveryBottomSheetFragment? =
+        null
+    private var sendAndReceiveBottomSheetFragment: SendAndReceiveBottomSheetFragment? = null
+
 
     @Inject
     lateinit var ftsNotification: FileTransferServiceNotification
@@ -328,10 +332,10 @@ class MainActivity : AppCompatActivity() {
             service.getServiceInstance()
                 .setOnDataReceiveListener(dataTransferServiceDataReceiveListener)
             dataTransferService = service.getServiceInstance()
+            displayToast("Service bound")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            displayToast("Service disconnected")
             dataTransferService = null
         }
     }
@@ -340,16 +344,18 @@ class MainActivity : AppCompatActivity() {
         UpgradedWifiDirectBroadcastReceiver.WifiDirectBroadcastReceiverCallback {
         override fun wifiOn() {
             if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
-                && groupCreatedFragment == null
+                && groupCreatedBottomSheetFragment == null
             ) {
                 openGroupCreatedModalBottomSheet()
-            } else if ((deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
-                        || deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING)
-                && peersDiscoveryFragment == null
+            } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER && peersDiscoveryBottomSheetFragment == null) {
+                openSendAndReceiveModalBottomSheet()
+            } else if (deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING &&
+                sendAndReceiveBottomSheetFragment == null
             ) {
-                openPeersDiscoveryModalBottomSheet()
+                openSendAndReceiveModalBottomSheet()
             }
         }
+
 
         override fun wifiOff() {
 
@@ -373,7 +379,7 @@ class MainActivity : AppCompatActivity() {
                     DeviceTransferRole.NO_ROLE
                 }
                 DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING -> {
-                    closePeersDiscoveryModalBottomSheet()
+                    closeSendAndReceiveModalBottomSheet()
                     DeviceTransferRole.SEND_AND_RECEIVE
                 }
                 else -> {
@@ -427,7 +433,11 @@ class MainActivity : AppCompatActivity() {
                             dataTransferServiceIntent = serviceIntent.apply {
                                 putExtra(DataTransferService.IS_SERVER, false)
                                 putExtra(DataTransferService.SERVER_IP_ADDRESS, serverIpAddress)
-                                putExtra(DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER, true)
+                                putExtra(
+                                    DataTransferService.IS_ONE_DIRECTIONAL_TRANSFER,
+                                    deviceTransferRole
+                                            != DeviceTransferRole.SEND_AND_RECEIVE
+                                )
                             }
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 ContextCompat.startForegroundService(
@@ -482,9 +492,10 @@ class MainActivity : AppCompatActivity() {
 
             mainActivityAllMediaOnDevice.run {
                 // change the tab mode based on the current screen density
-                allMediaOnDeviceTabLayout.tabMode = if (resources.configuration.fontScale > 1.1) {
-                    TabLayout.MODE_SCROLLABLE
-                } else TabLayout.MODE_FIXED
+                allMediaOnDeviceTabLayout.tabMode =
+                    if (resources.configuration.fontScale > 1.1) {
+                        TabLayout.MODE_SCROLLABLE
+                    } else TabLayout.MODE_FIXED
 
                 tabLayoutViewPagerConfiguration(
                     allMediaOnDeviceTabLayout,
@@ -509,7 +520,10 @@ class MainActivity : AppCompatActivity() {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
         PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
-        registerReceiver(upgradedWifiDirectBroadcastReceiver, createSystemBroadcastIntentFilter())
+        registerReceiver(
+            upgradedWifiDirectBroadcastReceiver,
+            createSystemBroadcastIntentFilter()
+        )
         localBroadcastManager.registerReceiver(
             dataTransferServiceConnectionStateReceiver,
             IntentFilter().apply {
@@ -760,37 +774,89 @@ class MainActivity : AppCompatActivity() {
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
                     deviceTransferRole = DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING
+                    // Turn on device wifi
+                    if (!wifiManager.isWifiEnabled) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                        } else {
+                            if (wifiManager.setWifiEnabled(true)) {
+                                /**Listen for wifi on via the broadcast receiver
+                                 * and then call openPeersDiscoveryModalBottomSheet**/
+
+                            } else {
+                                displayToast("Turn off your hotspot")
+                            }
+                        }
+                    } else {
+                        if (isLocationPermissionGranted()) {
+                            // Create wifi p2p group, if wifi is enabled
+                            openSendAndReceiveModalBottomSheet()
+                        } else {
+                            requestFineLocationPermission()
+                        }
+                    }
+                    connectionOptionsBottomSheetDialog.hide()
                 }
             }.root
         )
     }
 
+    private fun openSendAndReceiveModalBottomSheet() {
+        sendAndReceiveBottomSheetFragment = SendAndReceiveBottomSheetFragment.newInstance()
+        sendAndReceiveBottomSheetFragment?.isCancelable = false
+        sendAndReceiveBottomSheetFragment?.show(
+            supportFragmentManager,
+            "SendAndReceiveBottomSheetFragment"
+        )
+    }
+
     private fun openGroupCreatedModalBottomSheet() {
-        groupCreatedFragment = GroupCreatedFragment.newInstance()
-        groupCreatedFragment?.isCancelable = false
-        groupCreatedFragment?.show(
+        groupCreatedBottomSheetFragment = GroupCreatedBottomSheetFragment.newInstance()
+        groupCreatedBottomSheetFragment?.isCancelable = false
+        groupCreatedBottomSheetFragment?.show(
             supportFragmentManager,
             "GroupCreatedBottomSheetFragment"
         )
     }
 
     private fun openPeersDiscoveryModalBottomSheet() {
-        peersDiscoveryFragment = PeersDiscoveryFragment.newInstance()
-        peersDiscoveryFragment?.isCancelable = false
-        peersDiscoveryFragment?.show(
+        peersDiscoveryBottomSheetFragment =
+            PeersDiscoveryBottomSheetFragment.newInstance()
+        peersDiscoveryBottomSheetFragment?.isCancelable = false
+        peersDiscoveryBottomSheetFragment?.show(
             supportFragmentManager,
             "PeersDiscoveryBottomSheetFragment"
         )
     }
 
     fun closeGroupCreatedModalBottomSheet() {
-        groupCreatedFragment?.dismiss()
-        groupCreatedFragment = null
+        groupCreatedBottomSheetFragment?.let {
+            groupCreatedBottomSheetFragment!!.dismiss()
+            supportFragmentManager.beginTransaction()
+                .remove(groupCreatedBottomSheetFragment!!)
+                .commitAllowingStateLoss()
+            groupCreatedBottomSheetFragment = null
+        }
     }
 
     fun closePeersDiscoveryModalBottomSheet() {
-        peersDiscoveryFragment?.dismiss()
-        peersDiscoveryFragment = null
+        peersDiscoveryBottomSheetFragment?.let {
+            peersDiscoveryBottomSheetFragment!!.dismiss()
+            supportFragmentManager.beginTransaction()
+                .remove(peersDiscoveryBottomSheetFragment!!)
+                .commitAllowingStateLoss()
+            peersDiscoveryBottomSheetFragment = null
+        }
+    }
+
+    fun closeSendAndReceiveModalBottomSheet() {
+        sendAndReceiveBottomSheetFragment?.let {
+            sendAndReceiveBottomSheetFragment!!.dismiss()
+            supportFragmentManager.beginTransaction()
+                .remove(sendAndReceiveBottomSheetFragment!!)
+                .commitAllowingStateLoss()
+            sendAndReceiveBottomSheetFragment = null
+        }
     }
 
     fun cancelOngoingDataTransfer() {
@@ -968,4 +1034,5 @@ class MainActivity : AppCompatActivity() {
             }
         } else super.onBackPressed()
     }
+
 }

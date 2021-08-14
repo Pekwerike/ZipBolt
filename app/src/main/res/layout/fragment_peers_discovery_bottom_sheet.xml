@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".ui.fragments.modalbottomsheets.PeersDiscoveryFragment">
+    tools:context=".ui.fragments.modalbottomsheets.PeersDiscoveryBottomSheetFragment">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/fragment_peers_discovery_stop_discovery_image_button"

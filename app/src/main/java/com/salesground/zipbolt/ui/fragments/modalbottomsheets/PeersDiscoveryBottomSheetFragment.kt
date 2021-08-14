@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
-import com.salesground.zipbolt.databinding.FragmentPeersDiscoveryBinding
+import com.salesground.zipbolt.databinding.FragmentPeersDiscoveryBottomSheetBinding
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
 import com.salesground.zipbolt.ui.recyclerview.peersDiscoveryFragment.PeersDiscoveredRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.PeersDiscoveryViewModel
@@ -32,7 +32,7 @@ import kotlin.concurrent.schedule
 
 
 @AndroidEntryPoint
-class PeersDiscoveryFragment : BottomSheetDialogFragment() {
+class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
     private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null
     private lateinit var wifiP2pDnsSdServiceRequest: WifiP2pDnsSdServiceRequest
@@ -44,10 +44,10 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     lateinit var wifiP2pManager: WifiP2pManager
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
-    private lateinit var peersDiscoveryFragment: FragmentPeersDiscoveryBinding
+    private lateinit var peersDiscoveryBottomSheetFragment: FragmentPeersDiscoveryBottomSheetBinding
     private val peersDiscoveredRecyclerViewAdapter = PeersDiscoveredRecyclerViewAdapter(
         DataToTransferRecyclerViewItemClickListener {
-            if (peersDiscoveryFragment.fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility != View.INVISIBLE) {
+            if (peersDiscoveryBottomSheetFragment.fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility != View.INVISIBLE) {
                 connectToADevice(it)
             }
         }
@@ -72,15 +72,15 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        peersDiscoveryFragment = FragmentPeersDiscoveryBinding.inflate(
+        peersDiscoveryBottomSheetFragment = FragmentPeersDiscoveryBottomSheetBinding.inflate(
             inflater, container, false
         )
         // Inflate the layout for this fragment
-        return peersDiscoveryFragment.root
+        return peersDiscoveryBottomSheetFragment.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        peersDiscoveryFragment.run {
+        peersDiscoveryBottomSheetFragment.run {
             fragmentPeersDiscoveryDiscoveredPeersRecyclerView.run {
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -112,7 +112,7 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
                     lifecycleScope.launch(Dispatchers.Main) {""
-                        peersDiscoveryFragment.run {
+                        peersDiscoveryBottomSheetFragment.run {
                             fragmentPeersDiscoveryConnectingToPeerTextView.run {
                                 setAnimatedText(
                                     getString(
@@ -213,12 +213,9 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                Timer().schedule(2000) {
+                Timer().schedule(2500) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        if (isVisible) {
                             discoverServices()
-                            // displayToast("Searching for peers")
-                        }
                     }
                 }
             }
@@ -241,8 +238,8 @@ class PeersDiscoveryFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(): PeersDiscoveryFragment {
-            return PeersDiscoveryFragment()
+        fun newInstance(): PeersDiscoveryBottomSheetFragment {
+            return PeersDiscoveryBottomSheetFragment()
         }
     }
 
