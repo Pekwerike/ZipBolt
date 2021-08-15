@@ -157,109 +157,109 @@ class MainActivity : AppCompatActivity() {
                 dataUri: Uri?,
                 dataTransferStatus: DataToTransfer.TransferStatus
             ) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    when (dataTransferStatus) {
-                        DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
-                            // expand the bottom sheet to show receive has started
+                when (dataTransferStatus) {
+                    DataToTransfer.TransferStatus.RECEIVE_STARTED -> {
+                        // expand the bottom sheet to show receive has started
+                        lifecycleScope.launch(Dispatchers.Main) {
                             mainActivityViewModel.expandedConnectedToPeerReceiveOngoing()
-                            receivedDataViewModel.onDataReceiveStarted(
-                                ReceivedDataItem(
-                                    dataDisplayName,
-                                    dataSize,
-                                    percentageOfDataRead,
-                                    dataType,
-                                    dataUri
-                                )
-                            )
                         }
-
-                        DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
-                            receivedDataViewModel.updateOngoingReceiveDataItemReceivePercent(
-                                percentageOfDataRead
+                        receivedDataViewModel.onDataReceiveStarted(
+                            ReceivedDataItem(
+                                dataDisplayName,
+                                dataSize,
+                                percentageOfDataRead,
+                                dataType,
+                                dataUri
                             )
-                        }
+                        )
+                    }
 
-                        DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
-                            receivedDataViewModel.addDataToReceivedItems(
-                                when (dataType) {
-                                    MediaType.Image.value -> {
-                                        DataToTransfer.DeviceImage(
-                                            imageId = 0L,
-                                            imageUri = dataUri!!,
-                                            imageDateModified = "",
-                                            imageMimeType = "image/*",
-                                            imageSize = dataSize,
-                                            imageBucketName = "ZipBolt Images",
-                                            imageDisplayName = dataDisplayName
-                                        )
-                                    }
-                                    MediaType.Video.value -> {
-                                        DataToTransfer.DeviceVideo(
-                                            videoId = 0L,
-                                            videoUri = dataUri!!,
-                                            videoDisplayName = dataDisplayName,
-                                            videoDuration = dataUri.getVideoDuration(this@MainActivity),
-                                            videoSize = dataSize
-                                        )
-                                    }
-                                    MediaType.Audio.value -> {
-                                        DataToTransfer.DeviceAudio(
-                                            audioUri = dataUri!!,
-                                            audioDisplayName = dataDisplayName,
-                                            audioSize = dataSize,
-                                            audioDuration = dataUri.getAudioDuration(this@MainActivity),
-                                            audioArtPath = Uri.parse("")
-                                        )
-                                    }
-                                    MediaType.App.value -> {
-                                        DataToTransfer.DeviceApplication(
-                                            applicationName = dataDisplayName,
-                                            apkPath = dataUri!!.path ?: "",
-                                            appSize = dataSize,
-                                            applicationIcon = try {
-                                                dataUri?.path!!.let { path ->
-                                                    packageManager.getPackageArchiveInfo(path, 0)
-                                                        .let { packageInfo ->
-                                                            packageManager.getApplicationIcon(
-                                                                packageInfo!!
-                                                                    .applicationInfo.apply {
-                                                                        sourceDir = path
-                                                                        publicSourceDir = path
-                                                                    })
-                                                        }
-                                                }
-                                            } catch (nullPointerException: NullPointerException) {
-                                                null
-                                            }
-                                        ).apply {
-                                            this.dataType = dataType
-                                        }
-                                    }
-                                    in MediaType.File.ImageFile.value
-                                            ..MediaType.File.Document.DatDocument.value -> {
-                                        DataToTransfer.DeviceFile(
-                                            dataUri!!.toFile()
-                                        ).apply {
-                                            this.dataType = dataType
-                                        }
-                                    }
+                    DataToTransfer.TransferStatus.RECEIVE_ONGOING -> {
+                        receivedDataViewModel.updateOngoingReceiveDataItemReceivePercent(
+                            percentageOfDataRead
+                        )
+                    }
 
-                                    else -> {
-                                        DataToTransfer.DeviceImage(
-                                            imageId = 0L,
-                                            imageUri = dataUri!!,
-                                            imageDateModified = "",
-                                            imageMimeType = "image/*",
-                                            imageSize = dataSize,
-                                            imageBucketName = "ZipBolt Images",
-                                            imageDisplayName = dataDisplayName
-                                        )
-                                    }
-                                }.apply {
-                                    transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                    DataToTransfer.TransferStatus.RECEIVE_COMPLETE -> {
+                        receivedDataViewModel.addDataToReceivedItems(
+                            when (dataType) {
+                                MediaType.Image.value -> {
+                                    DataToTransfer.DeviceImage(
+                                        imageId = 0L,
+                                        imageUri = dataUri!!,
+                                        imageDateModified = "",
+                                        imageMimeType = "image/*",
+                                        imageSize = dataSize,
+                                        imageBucketName = "ZipBolt Images",
+                                        imageDisplayName = dataDisplayName
+                                    )
                                 }
-                            )
-                        }
+                                MediaType.Video.value -> {
+                                    DataToTransfer.DeviceVideo(
+                                        videoId = 0L,
+                                        videoUri = dataUri!!,
+                                        videoDisplayName = dataDisplayName,
+                                        videoDuration = dataUri.getVideoDuration(this@MainActivity),
+                                        videoSize = dataSize
+                                    )
+                                }
+                                MediaType.Audio.value -> {
+                                    DataToTransfer.DeviceAudio(
+                                        audioUri = dataUri!!,
+                                        audioDisplayName = dataDisplayName,
+                                        audioSize = dataSize,
+                                        audioDuration = dataUri.getAudioDuration(this@MainActivity),
+                                        audioArtPath = Uri.parse("")
+                                    )
+                                }
+                                MediaType.App.value -> {
+                                    DataToTransfer.DeviceApplication(
+                                        applicationName = dataDisplayName,
+                                        apkPath = dataUri!!.path ?: "",
+                                        appSize = dataSize,
+                                        applicationIcon = try {
+                                            dataUri?.path!!.let { path ->
+                                                packageManager.getPackageArchiveInfo(path, 0)
+                                                    .let { packageInfo ->
+                                                        packageManager.getApplicationIcon(
+                                                            packageInfo!!
+                                                                .applicationInfo.apply {
+                                                                    sourceDir = path
+                                                                    publicSourceDir = path
+                                                                })
+                                                    }
+                                            }
+                                        } catch (nullPointerException: NullPointerException) {
+                                            null
+                                        }
+                                    ).apply {
+                                        this.dataType = dataType
+                                    }
+                                }
+                                in MediaType.File.ImageFile.value
+                                        ..MediaType.File.Document.DatDocument.value -> {
+                                    DataToTransfer.DeviceFile(
+                                        dataUri!!.toFile()
+                                    ).apply {
+                                        this.dataType = dataType
+                                    }
+                                }
+
+                                else -> {
+                                    DataToTransfer.DeviceImage(
+                                        imageId = 0L,
+                                        imageUri = dataUri!!,
+                                        imageDateModified = "",
+                                        imageMimeType = "image/*",
+                                        imageSize = dataSize,
+                                        imageBucketName = "ZipBolt Images",
+                                        imageDisplayName = dataDisplayName
+                                    )
+                                }
+                            }.apply {
+                                transferStatus = DataToTransfer.TransferStatus.RECEIVE_COMPLETE
+                            }
+                        )
                     }
                 }
             }
@@ -332,7 +332,6 @@ class MainActivity : AppCompatActivity() {
             service.getServiceInstance()
                 .setOnDataReceiveListener(dataTransferServiceDataReceiveListener)
             dataTransferService = service.getServiceInstance()
-            displayToast("Service bound")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

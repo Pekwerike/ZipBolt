@@ -213,7 +213,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                Timer().schedule(2500) {
+                Timer().schedule(2000) {
                     lifecycleScope.launch(Dispatchers.Main) {
                             discoverServices()
                     }
