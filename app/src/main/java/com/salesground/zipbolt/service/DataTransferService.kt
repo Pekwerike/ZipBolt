@@ -38,7 +38,7 @@ class DataTransferService : Service() {
         const val SERVER_IP_ADDRESS = "ServerIpAddress"
         const val SOCKET_PORT = 7091
         const val IS_ONE_DIRECTIONAL_TRANSFER = "IsOneDirectionalTransfer"
-        const val BUFFER_SIZE = 1024 * 1024
+        const val BUFFER_SIZE = 1024 * 1024 * 2
 
         fun createServiceIntent(context: Context): Intent {
             return Intent(context, DataTransferService::class.java)
@@ -52,11 +52,7 @@ class DataTransferService : Service() {
     private lateinit var socket: Socket
     private lateinit var socketDOS: DataOutputStream
     private lateinit var socketDIS: DataInputStream
-    private var dataTransferListener: ((
-        dataToTransfer: DataToTransfer,
-        percentTransferred: Float,
-        transferStatus: DataToTransfer.TransferStatus
-    ) -> Unit)? = null
+
 
     private val dataTransferServiceConnectionStateIntent = Intent()
 
@@ -189,10 +185,7 @@ class DataTransferService : Service() {
     }
 
     fun transferData(dataCollectionSelected: MutableList<DataToTransfer>) {
-        Toast.makeText(this, "Transfer Data", Toast.LENGTH_SHORT).show()
         transferQueue.add(dataCollectionSelected)
-        // when dataTransferUserEvent shows data is not available then assign the new data
-        //dataCollection = dataCollectionSelected
     }
 
 
@@ -412,7 +405,7 @@ class DataTransferService : Service() {
                             dataInputStream,
                             mediaTransferProtocolDataReceiveListener
                         )
-                        delay(200)
+                        delay(100)
                     }
                     dataFlowListener?.totalFileReceiveComplete()
                 }
