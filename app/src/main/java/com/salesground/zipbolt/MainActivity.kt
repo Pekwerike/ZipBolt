@@ -463,12 +463,15 @@ class MainActivity : AppCompatActivity() {
         // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
-            connectToPeerButton.setOnClickListener {
-                if (it.visibility == VISIBLE) {
-                    configureConnectionOptionsModalBottomSheetLayout()
-                    connectionOptionsBottomSheetDialog.show()
+            activityMainZipBoltHeaderLayout.run {
+                zipBoltHeaderLayoutConnectToPeerButton.setOnClickListener {
+                    if (it.visibility == VISIBLE) {
+                        configureConnectionOptionsModalBottomSheetLayout()
+                        connectionOptionsBottomSheetDialog.show()
+                    }
                 }
             }
+
 
             sendFileButton.setOnClickListener {
                 if (it.visibility != INVISIBLE) {

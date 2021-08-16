@@ -16,13 +16,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:padding="@dimen/standard_padding"
         android:gravity="center"
+        android:background="#FF121212"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_margin="@dimen/small_margin"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="@dimen/medium_padding"
