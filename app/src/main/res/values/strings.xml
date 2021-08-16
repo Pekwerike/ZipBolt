@@ -57,4 +57,7 @@
     <string name="group_created_label">Group Created</string>
     <string name="waiting_for_receiver_label">Waiting for receiver</string>
     <string name="connecting_to_device_message_place_holder">Connecting to %1$s</string>
+    <string name="total_number_of_items_and_size_of_items_selected_placeholder">
+        %1$d selected (%2$s)
+    </string>
 </resources>

@@ -42,6 +42,7 @@ import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
+import androidx.core.view.marginBottom
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayoutMediator
@@ -472,7 +473,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-
             sendFileButton.setOnClickListener {
                 if (it.visibility != INVISIBLE) {
                     // send broadcast event that send data button has been triggered
@@ -481,10 +481,10 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
-                        dataToTransferViewModel.collectionOfDataToTransfer.value!!
+                        dataToTransferViewModel.collectionOfDataToTransfer
                     )
                     sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.collectionOfDataToTransfer.value!!
+                        dataToTransferViewModel.collectionOfDataToTransfer
                     )
                     // clear collection of data to transfer since transfer has been completed
                     dataToTransferViewModel.clearCollectionOfDataToTransfer()
@@ -615,16 +615,68 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        dataToTransferViewModel.collectionOfDataToTransferLiveData.observe(this) {
-            it?.let {
-                if (it.isNotEmpty()) {
-                    activityMainBinding.run {
-                        activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
-                            root.visibility = View.VISIBLE
-                            val totalDataSize : Long = it.sumOf {
-                                it.dataSize
+        dataToTransferViewModel.collectionOfDataToTransferLiveData.observe(this) { selectedItemsList ->
+            selectedItemsList?.let {
+                activityMainBinding.run {
+                    if (deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE
+                        || deviceTransferRole == DeviceTransferRole.SEND
+                    ) {
+                        // device connected
+                        if (selectedItemsList.isNotEmpty()) {
+                            activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
+                            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                                numberOfFilesSelected = it.size
+                                sizeOfFileSelected = it.sumOf { it.dataSize }
+                                root.visibility = VISIBLE
+                                zipBoltSendFileHeaderLayoutSendFileButton.run {
+                                    text = getString(R.string.send_label)
+                                    setOnClickListener {
+                                        mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                                        // transfer data using the DataTransferService
+                                        dataTransferService?.transferData(
+                                            dataToTransferViewModel.collectionOfDataToTransfer
+                                        )
+                                        sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
+                                            dataToTransferViewModel.collectionOfDataToTransfer
+                                        )
+                                        // clear collection of data to transfer since transfer has been completed
+                                        dataToTransferViewModel.clearCollectionOfDataToTransfer()
+                                        dataToTransferViewModel.sentDataButtonClicked()
+                                    }
+                                }
                             }
-                            val totalNumberOfItemsSelected = it.size
+                        } else {
+                            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.root.visibility =
+                                INVISIBLE
+                            activityMainZipBoltHeaderLayout.run {
+                                root.visibility = VISIBLE
+                                zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
+                            }
+                        }
+                    } else {
+                        // device not connected
+                        if (selectedItemsList.isNotEmpty()) {
+                            activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
+                            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                                numberOfFilesSelected = it.size
+                                sizeOfFileSelected = it.sumOf { it.dataSize }
+                                root.visibility = VISIBLE
+                                zipBoltSendFileHeaderLayoutSendFileButton.run {
+                                    text = getString(R.string.connect)
+                                    setOnClickListener {
+                                        // show connection options modal bottom sheet
+                                        configureConnectionOptionsModalBottomSheetLayout()
+                                        connectionOptionsBottomSheetDialog.show()
+                                    }
+                                }
+                            }
+                        } else {
+                            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.root.visibility =
+                                INVISIBLE
+                            activityMainZipBoltHeaderLayout.run {
+                                root.visibility = VISIBLE
+                                zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
+                            }
                         }
                     }
                 }
