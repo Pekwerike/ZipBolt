@@ -24,8 +24,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/small_margin"
         android:background="?attr/selectableItemBackground"
-        android:padding="@dimen/medium_padding"
+        android:padding="@dimen/standard_padding"
         android:text="@string/connect"
+        android:textStyle="bold"
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="@color/blue_415" />

@@ -76,7 +76,7 @@ class SentDataViewModel : ViewModel() {
             sentDataItemsNormalList.remove(it)
             viewModelScope.launch(Dispatchers.Main) {
                 _sentDataItems.value = sentDataItemsNormalList
-              //  _canceledSentDataItemIndex.value = removedIndex
+                //  _canceledSentDataItemIndex.value = removedIndex
             }
         }
     }

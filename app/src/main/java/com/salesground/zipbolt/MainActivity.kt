@@ -481,10 +481,10 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
-                        dataToTransferViewModel.collectionOfDataToTransfer
+                        dataToTransferViewModel.collectionOfDataToTransfer.value!!
                     )
                     sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.collectionOfDataToTransfer
+                        dataToTransferViewModel.collectionOfDataToTransfer.value!!
                     )
                     // clear collection of data to transfer since transfer has been completed
                     dataToTransferViewModel.clearCollectionOfDataToTransfer()
@@ -578,7 +578,6 @@ class MainActivity : AppCompatActivity() {
                         ) {
                             activityMainBinding.run {
                                 sendFileButton.visibility = VISIBLE
-                                connectToPeerButton.visibility = INVISIBLE
                             }
                         }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
@@ -611,7 +610,21 @@ class MainActivity : AppCompatActivity() {
                         }
                         activityMainBinding.run {
                             sendFileButton.visibility = INVISIBLE
-                            connectToPeerButton.visibility = VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+        dataToTransferViewModel.collectionOfDataToTransferLiveData.observe(this) {
+            it?.let {
+                if (it.isNotEmpty()) {
+                    activityMainBinding.run {
+                        activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                            root.visibility = View.VISIBLE
+                            val totalDataSize : Long = it.sumOf {
+                                it.dataSize
+                            }
+                            val totalNumberOfItemsSelected = it.size
                         }
                     }
                 }
