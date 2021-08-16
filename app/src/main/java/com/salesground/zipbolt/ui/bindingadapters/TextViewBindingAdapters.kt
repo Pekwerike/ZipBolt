@@ -101,7 +101,8 @@ fun TextView.setTransferPercent(transferPercent: Int?) {
 )
 fun TextView.setTransferPercent(transferPercent: Int?, fileSize: Long?) {
     if (transferPercent != null && fileSize != null) {
-        text = fileSize.transformDataSizeToMeasuredUnit(((transferPercent / 100f) * fileSize).roundToLong())
+        text =
+            fileSize.transformDataSizeToMeasuredUnit(((transferPercent / 100f) * fileSize).roundToLong())
     }
 
 }
@@ -123,6 +124,20 @@ fun TextView.setFileLastModifiedDateAndSize(fileLastModified: Long?, fileSize: L
             R.string.middle_round_dot_text_separation,
             fileSize.transformDataSizeToMeasuredUnit(),
             fileLastModified.parseDate()
+        )
+    }
+}
+
+@BindingAdapter("setNumberOfItemSelected", "setTotalSizeOfItemsSelected", requireAll = true)
+fun TextView.setNumberOfItemSelectedAndTotalSizeOfItemsSelected(
+    numberOfItemsSelected: Int?,
+    totalSizeOfItemsSelected: Long?
+) {
+    if (numberOfItemsSelected != null && totalSizeOfItemsSelected != null) {
+        text = context.getString(
+            R.string.total_number_of_items_and_size_of_items_selected_placeholder,
+            numberOfItemsSelected,
+            totalSizeOfItemsSelected.transformDataSizeToMeasuredUnit()
         )
     }
 }

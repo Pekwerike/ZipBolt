@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,20 +8,32 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/main_activity_all_media_on_device"
-        layout="@layout/all_media_on_device" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/connect_to_peer_button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/home_screen_connect_button_height"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="12dp"
-        android:text="@string/connect"
-        app:cornerRadius="6dp"
-        app:elevation="6dp"
-        app:icon="@drawable/person_icon" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include
+                android:id="@+id/activity_main_zip_bolt_header_layout"
+                layout="@layout/zip_bolt_header_layout" />
+
+            <include
+                android:id="@+id/activity_main_zip_bolt_files_transfer_selected_files_header_layout"
+                layout="@layout/zip_bolt_send_file_header_layout"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+
+        <include
+            android:id="@+id/main_activity_all_media_on_device"
+            layout="@layout/all_media_on_device"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+
+    </LinearLayout>
 
 
     <com.google.android.material.button.MaterialButton
@@ -30,8 +43,8 @@
         android:layout_gravity="end|bottom"
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="62dp"
-        android:visibility="invisible"
         android:text="@string/send_label"
+        android:visibility="invisible"
         app:cornerRadius="6dp"
         app:elevation="6dp"
         app:icon="@drawable/send_icon" />
@@ -44,3 +57,4 @@
         app:layout_behavior="@string/bottom_sheet_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

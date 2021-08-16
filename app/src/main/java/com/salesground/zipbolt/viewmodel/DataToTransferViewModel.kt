@@ -12,20 +12,29 @@ class DataToTransferViewModel : ViewModel() {
     val sentDataButtonClicked: LiveData<SingleLiveDataEventForUIState<Boolean>>
         get() = _sentDataButtonClicked
 
+    private var _collectionOfDataToTransferLiveData = MutableLiveData<MutableList<DataToTransfer>>(
+        mutableListOf()
+    )
+    val collectionOfDataToTransferLiveData: LiveData<MutableList<DataToTransfer>>
+        get() = _collectionOfDataToTransferLiveData
+
     private var _collectionOfDataToTransfer: MutableList<DataToTransfer> = mutableListOf()
     val collectionOfDataToTransfer: MutableList<DataToTransfer>
         get() = _collectionOfDataToTransfer
 
     fun addDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.add(dataToTransfer)
+        _collectionOfDataToTransferLiveData.value = collectionOfDataToTransfer
     }
 
     fun removeDataFromDataToTransfer(dataToTransfer: DataToTransfer) {
         collectionOfDataToTransfer.remove(dataToTransfer)
+        _collectionOfDataToTransferLiveData.value = collectionOfDataToTransfer
     }
 
     fun clearCollectionOfDataToTransfer() {
         _collectionOfDataToTransfer = mutableListOf()
+        _collectionOfDataToTransferLiveData.value = collectionOfDataToTransfer
     }
 
     fun sentDataButtonClicked() {
