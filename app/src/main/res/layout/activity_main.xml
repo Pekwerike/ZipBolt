@@ -8,34 +8,21 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <include
-                android:id="@+id/activity_main_zip_bolt_header_layout"
-                layout="@layout/zip_bolt_header_layout" />
-
-            <include
-                android:id="@+id/activity_main_zip_bolt_files_transfer_selected_files_header_layout"
-                layout="@layout/zip_bolt_send_file_header_layout"
-                android:visibility="invisible" />
-        </FrameLayout>
-
+        android:layout_height="wrap_content">
 
         <include
-            android:id="@+id/main_activity_all_media_on_device"
-            layout="@layout/all_media_on_device"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+            android:id="@+id/activity_main_zip_bolt_header_layout"
+            layout="@layout/zip_bolt_header_layout" />
 
-    </LinearLayout>
-
-
+        <include
+            android:id="@+id/activity_main_zip_bolt_files_transfer_selected_files_header_layout"
+            layout="@layout/zip_bolt_send_file_header_layout"
+            android:visibility="invisible" />
+    </FrameLayout>
+    
     <com.google.android.material.button.MaterialButton
         android:id="@+id/send_file_button"
         android:layout_width="wrap_content"
