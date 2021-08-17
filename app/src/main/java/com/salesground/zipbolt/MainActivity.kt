@@ -41,10 +41,8 @@ import android.content.Intent
 import android.provider.Settings
 import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
-import androidx.core.view.marginBottom
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayoutMediator
@@ -476,7 +474,7 @@ class MainActivity : AppCompatActivity() {
             }
             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
                 zipBoltSendFileHeaderLayoutDropAllItemsButton.setOnClickListener {
-                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
+                    dataToTransferViewModel.dropAllSelectedItems()
                 }
                 zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener{
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
@@ -488,24 +486,7 @@ class MainActivity : AppCompatActivity() {
                         dataToTransferViewModel.collectionOfDataToTransfer
                     )
                     // clear collection of data to transfer since transfer has been completed
-                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
-                    dataToTransferViewModel.sentDataButtonClicked()v
-                }
-            }
-
-            sendFileButton.setOnClickListener {
-                if (it.visibility != INVISIBLE) {
-                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                    // transfer data using the DataTransferService
-                    dataTransferService?.transferData(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    // clear collection of data to transfer since transfer has been completed
-                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
-                    dataToTransferViewModel.sentDataButtonClicked()
+                    dataToTransferViewModel.dropAllSelectedItems()
                 }
             }
 
@@ -648,19 +629,6 @@ class MainActivity : AppCompatActivity() {
                                 root.visibility = VISIBLE
                                 zipBoltSendFileHeaderLayoutSendFileButton.run {
                                     text = getString(R.string.send_label)
-                                    setOnClickListener {
-                                        mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                                        // transfer data using the DataTransferService
-                                        dataTransferService?.transferData(
-                                            dataToTransferViewModel.collectionOfDataToTransfer
-                                        )
-                                        sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                                            dataToTransferViewModel.collectionOfDataToTransfer
-                                        )
-                                        // clear collection of data to transfer since transfer has been completed
-                                        dataToTransferViewModel.clearCollectionOfDataToTransfer()
-                                        dataToTransferViewModel.sentDataButtonClicked()
-                                    }
                                 }
                             }
                         } else {

@@ -98,7 +98,7 @@ class DeviceAppsFragment : Fragment() {
                 applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
             }
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+        dataToTransferViewModel.dropAllSelectedItem.observe(this) {
             it.getEvent(javaClass.name)?.let {
                 applicationFragmentAppsDisplayRecyclerViewAdapter.selectedApplications = dataToTransferViewModel.collectionOfDataToTransfer
                 applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(

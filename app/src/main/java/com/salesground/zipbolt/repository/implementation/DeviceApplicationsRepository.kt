@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class DeviceApplicationsRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-     savedFilesRepository: SavedFilesRepository
+    savedFilesRepository: SavedFilesRepository
 ) : ApplicationsRepositoryInterface {
 
     private val zipBoltAppsFolder = savedFilesRepository.getZipBoltMediaCategoryBaseDirectory(
@@ -29,23 +29,23 @@ class DeviceApplicationsRepository @Inject constructor(
     )
 
     override suspend fun getAllAppsOnDevice(): MutableList<ApplicationInfo> {
-        val applicationInfoList = mutableListOf<ApplicationInfo>()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // val applicationInfoList = mutableListOf<ApplicationInfo>()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.packageManager
-                .getInstalledApplications(PackageManager.INSTALL_REASON_USER).forEach {
+                .getInstalledApplications(PackageManager.INSTALL_REASON_USER)/*.forEach {
                     if ((it.flags and ApplicationInfo.FLAG_SYSTEM) != ApplicationInfo.FLAG_SYSTEM) {
                         applicationInfoList.add(it)
                     }
-                }
+                }*/
 
         } else {
-            context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA).forEach {
+            context.packageManager.getInstalledApplications(PackageManager.GET_META_DATA)/*.forEach {
                 if ((it.flags and ApplicationInfo.FLAG_SYSTEM) != ApplicationInfo.FLAG_SYSTEM) {
                     applicationInfoList.add(it)
                 }
-            }
+            }*/
         }
-        return applicationInfoList
+        //return applicationInfoList
     }
 
     override suspend fun getNonSystemAppsOnDevice(): List<DataToTransfer> {
@@ -90,7 +90,7 @@ class DeviceApplicationsRepository @Inject constructor(
                 appSize,
                 transferMetaDataUpdateListener,
                 applicationFile,
-               MediaType.App
+                MediaType.App
             )
         ) {
             // application receive was cancelled

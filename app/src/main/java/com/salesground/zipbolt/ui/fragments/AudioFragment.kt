@@ -93,7 +93,7 @@ class AudioFragment : Fragment() {
         audioViewModel.deviceAudio.observe(this) {
             audioFragmentRecyclerViewAdapter.submitList(it)
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+        dataToTransferViewModel.dropAllSelectedItem.observe(this) {
             it.getEvent(javaClass.name)?.let {
                 audioFragmentRecyclerViewAdapter.selectedAudios =
                     dataToTransferViewModel.collectionOfDataToTransfer

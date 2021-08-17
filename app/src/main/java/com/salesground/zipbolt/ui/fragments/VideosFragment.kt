@@ -76,7 +76,7 @@ class VideosFragment : Fragment() {
         videoViewModel.allVideosOnDevice.observe(this) {
             videoFragmentRecyclerViewAdapter.submitList(it)
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+        dataToTransferViewModel.dropAllSelectedItem.observe(this) {
             it.getEvent(javaClass.name)?.let {
                 videoFragmentRecyclerViewAdapter.selectedVideos =
                     dataToTransferViewModel.collectionOfDataToTransfer

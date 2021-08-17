@@ -8,9 +8,9 @@ import com.salesground.zipbolt.utils.SingleLiveDataEventForUIState
 
 class DataToTransferViewModel : ViewModel() {
 
-    private val _sentDataButtonClicked = MutableLiveData<SingleLiveDataEventForUIState<Boolean>>()
-    val sentDataButtonClicked: LiveData<SingleLiveDataEventForUIState<Boolean>>
-        get() = _sentDataButtonClicked
+    private val _dropAllSelectedItem = MutableLiveData<SingleLiveDataEventForUIState<Boolean>>()
+    val dropAllSelectedItem: LiveData<SingleLiveDataEventForUIState<Boolean>>
+        get() = _dropAllSelectedItem
 
     private var _collectionOfDataToTransferLiveData = MutableLiveData<MutableList<DataToTransfer>>(
         mutableListOf()
@@ -32,13 +32,14 @@ class DataToTransferViewModel : ViewModel() {
         _collectionOfDataToTransferLiveData.value = collectionOfDataToTransfer
     }
 
-    fun clearCollectionOfDataToTransfer() {
+    private fun clearCollectionOfDataToTransfer() {
         _collectionOfDataToTransfer = mutableListOf()
         _collectionOfDataToTransferLiveData.value = collectionOfDataToTransfer
     }
 
-    fun sentDataButtonClicked() {
-        _sentDataButtonClicked.value = SingleLiveDataEventForUIState(true)
+    fun dropAllSelectedItems() {
+        clearCollectionOfDataToTransfer()
+        _dropAllSelectedItem.value = SingleLiveDataEventForUIState(true)
     }
 
 }
