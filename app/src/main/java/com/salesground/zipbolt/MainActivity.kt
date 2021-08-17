@@ -39,7 +39,9 @@ import javax.inject.Inject
 import kotlin.math.roundToInt
 import android.content.Intent
 import android.provider.Settings
+import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.core.view.marginBottom
@@ -472,12 +474,27 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                zipBoltSendFileHeaderLayoutDropAllItemsButton.setOnClickListener {
+                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
+                }
+                zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener{
+                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                    // transfer data using the DataTransferService
+                    dataTransferService?.transferData(
+                        dataToTransferViewModel.collectionOfDataToTransfer
+                    )
+                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
+                        dataToTransferViewModel.collectionOfDataToTransfer
+                    )
+                    // clear collection of data to transfer since transfer has been completed
+                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
+                    dataToTransferViewModel.sentDataButtonClicked()v
+                }
+            }
 
             sendFileButton.setOnClickListener {
                 if (it.visibility != INVISIBLE) {
-                    // send broadcast event that send data button has been triggered
-                    localBroadcastManager.sendBroadcast(sendDataClickedIntent)
-
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
@@ -623,6 +640,7 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         // device connected
                         if (selectedItemsList.isNotEmpty()) {
+                            turnStatusBarColor(true)
                             activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
                                 numberOfFilesSelected = it.size
@@ -646,6 +664,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         } else {
+                            turnStatusBarColor(false)
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.root.visibility =
                                 INVISIBLE
                             activityMainZipBoltHeaderLayout.run {
@@ -656,6 +675,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         // device not connected
                         if (selectedItemsList.isNotEmpty()) {
+                            turnStatusBarColor(true)
                             activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
                                 numberOfFilesSelected = it.size
@@ -671,6 +691,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         } else {
+                            turnStatusBarColor(false)
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.root.visibility =
                                 INVISIBLE
                             activityMainZipBoltHeaderLayout.run {
@@ -684,6 +705,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun turnStatusBarColor(dark: Boolean) {
+        if (dark) {
+            window.run {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    insetsController?.setSystemBarsAppearance(
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
+                } else {
+                    decorView.systemUiVisibility =
+                        SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() and decorView.systemUiVisibility
+                }
+                statusBarColor =
+                    ContextCompat.getColor(this@MainActivity, R.color.dark_status_bar_color)
+            }
+        } else {
+            window.run {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    insetsController?.setSystemBarsAppearance(
+                        0,
+                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                    )
+                } else {
+                    decorView.systemUiVisibility =
+                        SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or decorView.systemUiVisibility
+                }
+                statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.white)
+            }
+        }
+    }
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
         isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true

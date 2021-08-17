@@ -22,6 +22,7 @@
         android:padding="@dimen/standard_padding">
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/zip_bolt_send_file_header_layout_drop_all_items_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_margin="@dimen/small_margin"
