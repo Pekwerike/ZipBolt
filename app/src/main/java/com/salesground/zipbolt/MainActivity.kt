@@ -38,9 +38,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import android.content.Intent
+import android.content.res.Configuration
 import android.provider.Settings
 import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -602,6 +604,10 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     PeerConnectionUIState.NoConnectionUIAction -> {
+                        activityMainBinding.run {
+                            activityMainZipBoltHeaderLayout
+                                .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
+                        }
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
@@ -673,32 +679,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun turnStatusBarColor(dark: Boolean) {
-        if (dark) {
-            window.run {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    insetsController?.setSystemBarsAppearance(
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                    )
-                } else {
-                    decorView.systemUiVisibility =
-                        SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() and decorView.systemUiVisibility
+        if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO ) {
+            if (dark) {
+                window.run {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        insetsController?.setSystemBarsAppearance(
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        )
+                    } else {
+                        decorView.systemUiVisibility =
+                            SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() and decorView.systemUiVisibility
+                    }
+                    statusBarColor =
+                        ContextCompat.getColor(this@MainActivity, R.color.dark_status_bar_color)
                 }
-                statusBarColor =
-                    ContextCompat.getColor(this@MainActivity, R.color.dark_status_bar_color)
-            }
-        } else {
-            window.run {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    insetsController?.setSystemBarsAppearance(
-                        0,
-                        WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-                    )
-                } else {
-                    decorView.systemUiVisibility =
-                        SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or decorView.systemUiVisibility
+            } else {
+                window.run {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        insetsController?.setSystemBarsAppearance(
+                            0,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        )
+                    } else {
+                        decorView.systemUiVisibility =
+                            SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or decorView.systemUiVisibility
+                    }
+                    statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.white)
                 }
-                statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.white)
             }
         }
     }

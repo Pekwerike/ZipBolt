@@ -262,7 +262,11 @@ class DataTransferService : Service() {
 
             try {
                 launch {
-                    listenForMediaToTransfer(socketDOS)
+                    try {
+                        listenForMediaToTransfer(socketDOS)
+                    } catch (socketException: SocketException) {
+                        
+                    }
                 }
                 delay(300)
                 listenForMediaToReceive(socketDIS)
@@ -323,15 +327,17 @@ class DataTransferService : Service() {
                         SOCKET_PORT
                     ), 100
                 )
-            } catch (connectException: ConnectException) {
+            } catch (connectException: IOException) {
+                configureClientSocket(serverIpAddress)
+                return@launch
                 // send broadcast message to the main activity that we couldn't connect to peer.
                 // the main activity will use this message to determine how to update the ui
-                dataTransferServiceConnectionStateIntent.run {
+                /*dataTransferServiceConnectionStateIntent.run {
                     action =
                         DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS
 
                     localBroadcastManager.sendBroadcast(this)
-                }
+                }*/
 
             }
             try {

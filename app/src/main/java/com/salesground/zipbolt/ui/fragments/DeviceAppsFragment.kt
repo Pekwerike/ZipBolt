@@ -46,9 +46,6 @@ class DeviceAppsFragment : Fragment() {
                         mainActivity?.removeFromDataToTransferList(it)
                     } else {
                         mainActivity?.addToDataToTransferList(it)
-                        applicationsViewModel.addClickedApplicationIndex(
-                            applicationFragmentAppsDisplayRecyclerViewAdapter.currentList.indexOf(it)
-                        )
                     }
                 },
                 dataToTransferViewModel.collectionOfDataToTransfer
@@ -91,12 +88,12 @@ class DeviceAppsFragment : Fragment() {
             it.getEvent(javaClass.name)?.let {
                 applicationFragmentAppsDisplayRecyclerViewAdapter.selectedApplications =
                     dataToTransferViewModel.collectionOfDataToTransfer
-                applicationsViewModel.clickedApplicationSet.forEach { selectedApplicationIndex ->
+                /*applicationsViewModel.clickedApplicationSet.forEach { selectedApplicationIndex ->
                     applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemChanged(
                         selectedApplicationIndex
                     )
-                }
-                applicationsViewModel.clearClickedApplicationSet()
+                }*/
+                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
                 /* applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
                      applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
                      applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition() + 1

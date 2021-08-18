@@ -17,8 +17,6 @@ class ApplicationsViewModel @Inject constructor(
     private val applicationsRepositoryInterface: ApplicationsRepositoryInterface
 ) : ViewModel() {
 
-    var clickedApplicationSet: MutableSet<Int> = mutableSetOf()
-        private set
     private var allNonSystemAppsOnDevice = listOf<DataToTransfer>()
     private val _allApplicationsOnDevice = MutableLiveData<List<DataToTransfer>>(
         listOf()
@@ -39,11 +37,4 @@ class ApplicationsViewModel @Inject constructor(
         }
     }
 
-    fun clearClickedApplicationSet() {
-        clickedApplicationSet = mutableSetOf()
-    }
-
-    fun addClickedApplicationIndex(index: Int) {
-        clickedApplicationSet.add(index)
-    }
 }
