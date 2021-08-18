@@ -265,7 +265,7 @@ class DataTransferService : Service() {
                     try {
                         listenForMediaToTransfer(socketDOS)
                     } catch (socketException: SocketException) {
-                        
+
                     }
                 }
                 delay(300)
@@ -352,7 +352,11 @@ class DataTransferService : Service() {
 
             try {
                 launch {
-                    listenForMediaToTransfer(socketDOS)
+                    try {
+                        listenForMediaToTransfer(socketDOS)
+                    } catch (socketException: SocketException) {
+
+                    }
                 }
                 delay(300)
                 listenForMediaToReceive(socketDIS)

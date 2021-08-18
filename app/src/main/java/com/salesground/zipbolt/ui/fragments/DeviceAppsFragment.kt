@@ -93,6 +93,7 @@ class DeviceAppsFragment : Fragment() {
                         selectedApplicationIndex
                     )
                 }*/
+
                 applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
                 /* applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
                      applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),

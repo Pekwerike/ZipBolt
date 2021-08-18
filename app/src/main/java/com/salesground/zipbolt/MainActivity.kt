@@ -573,14 +573,9 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
-                        if (deviceTransferRole == DeviceTransferRole.SEND ||
-                            deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE
-                            || deviceTransferRole == DeviceTransferRole.RECEIVE
-                        ) {
-                            activityMainBinding.run {
-                                activityMainZipBoltHeaderLayout
-                                    .zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
-                            }
+                        activityMainBinding.run {
+                            activityMainZipBoltHeaderLayout
+                                .zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
                         }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
@@ -679,7 +674,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun turnStatusBarColor(dark: Boolean) {
-        if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO ) {
+        if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
             if (dark) {
                 window.run {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
