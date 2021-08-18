@@ -180,7 +180,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                             override fun onFailure(reason: Int) {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                    beginServiceDiscovery()
+                                    discoverServices()
                                 }
                             }
                         })

@@ -136,7 +136,7 @@ class FilesFragment : Fragment() {
                 }
             }
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+        dataToTransferViewModel.dropAllSelectedItem.observe(this) {
             it.getEvent(javaClass.name)?.let {
                 directoryListDisplayRecyclerViewAdapter.filesSelectedForTransfer =
                     dataToTransferViewModel.collectionOfDataToTransfer

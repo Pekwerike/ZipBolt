@@ -31,20 +31,6 @@ class DeviceAppsFragment : Fragment() {
     private var spanCount: Int = 0
     private var mainActivity: MainActivity? = null
 
-    @Inject
-    lateinit var localBroadcastManager: LocalBroadcastManager
-
-    private val sendDataBroadcastReceiver = SendDataBroadcastReceiver(
-        object : SendDataBroadcastReceiver.SendDataButtonClickedListener {
-            @SuppressLint("NotifyDataSetChanged")
-            override fun sendDataButtonClicked() {
-               /* applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
-                    applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
-                    applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition()
-                )*/
-            }
-        }
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,13 +84,21 @@ class DeviceAppsFragment : Fragment() {
                 applicationFragmentAppsDisplayRecyclerViewAdapter.submitList(it)
             }
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this) {
+        dataToTransferViewModel.dropAllSelectedItem.observe(this) {
             it.getEvent(javaClass.name)?.let {
-                applicationFragmentAppsDisplayRecyclerViewAdapter.selectedApplications = dataToTransferViewModel.collectionOfDataToTransfer
-                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
-                    applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
-                    applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition() + 1
-                )
+                applicationFragmentAppsDisplayRecyclerViewAdapter.selectedApplications =
+                    dataToTransferViewModel.collectionOfDataToTransfer
+                /*applicationsViewModel.clickedApplicationSet.forEach { selectedApplicationIndex ->
+                    applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemChanged(
+                        selectedApplicationIndex
+                    )
+                }*/
+
+                applicationFragmentAppsDisplayRecyclerViewAdapter.notifyDataSetChanged()
+                /* applicationFragmentAppsDisplayRecyclerViewAdapter.notifyItemRangeChanged(
+                     applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
+                     applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition() + 1
+                 )*/
             }
         }
 
@@ -129,17 +123,4 @@ class DeviceAppsFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        localBroadcastManager.registerReceiver(sendDataBroadcastReceiver,
-            IntentFilter().apply {
-                addAction(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
-            }
-        )
-    }
-
-    override fun onStop() {
-        super.onStop()
-        localBroadcastManager.unregisterReceiver(sendDataBroadcastReceiver)
-    }
 }

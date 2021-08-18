@@ -129,7 +129,7 @@ class ImageFragment : Fragment() {
                 }
             }
         }
-        dataToTransferViewModel.sentDataButtonClicked.observe(this){
+        dataToTransferViewModel.dropAllSelectedItem.observe(this){
             it.getEvent(javaClass.name)?.let {
                 dAdapter.imagesClicked = dataToTransferViewModel.collectionOfDataToTransfer
                 dAdapter.notifyItemRangeChanged(

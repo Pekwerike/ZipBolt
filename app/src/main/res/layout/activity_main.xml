@@ -35,20 +35,6 @@
 
     </LinearLayout>
 
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/send_file_button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/home_screen_connect_button_height"
-        android:layout_gravity="end|bottom"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginBottom="62dp"
-        android:text="@string/send_label"
-        android:visibility="invisible"
-        app:cornerRadius="6dp"
-        app:elevation="6dp"
-        app:icon="@drawable/send_icon" />
-
     <ViewStub
         android:id="@+id/connected_to_peer_transfer_ongoing_persistent_bottom_sheet_view_stub"
         android:layout_width="match_parent"

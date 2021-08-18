@@ -38,11 +38,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import android.content.Intent
+import android.content.res.Configuration
 import android.provider.Settings
+import android.view.WindowInsetsController
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
-import androidx.core.view.marginBottom
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayoutMediator
@@ -464,34 +466,7 @@ class MainActivity : AppCompatActivity() {
         // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
-            activityMainZipBoltHeaderLayout.run {
-                zipBoltHeaderLayoutConnectToPeerButton.setOnClickListener {
-                    if (it.visibility == VISIBLE) {
-                        configureConnectionOptionsModalBottomSheetLayout()
-                        connectionOptionsBottomSheetDialog.show()
-                    }
-                }
-            }
-
-            sendFileButton.setOnClickListener {
-                if (it.visibility != INVISIBLE) {
-                    // send broadcast event that send data button has been triggered
-                    localBroadcastManager.sendBroadcast(sendDataClickedIntent)
-
-                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                    // transfer data using the DataTransferService
-                    dataTransferService?.transferData(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    // clear collection of data to transfer since transfer has been completed
-                    dataToTransferViewModel.clearCollectionOfDataToTransfer()
-                    dataToTransferViewModel.sentDataButtonClicked()
-                }
-            }
-
+            configureZipBoltHeader()
             mainActivityAllMediaOnDevice.run {
                 // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode =
@@ -535,6 +510,36 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun configureZipBoltHeader() {
+        activityMainBinding.run {
+            activityMainZipBoltHeaderLayout.run {
+                zipBoltHeaderLayoutConnectToPeerButton.setOnClickListener {
+                    if (it.visibility == VISIBLE) {
+                        configureConnectionOptionsModalBottomSheetLayout()
+                        connectionOptionsBottomSheetDialog.show()
+                    }
+                }
+            }
+            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                zipBoltSendFileHeaderLayoutDropAllItemsButton.setOnClickListener {
+                    dataToTransferViewModel.dropAllSelectedItems()
+                }
+                zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener {
+                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                    // transfer data using the DataTransferService
+                    dataTransferService?.transferData(
+                        dataToTransferViewModel.collectionOfDataToTransfer
+                    )
+                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
+                        dataToTransferViewModel.collectionOfDataToTransfer
+                    )
+                    // clear collection of data to transfer since transfer has been completed
+                    dataToTransferViewModel.dropAllSelectedItems()
+                }
+            }
+        }
+    }
+
     private fun tabLayoutViewPagerConfiguration(
         tabLayout: TabLayout, viewPager: ViewPager,
         viewPagerAdapter: FragmentStatePagerAdapter,
@@ -573,12 +578,9 @@ class MainActivity : AppCompatActivity() {
             it?.let {
                 when (it) {
                     is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
-                        if (deviceTransferRole == DeviceTransferRole.SEND ||
-                            deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE
-                        ) {
-                            activityMainBinding.run {
-                                sendFileButton.visibility = VISIBLE
-                            }
+                        activityMainBinding.run {
+                            activityMainZipBoltHeaderLayout
+                                .zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
                         }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
@@ -602,14 +604,16 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     PeerConnectionUIState.NoConnectionUIAction -> {
+                        configureZipBoltHeader()
+                       /* activityMainBinding.run {
+                            activityMainZipBoltHeaderLayout
+                                .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
+                        }*/
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
                                 BottomSheetBehavior.STATE_HIDDEN
                             isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = false
-                        }
-                        activityMainBinding.run {
-                            sendFileButton.visibility = INVISIBLE
                         }
                     }
                 }
@@ -623,6 +627,7 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         // device connected
                         if (selectedItemsList.isNotEmpty()) {
+                            turnStatusBarColor(true)
                             activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
                                 numberOfFilesSelected = it.size
@@ -630,22 +635,10 @@ class MainActivity : AppCompatActivity() {
                                 root.visibility = VISIBLE
                                 zipBoltSendFileHeaderLayoutSendFileButton.run {
                                     text = getString(R.string.send_label)
-                                    setOnClickListener {
-                                        mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                                        // transfer data using the DataTransferService
-                                        dataTransferService?.transferData(
-                                            dataToTransferViewModel.collectionOfDataToTransfer
-                                        )
-                                        sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                                            dataToTransferViewModel.collectionOfDataToTransfer
-                                        )
-                                        // clear collection of data to transfer since transfer has been completed
-                                        dataToTransferViewModel.clearCollectionOfDataToTransfer()
-                                        dataToTransferViewModel.sentDataButtonClicked()
-                                    }
                                 }
                             }
                         } else {
+                            turnStatusBarColor(false)
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.root.visibility =
                                 INVISIBLE
                             activityMainZipBoltHeaderLayout.run {
@@ -656,6 +649,7 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         // device not connected
                         if (selectedItemsList.isNotEmpty()) {
+                            turnStatusBarColor(true)
                             activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
                                 numberOfFilesSelected = it.size
@@ -671,6 +665,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         } else {
+                            turnStatusBarColor(false)
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.root.visibility =
                                 INVISIBLE
                             activityMainZipBoltHeaderLayout.run {
@@ -684,6 +679,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun turnStatusBarColor(dark: Boolean) {
+        if ((resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
+            if (dark) {
+                window.run {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        insetsController?.setSystemBarsAppearance(
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        )
+                    } else {
+                        decorView.systemUiVisibility =
+                            SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() and decorView.systemUiVisibility
+                    }
+                    statusBarColor =
+                        ContextCompat.getColor(this@MainActivity, R.color.dark_status_bar_color)
+                }
+            } else {
+                window.run {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        insetsController?.setSystemBarsAppearance(
+                            0,
+                            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        )
+                    } else {
+                        decorView.systemUiVisibility =
+                            SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or decorView.systemUiVisibility
+                    }
+                    statusBarColor = ContextCompat.getColor(this@MainActivity, R.color.white)
+                }
+            }
+        }
+    }
 
     private fun configureConnectedToPeerTransferOngoingBottomSheetLayout() {
         isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = true

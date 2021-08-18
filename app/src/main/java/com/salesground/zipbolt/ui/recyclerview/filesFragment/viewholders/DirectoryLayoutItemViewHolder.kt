@@ -10,6 +10,7 @@ import com.salesground.zipbolt.databinding.FolderLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.utils.getDirectorySize
 
 
 class DirectoryLayoutItemViewHolder(
@@ -22,6 +23,8 @@ class DirectoryLayoutItemViewHolder(
         dataToTransfer: DataToTransfer,
         selectedFilesToTransfer: MutableList<DataToTransfer>
     ) {
+
+        dataToTransfer as DataToTransfer.DeviceFile
         folderLayoutItemBinding.run {
             folderName = dataToTransfer.dataDisplayName
 
@@ -33,7 +36,6 @@ class DirectoryLayoutItemViewHolder(
 
 
             folderLayoutItemViewGroup.setOnClickListener {
-                dataToTransfer as DataToTransfer.DeviceFile
                 folderClickedListener.onClick(dataToTransfer.file.path)
             }
             folderLayoutItemFolderSelectedCheckBox.setOnClickListener {
@@ -42,6 +44,7 @@ class DirectoryLayoutItemViewHolder(
                     folderLayoutItemFolderSelectedCheckBox,
                     !selectedFilesToTransfer.contains(dataToTransfer)
                 )
+                dataToTransfer.dataSize = dataToTransfer.file.getDirectorySize()
                 dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
             }
             executePendingBindings()
