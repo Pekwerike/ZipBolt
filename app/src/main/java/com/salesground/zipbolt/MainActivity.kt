@@ -573,7 +573,7 @@ class MainActivity : AppCompatActivity() {
                     is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
                         if (deviceTransferRole == DeviceTransferRole.SEND ||
                             deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE
-                            || deviceTrasnsferRole == DeviceTransferRole.RECEIVE
+                            || deviceTransferRole == DeviceTransferRole.RECEIVE
                         ) {
                             activityMainBinding.run {
                                 activityMainZipBoltHeaderLayout
