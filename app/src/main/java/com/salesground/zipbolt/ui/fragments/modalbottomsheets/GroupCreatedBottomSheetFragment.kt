@@ -103,11 +103,15 @@ class GroupCreatedBottomSheetFragment : BottomSheetDialogFragment() {
         wifiP2pManager.createGroup(wifiP2pChannel,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
-                    broadcastZipBoltFileTransferService()
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        broadcastZipBoltFileTransferService()
+                    }
                 }
 
                 override fun onFailure(p0: Int) {
-                    broadcastZipBoltFileTransferService()
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        broadcastZipBoltFileTransferService()
+                    }
                 }
             })
     }
@@ -139,13 +143,17 @@ class GroupCreatedBottomSheetFragment : BottomSheetDialogFragment() {
 
                             override fun onFailure(reason: Int) {
                                 // local service addition was not successfully sent to the android framework
-                                broadcastZipBoltFileTransferService()
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    broadcastZipBoltFileTransferService()
+                                }
                             }
                         })
                 }
 
                 override fun onFailure(reason: Int) {
-                    broadcastZipBoltFileTransferService()
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        broadcastZipBoltFileTransferService()
+                    }
                 }
             })
     }

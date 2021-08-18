@@ -476,7 +476,7 @@ class MainActivity : AppCompatActivity() {
                 zipBoltSendFileHeaderLayoutDropAllItemsButton.setOnClickListener {
                     dataToTransferViewModel.dropAllSelectedItems()
                 }
-                zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener{
+                zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener {
                     mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
                     // transfer data using the DataTransferService
                     dataTransferService?.transferData(
@@ -573,9 +573,11 @@ class MainActivity : AppCompatActivity() {
                     is PeerConnectionUIState.CollapsedConnectedToPeerTransferOngoing -> {
                         if (deviceTransferRole == DeviceTransferRole.SEND ||
                             deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE
+                            || deviceTrasnsferRole == DeviceTransferRole.RECEIVE
                         ) {
                             activityMainBinding.run {
-                                sendFileButton.visibility = VISIBLE
+                                activityMainZipBoltHeaderLayout
+                                    .zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
                             }
                         }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
@@ -605,9 +607,6 @@ class MainActivity : AppCompatActivity() {
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
                                 BottomSheetBehavior.STATE_HIDDEN
                             isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured = false
-                        }
-                        activityMainBinding.run {
-                            sendFileButton.visibility = INVISIBLE
                         }
                     }
                 }
