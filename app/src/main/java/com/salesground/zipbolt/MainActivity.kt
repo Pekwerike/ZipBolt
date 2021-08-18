@@ -466,32 +466,7 @@ class MainActivity : AppCompatActivity() {
         // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         inflate(layoutInflater).apply {
             activityMainBinding = this
-            activityMainZipBoltHeaderLayout.run {
-                zipBoltHeaderLayoutConnectToPeerButton.setOnClickListener {
-                    if (it.visibility == VISIBLE) {
-                        configureConnectionOptionsModalBottomSheetLayout()
-                        connectionOptionsBottomSheetDialog.show()
-                    }
-                }
-            }
-            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
-                zipBoltSendFileHeaderLayoutDropAllItemsButton.setOnClickListener {
-                    dataToTransferViewModel.dropAllSelectedItems()
-                }
-                zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener {
-                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                    // transfer data using the DataTransferService
-                    dataTransferService?.transferData(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    // clear collection of data to transfer since transfer has been completed
-                    dataToTransferViewModel.dropAllSelectedItems()
-                }
-            }
-
+            configureZipBoltHeader()
             mainActivityAllMediaOnDevice.run {
                 // change the tab mode based on the current screen density
                 allMediaOnDeviceTabLayout.tabMode =
@@ -533,6 +508,36 @@ class MainActivity : AppCompatActivity() {
                 addAction(DataTransferServiceConnectionStateReceiver.ACTION_CANNOT_CONNECT_TO_PEER_ADDRESS)
             }
         )
+    }
+
+    private fun configureZipBoltHeader() {
+        activityMainBinding.run {
+            activityMainZipBoltHeaderLayout.run {
+                zipBoltHeaderLayoutConnectToPeerButton.setOnClickListener {
+                    if (it.visibility == VISIBLE) {
+                        configureConnectionOptionsModalBottomSheetLayout()
+                        connectionOptionsBottomSheetDialog.show()
+                    }
+                }
+            }
+            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                zipBoltSendFileHeaderLayoutDropAllItemsButton.setOnClickListener {
+                    dataToTransferViewModel.dropAllSelectedItems()
+                }
+                zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener {
+                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+                    // transfer data using the DataTransferService
+                    dataTransferService?.transferData(
+                        dataToTransferViewModel.collectionOfDataToTransfer
+                    )
+                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
+                        dataToTransferViewModel.collectionOfDataToTransfer
+                    )
+                    // clear collection of data to transfer since transfer has been completed
+                    dataToTransferViewModel.dropAllSelectedItems()
+                }
+            }
+        }
     }
 
     private fun tabLayoutViewPagerConfiguration(
@@ -599,10 +604,11 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     PeerConnectionUIState.NoConnectionUIAction -> {
-                        activityMainBinding.run {
+                        configureZipBoltHeader()
+                       /* activityMainBinding.run {
                             activityMainZipBoltHeaderLayout
                                 .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
-                        }
+                        }*/
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
