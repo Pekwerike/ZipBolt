@@ -525,19 +525,23 @@ class MainActivity : AppCompatActivity() {
                     dataToTransferViewModel.dropAllSelectedItems()
                 }
                 zipBoltSendFileHeaderLayoutSendFileButton.setOnClickListener {
-                    mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
-                    // transfer data using the DataTransferService
-                    dataTransferService?.transferData(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
-                        dataToTransferViewModel.collectionOfDataToTransfer
-                    )
-                    // clear collection of data to transfer since transfer has been completed
-                    dataToTransferViewModel.dropAllSelectedItems()
+                    setUpTransfer()
                 }
             }
         }
+    }
+
+    private fun setUpTransfer() {
+        mainActivityViewModel.expandedConnectedToPeerTransferOngoing()
+        // transfer data using the DataTransferService
+        dataTransferService?.transferData(
+            dataToTransferViewModel.collectionOfDataToTransfer
+        )
+        sentDataViewModel.addCollectionOfDataToTransferToSentDataItems(
+            dataToTransferViewModel.collectionOfDataToTransfer
+        )
+        // clear collection of data to transfer since transfer has been completed
+        dataToTransferViewModel.dropAllSelectedItems()
     }
 
     private fun tabLayoutViewPagerConfiguration(
@@ -581,6 +585,15 @@ class MainActivity : AppCompatActivity() {
                         activityMainBinding.run {
                             activityMainZipBoltHeaderLayout
                                 .zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
+
+                            activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                                zipBoltSendFileHeaderLayoutSendFileButton.run {
+                                    text = getString(R.string.send_label)
+                                    setOnClickListener {
+                                        setUpTransfer()
+                                    }
+                                }
+                            }
                         }
                         if (!isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             configureConnectedToPeerTransferOngoingBottomSheetLayout()
