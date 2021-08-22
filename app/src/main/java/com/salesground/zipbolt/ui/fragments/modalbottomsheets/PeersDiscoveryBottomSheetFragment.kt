@@ -137,7 +137,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(p0: Int) {
                     // connection initiation failed,
-                    displayToast("Connection attempt failed")
+                  //  displayToast("Connection attempt failed")
                 }
             })
     }
@@ -180,7 +180,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                             override fun onFailure(reason: Int) {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                    displayToast("Add service request failed")
+                                  //  displayToast("Add service request failed")
                                     discoverServices()
                                 }
                             }
@@ -189,7 +189,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(reason: Int) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        displayToast("Clear service failed")
+                      //  displayToast("Clear service failed")
                         beginServiceDiscovery()
                     }
                 }
@@ -217,7 +217,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
             override fun onSuccess() {
                 Timer().schedule(2000) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                        displayToast(" new service discovery started")
+                       // displayToast(" new service discovery started")
                             discoverServices()
                     }
                 }
@@ -225,7 +225,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
             override fun onFailure(reason: Int) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    displayToast("Peers discovery failed")
+                    //displayToast("Peers discovery failed")
                     discoverServices()
                 }
             }
@@ -236,6 +236,9 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    fun killSelf(){
+        dismissAllowingStateLoss()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         peersDiscoveryViewModel.clearDiscoveredPeerSet()

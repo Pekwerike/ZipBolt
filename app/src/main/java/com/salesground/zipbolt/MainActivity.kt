@@ -618,10 +618,10 @@ class MainActivity : AppCompatActivity() {
 
                     PeerConnectionUIState.NoConnectionUIAction -> {
                         configureZipBoltHeader()
-                       /* activityMainBinding.run {
-                            activityMainZipBoltHeaderLayout
-                                .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
-                        }*/
+                        activityMainBinding.run {
+                             activityMainZipBoltHeaderLayout
+                                 .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
+                         }
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
@@ -659,16 +659,22 @@ class MainActivity : AppCompatActivity() {
                                 zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
                             }
                         }
-                    } else {
+                    }  else {
                         // device not connected
                         if (selectedItemsList.isNotEmpty()) {
                             turnStatusBarColor(true)
                             activityMainZipBoltHeaderLayout.root.visibility = INVISIBLE
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
+                                root.visibility = VISIBLE
                                 numberOfFilesSelected = it.size
                                 sizeOfFileSelected = it.sumOf { it.dataSize }
-                                root.visibility = VISIBLE
                                 zipBoltSendFileHeaderLayoutSendFileButton.run {
+                                    visibility =
+                                        if (deviceTransferRole == DeviceTransferRole.RECEIVE) {
+                                            INVISIBLE
+                                        } else {
+                                            VISIBLE
+                                        }
                                     text = getString(R.string.connect)
                                     setOnClickListener {
                                         // show connection options modal bottom sheet
@@ -683,7 +689,12 @@ class MainActivity : AppCompatActivity() {
                                 INVISIBLE
                             activityMainZipBoltHeaderLayout.run {
                                 root.visibility = VISIBLE
-                                zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
+                                zipBoltHeaderLayoutConnectToPeerButton.visibility =
+                                    if (deviceTransferRole == DeviceTransferRole.RECEIVE) {
+                                        INVISIBLE
+                                    } else {
+                                        VISIBLE
+                                    }
                             }
                         }
                     }
