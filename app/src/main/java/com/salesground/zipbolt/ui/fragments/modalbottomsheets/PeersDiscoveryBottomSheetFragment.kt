@@ -111,7 +111,8 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
-                    lifecycleScope.launch(Dispatchers.Main) {""
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        ""
                         peersDiscoveryBottomSheetFragment.run {
                             fragmentPeersDiscoveryConnectingToPeerTextView.run {
                                 setAnimatedText(
@@ -166,7 +167,8 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
             recordListener
         )
         wifiP2pDnsSdServiceRequest = WifiP2pDnsSdServiceRequest.newInstance()
-        wifiP2pManager.clearServiceRequests(wifiP2pChannel,
+        wifiP2pManager.removeServiceRequest(wifiP2pChannel,
+            wifiP2pDnsSdServiceRequest,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
                     wifiP2pManager.addServiceRequest(wifiP2pChannel,
@@ -174,6 +176,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                         object : WifiP2pManager.ActionListener {
                             override fun onSuccess() {
                                 lifecycleScope.launch(Dispatchers.Main) {
+                                    // displayToast("Add service request succeeded")
                                     discoverServices()
                                 }
                             }
@@ -189,7 +192,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(reason: Int) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                      //  displayToast("Clear service failed")
+                       // displayToast("Clear service failed")
                         beginServiceDiscovery()
                     }
                 }
@@ -217,8 +220,8 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
             override fun onSuccess() {
                 Timer().schedule(2000) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                       // displayToast(" new service discovery started")
-                            discoverServices()
+                        //   displayToast(" new service discovery started")
+                        discoverServices()
                     }
                 }
             }
@@ -236,9 +239,10 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
-    fun killSelf(){
+    fun killSelf() {
         dismissAllowingStateLoss()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         peersDiscoveryViewModel.clearDiscoveredPeerSet()
