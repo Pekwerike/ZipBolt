@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="applicationName"
+            type="String" />
+
+        <variable
+            name="applicationSize"
+            type="String" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/application_receive_layout_item_image_view"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_margin="@dimen/medium_margin"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/application_receive_layout_item_app_name_text_view"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/application_receive_layout_item_app_name_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/medium_margin"
+            android:layout_marginVertical="1dp"
+            android:lines="1"
+            android:text="@{applicationName}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintBottom_toTopOf="@+id/application_receive_layout_item_data_size_text_view"
+            app:layout_constraintEnd_toStartOf="@+id/application_receive_complete_layout_install_app_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/application_receive_layout_item_image_view"
+            app:layout_constraintTop_toTopOf="@+id/application_receive_layout_item_image_view" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/application_receive_layout_item_data_size_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="@{applicationSize}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintBottom_toBottomOf="@+id/application_receive_layout_item_image_view"
+            app:layout_constraintStart_toStartOf="@+id/application_receive_layout_item_app_name_text_view" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/application_receive_complete_layout_install_app_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:background="?attr/selectableItemBackground"
+            android:padding="@dimen/standard_padding"
+            android:text="@string/install"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textColor="@color/blue_415"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/application_receive_layout_item_data_size_text_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/application_receive_layout_item_app_name_text_view"
+            app:layout_constraintTop_toTopOf="@+id/application_receive_layout_item_app_name_text_view" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

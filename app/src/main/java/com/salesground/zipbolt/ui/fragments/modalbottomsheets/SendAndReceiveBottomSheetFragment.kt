@@ -67,7 +67,6 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
 
         observeViewModelLiveData()
         removeAllLocalServices()
-        clearServiceRequests()
     }
 
     override fun onCreateView(
@@ -134,7 +133,7 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
             serviceInfo,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
-
+                    clearServiceRequests()
                 }
 
                 override fun onFailure(reason: Int) {

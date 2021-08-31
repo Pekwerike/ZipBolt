@@ -60,4 +60,5 @@
     <string name="total_number_of_items_and_size_of_items_selected_placeholder">
         %1$d (%2$s)
     </string>
+    <string name="install">Install</string>
 </resources>
