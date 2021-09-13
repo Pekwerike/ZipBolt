@@ -58,6 +58,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        displayToast("Discovery started")
         activity?.let {
             mainActivity = it as MainActivity
         }

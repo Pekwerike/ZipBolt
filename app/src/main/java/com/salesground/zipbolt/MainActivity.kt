@@ -350,7 +350,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 openGroupCreatedModalBottomSheet()
             } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER && peersDiscoveryBottomSheetFragment == null) {
-                openSendAndReceiveModalBottomSheet()
+                preparePeerDiscovery()
             } else if (deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING &&
                 sendAndReceiveBottomSheetFragment == null
             ) {
@@ -871,29 +871,8 @@ class MainActivity : AppCompatActivity() {
                     connectionOptionsBottomSheetDialog.dismiss()
                 }
                 zipBoltProConnectionOptionsBottomSheetLayoutReceiveCardView.setOnClickListener {
-                    deviceTransferRole = DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
-                    // Turn on device wifi
-                    if (!wifiManager.isWifiEnabled) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
-                        } else {
-                            if (wifiManager.setWifiEnabled(true)) {
-                                /**Listen for wifi on via the broadcast receiver
-                                 * and then call openPeersDiscoveryModalBottomSheet**/
-
-                            } else {
-                                displayToast("Turn off your hotspot")
-                            }
-                        }
-                    } else {
-                        if (isLocationPermissionGranted()) {
-                            // Create wifi p2p group, if wifi is enabled
-                            openPeersDiscoveryModalBottomSheet()
-                        } else {
-                            requestFineLocationPermission()
-                        }
-                    }
                     connectionOptionsBottomSheetDialog.hide()
+                    preparePeerDiscovery()
                 }
 
                 zipBoltProConnectionOptionsBottomSheetLayoutSendAndReceiveCardView.setOnClickListener {
@@ -947,7 +926,7 @@ class MainActivity : AppCompatActivity() {
         peersDiscoveryBottomSheetFragment = PeersDiscoveryBottomSheetFragment()
         peersDiscoveryBottomSheetFragment?.show(
             supportFragmentManager,
-            " "
+            "PeersDiscoveryBottomSheetFragment"
         )
         peersDiscoveryBottomSheetFragment?.isCancelable = false
     }
@@ -1116,6 +1095,28 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    private fun preparePeerDiscovery() {
+        deviceTransferRole = DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER
+        if (isLocationPermissionGranted()) {
+            if (!wifiManager.isWifiEnabled) {
+                // turn on wifi
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
+                } else {
+                    if (wifiManager.setWifiEnabled(true)) {
+                        /**Listen for wifi on via the broadcast receiver
+                         * and then call openPeersDiscoveryModalBottomSheet**/
+                    } else {
+                        displayToast("Turn off your hotspot")
+                    }
+                }
+            } else {
+                openPeersDiscoveryModalBottomSheet()
+            }
+        } else {
+            requestFineLocationPermission()
+        }
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -1133,7 +1134,7 @@ class MainActivity : AppCompatActivity() {
                             openGroupCreatedModalBottomSheet()
                         }
                         DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER -> {
-                            openPeersDiscoveryModalBottomSheet()
+                            preparePeerDiscovery()
                         }
                         else -> {
                         }
