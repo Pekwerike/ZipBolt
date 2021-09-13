@@ -14,6 +14,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
+import com.salesground.zipbolt.viewmodel.GeneralViewModel
 import com.salesground.zipbolt.viewmodel.VideoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,6 +25,7 @@ class VideosFragment : Fragment() {
     private lateinit var videoFragmentRecyclerViewLayoutManager: LinearLayoutManager
     private var mainActivity: MainActivity? = null
     private val videoViewModel: VideoViewModel by activityViewModels()
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
 
 
@@ -84,6 +86,15 @@ class VideosFragment : Fragment() {
                     videoFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
                     videoFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
                 )
+            }
+        }
+        generalViewModel.hasPermissionToFetchMedia.observe(this) {
+            it?.let {
+                it.getEvent(javaClass.name)?.let {
+                    if (it) {
+                        videoViewModel.getAllVideosOnDevice()
+                    }
+                }
             }
         }
     }

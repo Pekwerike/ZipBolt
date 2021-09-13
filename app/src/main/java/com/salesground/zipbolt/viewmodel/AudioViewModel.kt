@@ -13,22 +13,19 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class AudioViewModel @Inject constructor(private val audioRepository: AudioRepository) : ViewModel() {
+class AudioViewModel @Inject constructor(private val audioRepository: AudioRepository) :
+    ViewModel() {
 
     private val _deviceAudio = MutableLiveData<MutableList<DataToTransfer>>()
     val deviceAudio: LiveData<MutableList<DataToTransfer>>
         get() = _deviceAudio
 
-    init {
-        getDeviceAudio()
-    }
-
-    private fun getDeviceAudio() {
-        viewModelScope.launch (Dispatchers.IO){
-                val deviceAudio = audioRepository.getAudioOnDevice()
-                withContext(Dispatchers.Main) {
-                    _deviceAudio.value = deviceAudio
-                }
+    fun getDeviceAudio() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val deviceAudio = audioRepository.getAudioOnDevice()
+            withContext(Dispatchers.Main) {
+                _deviceAudio.value = deviceAudio
+            }
         }
     }
 

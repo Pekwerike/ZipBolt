@@ -24,9 +24,7 @@ class ApplicationsViewModel @Inject constructor(
     val allApplicationsOnDevice: LiveData<List<DataToTransfer>>
         get() = _allApplicationsOnDevice
 
-    init {
-        getAllApplicationsOnDevice()
-    }
+
 
     fun getAllApplicationsOnDevice() {
         viewModelScope.launch(Dispatchers.IO) {

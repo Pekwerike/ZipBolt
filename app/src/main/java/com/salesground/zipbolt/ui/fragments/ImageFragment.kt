@@ -19,6 +19,7 @@ import com.salesground.zipbolt.model.ui.ImagesDisplayModel
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.imagefragment.DeviceImagesDisplayViewHolderType
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
+import com.salesground.zipbolt.viewmodel.GeneralViewModel
 import com.salesground.zipbolt.viewmodel.ImagesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +31,7 @@ class ImageFragment : Fragment() {
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
     private lateinit var dAdapter: DeviceImagesDisplayRecyclerViewAdapter
     private lateinit var gridLayoutManager: GridLayoutManager
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private var mainActivity: MainActivity? = null
     private lateinit var imageCategoryChipGroup: ChipGroup
     private lateinit var imageFragmentImageBinding: FragmentImageBinding
@@ -45,10 +47,10 @@ class ImageFragment : Fragment() {
         dAdapter = DeviceImagesDisplayRecyclerViewAdapter(
             onImageClicked = {
                 if (it is ImagesDisplayModel.DeviceImageDisplay) {
-                    if(dataToTransferViewModel.collectionOfDataToTransfer.contains(it.deviceImage)) {
+                    if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it.deviceImage)) {
                         // remove image
                         mainActivity?.removeFromDataToTransferList(it.deviceImage)
-                    }else{
+                    } else {
                         // add image
                         mainActivity?.addToDataToTransferList(it.deviceImage)
                     }
@@ -129,13 +131,22 @@ class ImageFragment : Fragment() {
                 }
             }
         }
-        dataToTransferViewModel.dropAllSelectedItem.observe(this){
+        dataToTransferViewModel.dropAllSelectedItem.observe(this) {
             it.getEvent(javaClass.name)?.let {
                 dAdapter.imagesClicked = dataToTransferViewModel.collectionOfDataToTransfer
                 dAdapter.notifyItemRangeChanged(
                     gridLayoutManager.findFirstVisibleItemPosition(),
                     gridLayoutManager.findLastVisibleItemPosition()
                 )
+            }
+        }
+        generalViewModel.hasPermissionToFetchMedia.observe(this) {
+            it?.let {
+                it.getEvent(javaClass.name)?.let {
+                    if (it) {
+                        imagesViewModel.getAllImages()
+                    }
+                }
             }
         }
     }

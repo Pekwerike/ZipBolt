@@ -18,6 +18,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.ApplicationsViewModel
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
+import com.salesground.zipbolt.viewmodel.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class DeviceAppsFragment : Fragment() {
     private val applicationsViewModel: ApplicationsViewModel by activityViewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private lateinit var applicationFragmentAppsDisplayRecyclerViewAdapter: ApplicationFragmentAppsDisplayRecyclerViewAdapter
     private lateinit var applicationFragmentAppsDisplayLayoutManager: GridLayoutManager
     private lateinit var fragmentAppBinding: FragmentAppBinding
@@ -99,6 +101,16 @@ class DeviceAppsFragment : Fragment() {
                      applicationFragmentAppsDisplayLayoutManager.findFirstVisibleItemPosition(),
                      applicationFragmentAppsDisplayLayoutManager.findLastVisibleItemPosition() + 1
                  )*/
+            }
+        }
+
+        generalViewModel.hasPermissionToFetchMedia.observe(this) {
+            it?.let {
+                it.getEvent(javaClass.name)?.let {
+                    if(it) {
+                        applicationsViewModel.getAllApplicationsOnDevice()
+                    }
+                }
             }
         }
 

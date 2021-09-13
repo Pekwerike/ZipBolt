@@ -1,5 +1,6 @@
 package com.salesground.zipbolt
 
+import android.Manifest
 import android.Manifest.*
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -46,6 +47,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayoutMediator
 import com.salesground.zipbolt.broadcast.UpgradedWifiDirectBroadcastReceiver
@@ -90,6 +92,7 @@ class MainActivity : AppCompatActivity() {
     private val dataToTransferViewModel: DataToTransferViewModel by viewModels()
     private val sentDataViewModel: SentDataViewModel by viewModels()
     private val receivedDataViewModel: ReceivedDataViewModel by viewModels()
+    private val generalViewModel: GeneralViewModel by viewModels()
 
     //fragments
     private var groupCreatedBottomSheetFragment: GroupCreatedBottomSheetFragment? = null
@@ -109,9 +112,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var localBroadcastManager: LocalBroadcastManager
-
-    private val sendDataClickedIntent =
-        Intent(SendDataBroadcastReceiver.ACTION_SEND_DATA_BUTTON_CLICKED)
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var upgradedWifiDirectBroadcastReceiver: UpgradedWifiDirectBroadcastReceiver
@@ -496,7 +496,7 @@ class MainActivity : AppCompatActivity() {
         Intent(this, DataTransferService::class.java).also {
             bindService(it, dataTransferServiceConnection, BIND_AUTO_CREATE)
         }
-        PermissionUtils.checkReadAndWriteExternalStoragePermission(this)
+        checkReadAndWriteExternalStoragePermission()
         registerReceiver(
             upgradedWifiDirectBroadcastReceiver,
             createSystemBroadcastIntentFilter()
@@ -589,6 +589,12 @@ class MainActivity : AppCompatActivity() {
                             activityMainZipBoltFilesTransferSelectedFilesHeaderLayout.run {
                                 zipBoltSendFileHeaderLayoutSendFileButton.run {
                                     text = getString(R.string.send_label)
+                                    visibility =
+                                        if (deviceTransferRole == DeviceTransferRole.RECEIVE) {
+                                            INVISIBLE
+                                        } else {
+                                            VISIBLE
+                                        }
                                     setOnClickListener {
                                         setUpTransfer()
                                     }
@@ -619,9 +625,9 @@ class MainActivity : AppCompatActivity() {
                     PeerConnectionUIState.NoConnectionUIAction -> {
                         configureZipBoltHeader()
                         activityMainBinding.run {
-                             activityMainZipBoltHeaderLayout
-                                 .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
-                         }
+                            activityMainZipBoltHeaderLayout
+                                .zipBoltHeaderLayoutConnectToPeerButton.visibility = VISIBLE
+                        }
                         if (isConnectedToPeerTransferOngoingBottomSheetLayoutConfigured) {
                             connectedToPeerTransferOngoingBottomSheetBehavior.isHideable = true
                             connectedToPeerTransferOngoingBottomSheetBehavior.state =
@@ -659,7 +665,7 @@ class MainActivity : AppCompatActivity() {
                                 zipBoltHeaderLayoutConnectToPeerButton.visibility = INVISIBLE
                             }
                         }
-                    }  else {
+                    } else {
                         // device not connected
                         if (selectedItemsList.isNotEmpty()) {
                             turnStatusBarColor(true)
@@ -920,31 +926,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openSendAndReceiveModalBottomSheet() {
-        sendAndReceiveBottomSheetFragment = SendAndReceiveBottomSheetFragment.newInstance()
-        sendAndReceiveBottomSheetFragment?.isCancelable = false
+        sendAndReceiveBottomSheetFragment = SendAndReceiveBottomSheetFragment()
         sendAndReceiveBottomSheetFragment?.show(
             supportFragmentManager,
             "SendAndReceiveBottomSheetFragment"
         )
+        sendAndReceiveBottomSheetFragment?.isCancelable = false
     }
 
     private fun openGroupCreatedModalBottomSheet() {
-        groupCreatedBottomSheetFragment = GroupCreatedBottomSheetFragment.newInstance()
-        groupCreatedBottomSheetFragment?.isCancelable = false
+        groupCreatedBottomSheetFragment = GroupCreatedBottomSheetFragment()
         groupCreatedBottomSheetFragment?.show(
             supportFragmentManager,
             "GroupCreatedBottomSheetFragment"
         )
+        groupCreatedBottomSheetFragment?.isCancelable = false
     }
 
     private fun openPeersDiscoveryModalBottomSheet() {
-        peersDiscoveryBottomSheetFragment =
-            PeersDiscoveryBottomSheetFragment.newInstance()
-        peersDiscoveryBottomSheetFragment?.isCancelable = false
+        peersDiscoveryBottomSheetFragment = PeersDiscoveryBottomSheetFragment()
         peersDiscoveryBottomSheetFragment?.show(
             supportFragmentManager,
-            "PeersDiscoveryBottomSheetFragment"
+            " "
         )
+        peersDiscoveryBottomSheetFragment?.isCancelable = false
     }
 
     fun closeGroupCreatedModalBottomSheet() {
@@ -959,10 +964,12 @@ class MainActivity : AppCompatActivity() {
 
     fun closePeersDiscoveryModalBottomSheet() {
         peersDiscoveryBottomSheetFragment?.let {
+            peersDiscoveryBottomSheetFragment!!.endServiceDiscovery()
+
             peersDiscoveryBottomSheetFragment!!.dismiss()
             supportFragmentManager.beginTransaction()
                 .remove(peersDiscoveryBottomSheetFragment!!)
-                .commitAllowingStateLoss()
+                .commit()
             peersDiscoveryBottomSheetFragment = null
         }
     }
@@ -1066,6 +1073,30 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    fun checkReadAndWriteExternalStoragePermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
+                this,
+                permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            generalViewModel.hasPermissionToFetchMedia(true)
+        } else {
+            generalViewModel.hasPermissionToFetchMedia(false)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    permission.WRITE_EXTERNAL_STORAGE,
+                    permission.READ_EXTERNAL_STORAGE
+                ),
+                PermissionUtils.READ_WRITE_STORAGE_REQUEST_CODE
+            )
+        }
+    }
+
     // check if SpeedForce has access to device fine location
     private fun requestFineLocationPermission() {
         ActivityCompat.requestPermissions(
@@ -1114,12 +1145,15 @@ class MainActivity : AppCompatActivity() {
             ) &&
             permissions.contains(permission.WRITE_EXTERNAL_STORAGE)
         ) {
-            if (grantResults.isNotEmpty()) {
+            checkReadAndWriteExternalStoragePermission()
+            /*if (grantResults.isNotEmpty()) {
                 if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     // SpeedForce has permission to read and write ot the device external storage
-                    // TODO Alert the viewModel to go ahead and fetch media and files from the repositories
+                    generalViewModel.hasPermissionToFetchMedia(true)
                 }
-            }
+            }else{
+
+            }*/
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }

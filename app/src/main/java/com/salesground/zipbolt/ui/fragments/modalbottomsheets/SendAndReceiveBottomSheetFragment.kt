@@ -13,8 +13,10 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,7 +37,7 @@ import kotlin.concurrent.schedule
 @AndroidEntryPoint
 class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var fragmentSendAndReceiveBottomSheetBinding: FragmentSendAndReceiveBottomSheetBinding
-    private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
+    private val peersDiscoveryViewModel by viewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null
 
     @Inject
@@ -264,7 +266,12 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+       // displayToast("Destroyed")
         peersDiscoveryViewModel.clearDiscoveredPeerSet()
+    }
+
+    private fun displayToast(s: String) {
+        Toast.makeText(requireContext(), s, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

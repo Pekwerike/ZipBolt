@@ -15,6 +15,7 @@ import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemCli
 import com.salesground.zipbolt.ui.recyclerview.filesFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.FileViewModel
+import com.salesground.zipbolt.viewmodel.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ class FilesFragment : Fragment() {
     private lateinit var fragmentFilesBinding: FragmentFilesBinding
     private lateinit var recyclerViewLayoutManager: LinearLayoutManager
     private var mainActivity: MainActivity? = null
-
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private val fileViewModel: FileViewModel by activityViewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
 
@@ -144,6 +145,15 @@ class FilesFragment : Fragment() {
                     recyclerViewLayoutManager.findFirstVisibleItemPosition(),
                     recyclerViewLayoutManager.findLastVisibleItemPosition()
                 )
+            }
+        }
+        generalViewModel.hasPermissionToFetchMedia.observe(this) {
+            it?.let {
+                it.getEvent(javaClass.name)?.let {
+                    if(it) {
+                        fileViewModel.initialGet()
+                    }
+                }
             }
         }
     }

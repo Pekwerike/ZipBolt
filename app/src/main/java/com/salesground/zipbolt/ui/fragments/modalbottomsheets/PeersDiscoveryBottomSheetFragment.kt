@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.fragments.modalbottomsheets
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
@@ -9,11 +10,13 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -25,23 +28,23 @@ import com.salesground.zipbolt.ui.recyclerview.peersDiscoveryFragment.PeersDisco
 import com.salesground.zipbolt.viewmodel.PeersDiscoveryViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
 
-@AndroidEntryPoint
 class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
-    private val peersDiscoveryViewModel by activityViewModels<PeersDiscoveryViewModel>()
+    private var shouldContinueDiscovery: Boolean = true
+    private val peersDiscoveryViewModel by viewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null
     private lateinit var wifiP2pDnsSdServiceRequest: WifiP2pDnsSdServiceRequest
 
-    @Inject
-    lateinit var wifiManager: WifiManager
-
-    @Inject
-    lateinit var wifiP2pManager: WifiP2pManager
+    private val wifiP2pManager: WifiP2pManager by lazy {
+        context?.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+    }
 
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var peersDiscoveryBottomSheetFragment: FragmentPeersDiscoveryBottomSheetBinding
@@ -64,6 +67,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
         ) {
 
         }
+
         observeViewModelLiveData()
         beginServiceDiscovery()
     }
@@ -87,7 +91,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                 adapter = peersDiscoveredRecyclerViewAdapter
             }
             fragmentPeersDiscoveryStopDiscoveryImageButton.setOnClickListener {
-                endServiceDiscovery()
+                endServiceDiscoveryInternal()
             }
         }
     }
@@ -102,6 +106,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
     @SuppressLint("MissingPermission")
     private fun connectToADevice(device: WifiP2pDevice) {
+        shouldContinueDiscovery = false
         val wifiP2pConfig = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
             wps.setup = WpsInfo.PBC
@@ -112,7 +117,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                 override fun onSuccess() {
                     // Broadcast receiver notifies us in WIFI_P2P_CONNECTION_CHANGED_ACTION
                     lifecycleScope.launch(Dispatchers.Main) {
-                        ""
                         peersDiscoveryBottomSheetFragment.run {
                             fragmentPeersDiscoveryConnectingToPeerTextView.run {
                                 setAnimatedText(
@@ -138,7 +142,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(p0: Int) {
                     // connection initiation failed,
-                  //  displayToast("Connection attempt failed")
+                 //   displayToast("Connection attempt failed")
                 }
             })
     }
@@ -176,13 +180,14 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                         object : WifiP2pManager.ActionListener {
                             override fun onSuccess() {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                    // displayToast("Add service request succeeded")
+                                   // Log.i("SearchingForPeers", "Add service request successfully")
                                     discoverServices()
                                 }
                             }
 
                             override fun onFailure(reason: Int) {
                                 lifecycleScope.launch(Dispatchers.Main) {
+                                   // Log.i("SearchingForPeers", "Add service request failed")
                                   //  displayToast("Add service request failed")
                                     discoverServices()
                                 }
@@ -192,14 +197,15 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(reason: Int) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                       // displayToast("Clear service failed")
+                      //  Log.i("SearchingForPeers", "Clear service failed")
+                        // displayToast("Clear service failed")
                         beginServiceDiscovery()
                     }
                 }
             })
     }
 
-    private fun endServiceDiscovery() {
+    private fun endServiceDiscoveryInternal() {
         wifiP2pManager.removeServiceRequest(
             wifiP2pChannel,
             wifiP2pDnsSdServiceRequest,
@@ -214,22 +220,42 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
             })
     }
 
+    fun endServiceDiscovery() {
+        wifiP2pManager.removeServiceRequest(
+            wifiP2pChannel,
+            wifiP2pDnsSdServiceRequest,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+
+                }
+
+                override fun onFailure(reason: Int) {
+                }
+            })
+    }
+
     @SuppressLint("MissingPermission")
     private fun discoverServices() {
         wifiP2pManager.discoverServices(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
-                Timer().schedule(2000) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        //   displayToast(" new service discovery started")
-                        discoverServices()
+                if (shouldContinueDiscovery) {
+                    Timer().schedule(2000) {
+                        lifecycleScope.launch(Dispatchers.Main) {
+                        //    Log.i("SearchingForPeers", "New discovery started")
+                          //  displayToast("New discovery started")
+                            discoverServices()
+                        }
                     }
                 }
             }
 
             override fun onFailure(reason: Int) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    //displayToast("Peers discovery failed")
-                    discoverServices()
+                if (shouldContinueDiscovery) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                       // Log.i("SearchingForPeers", "Peers discovery failed")
+                       // displayToast("Peers discovery failed")
+                        discoverServices()
+                    }
                 }
             }
         })
@@ -238,16 +264,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
     private fun displayToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
-
-    fun killSelf() {
-        dismissAllowingStateLoss()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        peersDiscoveryViewModel.clearDiscoveredPeerSet()
-    }
-
     companion object {
         fun newInstance(): PeersDiscoveryBottomSheetFragment {
             return PeersDiscoveryBottomSheetFragment()

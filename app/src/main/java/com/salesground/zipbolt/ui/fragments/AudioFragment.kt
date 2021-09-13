@@ -19,6 +19,7 @@ import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.audioFragment.AudioFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.AudioViewModel
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
+import com.salesground.zipbolt.viewmodel.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,6 +29,7 @@ class AudioFragment : Fragment() {
     private lateinit var audioFragmentRecyclerViewAdapter: AudioFragmentRecyclerViewAdapter
     private lateinit var audioFragmentRecyclerViewLayoutManager: LinearLayoutManager
     private var mainActivity: MainActivity? = null
+    private val generalViewModel: GeneralViewModel by activityViewModels()
     private val audioViewModel: AudioViewModel by activityViewModels()
     private val dataToTransferViewModel: DataToTransferViewModel by activityViewModels()
 
@@ -101,6 +103,15 @@ class AudioFragment : Fragment() {
                     audioFragmentRecyclerViewLayoutManager.findFirstVisibleItemPosition(),
                     audioFragmentRecyclerViewLayoutManager.findLastVisibleItemPosition()
                 )
+            }
+        }
+        generalViewModel.hasPermissionToFetchMedia.observe(this) {
+            it?.let {
+                it.getEvent(javaClass.name)?.let {
+                    if (it) {
+                        audioViewModel.getDeviceAudio()
+                    }
+                }
             }
         }
     }

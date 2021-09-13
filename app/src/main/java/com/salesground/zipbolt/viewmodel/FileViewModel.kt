@@ -69,7 +69,8 @@ class FileViewModel @Inject constructor(
     }
 
 
-    init {
+
+    fun initialGet(){
         viewModelScope.launch(Dispatchers.IO) {
             currentDirectoryEntry = filesRepository.getRootDirectory().path
             getDirectoryChildren(currentDirectoryEntry)

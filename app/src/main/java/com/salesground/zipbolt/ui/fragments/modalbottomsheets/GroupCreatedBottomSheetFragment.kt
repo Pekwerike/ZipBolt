@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.fragments.modalbottomsheets
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.wifi.WifiManager
 import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo
@@ -9,6 +10,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.salesground.zipbolt.MainActivity
@@ -23,13 +25,10 @@ import javax.inject.Inject
  * This class will only be open given that
  * 1. Wifi is enabled
  * 2. ZipBolt has been given access to device location**/
-@AndroidEntryPoint
 class GroupCreatedBottomSheetFragment : BottomSheetDialogFragment() {
-    @Inject
-    lateinit var wifiManager: WifiManager
-
-    @Inject
-    lateinit var wifiP2pManager: WifiP2pManager
+    private val wifiP2pManager: WifiP2pManager by lazy{
+        context?.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+    }
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var fragmentGroupCreatedBinding: FragmentGroupCreatedBottomSheetBinding
     private var mainActivity: MainActivity? = null
@@ -158,6 +157,10 @@ class GroupCreatedBottomSheetFragment : BottomSheetDialogFragment() {
             })
     }
 
+    override fun onResume() {
+        super.onResume()
+       // Toast.makeText(requireContext(), "Resumed", Toast.LENGTH_SHORT).show()
+    }
     companion object {
         fun newInstance(): GroupCreatedBottomSheetFragment {
             return GroupCreatedBottomSheetFragment()

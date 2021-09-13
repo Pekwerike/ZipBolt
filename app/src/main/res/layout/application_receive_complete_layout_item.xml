@@ -64,7 +64,7 @@
             android:background="?attr/selectableItemBackground"
             android:padding="@dimen/standard_padding"
             android:text="@string/install"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             android:textColor="@color/blue_415"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/application_receive_layout_item_data_size_text_view"

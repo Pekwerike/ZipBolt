@@ -36,7 +36,8 @@ class ImagesViewModel @Inject constructor(
         get() = _chosenBucket
 
 
-    init {
+
+    fun getAllImages(){
         viewModelScope.launch(Dispatchers.IO) {
             allImagesOnDeviceRaw =
                 imageRepository.getImagesOnDevice() as MutableList<DataToTransfer.DeviceImage>
