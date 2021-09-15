@@ -7,14 +7,11 @@ import android.net.Uri
 import android.os.Build
 import com.salesground.zipbolt.communication.MediaTransferProtocol
 import com.salesground.zipbolt.communication.readStreamDataIntoFile
-import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.repository.ApplicationsRepositoryInterface
 import com.salesground.zipbolt.repository.SavedFilesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.io.*
 import javax.inject.Inject
 

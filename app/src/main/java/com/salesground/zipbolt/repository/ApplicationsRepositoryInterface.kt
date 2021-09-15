@@ -2,7 +2,6 @@ package com.salesground.zipbolt.repository
 
 import android.content.pm.ApplicationInfo
 import com.salesground.zipbolt.communication.MediaTransferProtocol
-import com.salesground.zipbolt.model.ApplicationModel
 import com.salesground.zipbolt.model.DataToTransfer
 import java.io.DataInputStream
 

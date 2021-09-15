@@ -1,6 +1,7 @@
 package com.salesground.zipbolt.ui.fragments.modalbottomsheets
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
@@ -34,18 +35,14 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
-@AndroidEntryPoint
 class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var fragmentSendAndReceiveBottomSheetBinding: FragmentSendAndReceiveBottomSheetBinding
     private val peersDiscoveryViewModel by viewModels<PeersDiscoveryViewModel>()
     private var mainActivity: MainActivity? = null
 
-    @Inject
-    lateinit var wifiManager: WifiManager
-
-    @Inject
-    lateinit var wifiP2pManager: WifiP2pManager
-
+    private val wifiP2pManager: WifiP2pManager by lazy {
+        context?.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+    }
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private val peersDiscoveredRecyclerViewAdapter = PeersDiscoveredRecyclerViewAdapter(
         DataToTransferRecyclerViewItemClickListener {
@@ -267,12 +264,7 @@ class SendAndReceiveBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-       // displayToast("Destroyed")
         peersDiscoveryViewModel.clearDiscoveredPeerSet()
-    }
-
-    private fun displayToast(s: String) {
-        Toast.makeText(requireContext(), s, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

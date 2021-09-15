@@ -58,7 +58,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        displayToast("Discovery started")
         activity?.let {
             mainActivity = it as MainActivity
         }
@@ -142,8 +141,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                 }
 
                 override fun onFailure(p0: Int) {
-                    // connection initiation failed,
-                 //   displayToast("Connection attempt failed")
+
                 }
             })
     }
@@ -181,15 +179,12 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                         object : WifiP2pManager.ActionListener {
                             override fun onSuccess() {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                   // Log.i("SearchingForPeers", "Add service request successfully")
                                     discoverServices()
                                 }
                             }
 
                             override fun onFailure(reason: Int) {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                   // Log.i("SearchingForPeers", "Add service request failed")
-                                  //  displayToast("Add service request failed")
                                     discoverServices()
                                 }
                             }
@@ -198,8 +193,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
 
                 override fun onFailure(reason: Int) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                      //  Log.i("SearchingForPeers", "Clear service failed")
-                        // displayToast("Clear service failed")
                         beginServiceDiscovery()
                     }
                 }
@@ -242,8 +235,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
                 if (shouldContinueDiscovery) {
                     Timer().schedule(2000) {
                         lifecycleScope.launch(Dispatchers.Main) {
-                        //    Log.i("SearchingForPeers", "New discovery started")
-                          //  displayToast("New discovery started")
                             discoverServices()
                         }
                     }
@@ -253,8 +244,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
             override fun onFailure(reason: Int) {
                 if (shouldContinueDiscovery) {
                     lifecycleScope.launch(Dispatchers.Main) {
-                       // Log.i("SearchingForPeers", "Peers discovery failed")
-                       // displayToast("Peers discovery failed")
                         discoverServices()
                     }
                 }
@@ -262,9 +251,6 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
         })
     }
 
-    private fun displayToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
     companion object {
         fun newInstance(): PeersDiscoveryBottomSheetFragment {
             return PeersDiscoveryBottomSheetFragment()
