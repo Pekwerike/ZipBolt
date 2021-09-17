@@ -31,11 +31,11 @@
     <string name="receiving">Receiving</string>
     <string name="transfer_history">Transfer History</string>
     <string name="active_data_flow_label">Active data flow, swipe up to view details.</string>
-    <string name="send_to_peer_connection_description">High-speed file transfer but you cannot receive from peer. Peer must choose Receive.</string>
-    <string name="receive_connection_description">High-speed file receive but you cannot send file to peer. Peer must choose Send.</string>
+    <string name="send_to_peer_connection_description">High-speed file transfer but you cannot receive from peer. Peer must choose <b>Receive</b>.</string>
+    <string name="receive_connection_description">High-speed file receive but you cannot send file to peer. Peer must choose <b>Send</b>.</string>
     <string name="receive">Receive</string>
     <string name="bidirectional_file_transfer_description">Low-speed bidirectional file transfer. You can transfer and receive files from peer. Peer must also
-    choose Send and Receive.</string>
+    choose <b>Send and Receive</b>.</string>
     <string name="send_and_receive">Send and Receive</string>
     <string name="zip_bolt_file_transfer_service">ZipBoltFileTransferService</string>
     <string name="waiting_for_receiver">Waiting for receiver</string>

@@ -7,7 +7,6 @@ import java.io.DataOutputStream
 
 interface MediaTransferProtocol {
 
-
     enum class MediaTransferProtocolMetaData(val value: Int) {
         NO_DATA(200),
         DATA_AVAILABLE(201),
