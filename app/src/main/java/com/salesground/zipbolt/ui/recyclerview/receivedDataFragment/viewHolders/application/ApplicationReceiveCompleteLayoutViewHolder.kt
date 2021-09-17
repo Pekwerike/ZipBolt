@@ -15,12 +15,17 @@ class ApplicationReceiveCompleteLayoutViewHolder(
     private val applicationReceiveCompleteLayoutItemBinding: ApplicationReceiveCompleteLayoutItemBinding
 ) : RecyclerView.ViewHolder(applicationReceiveCompleteLayoutItemBinding.root) {
 
-    fun bindData(dataToTransfer: DataToTransfer) {
+    fun bindData(dataToTransfer: DataToTransfer,
+    ) {
         dataToTransfer as DataToTransfer.DeviceApplication
 
         applicationReceiveCompleteLayoutItemBinding.run {
             applicationName = dataToTransfer.dataDisplayName
             applicationSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
+
+            applicationReceiveCompleteLayoutInstallAppButton.setOnClickListener {
+
+            }
 
             Glide.with(applicationReceiveLayoutItemImageView)
                 .load(dataToTransfer.applicationIcon)

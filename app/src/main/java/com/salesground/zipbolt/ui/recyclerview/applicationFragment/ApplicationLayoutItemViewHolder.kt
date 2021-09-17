@@ -2,19 +2,18 @@ package com.salesground.zipbolt.ui.recyclerview.applicationFragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ApplicationLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 class ApplicationLayoutItemViewHolder(
     private val applicationLayoutItemBinding: ApplicationLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val applicationLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(applicationLayoutItemBinding.root) {
 
     fun bindApplicationDetails(
@@ -34,7 +33,7 @@ class ApplicationLayoutItemViewHolder(
 
             with(applicationLayoutItemSelectableLinearlayout) {
                 setOnClickListener {
-                    dataToTransferRecyclerViewItemClickListener.onClick(
+                    applicationLayoutClickedListener.onClick(
                         dataToTransfer
                     )
 
@@ -57,7 +56,7 @@ class ApplicationLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            applicationLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): ApplicationLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<ApplicationLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
@@ -67,7 +66,7 @@ class ApplicationLayoutItemViewHolder(
             )
             return ApplicationLayoutItemViewHolder(
                 layoutBinding,
-                dataToTransferRecyclerViewItemClickListener
+                applicationLayoutClickedListener
             )
         }
     }

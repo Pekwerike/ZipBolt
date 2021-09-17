@@ -5,17 +5,17 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class AudioFragmentRecyclerViewAdapter(
-    private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
-     var selectedAudios: MutableList<DataToTransfer>
+    private val audioLayoutClickedListener:
+    RecyclerViewItemClickedListener<DataToTransfer>,
+    var selectedAudios: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return AudioLayoutItemViewHolder.createViewHolder(
             parent,
-            dataToTransferRecyclerViewItemClickListener
+            audioLayoutClickedListener
         )
     }
 

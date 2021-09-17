@@ -9,11 +9,11 @@ import com.bumptech.glide.Glide
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class DirectoryImageLayoutItemViewHolder(
     private val folderImageLayoutItemBinding: com.salesground.zipbolt.databinding.FolderImageLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val directoryImageLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(folderImageLayoutItemBinding.root) {
 
     fun bindData(
@@ -40,7 +40,7 @@ class DirectoryImageLayoutItemViewHolder(
                     folderImageLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryImageLayoutClickedListener.onClick(dataToTransfer)
             }
 
             folderImageLayoutItemFolderSelectedCheckBox.setOnClickListener {
@@ -49,7 +49,7 @@ class DirectoryImageLayoutItemViewHolder(
                     folderImageLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryImageLayoutClickedListener.onClick(dataToTransfer)
             }
             executePendingBindings()
         }
@@ -67,7 +67,7 @@ class DirectoryImageLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            directoryImageLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): DirectoryImageLayoutItemViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<com.salesground.zipbolt.databinding.FolderImageLayoutItemBinding>(
@@ -79,7 +79,7 @@ class DirectoryImageLayoutItemViewHolder(
 
             return DirectoryImageLayoutItemViewHolder(
                 layoutBinding,
-                dataToTransferRecyclerViewItemClickListener
+                directoryImageLayoutClickedListener
             )
         }
     }

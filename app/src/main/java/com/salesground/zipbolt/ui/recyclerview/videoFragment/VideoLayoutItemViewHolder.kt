@@ -1,13 +1,7 @@
 package com.salesground.zipbolt.ui.recyclerview.videoFragment
 
-import android.graphics.drawable.ColorDrawable
-import android.media.ThumbnailUtils
-import android.os.Build
-import android.provider.MediaStore.Images.Thumbnails.MINI_KIND
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -15,12 +9,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.VideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class VideoLayoutItemViewHolder(
     private val videoLayoutItemBinding: VideoLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val videoLayoutClickedListener:
+    RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(videoLayoutItemBinding.root) {
 
     fun bindVideoData(
@@ -43,7 +37,7 @@ class VideoLayoutItemViewHolder(
 
             videoLayoutItemSelectableLinearLayout.run {
                 videoLayoutItemVideoSelectedCheckBox.setOnClickListener {
-                    dataToTransferRecyclerViewItemClickListener.onClick(
+                    videoLayoutClickedListener.onClick(
                         dataToTransfer
                     )
 
@@ -59,7 +53,7 @@ class VideoLayoutItemViewHolder(
                 }
 
                 setOnClickListener {
-                    dataToTransferRecyclerViewItemClickListener.onClick(
+                    videoLayoutClickedListener.onClick(
                         dataToTransfer
                     )
 
@@ -89,7 +83,7 @@ class VideoLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            videoLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): VideoLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<VideoLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
@@ -99,7 +93,7 @@ class VideoLayoutItemViewHolder(
             )
             return VideoLayoutItemViewHolder(
                 layoutBinding,
-                dataToTransferRecyclerViewItemClickListener
+                videoLayoutClickedListener
             )
         }
     }

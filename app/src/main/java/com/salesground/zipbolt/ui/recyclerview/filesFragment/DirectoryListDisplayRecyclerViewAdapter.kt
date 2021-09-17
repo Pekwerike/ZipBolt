@@ -1,18 +1,17 @@
 package com.salesground.zipbolt.ui.recyclerview.filesFragment
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.filesFragment.viewholders.*
 
 class DirectoryListDisplayRecyclerViewAdapter(
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
-    private val folderClickedListener: DataToTransferRecyclerViewItemClickListener<String>,
+    private val directoryListDisplayLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>,
+    private val folderClickedListener: RecyclerViewItemClickedListener<String>,
     var filesSelectedForTransfer: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer,
         RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
@@ -28,68 +27,68 @@ class DirectoryListDisplayRecyclerViewAdapter(
             MediaType.File.Directory.value -> {
                 DirectoryLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener,
+                    directoryListDisplayLayoutClickedListener,
                     folderClickedListener
                 )
             }
             MediaType.File.AppFile.value -> {
                 DirectoryAppLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.ImageFile.value -> {
                 DirectoryImageLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.VideoFile.value -> {
                 DirectoryVideoLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.AudioFile.value -> {
                 DirectoryAudioLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.Document.PowerPointDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.Document.WordDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.Document.PdfDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.Document.ExcelDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             MediaType.File.Document.ZipDocument.value -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
             else -> {
                 DirectoryDocumentLayoutItemViewHolder.createViewHolder(
                     parent,
-                    dataToTransferRecyclerViewItemClickListener
+                    directoryListDisplayLayoutClickedListener
                 )
             }
         }

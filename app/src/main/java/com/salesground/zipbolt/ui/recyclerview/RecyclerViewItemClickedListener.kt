@@ -1,7 +1,7 @@
 package com.salesground.zipbolt.ui.recyclerview
 
 
-class DataToTransferRecyclerViewItemClickListener<T>(
+class RecyclerViewItemClickedListener<T>(
     private val clicked: (T) -> Unit
 ) {
     fun onClick(clickedItem: T) {
