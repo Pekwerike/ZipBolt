@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.ongoingDataTransferRecyclerViewComponents.viewHolders.application.ApplicationReceiveCompleteLayoutViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.audio.AudioReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.directory.DirectoryReceiveCompleteLayoutItemViewHolder
@@ -15,7 +16,7 @@ import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.image.PlainImageFileReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.video.PlainVideoFileReceiveCompleteLayoutItemViewHolder
 
-class ReceivedDataFragmentRecyclerViewAdapter :
+class ReceivedDataFragmentRecyclerViewAdapter(private val installReceivedApplicationClickListener: RecyclerViewItemClickedListener<String>) :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>
         (DataToTransferRecyclerViewDiffUtil()) {
     enum class ReceiveDataFragmentAdapterViewTypes(val value: Int) {
@@ -67,7 +68,10 @@ class ReceivedDataFragmentRecyclerViewAdapter :
                 ImageReceiveCompleteLayoutViewHolder.createViewHolder(parent)
             }
             ReceiveDataFragmentAdapterViewTypes.APP_RECEIVE_COMPLETE.value -> {
-                ApplicationReceiveCompleteLayoutViewHolder.createViewHolder(parent)
+                ApplicationReceiveCompleteLayoutViewHolder.createViewHolder(
+                    parent,
+                    installReceivedApplicationClickListener
+                )
             }
             ReceiveDataFragmentAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value -> {
                 AudioReceiveCompleteLayoutItemViewHolder.createViewHolder(parent)

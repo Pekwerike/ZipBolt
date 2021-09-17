@@ -9,14 +9,15 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.ApplicationLayoutItemTransferOrReceiveBinding
 import com.salesground.zipbolt.databinding.ApplicationReceiveCompleteLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 class ApplicationReceiveCompleteLayoutViewHolder(
-    private val applicationReceiveCompleteLayoutItemBinding: ApplicationReceiveCompleteLayoutItemBinding
+    private val applicationReceiveCompleteLayoutItemBinding: ApplicationReceiveCompleteLayoutItemBinding,
+    private val installReceivedApplicationClickListener: RecyclerViewItemClickedListener<String>
 ) : RecyclerView.ViewHolder(applicationReceiveCompleteLayoutItemBinding.root) {
 
-    fun bindData(dataToTransfer: DataToTransfer,
-    ) {
+    fun bindData(dataToTransfer: DataToTransfer) {
         dataToTransfer as DataToTransfer.DeviceApplication
 
         applicationReceiveCompleteLayoutItemBinding.run {
@@ -24,7 +25,7 @@ class ApplicationReceiveCompleteLayoutViewHolder(
             applicationSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
 
             applicationReceiveCompleteLayoutInstallAppButton.setOnClickListener {
-
+                installReceivedApplicationClickListener.onClick(dataToTransfer.apkPath)
             }
 
             Glide.with(applicationReceiveLayoutItemImageView)
@@ -35,7 +36,10 @@ class ApplicationReceiveCompleteLayoutViewHolder(
     }
 
     companion object {
-        fun createViewHolder(parent: ViewGroup): ApplicationReceiveCompleteLayoutViewHolder {
+        fun createViewHolder(
+            parent: ViewGroup,
+            installReceivedApplicationClickListener: RecyclerViewItemClickedListener<String>
+        ): ApplicationReceiveCompleteLayoutViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<ApplicationReceiveCompleteLayoutItemBinding>(
                     LayoutInflater.from(parent.context),
@@ -43,7 +47,10 @@ class ApplicationReceiveCompleteLayoutViewHolder(
                     parent,
                     false
                 )
-            return ApplicationReceiveCompleteLayoutViewHolder(layoutBinding)
+            return ApplicationReceiveCompleteLayoutViewHolder(
+                layoutBinding,
+                installReceivedApplicationClickListener
+            )
         }
     }
 }
