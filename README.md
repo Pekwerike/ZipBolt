@@ -18,7 +18,7 @@ To maintain real-time communication across connected devices, ZipBolt has its ow
 2. Low device discovery latency (avg - 300ms)🌪🌪.
 3. Rapid file transfer speeds with low network latency and high transfer bandwidth⚡️⚡️.
 4. Share all kind of files, even directories!✨✨.
-5. Beautifu user interface🌈🌈 + amazing user experience💫💫.
+5. Beautiful user interface🌈🌈 + amazing user experience💫💫.
 6. Lightweight⚡️⚡️ when compared to other file transfer apps in the market😌😌.
 7. Privacy🤩🤩 - Doesn't request for your location/gps data.
 
