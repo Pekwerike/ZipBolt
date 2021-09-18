@@ -1,5 +1,5 @@
 # ZipBolt
-ZipBolt is a file-sharing platform that allows digital devices to share files at incredible speeds using WiFi Peer-to-Peer technology. ZipBolt originated from the idea that creating network connections across multiple devices irrespective of the device operating system should be as fast as a finger snap and sharing large files through a wireless network could be done in the blink of an eye. 
+ZipBolt is a file-sharing platform that allows digital devices to share files at incredible speeds using WiFi Peer-to-Peer technology. ZipBolt originated from the idea that creating network connections across multiple devices irrespective of device operating systems should be as fast as a finger snap and sharing large files through a wireless network should be done in the blink of an eye. 
 
 At the moment after building on the strength of Wifi P2P technology, ZipBolt can help digital devices create network connections in an average of 2 seconds, and hopefully based on hardware advancements in the future ZipBolt will reach its ideal file transfer speed. 
 
