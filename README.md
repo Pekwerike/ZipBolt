@@ -14,11 +14,13 @@ ZipBolt makes use of WiFi Direct service discovery APIs to allow devices to disc
 To maintain real-time communication across connected devices, ZipBolt has its own custom communication protocol that was built on top of the Sockets API. This communication protocol also makes it possible for ZipBolt to share any type of files and even directories across connected devices. 
 
 ## ZipBolt Features 
-1. Very fast device connections with few permission requests 
-2. Incredible file transfer speeds 
-3. Share any type of file, even directories 
-4. Beautiful User Interface with simple structure
-5. Lightweight when compared to other file transfer apps in the market 
+1. Very fast device connection with zero permission request🥰🥰.
+2. Low device discovery latency (avg - 300ms)🌪🌪.
+3. Rapid file transfer speeds with low network latency and high transfer bandwidth⚡️⚡️.
+4. Share all kind of files, even directories!✨✨.
+5. Beautifu user interface🌈🌈 + amazing user experience💫💫.
+6. Lightweight⚡️⚡️ when compared to other file transfer apps in the market😌😌.
+7. Privacy🤩🤩 - Doesn't request for your location/gps data.
 
 ## App Screenshots 
 ### Light Mode 
