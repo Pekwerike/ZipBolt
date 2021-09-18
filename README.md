@@ -32,7 +32,7 @@ To maintain real-time communication across connected devices, ZipBolt has its ow
  - [Android Jetpack](https://developer.android.com/jetpack) - Jetpack is a suite of libraries to help developers follow best practices, reduce boilerplate code, and write code that works consistently across Android versions and devices so that developers can focus on the code they care about.
  - [Glide](https://github.com/bumptech/glide) - Glide is a fast and efficient open source media management and image loading framework for Android that wraps media decoding, memory and disk caching, and resource pooling into a simple and easy to use interface.
  - [Junit4](https://junit.org/junit4/) - JUnit is a simple framework to write repeatable tests. It is an instance of the xUnit architecture for unit testing frameworks.
- - [Robolectric](http://robolectric.org) - Robolectric is a framework that brings fast and reliable unit tests to Android. T
+ - [Robolectric](http://robolectric.org) - Robolectric is a framework that brings fast and reliable unit tests to Android. 
 
 ## How to Run ZipBolt on android-: 
 1. Transfer the apk file to an android device 
