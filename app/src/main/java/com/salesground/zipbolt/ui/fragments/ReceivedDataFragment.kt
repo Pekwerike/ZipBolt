@@ -1,5 +1,7 @@
 package com.salesground.zipbolt.ui.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentReceivedDataBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.model.MediaType
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.ReceivedDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.ui.recyclerview.sentDataFragment.SentDataFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
@@ -23,7 +26,17 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class ReceivedDataFragment : Fragment() {
     private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
-    private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter()
+    private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter(
+        RecyclerViewItemClickedListener { apkPath: String ->
+            // start intent to install the application
+            val intent = Intent(Intent.ACTION_VIEW)
+                .setDataAndType(
+                    (Uri.parse(apkPath)),
+                    "application/vnd.android.package-archive"
+                )
+            startActivity(intent)
+        }
+    )
     private lateinit var receivedDataFragmentLayoutManager: GridLayoutManager
     private lateinit var receivedDataFragmentBinding: FragmentReceivedDataBinding
 

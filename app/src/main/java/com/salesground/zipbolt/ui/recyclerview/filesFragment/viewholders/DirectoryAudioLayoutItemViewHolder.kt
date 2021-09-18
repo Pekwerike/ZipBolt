@@ -9,11 +9,11 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FolderAudioLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class DirectoryAudioLayoutItemViewHolder(
     private val folderAudioLayoutItemBinding: FolderAudioLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val directoryAudioLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(folderAudioLayoutItemBinding.root) {
 
     fun bindData(
@@ -38,7 +38,7 @@ class DirectoryAudioLayoutItemViewHolder(
                     folderAudioLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryAudioLayoutClickedListener.onClick(dataToTransfer)
 
             }
             folderAudioLayoutItemFolderSelectedCheckBox.setOnClickListener {
@@ -47,7 +47,7 @@ class DirectoryAudioLayoutItemViewHolder(
                     folderAudioLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryAudioLayoutClickedListener.onClick(dataToTransfer)
             }
             executePendingBindings()
         }
@@ -65,7 +65,7 @@ class DirectoryAudioLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            directoryAudioLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): DirectoryAudioLayoutItemViewHolder {
             val layoutItemBinding = DataBindingUtil.inflate<FolderAudioLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
@@ -75,7 +75,7 @@ class DirectoryAudioLayoutItemViewHolder(
             )
             return DirectoryAudioLayoutItemViewHolder(
                 layoutItemBinding,
-                dataToTransferRecyclerViewItemClickListener
+                directoryAudioLayoutClickedListener
             )
         }
     }

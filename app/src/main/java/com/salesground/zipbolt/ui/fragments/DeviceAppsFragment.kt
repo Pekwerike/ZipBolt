@@ -1,7 +1,5 @@
 package com.salesground.zipbolt.ui.fragments
 
-import android.annotation.SuppressLint
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,18 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.salesground.zipbolt.MainActivity
-import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentAppBinding
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.applicationFragment.ApplicationFragmentAppsDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.ApplicationsViewModel
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.GeneralViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class DeviceAppsFragment : Fragment() {
@@ -43,7 +38,7 @@ class DeviceAppsFragment : Fragment() {
 
         applicationFragmentAppsDisplayRecyclerViewAdapter =
             ApplicationFragmentAppsDisplayRecyclerViewAdapter(
-                DataToTransferRecyclerViewItemClickListener {
+                RecyclerViewItemClickedListener {
                     if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                         mainActivity?.removeFromDataToTransferList(it)
                     } else {
@@ -64,7 +59,7 @@ class DeviceAppsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         fragmentAppBinding = FragmentAppBinding.inflate(inflater, container, false)
         return fragmentAppBinding.root

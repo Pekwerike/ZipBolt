@@ -5,11 +5,11 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
-    private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
+    private val applicationLayoutClickedListener:
+    RecyclerViewItemClickedListener<DataToTransfer>,
     var  selectedApplications: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(
     DataToTransferRecyclerViewDiffUtil()
@@ -18,7 +18,7 @@ class ApplicationFragmentAppsDisplayRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return ApplicationLayoutItemViewHolder.createViewHolder(
             parent,
-            dataToTransferRecyclerViewItemClickListener
+            applicationLayoutClickedListener
         )
     }
 

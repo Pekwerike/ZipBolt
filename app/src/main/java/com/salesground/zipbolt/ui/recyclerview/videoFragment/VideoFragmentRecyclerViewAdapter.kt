@@ -5,17 +5,17 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewDiffUtil
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class VideoFragmentRecyclerViewAdapter(
-    private val dataToTransferRecyclerViewItemClickListener:
-    DataToTransferRecyclerViewItemClickListener<DataToTransfer>,
+    private val videoLayoutClickedListener:
+    RecyclerViewItemClickedListener<DataToTransfer>,
     var selectedVideos: MutableList<DataToTransfer>
 ) : ListAdapter<DataToTransfer, RecyclerView.ViewHolder>(DataToTransferRecyclerViewDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return VideoLayoutItemViewHolder.createViewHolder(
             parent,
-            dataToTransferRecyclerViewItemClickListener
+            videoLayoutClickedListener
         )
     }
 

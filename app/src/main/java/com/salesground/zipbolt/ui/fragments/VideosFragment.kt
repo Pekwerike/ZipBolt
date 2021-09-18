@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.databinding.FragmentVideosBinding
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.videoFragment.VideoFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
@@ -36,7 +36,7 @@ class VideosFragment : Fragment() {
         }
 
         videoFragmentRecyclerViewAdapter = VideoFragmentRecyclerViewAdapter(
-            DataToTransferRecyclerViewItemClickListener {
+            RecyclerViewItemClickedListener {
                 if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
@@ -52,7 +52,7 @@ class VideosFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         fragmentVideosBinding = FragmentVideosBinding.inflate(inflater, container, false)
         return fragmentVideosBinding.root

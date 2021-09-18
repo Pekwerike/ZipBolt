@@ -9,11 +9,11 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FolderDocumentLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class DirectoryDocumentLayoutItemViewHolder(
     private val folderDocumentLayoutItemBinding: FolderDocumentLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val directoryDocumentLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(folderDocumentLayoutItemBinding.root) {
 
     fun bindData(
@@ -37,7 +37,7 @@ class DirectoryDocumentLayoutItemViewHolder(
                     folderDocumentLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryDocumentLayoutClickedListener.onClick(dataToTransfer)
             }
 
             folderDocumentLayoutItemFolderSelectedCheckBox.setOnClickListener {
@@ -46,7 +46,7 @@ class DirectoryDocumentLayoutItemViewHolder(
                     folderDocumentLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryDocumentLayoutClickedListener.onClick(dataToTransfer)
             }
             executePendingBindings()
         }
@@ -64,7 +64,7 @@ class DirectoryDocumentLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            directoryDocumentLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): DirectoryDocumentLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<FolderDocumentLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
@@ -74,7 +74,7 @@ class DirectoryDocumentLayoutItemViewHolder(
             )
             return DirectoryDocumentLayoutItemViewHolder(
                 layoutBinding,
-                dataToTransferRecyclerViewItemClickListener
+                directoryDocumentLayoutClickedListener
             )
         }
     }

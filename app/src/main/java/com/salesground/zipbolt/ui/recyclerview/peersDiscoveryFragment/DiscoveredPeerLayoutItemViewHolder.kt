@@ -7,11 +7,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.DiscoveredPeerLayoutItemBinding
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class DiscoveredPeerLayoutItemViewHolder(
     private val discoveredPeerLayoutItemBinding: DiscoveredPeerLayoutItemBinding,
-    private val deviceClickListener: DataToTransferRecyclerViewItemClickListener<WifiP2pDevice>
+    private val deviceClickedListener: RecyclerViewItemClickedListener<WifiP2pDevice>
 ) : RecyclerView.ViewHolder(discoveredPeerLayoutItemBinding.root) {
 
     fun bindData(device: WifiP2pDevice) {
@@ -22,7 +22,7 @@ class DiscoveredPeerLayoutItemViewHolder(
                 "Unspecified Device"
             }
             discoveredPeerLayoutItemViewGroup.setOnClickListener {
-                deviceClickListener.onClick(device)
+                deviceClickedListener.onClick(device)
             }
 
             executePendingBindings()
@@ -32,7 +32,7 @@ class DiscoveredPeerLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            deviceClickListener: DataToTransferRecyclerViewItemClickListener<WifiP2pDevice>
+            deviceClickedListener: RecyclerViewItemClickedListener<WifiP2pDevice>
         ): DiscoveredPeerLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<
                     DiscoveredPeerLayoutItemBinding>(
@@ -43,7 +43,7 @@ class DiscoveredPeerLayoutItemViewHolder(
             )
             return DiscoveredPeerLayoutItemViewHolder(
                 layoutBinding,
-                deviceClickListener
+                deviceClickedListener
             )
         }
     }

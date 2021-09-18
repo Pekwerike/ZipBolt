@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.broadcast.SendDataBroadcastReceiver
 import com.salesground.zipbolt.databinding.FragmentAudioBinding
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.HalfLineRecyclerViewCustomDivider
 import com.salesground.zipbolt.ui.recyclerview.audioFragment.AudioFragmentRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.AudioViewModel
@@ -52,7 +52,7 @@ class AudioFragment : Fragment() {
         }
 
         audioFragmentRecyclerViewAdapter = AudioFragmentRecyclerViewAdapter(
-            DataToTransferRecyclerViewItemClickListener {
+            RecyclerViewItemClickedListener {
                 if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
@@ -69,7 +69,7 @@ class AudioFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         fragmentAudioBinding = FragmentAudioBinding.inflate(inflater, container, false)
         return fragmentAudioBinding.root

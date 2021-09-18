@@ -1,25 +1,14 @@
 package com.salesground.zipbolt.ui.recyclerview.audioFragment
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.AudioLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 /** AudioLayoutItemViewHolder is the view holder for each audio item displayed in the
  * AudioFragment Recyclerview. AudioLayoutItemViewHolder uses the R.layout.video_layout_item
@@ -27,7 +16,7 @@ import kotlin.math.roundToInt
  * */
 class AudioLayoutItemViewHolder(
     private val audioLayoutItemBinding: AudioLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val audioLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(audioLayoutItemBinding.root) {
 
     fun bindData(
@@ -50,7 +39,7 @@ class AudioLayoutItemViewHolder(
 
             audioLayoutItemSelectableLinearLayout.run {
                 audioLayoutItemVideoSelectedCheckBox.setOnClickListener {
-                    dataToTransferRecyclerViewItemClickListener.onClick(
+                    audioLayoutClickedListener.onClick(
                         dataToTransfer
                     )
 
@@ -66,7 +55,7 @@ class AudioLayoutItemViewHolder(
                 }
 
                 setOnClickListener {
-                    dataToTransferRecyclerViewItemClickListener.onClick(
+                    audioLayoutClickedListener.onClick(
                         dataToTransfer
                     )
 
@@ -97,7 +86,7 @@ class AudioLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            audioLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): AudioLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<AudioLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
@@ -108,7 +97,7 @@ class AudioLayoutItemViewHolder(
 
             return AudioLayoutItemViewHolder(
                 layoutBinding,
-                dataToTransferRecyclerViewItemClickListener
+                audioLayoutClickedListener
             )
         }
     }

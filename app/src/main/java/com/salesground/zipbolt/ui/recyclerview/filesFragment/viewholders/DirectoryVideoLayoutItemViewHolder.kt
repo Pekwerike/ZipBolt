@@ -10,11 +10,11 @@ import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FolderVideoLayoutItemBinding
 import com.salesground.zipbolt.model.DataToTransfer
 import com.salesground.zipbolt.ui.customviews.SelectableLinearLayout
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 
 class DirectoryVideoLayoutItemViewHolder(
     private val folderVideoLayoutItemBinding: FolderVideoLayoutItemBinding,
-    private val dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+    private val directoryVideoLayoutItemClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
 ) : RecyclerView.ViewHolder(folderVideoLayoutItemBinding.root) {
 
 
@@ -42,7 +42,7 @@ class DirectoryVideoLayoutItemViewHolder(
                     folderVideoLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryVideoLayoutItemClickedListener.onClick(dataToTransfer)
             }
 
             folderVideoLayoutItemFolderSelectedCheckBox.setOnClickListener {
@@ -51,7 +51,7 @@ class DirectoryVideoLayoutItemViewHolder(
                     folderVideoLayoutItemFolderSelectedCheckBox,
                     !filesSelectedForTransfer.contains(dataToTransfer)
                 )
-                dataToTransferRecyclerViewItemClickListener.onClick(dataToTransfer)
+                directoryVideoLayoutItemClickedListener.onClick(dataToTransfer)
             }
             executePendingBindings()
         }
@@ -69,7 +69,7 @@ class DirectoryVideoLayoutItemViewHolder(
     companion object {
         fun createViewHolder(
             parent: ViewGroup,
-            dataToTransferRecyclerViewItemClickListener: DataToTransferRecyclerViewItemClickListener<DataToTransfer>
+            directoryVideoLayoutClickedListener: RecyclerViewItemClickedListener<DataToTransfer>
         ): DirectoryVideoLayoutItemViewHolder {
             val layoutBinding = DataBindingUtil.inflate<FolderVideoLayoutItemBinding>(
                 LayoutInflater.from(parent.context),
@@ -80,7 +80,7 @@ class DirectoryVideoLayoutItemViewHolder(
 
             return DirectoryVideoLayoutItemViewHolder(
                 layoutBinding,
-                dataToTransferRecyclerViewItemClickListener
+                directoryVideoLayoutClickedListener
             )
         }
     }

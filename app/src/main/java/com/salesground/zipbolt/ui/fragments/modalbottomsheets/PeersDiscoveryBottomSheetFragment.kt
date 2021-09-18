@@ -2,7 +2,6 @@ package com.salesground.zipbolt.ui.fragments.modalbottomsheets
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
@@ -10,12 +9,9 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,16 +19,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentPeersDiscoveryBottomSheetBinding
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.peersDiscoveryFragment.PeersDiscoveredRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.PeersDiscoveryViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
-import javax.inject.Inject
 import kotlin.concurrent.schedule
 
 
@@ -49,7 +41,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var wifiP2pChannel: WifiP2pManager.Channel
     private lateinit var peersDiscoveryBottomSheetFragment: FragmentPeersDiscoveryBottomSheetBinding
     private val peersDiscoveredRecyclerViewAdapter = PeersDiscoveredRecyclerViewAdapter(
-        DataToTransferRecyclerViewItemClickListener {
+        RecyclerViewItemClickedListener {
             if (peersDiscoveryBottomSheetFragment.fragmentPeersDiscoveryDiscoveredPeersRecyclerView.visibility != View.INVISIBLE) {
                 connectToADevice(it)
             }
@@ -75,7 +67,7 @@ class PeersDiscoveryBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         peersDiscoveryBottomSheetFragment = FragmentPeersDiscoveryBottomSheetBinding.inflate(
             inflater, container, false
         )

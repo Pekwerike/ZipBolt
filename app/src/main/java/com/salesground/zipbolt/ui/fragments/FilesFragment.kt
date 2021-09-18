@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.salesground.zipbolt.MainActivity
 import com.salesground.zipbolt.R
 import com.salesground.zipbolt.databinding.FragmentFilesBinding
-import com.salesground.zipbolt.ui.recyclerview.DataToTransferRecyclerViewItemClickListener
+import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.ui.recyclerview.filesFragment.DirectoryListDisplayRecyclerViewAdapter
 import com.salesground.zipbolt.viewmodel.DataToTransferViewModel
 import com.salesground.zipbolt.viewmodel.FileViewModel
@@ -51,13 +51,13 @@ class FilesFragment : Fragment() {
         }
 
         directoryListDisplayRecyclerViewAdapter =
-            DirectoryListDisplayRecyclerViewAdapter(DataToTransferRecyclerViewItemClickListener {
+            DirectoryListDisplayRecyclerViewAdapter(RecyclerViewItemClickedListener {
                 if (dataToTransferViewModel.collectionOfDataToTransfer.contains(it)) {
                     mainActivity?.removeFromDataToTransferList(it)
                 } else {
                     mainActivity?.addToDataToTransferList(it)
                 }
-            }, DataToTransferRecyclerViewItemClickListener {
+            }, RecyclerViewItemClickedListener {
                 backStackCount++
                 fileViewModel.moveToDirectory(it)
             }, dataToTransferViewModel.collectionOfDataToTransfer
@@ -69,7 +69,7 @@ class FilesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         fragmentFilesBinding = FragmentFilesBinding.inflate(inflater, container, false)
         return fragmentFilesBinding.root
