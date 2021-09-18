@@ -43,5 +43,6 @@ To maintain real-time communication across connected devices, ZipBolt has its ow
 1. Refactor app to follow clean architecture with multiple modules 
 2. Increase test coverage across all layers 
 3. Refactor File transfer layer into a library 
-4. Create ZipBolt for ios, macOS, Windows, Linux, etc 
+4. Migrate the UI to Jetpack compose
+5. Create ZipBolt for ios, macOS, Windows, Linux, etc 
 
