@@ -20,7 +20,11 @@ To maintain real-time communication across connected devices, ZipBolt has its ow
 4. Beautiful User Interface with simple structure
 5. Lightweight when compared to other file transfer apps in the market 
 
-## UI Screenshots 
+## App Screenshots 
+### Light Mode 
+<img src="https://user-images.githubusercontent.com/43956851/133894965-0e083cfe-df3c-4ecd-ac45-d5d6e407be80.jpg" width="198" height="429"> <img src="https://user-images.githubusercontent.com/43956851/133894941-1157f5a0-8930-41df-9297-fd9923463a69.jpg" width="198" height="429">  <img src="https://user-images.githubusercontent.com/43956851/133894669-f75d001b-1773-488c-b431-a0702f82b627.jpg" width="198" height="429">  <img src="https://user-images.githubusercontent.com/43956851/133894779-f623912d-6a1d-4359-99c1-059d7a128a4e.jpg" width="198" height="429">  <img src="https://user-images.githubusercontent.com/43956851/133894847-0b0972dd-cac7-46ad-8ad1-6dd4dc320329.jpg" width="198" height="429">  <img src="https://user-images.githubusercontent.com/43956851/133894952-0a2ef9c5-138b-4e2c-86ab-834808c58490.jpg" width="198" height="429">
+
+### Dark Mode 
 
 ## Open-source libraries used 
  - ShimmerLayout 
