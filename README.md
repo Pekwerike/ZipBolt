@@ -27,10 +27,10 @@ To maintain real-time communication across connected devices, ZipBolt has its ow
 ### Dark Mode 
 
 ## Open-source libraries used 
- - ShimmerLayout 
- - Dagger/Hilt 
- - Android Jetpack 
- - Glide  
+ - [ShimmerLayout](https://github.com/facebook/shimmer-android) - Shimmer is an Android library that provides an easy way to add a shimmer effect to any view in your Android app.
+ - [Dagger/Hilt](https://dagger.dev/hilt/) - Hilt provides a standard way to incorporate Dagger dependency injection into an Android application.
+ - [Android Jetpack](https://developer.android.com/jetpack) - Jetpack is a suite of libraries to help developers follow best practices, reduce boilerplate code, and write code that works consistently across Android versions and devices so that developers can focus on the code they care about.
+ - [Glide](https://github.com/bumptech/glide) - Glide is a fast and efficient open source media management and image loading framework for Android that wraps media decoding, memory and disk caching, and resource pooling into a simple and easy to use interface.
 
 ## How to Run ZipBolt on android-: 
 1. Transfer the apk file to an android device 
