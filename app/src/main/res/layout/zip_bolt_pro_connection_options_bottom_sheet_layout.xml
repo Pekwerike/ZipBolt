@@ -78,6 +78,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/zip_bolt_pro_connection_options_bottom_sheet_layout_send_and_receive_card_view"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp">
