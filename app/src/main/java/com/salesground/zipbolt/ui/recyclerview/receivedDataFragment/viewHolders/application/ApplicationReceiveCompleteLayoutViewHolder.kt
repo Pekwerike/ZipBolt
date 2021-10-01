@@ -13,8 +13,7 @@ import com.salesground.zipbolt.ui.recyclerview.RecyclerViewItemClickedListener
 import com.salesground.zipbolt.utils.transformDataSizeToMeasuredUnit
 
 class ApplicationReceiveCompleteLayoutViewHolder(
-    private val applicationReceiveCompleteLayoutItemBinding: ApplicationReceiveCompleteLayoutItemBinding,
-    private val installReceivedApplicationClickListener: RecyclerViewItemClickedListener<String>
+    private val applicationReceiveCompleteLayoutItemBinding: ApplicationReceiveCompleteLayoutItemBinding
 ) : RecyclerView.ViewHolder(applicationReceiveCompleteLayoutItemBinding.root) {
 
     fun bindData(dataToTransfer: DataToTransfer) {
@@ -23,10 +22,6 @@ class ApplicationReceiveCompleteLayoutViewHolder(
         applicationReceiveCompleteLayoutItemBinding.run {
             applicationName = dataToTransfer.dataDisplayName
             applicationSize = dataToTransfer.dataSize.transformDataSizeToMeasuredUnit()
-
-            applicationReceiveCompleteLayoutInstallAppButton.setOnClickListener {
-                installReceivedApplicationClickListener.onClick(dataToTransfer.apkPath)
-            }
 
             Glide.with(applicationReceiveLayoutItemImageView)
                 .load(dataToTransfer.applicationIcon)
@@ -37,8 +32,7 @@ class ApplicationReceiveCompleteLayoutViewHolder(
 
     companion object {
         fun createViewHolder(
-            parent: ViewGroup,
-            installReceivedApplicationClickListener: RecyclerViewItemClickedListener<String>
+            parent: ViewGroup
         ): ApplicationReceiveCompleteLayoutViewHolder {
             val layoutBinding =
                 DataBindingUtil.inflate<ApplicationReceiveCompleteLayoutItemBinding>(
@@ -48,8 +42,7 @@ class ApplicationReceiveCompleteLayoutViewHolder(
                     false
                 )
             return ApplicationReceiveCompleteLayoutViewHolder(
-                layoutBinding,
-                installReceivedApplicationClickListener
+                layoutBinding
             )
         }
     }

@@ -40,7 +40,7 @@
             android:text="@{applicationName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/application_receive_layout_item_data_size_text_view"
-            app:layout_constraintEnd_toStartOf="@+id/application_receive_complete_layout_install_app_button"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/application_receive_layout_item_image_view"
             app:layout_constraintTop_toTopOf="@+id/application_receive_layout_item_image_view" />
@@ -56,22 +56,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/application_receive_layout_item_image_view"
             app:layout_constraintStart_toStartOf="@+id/application_receive_layout_item_app_name_text_view" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/application_receive_complete_layout_install_app_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/standard_margin"
-            android:background="?attr/selectableItemBackground"
-            android:padding="@dimen/standard_padding"
-            android:text="@string/install"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="@color/blue_415"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/application_receive_layout_item_data_size_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/application_receive_layout_item_app_name_text_view"
-            app:layout_constraintTop_toTopOf="@+id/application_receive_layout_item_app_name_text_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

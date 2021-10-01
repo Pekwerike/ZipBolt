@@ -26,17 +26,7 @@ import kotlin.math.roundToInt
 @AndroidEntryPoint
 class ReceivedDataFragment : Fragment() {
     private val receivedDataViewModel: ReceivedDataViewModel by activityViewModels()
-    private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter(
-        RecyclerViewItemClickedListener { apkPath: String ->
-            // start intent to install the application
-            val intent = Intent(Intent.ACTION_VIEW)
-                .setDataAndType(
-                    (Uri.parse(apkPath)),
-                    "application/vnd.android.package-archive"
-                )
-            startActivity(intent)
-        }
-    )
+    private val receivedDataFragmentRecyclerViewAdapter = ReceivedDataFragmentRecyclerViewAdapter()
     private lateinit var receivedDataFragmentLayoutManager: GridLayoutManager
     private lateinit var receivedDataFragmentBinding: FragmentReceivedDataBinding
 

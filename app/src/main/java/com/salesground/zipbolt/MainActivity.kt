@@ -1161,6 +1161,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        dataTransferService?.killDataTransferService()
         unbindService(dataTransferServiceConnection)
         // unregister the broadcast receiver
         unregisterReceiver(upgradedWifiDirectBroadcastReceiver)

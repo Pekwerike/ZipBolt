@@ -16,7 +16,7 @@ import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.image.PlainImageFileReceiveCompleteLayoutItemViewHolder
 import com.salesground.zipbolt.ui.recyclerview.receivedDataFragment.viewHolders.plainFile.video.PlainVideoFileReceiveCompleteLayoutItemViewHolder
 
-class ReceivedDataFragmentRecyclerViewAdapter(private val installReceivedApplicationClickListener: RecyclerViewItemClickedListener<String>) :
+class ReceivedDataFragmentRecyclerViewAdapter :
     ListAdapter<DataToTransfer, RecyclerView.ViewHolder>
         (DataToTransferRecyclerViewDiffUtil()) {
     enum class ReceiveDataFragmentAdapterViewTypes(val value: Int) {
@@ -69,8 +69,7 @@ class ReceivedDataFragmentRecyclerViewAdapter(private val installReceivedApplica
             }
             ReceiveDataFragmentAdapterViewTypes.APP_RECEIVE_COMPLETE.value -> {
                 ApplicationReceiveCompleteLayoutViewHolder.createViewHolder(
-                    parent,
-                    installReceivedApplicationClickListener
+                    parent
                 )
             }
             ReceiveDataFragmentAdapterViewTypes.AUDIO_RECEIVE_COMPLETE.value -> {
