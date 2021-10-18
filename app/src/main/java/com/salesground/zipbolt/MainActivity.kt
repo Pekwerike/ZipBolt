@@ -348,7 +348,7 @@ class MainActivity : AppCompatActivity() {
             if (deviceTransferRole == DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                 && groupCreatedBottomSheetFragment == null
             ) {
-                openGroupCreatedModalBottomSheet()
+            //    openGroupCreatedModalBottomSheet()
             } else if (deviceTransferRole == DeviceTransferRole.RECEIVE_BUT_DISCOVERING_PEER && peersDiscoveryBottomSheetFragment == null) {
                 preparePeerDiscovery()
             } else if (deviceTransferRole == DeviceTransferRole.SEND_AND_RECEIVE_BUT_DISCOVERING &&
@@ -849,13 +849,14 @@ class MainActivity : AppCompatActivity() {
                     deviceTransferRole = DeviceTransferRole.SEND_BUT_DISCOVERING_PEER
                     // Turn on device wifi if it is off
                     if (!wifiManager.isWifiEnabled) {
-                        toggleWifi(false)
+                        // toggleWifi(false)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             turnOnWifiResultLauncher.launch(Intent(Settings.Panel.ACTION_WIFI))
                         } else {
                             if (wifiManager.setWifiEnabled(true)) {
                                 /**Listen for wifi on via the broadcast receiver
                                  * and then call openGroupCreatedModalBottomSheet**/
+                                openGroupCreatedModalBottomSheet()
                             } else {
                                 displayToast("Turn off your hotspot")
                             }

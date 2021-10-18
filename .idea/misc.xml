@@ -189,6 +189,15 @@
         <entry key="..\:/Users/mr758vq/Desktop/ZipBoltPro/ZipBoltPro/app/src/main/res/layout/waiting_for_receiver_persistent_bottom_sheet_layout.xml" value="0.1796875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.17346014492753623" />
         <entry key="app/src/main/res/layout/application_receive_complete_layout_item.xml" value="0.4382716049382716" />
+        <entry key="app/src/main/res/layout/category_chip.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/collapsed_connected_to_peer_transfer_receive_ongoing_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/connected_to_peer_transfer_ongoing_persistent_bottom_sheet.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/discovered_peer_layout_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/expanded_bottom_sheet_layout_toolbar.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/expanded_connected_to_peer_transfer_ongoing.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_send_and_receive_bottom_sheet.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/zip_bolt_pro_connection_options_bottom_sheet_layout.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/zip_bolt_send_file_header_layout.xml" value="0.1" />
       </map>
     </option>
   </component>
