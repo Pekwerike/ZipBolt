@@ -1,7 +1,5 @@
 # ZipBolt
-ZipBolt is a file-sharing platform that allows digital devices to share files at incredible speeds using WiFi Peer-to-Peer technology. ZipBolt originated from the idea that creating network connections across multiple devices irrespective of device operating systems should be as fast as a finger snap and sharing large files through a wireless network should be done in the blink of an eye. 
-
-At the moment after building on the strength of Wifi P2P technology, ZipBolt can help digital devices create network connections in an average of 2 seconds, and hopefully based on hardware advancements in the future ZipBolt will reach its ideal file transfer speed. 
+ZipBolt is a file-sharing platform that allows digital devices to share files at incredible speeds using WiFi Peer-to-Peer technology.
 
 ## What's WiFi P2P/ WiFi Direct?
 According to Wi-Fi Alliance, Wi-Fi CERTIFIED Wi-Fi Direct® enables Wi-Fi devices to connect directly to each other, making it simple and convenient to print, share, sync, play games, and display content to another device. Wi-Fi Direct devices connect to one another without joining a traditional home, office, or public network.
